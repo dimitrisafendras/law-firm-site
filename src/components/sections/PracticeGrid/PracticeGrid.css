@@ -88,6 +88,24 @@
 
 /* ─── Domain Card ──────────────────────────────────────────────────────────── */
 
+/* Decorative SVG background illustration */
+.practice-domain__bg {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 360px;
+  height: 360px;
+  color: var(--accent);
+  opacity: 0.12;
+  pointer-events: none;
+  transition: opacity 0.6s, transform 0.6s;
+}
+
+.practice-domain:hover .practice-domain__bg {
+  opacity: 0.22;
+  transform: scale(1.05);
+}
+
 .practice-domain {
   position: relative;
   overflow: hidden;
@@ -104,9 +122,27 @@
   }
 }
 
+/* Top accent line */
+.practice-domain::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent 80%);
+  opacity: 0.4;
+  transition: opacity 0.5s;
+}
+
+.practice-domain:hover::before {
+  opacity: 0.8;
+}
+
 .practice-domain:hover {
   background: var(--surface-variant);
   border-color: var(--accent-border);
+  box-shadow: 0 0 40px rgba(137, 207, 240, 0.06);
 }
 
 .practice-domain__icon-bg {

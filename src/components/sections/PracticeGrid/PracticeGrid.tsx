@@ -6,14 +6,27 @@ import {
   MaritimeIcon,
   CryptoIcon,
 } from '@/assets/illustrations';
+import {
+  RealEstateBg,
+  StartupBg,
+  MaritimeBg,
+  CryptoBg,
+} from '@/assets/domainBackgrounds';
 import './PracticeGrid.css';
 
-const domains = [
-  { key: 'RealEstate', icon: RealEstateIcon, span: 'wide', num: 'I' },
-  { key: 'Startup', icon: StartupFundingIcon, span: 'narrow', num: 'II' },
-  { key: 'Maritime', icon: MaritimeIcon, span: 'narrow', num: 'III' },
-  { key: 'Crypto', icon: CryptoIcon, span: 'wide', num: 'IV' },
-] as const;
+import type { ComponentType } from 'react';
+
+const domains: {
+  key: string;
+  icon: ComponentType<{ className?: string }>;
+  bg: ComponentType<{ className?: string }>;
+  num: string;
+}[] = [
+  { key: 'RealEstate', icon: RealEstateIcon, bg: RealEstateBg, num: 'I' },
+  { key: 'Startup', icon: StartupFundingIcon, bg: StartupBg, num: 'II' },
+  { key: 'Maritime', icon: MaritimeIcon, bg: MaritimeBg, num: 'III' },
+  { key: 'Crypto', icon: CryptoIcon, bg: CryptoBg, num: 'IV' },
+];
 
 export function PracticeGrid() {
   const { t } = useTranslation();
@@ -32,8 +45,9 @@ export function PracticeGrid() {
         </FadeInSection>
 
         <StaggerGroup className="practice-bento" interval={0.15}>
-          {domains.map(({ key, icon: Icon, span, num }) => (
-            <FadeInSection key={key} variant="fade-up" className={`practice-domain practice-domain--${span}`}>
+          {domains.map(({ key, icon: Icon, bg: Bg, num }) => (
+            <FadeInSection key={key} variant="fade-up" className="practice-domain">
+              <Bg className="practice-domain__bg" />
               <div className="practice-domain__icon-bg">
                 <Icon className="practice-domain__icon-large" />
               </div>

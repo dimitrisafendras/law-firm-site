@@ -1,21 +1,28 @@
 import type { ReactNode, HTMLAttributes } from 'react';
 import './Card.css';
 
-type CardVariant = 'default' | 'bordered' | 'elevated' | 'glass' | 'glass-strong';
-
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  variant?: CardVariant;
+  variant?: 'default' | 'strong' | 'glow';
+  clickable?: boolean;
   children: ReactNode;
 }
 
 export function Card({
   variant = 'default',
+  clickable = false,
   children,
   className = '',
   ...props
 }: CardProps) {
+  const classes = [
+    'card',
+    variant !== 'default' ? `card--${variant}` : '',
+    clickable ? 'card--clickable' : '',
+    className,
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className={`card card--${variant} ${className}`.trim()} {...props}>
+    <div className={classes} {...props}>
       {children}
     </div>
   );

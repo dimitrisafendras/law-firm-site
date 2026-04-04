@@ -1,21 +1,22 @@
 .practice-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-radius: 4px;
   padding: 32px 24px;
   text-align: left;
-  transition: all var(--transition, 0.3s);
 }
 
 .practice-card--link {
   text-decoration: none;
   color: inherit;
   display: block;
+  transition: border-color 0.5s;
 }
 
-.practice-card:hover {
+.practice-card--link:hover {
   border-color: var(--accent-border);
-  box-shadow: var(--shadow);
 }
 
 .practice-card--link:focus-visible {

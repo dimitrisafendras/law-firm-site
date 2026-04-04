@@ -142,9 +142,7 @@
 }
 
 .practice-domain:hover {
-  background: var(--surface-variant);
   border-color: var(--accent-border);
-  box-shadow: 0 0 40px rgba(137, 207, 240, 0.06);
 }
 
 .practice-domain__icon-bg {

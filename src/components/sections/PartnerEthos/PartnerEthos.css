@@ -58,7 +58,7 @@
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: 4px;
-  background: var(--surface-container-low);
+  background: var(--glass-bg);
 }
 
 .partner-ethos__image {

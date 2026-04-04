@@ -317,14 +317,14 @@ export default function DesignSystem() {
         <div style={showcaseBox}>
           <span style={showcaseLabel}>Card</span>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-            <Card variant="bordered">
-              <CardHeader><Heading level={3}>Bordered Card</Heading></CardHeader>
-              <CardBody><Text variant="small">A card with a subtle border and structured sub-components.</Text></CardBody>
+            <Card>
+              <CardHeader><Heading level={3}>Default Card</Heading></CardHeader>
+              <CardBody><Text variant="small">A glass card with structured sub-components.</Text></CardBody>
               <CardFooter><Button variant="ghost" size="sm">Learn More</Button></CardFooter>
             </Card>
-            <Card variant="elevated">
-              <CardHeader><Heading level={3}>Elevated Card</Heading></CardHeader>
-              <CardBody><Text variant="small">A card with shadow elevation for emphasis.</Text></CardBody>
+            <Card clickable>
+              <CardHeader><Heading level={3}>Clickable Card</Heading></CardHeader>
+              <CardBody><Text variant="small">A card with hover effect for interactive elements.</Text></CardBody>
               <CardFooter><Button variant="primary" size="sm">Action</Button></CardFooter>
             </Card>
           </div>
@@ -339,19 +339,15 @@ export default function DesignSystem() {
         }}>
           <div style={{ padding: '16px 32px 0' }}><span style={{ ...showcaseLabel, color: '#fff' }}>Glass Card</span></div>
           <div style={{ padding: '16px 32px 32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
-            <GlassCard intensity="light">
-              <Heading level={3} className="glass-demo-heading">Light Glass</Heading>
-              <Text variant="small" className="glass-demo-text">A subtle frosted glass effect with a light blur — ideal for overlaying colorful backgrounds.</Text>
+            <GlassCard>
+              <Heading level={3} className="glass-demo-heading">Default Glass</Heading>
+              <Text variant="small" className="glass-demo-text">The standard glass card — balanced translucency and readability.</Text>
             </GlassCard>
-            <GlassCard intensity="medium">
-              <Heading level={3} className="glass-demo-heading">Medium Glass</Heading>
-              <Text variant="small" className="glass-demo-text">The default intensity — balanced translucency and readability.</Text>
-            </GlassCard>
-            <GlassCard intensity="strong">
+            <GlassCard variant="strong">
               <Heading level={3} className="glass-demo-heading">Strong Glass</Heading>
               <Text variant="small" className="glass-demo-text">Higher opacity and stronger blur for maximum content legibility.</Text>
             </GlassCard>
-            <GlassCard intensity="medium" glow>
+            <GlassCard variant="glow">
               <Heading level={3} className="glass-demo-heading">Glow Effect</Heading>
               <Text variant="small" className="glass-demo-text">Glass card with an ambient accent glow — great for featured items and CTAs.</Text>
             </GlassCard>
@@ -367,14 +363,14 @@ export default function DesignSystem() {
         }}>
           <div style={{ padding: '16px 32px 0' }}><span style={{ ...showcaseLabel, color: '#fff' }}>Card — Glass Variants</span></div>
           <div style={{ padding: '16px 32px 32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-            <Card variant="glass">
-              <CardHeader><Heading level={3} className="glass-demo-heading">Glass Card</Heading></CardHeader>
-              <CardBody><Text variant="small" className="glass-demo-text">The standard Card component with the glass variant applied.</Text></CardBody>
+            <Card>
+              <CardHeader><Heading level={3} className="glass-demo-heading">Default Card</Heading></CardHeader>
+              <CardBody><Text variant="small" className="glass-demo-text">The standard Card component with glass styling.</Text></CardBody>
               <CardFooter><Button variant="secondary" size="sm">Details</Button></CardFooter>
             </Card>
-            <Card variant="glass-strong">
-              <CardHeader><Heading level={3} className="glass-demo-heading">Glass Strong</Heading></CardHeader>
-              <CardBody><Text variant="small" className="glass-demo-text">Stronger glass variant for higher contrast on busy backgrounds.</Text></CardBody>
+            <Card variant="strong">
+              <CardHeader><Heading level={3} className="glass-demo-heading">Strong Card</Heading></CardHeader>
+              <CardBody><Text variant="small" className="glass-demo-text">Stronger glass for higher contrast on busy backgrounds.</Text></CardBody>
               <CardFooter><Button size="sm">Contact Us</Button></CardFooter>
             </Card>
           </div>

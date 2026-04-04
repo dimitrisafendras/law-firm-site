@@ -1,6 +1,10 @@
-import { colors, fonts, colorVarNames, fontVarNames } from './tokens';
+import { colors, fonts, glass, colorVarNames, fontVarNames, glassVarNames } from './tokens';
 
-function buildVarBlock(colorTokens: Record<string, string>, fontTokens: Record<string, string>): string {
+function buildVarBlock(
+  colorTokens: Record<string, string>,
+  fontTokens: Record<string, string>,
+  glassTokens: Record<string, string>,
+): string {
   const lines: string[] = [];
   for (const [key, value] of Object.entries(colorTokens)) {
     const varName = colorVarNames[key];
@@ -10,11 +14,15 @@ function buildVarBlock(colorTokens: Record<string, string>, fontTokens: Record<s
     const varName = fontVarNames[key];
     if (varName) lines.push(`  ${varName}: ${value};`);
   }
+  for (const [key, value] of Object.entries(glassTokens)) {
+    const varName = glassVarNames[key];
+    if (varName) lines.push(`  ${varName}: ${value};`);
+  }
   return lines.join('\n');
 }
 
-const lightVars = buildVarBlock(colors.light, fonts);
-const darkVars = buildVarBlock(colors.dark, fonts);
+const lightVars = buildVarBlock(colors.light, fonts, glass.light);
+const darkVars = buildVarBlock(colors.dark, fonts, glass.dark);
 
 function buildCSS(mode: 'system' | 'light' | 'dark'): string {
   if (mode === 'light') {

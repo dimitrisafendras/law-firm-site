@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, breakpoints, layout, transitions, colorVarNames } from '../theme';
+import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, breakpoints, layout, transitions, colorVarNames } from '../theme';
 import { setTheme } from '../theme';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import {
@@ -24,6 +24,7 @@ import {
   PracticeAreaCard,
   TestimonialCard,
   ContactForm,
+  GlassCard,
 } from '../components';
 
 // ─── Theme Toggle ────────────────────────────────────────────────────────────
@@ -309,6 +310,56 @@ export default function DesignSystem() {
           </div>
         </div>
 
+        {/* Glass Card */}
+        <div style={{
+          ...showcaseBox,
+          background: 'linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%)',
+          padding: 0,
+          overflow: 'hidden',
+        }}>
+          <div style={{ padding: '16px 32px 0' }}><span style={{ ...showcaseLabel, color: '#fff' }}>Glass Card</span></div>
+          <div style={{ padding: '16px 32px 32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+            <GlassCard intensity="light">
+              <Heading level={4} className="glass-demo-heading">Light Glass</Heading>
+              <Text variant="small" className="glass-demo-text">A subtle frosted glass effect with a light blur — ideal for overlaying colorful backgrounds.</Text>
+            </GlassCard>
+            <GlassCard intensity="medium">
+              <Heading level={4} className="glass-demo-heading">Medium Glass</Heading>
+              <Text variant="small" className="glass-demo-text">The default intensity — balanced translucency and readability.</Text>
+            </GlassCard>
+            <GlassCard intensity="strong">
+              <Heading level={4} className="glass-demo-heading">Strong Glass</Heading>
+              <Text variant="small" className="glass-demo-text">Higher opacity and stronger blur for maximum content legibility.</Text>
+            </GlassCard>
+            <GlassCard intensity="medium" glow>
+              <Heading level={4} className="glass-demo-heading">Glow Effect</Heading>
+              <Text variant="small" className="glass-demo-text">Glass card with an ambient accent glow — great for featured items and CTAs.</Text>
+            </GlassCard>
+          </div>
+        </div>
+
+        {/* Card glass variants */}
+        <div style={{
+          ...showcaseBox,
+          background: 'linear-gradient(160deg, var(--secondary) 0%, var(--accent) 50%, var(--tertiary) 100%)',
+          padding: 0,
+          overflow: 'hidden',
+        }}>
+          <div style={{ padding: '16px 32px 0' }}><span style={{ ...showcaseLabel, color: '#fff' }}>Card — Glass Variants</span></div>
+          <div style={{ padding: '16px 32px 32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+            <Card variant="glass">
+              <CardHeader><Heading level={4} className="glass-demo-heading">Glass Card</Heading></CardHeader>
+              <CardBody><Text variant="small" className="glass-demo-text">The standard Card component with the glass variant applied.</Text></CardBody>
+              <CardFooter><Button variant="secondary" size="sm">Details</Button></CardFooter>
+            </Card>
+            <Card variant="glass-strong">
+              <CardHeader><Heading level={4} className="glass-demo-heading">Glass Strong</Heading></CardHeader>
+              <CardBody><Text variant="small" className="glass-demo-text">Stronger glass variant for higher contrast on busy backgrounds.</Text></CardBody>
+              <CardFooter><Button size="sm">Contact Us</Button></CardFooter>
+            </Card>
+          </div>
+        </div>
+
         {/* Hero */}
         <div style={{ ...showcaseBox, padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '16px 32px 0' }}><span style={showcaseLabel}>Hero</span></div>
@@ -506,6 +557,15 @@ export default function DesignSystem() {
               <span style={{ fontFamily: 'var(--mono)', fontSize: '11px', opacity: 0.5 }}>{value}</span>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Glass Tokens */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '32px' }}>{t('glassTokens')}</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+          <TokenTable title={t('light')} tokens={glass.light} />
+          <TokenTable title={t('dark')} tokens={glass.dark} />
         </div>
       </section>
 

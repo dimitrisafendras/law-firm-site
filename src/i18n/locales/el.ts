@@ -30,6 +30,8 @@ const el = {
   layout: 'Διάταξη',
   transitions: 'Μεταβάσεις',
 
+  glassTokens: 'Glass Tokens',
+
   // Theme toggle
   themeSystem: 'σύστημα',
   themeLight: 'ανοιχτό',

@@ -30,6 +30,8 @@ const en = {
   layout: 'Layout',
   transitions: 'Transitions',
 
+  glassTokens: 'Glass Tokens',
+
   // Theme toggle
   themeSystem: 'system',
   themeLight: 'light',

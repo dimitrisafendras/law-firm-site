@@ -120,6 +120,27 @@ export const layout = {
   maxWidth: '1280px',
 } as const;
 
+// ─── Glass ───────────────────────────────────────────────────────────────────
+
+export const glass = {
+  light: {
+    bg: 'rgba(255, 255, 255, 0.45)',
+    bgStrong: 'rgba(255, 255, 255, 0.65)',
+    border: 'rgba(255, 255, 255, 0.5)',
+    shadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+    blur: '16px',
+    blurStrong: '24px',
+  },
+  dark: {
+    bg: 'rgba(255, 255, 255, 0.06)',
+    bgStrong: 'rgba(255, 255, 255, 0.1)',
+    border: 'rgba(255, 255, 255, 0.12)',
+    shadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+    blur: '16px',
+    blurStrong: '24px',
+  },
+} as const;
+
 // ─── Transitions ──────────────────────────────────────────────────────────────
 
 export const transitions = {
@@ -151,6 +172,15 @@ export const colorVarNames: Record<string, string> = {
   shadow: '--shadow',
 };
 
+export const glassVarNames: Record<string, string> = {
+  bg: '--glass-bg',
+  bgStrong: '--glass-bg-strong',
+  border: '--glass-border',
+  shadow: '--glass-shadow',
+  blur: '--glass-blur',
+  blurStrong: '--glass-blur-strong',
+};
+
 export const fontVarNames: Record<string, string> = {
   sans: '--sans',
   heading: '--heading',
@@ -168,6 +198,7 @@ export const theme = {
   letterSpacings,
   spacing,
   radii,
+  glass,
   breakpoints,
   layout,
   transitions,

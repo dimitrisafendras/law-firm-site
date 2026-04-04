@@ -1,0 +1,194 @@
+.network-map {
+  padding: 128px 0;
+  background: var(--surface-container-low);
+
+  @media (max-width: 1024px) {
+    padding: 64px 0;
+  }
+}
+
+.network-map__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 48px;
+
+  @media (max-width: 1024px) {
+    padding: 0 16px;
+  }
+}
+
+/* ─── Header ──────────────────────────────────────────────────────────────── */
+
+.network-map__header {
+  text-align: center;
+  margin-bottom: 80px;
+
+  @media (max-width: 1024px) {
+    margin-bottom: 48px;
+  }
+}
+
+.network-map__title {
+  font-family: var(--label);
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-h);
+  margin: 0 0 16px;
+
+  @media (max-width: 1024px) {
+    font-size: 28px;
+  }
+}
+
+.network-map__subtitle {
+  font-family: var(--heading);
+  font-size: 20px;
+  font-style: italic;
+  color: var(--text);
+  opacity: 0.6;
+  margin: 0;
+}
+
+/* ─── Two-Column Grid: Cards Left, Map Right ─────────────────────────────── */
+
+.network-map__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Node Cards: 2 top + 1 bottom spanning full width ───────────────────── */
+
+.network-map__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.network-map__cards > :nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+.network-map__card {
+  position: relative;
+  overflow: hidden;
+  padding: 32px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 4px;
+  transition: border-color 0.5s;
+}
+
+.network-map__card:hover {
+  border-color: var(--accent-border);
+}
+
+.network-map__card-code {
+  position: absolute;
+  top: -16px;
+  right: -8px;
+  font-family: var(--label);
+  font-size: 100px;
+  font-weight: 700;
+  color: var(--accent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+  line-height: 1;
+}
+
+.network-map__card:hover .network-map__card-code {
+  opacity: 0.05;
+}
+
+.network-map__card-label {
+  font-family: var(--label);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 12px;
+}
+
+.network-map__card-city {
+  font-family: var(--label);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-h);
+  margin: 0 0 16px;
+}
+
+.network-map__card-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+}
+
+.network-map__card-list li {
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.7;
+  padding: 4px 0;
+}
+
+.network-map__card-list li::before {
+  content: '\2022';
+  margin-right: 10px;
+  color: var(--accent);
+  opacity: 0.5;
+}
+
+.network-map__card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--label);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-decoration: none;
+  transition: gap 0.3s;
+}
+
+.network-map__card-link:hover {
+  gap: 16px;
+}
+
+/* ─── Map ─────────────────────────────────────────────────────────────────── */
+
+.network-map__map-col {
+  display: flex;
+}
+
+.network-map__map {
+  position: relative;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+}
+
+.network-map__map-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+}
+
+.network-map__map-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 42% 40%, var(--accent-bg), transparent 60%);
+  opacity: 0.5;
+  pointer-events: none;
+}

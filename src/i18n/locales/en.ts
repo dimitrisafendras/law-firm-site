@@ -73,6 +73,30 @@ const en = {
   teamFocusLabel: 'Focus',
   teamOriginLabel: 'Origin',
 
+  // ─── Network / Map ──────────────────────────────────────────────────────────
+  networkTitle: 'Global Network',
+  networkSubtitle: 'Strategic presence in key jurisdictions for seamless cross-border counsel.',
+
+  networkAthensLabel: 'European HQ',
+  networkAthensCity: 'Athens, GR',
+  networkAthensItem1: 'Real Estate & Startup Law',
+  networkAthensItem2: 'EU Regulatory Compliance',
+  networkAthensItem3: 'Venture Capital Structuring',
+
+  networkPiraeusLabel: 'Maritime Hub',
+  networkPiraeusCity: 'Piraeus, GR',
+  networkPiraeusItem1: 'Maritime Disputes & Finance',
+  networkPiraeusItem2: 'Flag State Compliance',
+  networkPiraeusItem3: 'Shipping Corridor Advisory',
+
+  networkDigitalLabel: 'Digital Jurisdiction',
+  networkDigitalCity: 'Decentralized',
+  networkDigitalItem1: 'Cryptocurrency Regulation',
+  networkDigitalItem2: 'DeFi Protocol Compliance',
+  networkDigitalItem3: 'DAO Governance Structures',
+
+  networkConnectNode: 'Connect Node',
+
   // ─── Stats ───────────────────────────────────────────────────────────────────
   statClients: 'Clients Served',
   statTransactions: 'In Transactions',

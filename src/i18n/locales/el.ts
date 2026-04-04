@@ -73,6 +73,30 @@ const el = {
   teamFocusLabel: 'Εστίαση',
   teamOriginLabel: 'Καταγωγή',
 
+  // ─── Network / Map ──────────────────────────────────────────────────────────
+  networkTitle: 'Παγκόσμιο Δίκτυο',
+  networkSubtitle: 'Στρατηγική παρουσία σε κρίσιμες δικαιοδοσίες για απρόσκοπτη διασυνοριακή συμβουλευτική.',
+
+  networkAthensLabel: 'Ευρωπαϊκά Κεντρικά',
+  networkAthensCity: 'Αθήνα, GR',
+  networkAthensItem1: 'Ακίνητα & Δίκαιο Startups',
+  networkAthensItem2: 'Κανονιστική Συμμόρφωση ΕΕ',
+  networkAthensItem3: 'Δόμηση Επιχειρηματικών Κεφαλαίων',
+
+  networkPiraeusLabel: 'Ναυτιλιακός Κόμβος',
+  networkPiraeusCity: 'Πειραιάς, GR',
+  networkPiraeusItem1: 'Ναυτικές Διαφορές & Χρηματοδότηση',
+  networkPiraeusItem2: 'Συμμόρφωση Σημαίας',
+  networkPiraeusItem3: 'Συμβουλευτική Ναυτιλιακού Διαδρόμου',
+
+  networkDigitalLabel: 'Ψηφιακή Δικαιοδοσία',
+  networkDigitalCity: 'Αποκεντρωμένο',
+  networkDigitalItem1: 'Ρύθμιση Κρυπτονομισμάτων',
+  networkDigitalItem2: 'Συμμόρφωση Πρωτοκόλλων DeFi',
+  networkDigitalItem3: 'Δομές Διακυβέρνησης DAO',
+
+  networkConnectNode: 'Σύνδεση Κόμβου',
+
   // ─── Stats ───────────────────────────────────────────────────────────────────
   statClients: 'Πελάτες',
   statTransactions: 'Σε Συναλλαγές',

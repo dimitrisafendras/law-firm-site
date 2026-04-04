@@ -8,6 +8,7 @@ import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
 import { StatsBar } from '@/components/sections/StatsBar/StatsBar';
 import { PracticeGrid } from '@/components/sections/PracticeGrid/PracticeGrid';
 import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
+import { NetworkMap } from '@/components/sections/NetworkMap/NetworkMap';
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection/TestimonialsSection';
 import { CtaSection } from '@/components/sections/CtaSection/CtaSection';
 import { ContactSection } from '@/components/sections/ContactSection/ContactSection';
@@ -51,6 +52,7 @@ export default function HomePage() {
       <StatsBar />
       <PracticeGrid />
       <PartnerEthos />
+      <NetworkMap />
       <TestimonialsSection />
       <CtaSection />
       <ContactSection />

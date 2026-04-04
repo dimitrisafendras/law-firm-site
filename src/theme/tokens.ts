@@ -37,7 +37,7 @@ export const colors = {
     text: '#E2E2E8',
     textHeading: '#E2E2E8',
     background: '#111317',
-    surface: '#111317',
+    surface: '#181A1F',
     border: 'rgba(64, 72, 77, 0.15)',
     codeBg: '#1A1C20',
     accent: '#BCE8FF',

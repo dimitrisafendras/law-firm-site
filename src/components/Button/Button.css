@@ -46,14 +46,15 @@
 }
 
 .btn--primary:hover:not(:disabled) {
-  filter: brightness(1.08);
+  filter: brightness(0.92);
+  box-shadow: 0 4px 16px rgba(137, 207, 240, 0.3);
 }
 
 /* Secondary */
 .btn--secondary {
   background: transparent;
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--accent-border);
 }
 
 .btn--secondary:hover:not(:disabled) {

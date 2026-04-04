@@ -4,6 +4,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
+  background: linear-gradient(135deg, var(--bg) 30%, #0f1a2e 70%, #112240 100%);
 }
 
 /* ─── Full Background Image ────────────────────────────────────────────────── */

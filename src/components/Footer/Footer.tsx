@@ -23,7 +23,7 @@ export function Footer({ logo, columns, bottom }: FooterProps) {
               <span className="footer__column-title">{col.title}</span>
               <ul className="footer__column-links">
                 {col.links.map((link) => (
-                  <li key={link.href}>
+                  <li key={link.label}>
                     <a className="footer__link" href={link.href}>
                       {link.label}
                     </a>

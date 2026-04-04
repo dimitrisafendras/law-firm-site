@@ -22,7 +22,6 @@ import {
   PracticeAreaCard,
   TestimonialCard,
   ContactForm,
-  GlassCard,
 } from '../components';
 
 // ─── Theme Toggle ────────────────────────────────────────────────────────────
@@ -330,31 +329,7 @@ export default function DesignSystem() {
           </div>
         </div>
 
-        {/* Glass Card */}
-        <div style={{
-          ...showcaseBox,
-          background: 'var(--gradient-glass-a)',
-          padding: 0,
-          overflow: 'hidden',
-        }}>
-          <div style={{ padding: '16px 32px 0' }}><span style={{ ...showcaseLabel, color: '#fff' }}>Glass Card</span></div>
-          <div style={{ padding: '16px 32px 32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
-            <GlassCard>
-              <Heading level={3} className="glass-demo-heading">Default Glass</Heading>
-              <Text variant="small" className="glass-demo-text">The standard glass card — balanced translucency and readability.</Text>
-            </GlassCard>
-            <GlassCard variant="strong">
-              <Heading level={3} className="glass-demo-heading">Strong Glass</Heading>
-              <Text variant="small" className="glass-demo-text">Higher opacity and stronger blur for maximum content legibility.</Text>
-            </GlassCard>
-            <GlassCard variant="glow">
-              <Heading level={3} className="glass-demo-heading">Glow Effect</Heading>
-              <Text variant="small" className="glass-demo-text">Glass card with an ambient accent glow — great for featured items and CTAs.</Text>
-            </GlassCard>
-          </div>
-        </div>
-
-        {/* Card glass variants */}
+        {/* Card variants */}
         <div style={{
           ...showcaseBox,
           background: 'var(--gradient-glass-b)',

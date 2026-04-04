@@ -1,15 +1,17 @@
-import type { ReactNode, HTMLAttributes } from 'react';
+import type { ReactNode, ElementType, HTMLAttributes } from 'react';
 import './Card.css';
 
-interface CardProps extends HTMLAttributes<HTMLDivElement> {
+interface CardProps extends HTMLAttributes<HTMLElement> {
   variant?: 'default' | 'strong' | 'glow';
   clickable?: boolean;
+  as?: ElementType;
   children: ReactNode;
 }
 
 export function Card({
   variant = 'default',
   clickable = false,
+  as: Tag = 'div',
   children,
   className = '',
   ...props
@@ -22,9 +24,9 @@ export function Card({
   ].filter(Boolean).join(' ');
 
   return (
-    <div className={classes} {...props}>
+    <Tag className={classes} {...props}>
       {children}
-    </div>
+    </Tag>
   );
 }
 

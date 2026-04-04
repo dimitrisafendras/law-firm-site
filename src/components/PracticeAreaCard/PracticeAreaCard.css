@@ -1,25 +1,11 @@
 .practice-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  border-radius: 4px;
   padding: 32px 24px;
   text-align: left;
-}
-
-.practice-card--link {
   text-decoration: none;
   color: inherit;
-  display: block;
-  transition: border-color 0.5s;
 }
 
-.practice-card--link:hover {
-  border-color: var(--accent-border);
-}
-
-.practice-card--link:focus-visible {
+.practice-card:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }

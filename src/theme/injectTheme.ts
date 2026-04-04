@@ -13,14 +13,36 @@ function buildVarBlock(colorTokens: Record<string, string>, fontTokens: Record<s
   return lines.join('\n');
 }
 
+const lightVars = buildVarBlock(colors.light, fonts);
+const darkVars = buildVarBlock(colors.dark, fonts);
+
+function buildCSS(mode: 'system' | 'light' | 'dark'): string {
+  if (mode === 'light') {
+    return `:root {\n${lightVars}\n  color-scheme: light;\n}\n`;
+  }
+  if (mode === 'dark') {
+    return `:root {\n${darkVars}\n  color-scheme: dark;\n}\n#social .button-icon {\n  filter: invert(1) brightness(2);\n}\n`;
+  }
+  // system (default)
+  return `:root {\n${lightVars}\n}\n\n@media (prefers-color-scheme: dark) {\n  :root {\n${darkVars.replace(/^  /gm, '    ')}\n  }\n\n  #social .button-icon {\n    filter: invert(1) brightness(2);\n  }\n}\n`;
+}
+
+let styleEl: HTMLStyleElement | null = null;
+
 export function injectTheme(): void {
-  const lightVars = buildVarBlock(colors.light, fonts);
-  const darkVars = buildVarBlock(colors.dark, fonts);
+  styleEl = document.createElement('style');
+  styleEl.setAttribute('data-theme', 'generated');
+  styleEl.textContent = buildCSS('system');
+  document.head.prepend(styleEl);
+}
 
-  const css = `:root {\n${lightVars}\n}\n\n@media (prefers-color-scheme: dark) {\n  :root {\n${darkVars.replace(/^  /gm, '    ')}\n  }\n\n  #social .button-icon {\n    filter: invert(1) brightness(2);\n  }\n}\n`;
+export function setTheme(mode: 'system' | 'light' | 'dark'): void {
+  if (!styleEl) {
+    injectTheme();
+  }
+  styleEl!.textContent = buildCSS(mode);
+}
 
-  const style = document.createElement('style');
-  style.setAttribute('data-theme', 'generated');
-  style.textContent = css;
-  document.head.prepend(style);
+export function getCurrentResolvedMode(): 'light' | 'dark' {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }

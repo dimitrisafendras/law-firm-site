@@ -1,0 +1,40 @@
+.practice-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 32px 24px;
+  text-align: left;
+  transition: all var(--transition, 0.3s);
+}
+
+.practice-card--link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.practice-card:hover {
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow);
+}
+
+.practice-card__icon {
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: var(--accent);
+}
+
+.practice-card__title {
+  font-family: var(--heading);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-h);
+  margin: 0 0 8px;
+}
+
+.practice-card__description {
+  font-size: 15px;
+  line-height: 145%;
+  color: var(--text);
+  margin: 0;
+}

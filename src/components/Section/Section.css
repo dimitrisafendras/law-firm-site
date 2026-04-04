@@ -1,0 +1,19 @@
+.section {
+  padding: 88px 0;
+
+  @media (max-width: 1024px) {
+    padding: 48px 0;
+  }
+}
+
+.section--default {
+  background: var(--bg);
+}
+
+.section--surface {
+  background: var(--surface);
+}
+
+.section--accent {
+  background: var(--accent-bg);
+}

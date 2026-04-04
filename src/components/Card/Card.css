@@ -1,0 +1,26 @@
+.card {
+  background: var(--surface);
+  border-radius: 4px;
+  overflow: hidden;
+  text-align: left;
+}
+
+.card--bordered {
+  border: 1px solid var(--border);
+}
+
+.card--elevated {
+  box-shadow: var(--shadow);
+}
+
+.card__header {
+  padding: 24px 24px 0;
+}
+
+.card__body {
+  padding: 24px;
+}
+
+.card__footer {
+  padding: 0 24px 24px;
+}

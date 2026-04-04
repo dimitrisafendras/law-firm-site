@@ -1,0 +1,92 @@
+/* Body variants */
+.text--body {
+  font-size: 18px;
+  line-height: 145%;
+  color: var(--text);
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+.text--lead {
+  font-size: 20px;
+  line-height: 145%;
+  color: var(--text);
+
+  @media (max-width: 1024px) {
+    font-size: 18px;
+  }
+}
+
+.text--small {
+  font-size: 15px;
+  line-height: 135%;
+  color: var(--text);
+}
+
+.text--label {
+  font-family: var(--label);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18px;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.text--overline {
+  font-family: var(--label);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Headings */
+.heading {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.heading--1 {
+  font-size: 56px;
+  line-height: 118%;
+  letter-spacing: -1.68px;
+
+  @media (max-width: 1024px) {
+    font-size: 36px;
+  }
+}
+
+.heading--2 {
+  font-size: 36px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+
+  @media (max-width: 1024px) {
+    font-size: 24px;
+  }
+}
+
+.heading--3 {
+  font-size: 24px;
+  line-height: 135%;
+  letter-spacing: -0.24px;
+
+  @media (max-width: 1024px) {
+    font-size: 20px;
+  }
+}
+
+.heading--4 {
+  font-size: 20px;
+  line-height: 135%;
+  letter-spacing: -0.24px;
+
+  @media (max-width: 1024px) {
+    font-size: 18px;
+  }
+}

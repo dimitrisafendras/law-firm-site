@@ -92,8 +92,6 @@
   padding: 6px 16px;
   border-radius: 999px;
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
   font-family: var(--label);
   font-size: 12px;
@@ -162,8 +160,6 @@
   gap: 16px;
   padding: 24px 32px;
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
   border-radius: 4px;
 }

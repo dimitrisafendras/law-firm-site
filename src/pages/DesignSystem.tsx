@@ -246,6 +246,19 @@ export default function DesignSystem() {
           </div>
         </div>
 
+        {/* Button Glass — on gradient */}
+        <div style={{
+          ...showcaseBox,
+          background: 'var(--gradient-glass-a)',
+        }}>
+          <span style={{ ...showcaseLabel, color: '#fff' }}>Button — Glass on Gradient</span>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <Button variant="glass" size="sm">Glass SM</Button>
+            <Button variant="glass">Glass MD</Button>
+            <Button variant="glass" size="lg">Glass LG</Button>
+          </div>
+        </div>
+
         {/* Text & Heading */}
         <div style={showcaseBox}>
           <span style={showcaseLabel}>Heading & Text</span>
@@ -331,7 +344,7 @@ export default function DesignSystem() {
         {/* Glass Card */}
         <div style={{
           ...showcaseBox,
-          background: 'linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%)',
+          background: 'var(--gradient-glass-a)',
           padding: 0,
           overflow: 'hidden',
         }}>
@@ -359,7 +372,7 @@ export default function DesignSystem() {
         {/* Card glass variants */}
         <div style={{
           ...showcaseBox,
-          background: 'linear-gradient(160deg, var(--secondary) 0%, var(--accent) 50%, var(--tertiary) 100%)',
+          background: 'var(--gradient-glass-b)',
           padding: 0,
           overflow: 'hidden',
         }}>

@@ -145,6 +145,19 @@ export const glass = {
   },
 } as const;
 
+// ─── Gradients ───────────────────────────────────────────────────────────────
+
+export const gradients = {
+  light: {
+    glassA: 'linear-gradient(135deg, #89CFF0 0%, #002B49 100%)',
+    glassB: 'linear-gradient(160deg, #002B49 0%, #89CFF0 50%, #FFB775 100%)',
+  },
+  dark: {
+    glassA: 'linear-gradient(135deg, #0D3B5C 0%, #0A1628 100%)',
+    glassB: 'linear-gradient(160deg, #0A1628 0%, #0D3B5C 50%, #4A2E10 100%)',
+  },
+} as const;
+
 // ─── Transitions ──────────────────────────────────────────────────────────────
 
 export const transitions = {
@@ -187,6 +200,11 @@ export const glassVarNames: Record<string, string> = {
   blurStrong: '--glass-blur-strong',
 };
 
+export const gradientVarNames: Record<string, string> = {
+  glassA: '--gradient-glass-a',
+  glassB: '--gradient-glass-b',
+};
+
 export const fontVarNames: Record<string, string> = {
   sans: '--sans',
   heading: '--heading',
@@ -205,6 +223,7 @@ export const theme = {
   spacing,
   radii,
   glass,
+  gradients,
   breakpoints,
   layout,
   transitions,

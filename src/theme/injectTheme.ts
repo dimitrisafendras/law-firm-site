@@ -1,28 +1,30 @@
-import { colors, fonts, glass, colorVarNames, fontVarNames, glassVarNames } from './tokens';
+import { colors, fonts, glass, gradients, colorVarNames, fontVarNames, glassVarNames, gradientVarNames } from './tokens';
+
+function mapVars(tokens: Record<string, string>, varNames: Record<string, string>): string[] {
+  const lines: string[] = [];
+  for (const [key, value] of Object.entries(tokens)) {
+    const varName = varNames[key];
+    if (varName) lines.push(`  ${varName}: ${value};`);
+  }
+  return lines;
+}
 
 function buildVarBlock(
   colorTokens: Record<string, string>,
   fontTokens: Record<string, string>,
   glassTokens: Record<string, string>,
+  gradientTokens: Record<string, string>,
 ): string {
-  const lines: string[] = [];
-  for (const [key, value] of Object.entries(colorTokens)) {
-    const varName = colorVarNames[key];
-    if (varName) lines.push(`  ${varName}: ${value};`);
-  }
-  for (const [key, value] of Object.entries(fontTokens)) {
-    const varName = fontVarNames[key];
-    if (varName) lines.push(`  ${varName}: ${value};`);
-  }
-  for (const [key, value] of Object.entries(glassTokens)) {
-    const varName = glassVarNames[key];
-    if (varName) lines.push(`  ${varName}: ${value};`);
-  }
-  return lines.join('\n');
+  return [
+    ...mapVars(colorTokens, colorVarNames),
+    ...mapVars(fontTokens, fontVarNames),
+    ...mapVars(glassTokens, glassVarNames),
+    ...mapVars(gradientTokens, gradientVarNames),
+  ].join('\n');
 }
 
-const lightVars = buildVarBlock(colors.light, fonts, glass.light);
-const darkVars = buildVarBlock(colors.dark, fonts, glass.dark);
+const lightVars = buildVarBlock(colors.light, fonts, glass.light, gradients.light);
+const darkVars = buildVarBlock(colors.dark, fonts, glass.dark, gradients.dark);
 
 function buildCSS(mode: 'system' | 'light' | 'dark'): string {
   if (mode === 'light') {

@@ -150,12 +150,12 @@
   top: 0;
   right: 0;
   padding: 32px;
-  opacity: 0.15;
+  opacity: 0.45;
   transition: opacity 0.5s;
 }
 
 .practice-domain:hover .practice-domain__icon-bg {
-  opacity: 0.35;
+  opacity: 0.7;
 }
 
 .practice-domain__icon-large {

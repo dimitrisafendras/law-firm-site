@@ -57,6 +57,8 @@ const en = {
   attorney1Spec1: 'Real Estate',
   attorney1Spec2: 'Startup Funding',
   attorney1Spec3: 'Venture Capital',
+  attorney1Focus: 'Transactional Strategy',
+  attorney1Origin: 'Athens',
 
   attorney2Name: 'Alexandra Marinaki',
   attorney2Title: 'Founding Partner',
@@ -65,6 +67,11 @@ const en = {
   attorney2Spec1: 'Maritime Law',
   attorney2Spec2: 'Cryptocurrency',
   attorney2Spec3: 'Digital Assets',
+  attorney2Focus: 'Cross-Border Regulation',
+  attorney2Origin: 'Piraeus',
+
+  teamFocusLabel: 'Focus',
+  teamOriginLabel: 'Origin',
 
   // ─── Stats ───────────────────────────────────────────────────────────────────
   statClients: 'Clients Served',

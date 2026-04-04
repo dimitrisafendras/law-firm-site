@@ -57,6 +57,8 @@ const el = {
   attorney1Spec1: 'Ακίνητα',
   attorney1Spec2: 'Χρηματοδότηση Startups',
   attorney1Spec3: 'Επιχειρηματικά Κεφάλαια',
+  attorney1Focus: 'Συναλλακτική Στρατηγική',
+  attorney1Origin: 'Αθήνα',
 
   attorney2Name: 'Αλεξάνδρα Μαρινάκη',
   attorney2Title: 'Ιδρυτική Εταίρος',
@@ -65,6 +67,11 @@ const el = {
   attorney2Spec1: 'Ναυτικό Δίκαιο',
   attorney2Spec2: 'Κρυπτονομίσματα',
   attorney2Spec3: 'Ψηφιακά Περιουσιακά',
+  attorney2Focus: 'Διασυνοριακή Ρύθμιση',
+  attorney2Origin: 'Πειραιάς',
+
+  teamFocusLabel: 'Εστίαση',
+  teamOriginLabel: 'Καταγωγή',
 
   // ─── Stats ───────────────────────────────────────────────────────────────────
   statClients: 'Πελάτες',

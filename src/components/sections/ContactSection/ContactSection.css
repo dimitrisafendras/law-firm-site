@@ -1,6 +1,6 @@
 .contact-section {
   padding: 128px 0;
-  background: var(--bg);
+  background: var(--grad-6);
 
   @media (max-width: 1024px) {
     padding: 64px 0;

@@ -1,6 +1,6 @@
 .cta-section {
   padding: 160px 0;
-  background: var(--surface);
+  background: var(--grad-5);
 
   @media (max-width: 1024px) {
     padding: 80px 0;

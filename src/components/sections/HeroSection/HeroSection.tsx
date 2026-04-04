@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { FadeInSection } from '@/components/animations/FadeInSection';
-import heroBg from '@/assets/images/hero-acropolis.jpg';
+import heroBg from '@/assets/images/hero-parthenon.png';
 import './HeroSection.css';
 
 export function HeroSection() {
@@ -12,6 +12,8 @@ export function HeroSection() {
         <img src={heroBg} alt="" className="hero-section__bg-img" />
         <div className="hero-section__bg-overlay" />
       </div>
+
+      <div className="hero-section__bg-fade" />
 
       <div className="hero-section__content">
         <FadeInSection variant="fade-up" delay={0.2}>

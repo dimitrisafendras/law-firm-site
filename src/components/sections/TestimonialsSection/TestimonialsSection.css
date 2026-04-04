@@ -1,6 +1,6 @@
 .testimonials-section {
   padding: 128px 0;
-  background: var(--surface);
+  background: var(--grad-4);
 
   @media (max-width: 1024px) {
     padding: 64px 0;

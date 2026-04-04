@@ -1,6 +1,6 @@
 .network-map {
   padding: 128px 0;
-  background: var(--surface-container-low);
+  background: var(--grad-3);
 
   @media (max-width: 1024px) {
     padding: 64px 0;

@@ -1,6 +1,6 @@
 .practice-section {
   padding: 128px 0;
-  background: var(--surface);
+  background: var(--grad-1);
 
   @media (max-width: 1024px) {
     padding: 64px 0;

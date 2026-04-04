@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { FadeInSection } from '@/components/animations/FadeInSection';
-import heroBg from '@/assets/images/hero-parthenon.png';
+import heroBg from '@/assets/images/hero-acropolis.png';
 import './HeroSection.css';
 
 export function HeroSection() {

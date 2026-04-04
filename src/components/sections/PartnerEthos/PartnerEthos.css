@@ -1,0 +1,173 @@
+.partner-ethos {
+  padding: 128px 0;
+  background: var(--bg);
+
+  @media (max-width: 1024px) {
+    padding: 64px 0;
+  }
+}
+
+.partner-ethos__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 48px;
+
+  @media (max-width: 1024px) {
+    padding: 0 16px;
+  }
+}
+
+.partner-ethos__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+/* ─── Image Column ─────────────────────────────────────────────────────────── */
+
+.partner-ethos__image-col {
+  position: relative;
+}
+
+.partner-ethos__image-wrapper {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.partner-ethos__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.partner-ethos__quote-card {
+  position: absolute;
+  bottom: -40px;
+  right: -40px;
+  max-width: 280px;
+  padding: 40px;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+  border: 1px solid var(--glass-border);
+  border-radius: 4px;
+
+  @media (max-width: 1024px) {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    max-width: 100%;
+    margin-top: 16px;
+  }
+}
+
+.partner-ethos__quote {
+  font-family: var(--heading);
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--accent);
+  margin: 0;
+}
+
+/* ─── Text Column ──────────────────────────────────────────────────────────── */
+
+.partner-ethos__text-col {
+  padding-left: 48px;
+
+  @media (max-width: 1024px) {
+    padding-left: 0;
+  }
+}
+
+.partner-ethos__label {
+  font-family: var(--label);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  color: var(--text);
+  opacity: 0.4;
+  display: block;
+  margin-bottom: 32px;
+}
+
+.partner-ethos__title {
+  font-family: var(--heading);
+  font-size: 56px;
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--text-h);
+  margin: 0 0 40px;
+
+  @media (max-width: 1024px) {
+    font-size: 36px;
+  }
+}
+
+.partner-ethos__title-accent {
+  font-style: italic;
+}
+
+.partner-ethos__desc {
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--text);
+  opacity: 0.7;
+  margin: 0 0 40px;
+}
+
+/* ─── Partner list ─────────────────────────────────────────────────────────── */
+
+.partner-ethos__partners {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.partner-ethos__partner {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.partner-ethos__bar {
+  width: 3px;
+  height: 48px;
+  margin-top: 4px;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.partner-ethos__bar--primary {
+  background: var(--accent);
+}
+
+.partner-ethos__bar--accent {
+  background: var(--tertiary);
+}
+
+.partner-ethos__partner-name {
+  font-family: var(--heading);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--text-h);
+  margin: 0 0 4px;
+}
+
+.partner-ethos__partner-role {
+  font-family: var(--label);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text);
+  opacity: 0.5;
+  margin: 0;
+}

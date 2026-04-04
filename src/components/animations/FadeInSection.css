@@ -1,0 +1,56 @@
+/* ─── Scroll-triggered fade animations ─────────────────────────────────────── */
+
+.fade-section {
+  opacity: 0;
+  transition-property: opacity, transform;
+  transition-duration: var(--fade-duration, 0.7s);
+  transition-delay: var(--fade-delay, 0s);
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+/* Variants — initial state */
+.fade-section--fade-up {
+  transform: translateY(40px);
+}
+
+.fade-section--fade-left {
+  transform: translateX(-40px);
+}
+
+.fade-section--fade-right {
+  transform: translateX(40px);
+}
+
+.fade-section--scale {
+  transform: scale(0.95);
+}
+
+.fade-section--fade {
+  transform: none;
+}
+
+/* Visible state — shared */
+.fade-section--visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─── Stagger Group ────────────────────────────────────────────────────────── */
+
+.stagger-group > .fade-section:nth-child(1) { --fade-delay: 0s; }
+.stagger-group > .fade-section:nth-child(2) { --fade-delay: var(--stagger-interval, 0.12s); }
+.stagger-group > .fade-section:nth-child(3) { --fade-delay: calc(var(--stagger-interval, 0.12s) * 2); }
+.stagger-group > .fade-section:nth-child(4) { --fade-delay: calc(var(--stagger-interval, 0.12s) * 3); }
+.stagger-group > .fade-section:nth-child(5) { --fade-delay: calc(var(--stagger-interval, 0.12s) * 4); }
+.stagger-group > .fade-section:nth-child(6) { --fade-delay: calc(var(--stagger-interval, 0.12s) * 5); }
+
+/* ─── Reduce motion ────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

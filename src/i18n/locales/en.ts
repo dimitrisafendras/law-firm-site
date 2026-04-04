@@ -10,16 +10,18 @@ const en = {
   navCta: 'Book Consultation',
 
   // ─── Hero ────────────────────────────────────────────────────────────────────
-  heroOverline: 'Modern Legal Practice in Athens',
-  heroTitle: 'Where tradition meets the future of law',
+  heroOverline: 'The Intersection of Legacy & Innovation',
+  heroTitleLine1: 'Architects of',
+  heroTitleLine2: 'Growth & Sovereignty',
+  heroTitle: 'Architects of Growth & Sovereignty',
   heroSubtitle:
     'A new-generation legal practice combining deep expertise in real estate, startup funding, maritime, and cryptocurrency law. Built for ambitious professionals navigating tomorrow\u2019s challenges.',
-  heroCta: 'Schedule a Consultation',
-  heroSecondaryCta: 'Explore Our Practice',
+  heroCta: 'Establish Protocol',
+  heroSecondaryCta: 'View Intelligence',
 
   // ─── Practice Areas ──────────────────────────────────────────────────────────
   practiceOverline: 'Practice Areas',
-  practiceTitle: 'Focused expertise for a changing world',
+  practiceTitle: 'Structural Domains',
   practiceSubtitle:
     'Four pillars of specialization designed for forward-thinking clients who need precision, speed, and strategic depth.',
 
@@ -40,8 +42,11 @@ const en = {
     'Token issuance, DeFi protocol compliance, MiCA regulatory frameworks, exchange licensing, DAO governance structures, and digital asset dispute resolution.',
 
   // ─── Team / Attorneys ────────────────────────────────────────────────────────
-  teamOverline: 'Our Team',
+  teamOverline: 'Partner Ethos',
   teamTitle: 'Partners who understand your world',
+  partnerEthosLine1: 'Architectural',
+  partnerEthosLine2: 'Jurisprudence',
+  partnerQuote: 'Law is not a reactive barrier; it is the blueprint upon which empires are constructed.',
   teamSubtitle:
     'Two attorneys. Two complementary visions. One commitment to delivering results that move you forward.',
 
@@ -85,6 +90,11 @@ const en = {
     'When we needed to structure our tokenized real estate platform under MiCA, they were the only firm in Athens that could handle both sides \u2014 property law and crypto regulation.',
   testimonial3Author: 'Elena Konstantinou',
   testimonial3Role: 'Founder, PropChain',
+
+  // ─── CTA ──────────────────────────────────────────────────────────────────────
+  ctaTitle: 'Ready to Secure\nYour Future?',
+  ctaSubtitle: 'The frontier is unforgiving to the unprepared. Partner with the architects of sovereign growth today.',
+  ctaButton: 'Establish Protocol Now',
 
   // ─── Contact ─────────────────────────────────────────────────────────────────
   contactOverline: 'Get in Touch',

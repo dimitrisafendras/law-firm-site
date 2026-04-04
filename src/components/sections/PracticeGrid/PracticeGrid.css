@@ -1,0 +1,198 @@
+.practice-section {
+  padding: 128px 0;
+  background: var(--surface);
+
+  @media (max-width: 1024px) {
+    padding: 64px 0;
+  }
+}
+
+.practice-section__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 48px;
+
+  @media (max-width: 1024px) {
+    padding: 0 16px;
+  }
+}
+
+.practice-section__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  margin-bottom: 96px;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 48px;
+  }
+}
+
+.practice-section__header-text {
+  max-width: 640px;
+}
+
+.practice-section__title {
+  font-family: var(--heading);
+  font-size: 48px;
+  font-weight: 400;
+  color: var(--text-h);
+  margin: 0 0 16px;
+
+  @media (max-width: 1024px) {
+    font-size: 36px;
+  }
+}
+
+.practice-section__subtitle {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text);
+  opacity: 0.7;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.practice-section__label {
+  font-family: var(--label);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text);
+  opacity: 0.4;
+  white-space: nowrap;
+}
+
+/* ─── Bento Grid ───────────────────────────────────────────────────────────── */
+
+.practice-bento {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 24px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.practice-domain--narrow {
+  grid-column: span 1;
+}
+
+.practice-domain--wide {
+  grid-column: span 1;
+}
+
+/* Alternate: first=wide, second=narrow, third=narrow, fourth=wide */
+.practice-bento > :nth-child(1) { grid-column: 1; }
+.practice-bento > :nth-child(2) { grid-column: 2; }
+.practice-bento > :nth-child(3) { grid-column: 1; }
+.practice-bento > :nth-child(4) { grid-column: 2; }
+
+@media (min-width: 1025px) {
+  .practice-bento {
+    grid-template-columns: 7fr 5fr;
+  }
+  .practice-bento > :nth-child(3) {
+    grid-column: 1;
+    /* Swap: narrow on left */
+  }
+  .practice-bento > :nth-child(4) {
+    grid-column: 2;
+    /* Swap: wide on right */
+  }
+}
+
+/* ─── Domain Card ──────────────────────────────────────────────────────────── */
+
+.practice-domain {
+  position: relative;
+  overflow: hidden;
+  padding: 48px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 4px;
+  transition: all var(--transition, 0.3s);
+
+  @media (max-width: 1024px) {
+    padding: 32px 24px;
+  }
+}
+
+.practice-domain:hover {
+  background: var(--surface-variant);
+  border-color: var(--accent-border);
+}
+
+.practice-domain__icon-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 32px;
+  opacity: 0.15;
+  transition: opacity 0.5s;
+}
+
+.practice-domain:hover .practice-domain__icon-bg {
+  opacity: 0.35;
+}
+
+.practice-domain__icon-large {
+  width: 72px;
+  height: 72px;
+  color: var(--accent);
+}
+
+.practice-domain__num {
+  font-family: var(--label);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 32px;
+}
+
+.practice-domain__title {
+  font-family: var(--heading);
+  font-size: 36px;
+  font-weight: 400;
+  color: var(--text-h);
+  margin: 0 0 20px;
+  line-height: 1.2;
+
+  @media (max-width: 1024px) {
+    font-size: 28px;
+  }
+}
+
+.practice-domain__desc {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+  opacity: 0.7;
+  margin: 0 0 32px;
+  max-width: 400px;
+}
+
+.practice-domain__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--label);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-decoration: none;
+  transition: gap 0.3s;
+}
+
+.practice-domain__link:hover {
+  gap: 24px;
+}

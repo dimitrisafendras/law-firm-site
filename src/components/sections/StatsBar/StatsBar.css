@@ -1,5 +1,9 @@
 .stats-bar {
-  background: var(--secondary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
   padding: 48px 48px;
 
   @media (max-width: 1024px) {
@@ -40,7 +44,8 @@
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text);
+  opacity: 0.5;
   display: block;
   margin-top: 8px;
 }

@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/Button';
 import { FadeInSection } from '@/components/animations/FadeInSection';
-import heroBg from '@/assets/images/hero-bg.jpg';
+import heroBg from '@/assets/images/hero-acropolis.png';
 import './HeroSection.css';
 
 export function HeroSection() {
@@ -16,13 +15,16 @@ export function HeroSection() {
 
       <div className="hero-section__content">
         <FadeInSection variant="fade-up" delay={0.2}>
-          <span className="hero-section__overline">{t('heroOverline')}</span>
+          <span className="hero-section__badge">
+            <span className="hero-section__badge-dot" aria-hidden="true" />
+            {t('heroOverline')}
+          </span>
         </FadeInSection>
 
         <FadeInSection variant="fade-up" delay={0.4}>
           <h1 className="hero-section__title">
             {t('heroTitleLine1')} <br />
-            <span className="hero-section__title-accent">{t('heroTitleLine2')}</span>
+            <span className="hero-section__title-gradient">{t('heroTitleLine2')}</span>
           </h1>
         </FadeInSection>
 
@@ -30,26 +32,14 @@ export function HeroSection() {
           <p className="hero-section__subtitle">{t('heroSubtitle')}</p>
         </FadeInSection>
 
+        {/* Floating stat card */}
         <FadeInSection variant="fade-up" delay={0.8}>
-          <div className="hero-section__actions">
-            <Button
-              size="lg"
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              {t('heroCta')}
-            </Button>
-            <Button
-              variant="glass"
-              size="lg"
-              onClick={() => document.getElementById('practice')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              {t('heroSecondaryCta')}
-            </Button>
+          <div className="hero-section__stat-card">
+            <span className="hero-section__stat-value">20+</span>
+            <span className="hero-section__stat-label">{t('statYears')}</span>
           </div>
         </FadeInSection>
       </div>
-
-      <div className="hero-section__line" />
     </header>
   );
 }

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/Button';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { DigitalAcropolis } from '@/assets/illustrations';
+import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import './CtaSection.css';
 
 export function CtaSection() {
@@ -9,6 +10,7 @@ export function CtaSection() {
 
   return (
     <section className="cta-section">
+      <CircuitLines variant="e" />
       <div className="cta-section__inner">
         <FadeInSection variant="scale">
           <div className="cta-section__card">

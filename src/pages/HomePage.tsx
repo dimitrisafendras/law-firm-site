@@ -2,15 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { Navbar, Footer, Button } from '@/components';
 import { ScaleOfJustice } from '@/assets/illustrations';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
-import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle';
-
 import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
 import { StatsBar } from '@/components/sections/StatsBar/StatsBar';
 import { PracticeGrid } from '@/components/sections/PracticeGrid/PracticeGrid';
 import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
 import { NetworkMap } from '@/components/sections/NetworkMap/NetworkMap';
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection/TestimonialsSection';
-import { CtaSection } from '@/components/sections/CtaSection/CtaSection';
 import { ContactSection } from '@/components/sections/ContactSection/ContactSection';
 
 export default function HomePage() {
@@ -36,7 +33,6 @@ export default function HomePage() {
         ]}
         cta={
           <div className="navbar__actions">
-            <ThemeToggle />
             <LanguageSwitcher />
             <Button
               size="sm"
@@ -54,7 +50,6 @@ export default function HomePage() {
       <PartnerEthos />
       <NetworkMap />
       <TestimonialsSection />
-      <CtaSection />
       <ContactSection />
 
       <Footer

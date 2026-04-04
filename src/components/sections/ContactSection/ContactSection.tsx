@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ContactForm } from '@/components/ContactForm';
 import { FadeInSection } from '@/components/animations/FadeInSection';
+import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import './ContactSection.css';
 
 export function ContactSection() {
@@ -8,6 +9,7 @@ export function ContactSection() {
 
   return (
     <section id="contact" className="contact-section">
+      <CircuitLines variant="b" />
       <div className="contact-section__inner">
         <div className="contact-section__grid">
           <FadeInSection variant="fade-left" className="contact-section__info">

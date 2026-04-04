@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { TestimonialCard } from '@/components/TestimonialCard';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
+import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import './TestimonialsSection.css';
 
 export function TestimonialsSection() {
@@ -14,6 +15,7 @@ export function TestimonialsSection() {
 
   return (
     <section id="testimonials" className="testimonials-section">
+      <CircuitLines variant="c" />
       <div className="testimonials-section__inner">
         <FadeInSection>
           <div className="testimonials-section__header">

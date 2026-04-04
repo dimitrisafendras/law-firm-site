@@ -1,4 +1,6 @@
 .cta-section {
+  position: relative;
+  overflow: hidden;
   padding: 160px 0;
   background: var(--grad-5);
 

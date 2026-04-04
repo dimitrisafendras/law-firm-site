@@ -12,6 +12,7 @@ import {
   MaritimeBg,
   CryptoBg,
 } from '@/assets/domainBackgrounds';
+import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import './PracticeGrid.css';
 
 import type { ComponentType } from 'react';
@@ -33,6 +34,7 @@ export function PracticeGrid() {
 
   return (
     <section id="practice" className="practice-section">
+      <CircuitLines variant="a" />
       <div className="practice-section__inner">
         <FadeInSection>
           <div className="practice-section__header">

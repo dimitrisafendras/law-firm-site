@@ -1,4 +1,6 @@
 .testimonials-section {
+  position: relative;
+  overflow: hidden;
   padding: 128px 0;
   background: var(--grad-4);
 

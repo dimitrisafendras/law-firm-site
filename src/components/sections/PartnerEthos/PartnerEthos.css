@@ -1,4 +1,6 @@
 .partner-ethos {
+  position: relative;
+  overflow: hidden;
   padding: 128px 0;
   background: var(--grad-2);
 
@@ -107,7 +109,16 @@
 /* ─── Text Column ─────────────────────────────────────────────────────────── */
 
 .partner-ethos__text-col {
-  padding-top: 16px;
+  padding: 40px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 4px;
+
+  @media (max-width: 1024px) {
+    padding: 24px;
+  }
 }
 
 .partner-ethos__text-col--right {

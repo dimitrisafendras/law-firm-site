@@ -33,6 +33,22 @@
   display: none;
 }
 
+/* ─── Digital Lines ───────────────────────────────────────────────────────── */
+
+.hero-section__lines {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 55%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
 /* ─── Content ──────────────────────────────────────────────────────────────── */
 
 .hero-section__content {

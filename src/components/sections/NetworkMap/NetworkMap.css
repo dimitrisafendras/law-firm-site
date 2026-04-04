@@ -1,4 +1,6 @@
 .network-map {
+  position: relative;
+  overflow: hidden;
   padding: 128px 0;
   background: var(--grad-3);
 
@@ -185,10 +187,26 @@
   opacity: 0.8;
 }
 
+/* ─── Pin ──────────────────────────────────────────────────────────────────── */
+
+.network-map__pin {
+  position: absolute;
+  top: 51%;
+  left: 53%;
+  transform: translate(-50%, -100%);
+  z-index: 2;
+}
+
+.network-map__pin-icon {
+  width: 28px;
+  height: 42px;
+  filter: drop-shadow(0 0 8px var(--accent));
+}
+
 .network-map__map-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 42% 40%, var(--accent-bg), transparent 60%);
-  opacity: 0.5;
+  background: var(--grad-3);
+  opacity: 0.35;
   pointer-events: none;
 }

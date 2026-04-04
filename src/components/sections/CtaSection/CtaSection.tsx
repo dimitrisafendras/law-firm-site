@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/Button';
 import { FadeInSection } from '@/components/animations/FadeInSection';
+import { DigitalAcropolis } from '@/assets/illustrations';
 import './CtaSection.css';
 
 export function CtaSection() {
@@ -12,6 +13,7 @@ export function CtaSection() {
         <FadeInSection variant="scale">
           <div className="cta-section__card">
             <div className="cta-section__glow" />
+            <DigitalAcropolis className="cta-section__illustration" />
             <div className="cta-section__content">
               <h2 className="cta-section__title">{t('ctaTitle')}</h2>
               <p className="cta-section__desc">{t('ctaSubtitle')}</p>

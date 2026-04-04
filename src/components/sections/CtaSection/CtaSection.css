@@ -40,6 +40,29 @@
   opacity: 0.4;
 }
 
+.cta-section__illustration {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  color: var(--accent);
+  opacity: 0.08;
+  pointer-events: none;
+  transition: opacity 0.6s;
+
+  @media (max-width: 1024px) {
+    width: 360px;
+    height: 360px;
+    bottom: -20px;
+  }
+}
+
+.cta-section__card:hover .cta-section__illustration {
+  opacity: 0.15;
+}
+
 .cta-section__content {
   position: relative;
   z-index: 1;

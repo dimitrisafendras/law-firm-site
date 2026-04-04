@@ -52,7 +52,7 @@ export function FadeInSection({
 
   return (
     <Tag
-      ref={ref as React.RefObject<HTMLElement>}
+      ref={ref as React.RefObject<HTMLDivElement>}
       className={`fade-section fade-section--${variant} ${isVisible ? 'fade-section--visible' : ''} ${className}`.trim()}
       style={style}
     >

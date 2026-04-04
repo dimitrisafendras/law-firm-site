@@ -1,0 +1,30 @@
+.icon-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: all var(--transition, 0.3s);
+  font-size: 15px;
+  line-height: 1;
+  padding: 0;
+  font-family: var(--label);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.icon-toggle:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.icon-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

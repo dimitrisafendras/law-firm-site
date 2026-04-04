@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Navbar, Footer, Button } from '@/components';
 import { ScaleOfJustice } from '@/assets/illustrations';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
+import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle';
 
 import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
 import { StatsBar } from '@/components/sections/StatsBar/StatsBar';
@@ -34,6 +35,7 @@ export default function HomePage() {
         ]}
         cta={
           <div className="navbar__actions">
+            <ThemeToggle />
             <LanguageSwitcher />
             <Button
               size="sm"

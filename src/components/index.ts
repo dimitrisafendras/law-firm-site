@@ -18,3 +18,5 @@ export { AttorneyCard } from './AttorneyCard';
 export { PracticeAreaCard } from './PracticeAreaCard';
 export { TestimonialCard } from './TestimonialCard';
 export { ContactForm } from './ContactForm';
+export { IconToggle } from './IconToggle/IconToggle';
+export { ThemeToggle } from './ThemeToggle/ThemeToggle';

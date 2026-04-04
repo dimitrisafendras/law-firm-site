@@ -148,8 +148,8 @@ export const glass = {
     blurStrong: '24px',
   },
   dark: {
-    bg: 'rgba(24, 26, 31, 0.6)',
-    bgStrong: 'rgba(24, 26, 31, 0.75)',
+    bg: 'rgba(24, 26, 31, 0.8)',
+    bgStrong: 'rgba(24, 26, 31, 0.9)',
     border: 'rgba(255, 255, 255, 0.1)',
     shadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
     blur: '16px',

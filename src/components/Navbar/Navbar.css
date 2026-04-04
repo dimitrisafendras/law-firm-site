@@ -13,10 +13,11 @@
 
 /* Glass effect after scrolling */
 .navbar--scrolled {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur-strong));
-  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
-  box-shadow: var(--shadow);
+  background: rgba(17, 19, 23, 0.7);
+  backdrop-filter: blur(40px) saturate(1.4);
+  -webkit-backdrop-filter: blur(40px) saturate(1.4);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
 .navbar__inner {

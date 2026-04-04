@@ -1,10 +1,18 @@
 .testimonial-card {
-  background: var(--surface);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-left: 3px solid var(--accent);
-  border-radius: 0 4px 4px 0;
+  border-radius: 4px;
   padding: 32px 24px;
   margin: 0;
   text-align: left;
+  transition: border-color 0.5s;
+}
+
+.testimonial-card:hover {
+  border-color: var(--accent-border);
 }
 
 .testimonial-card__quote {

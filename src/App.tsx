@@ -1,11 +1,21 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
+import DesignSystem from './pages/DesignSystem'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [page, setPage] = useState(window.location.hash)
+
+  useEffect(() => {
+    const onHash = () => setPage(window.location.hash)
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
+
+  if (page === '#design-system') return <DesignSystem />
 
   return (
     <>

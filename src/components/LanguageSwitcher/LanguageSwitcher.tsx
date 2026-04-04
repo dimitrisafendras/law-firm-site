@@ -11,7 +11,7 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <button className="lang-switcher" onClick={toggle} aria-label="Switch language">
+    <button className="lang-switcher" onClick={toggle} aria-label={i18n.language === 'en' ? 'ΕΛ — Switch to Greek' : 'EN — Switch to English'}>
       {i18n.language === 'en' ? 'ΕΛ' : 'EN'}
     </button>
   );

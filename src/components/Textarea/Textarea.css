@@ -34,19 +34,20 @@
 
 .textarea-field::placeholder {
   color: var(--text);
-  opacity: 0.4;
+  opacity: 0.55;
 }
 
 .textarea-field:focus {
-  outline: none;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
   border-color: var(--accent);
 }
 
 .textarea-group--error .textarea-field {
-  border-color: var(--tertiary);
+  border-color: var(--error);
 }
 
 .textarea-error {
   font-size: 13px;
-  color: var(--tertiary);
+  color: var(--error);
 }

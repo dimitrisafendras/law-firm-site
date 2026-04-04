@@ -51,7 +51,7 @@
   font-weight: 600;
   letter-spacing: 0.18px;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   display: block;
   margin-bottom: 12px;
 }
@@ -67,7 +67,7 @@
   font-size: 13px;
   padding: 4px 8px;
   background: var(--accent-bg);
-  color: var(--accent);
+  color: var(--accent-text);
   border-radius: 2px;
 }
 

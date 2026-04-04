@@ -1,18 +1,21 @@
 import type { ReactNode } from 'react';
 import './PracticeAreaCard.css';
 
+type HeadingLevel = 'h2' | 'h3' | 'h4';
+
 interface PracticeAreaCardProps {
   icon?: ReactNode;
   title: string;
   description: string;
   href?: string;
+  headingLevel?: HeadingLevel;
 }
 
-export function PracticeAreaCard({ icon, title, description, href }: PracticeAreaCardProps) {
+export function PracticeAreaCard({ icon, title, description, href, headingLevel: Tag = 'h3' }: PracticeAreaCardProps) {
   const content = (
     <>
       {icon && <div className="practice-card__icon">{icon}</div>}
-      <h3 className="practice-card__title">{title}</h3>
+      <Tag className="practice-card__title">{title}</Tag>
       <p className="practice-card__description">{description}</p>
     </>
   );

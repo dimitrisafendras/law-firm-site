@@ -16,8 +16,8 @@ export function Textarea({ label, error, className = '', id, ...props }: Textare
           {label}
         </label>
       )}
-      <textarea className="textarea-field" id={textareaId} {...props} />
-      {error && <span className="textarea-error">{error}</span>}
+      <textarea className="textarea-field" id={textareaId} aria-invalid={!!error} aria-describedby={error && textareaId ? `${textareaId}-error` : undefined} {...props} />
+      {error && <span className="textarea-error" id={textareaId ? `${textareaId}-error` : undefined} role="alert">{error}</span>}
     </div>
   );
 }

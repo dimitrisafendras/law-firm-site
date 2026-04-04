@@ -30,7 +30,7 @@
   font-weight: 600;
   letter-spacing: 0.18px;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   display: block;
   margin-bottom: 16px;
 }

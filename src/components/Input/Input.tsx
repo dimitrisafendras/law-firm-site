@@ -16,8 +16,8 @@ export function Input({ label, error, className = '', id, ...props }: InputProps
           {label}
         </label>
       )}
-      <input className="input-field" id={inputId} {...props} />
-      {error && <span className="input-error">{error}</span>}
+      <input className="input-field" id={inputId} aria-invalid={!!error} aria-describedby={error && inputId ? `${inputId}-error` : undefined} {...props} />
+      {error && <span className="input-error" id={inputId ? `${inputId}-error` : undefined} role="alert">{error}</span>}
     </div>
   );
 }

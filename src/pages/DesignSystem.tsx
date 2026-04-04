@@ -107,7 +107,7 @@ const labelStyle: React.CSSProperties = {
   fontSize: '11px',
   letterSpacing: '0.1em',
   textTransform: 'uppercase',
-  opacity: 0.6,
+  opacity: 0.75,
 };
 
 const tokenRowStyle: React.CSSProperties = {
@@ -136,6 +136,20 @@ const showcaseLabel: React.CSSProperties = {
   display: 'block',
 };
 
+function luminance(r: number, g: number, b: number): number {
+  const [rs, gs, bs] = [r, g, b].map((c) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+}
+
+function contrastRatio(l1: number, l2: number): number {
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 function contrastColor(hex: string): string {
   if (hex.startsWith('rgba') || hex.startsWith('var')) return 'var(--text)';
   const c = hex.replace('#', '');
@@ -143,7 +157,10 @@ function contrastColor(hex: string): string {
   const r = parseInt(c.slice(0, 2), 16);
   const g = parseInt(c.slice(2, 4), 16);
   const b = parseInt(c.slice(4, 6), 16);
-  return (r * 299 + g * 587 + b * 114) / 1000 > 128 ? '#002B49' : '#F5F5F5';
+  const lum = luminance(r, g, b);
+  const whiteCR = contrastRatio(1, lum);
+  const blackCR = contrastRatio(lum, 0);
+  return blackCR >= whiteCR ? '#000000' : '#FFFFFF';
 }
 
 function ColorSwatches({ mode, tokens }: { mode: string; tokens: Record<string, string> }) {
@@ -158,8 +175,8 @@ function ColorSwatches({ mode, tokens }: { mode: string; tokens: Record<string, 
           return (
             <div key={key} style={swatchStyle(value)}>
               <span style={{ ...monoSmall, color: contrastColor(value), fontWeight: 600 }}>{key}</span>
-              <span style={{ ...monoSmall, color: contrastColor(value), opacity: 0.7 }}>{varName}</span>
-              <span style={{ ...monoSmall, color: contrastColor(value), opacity: 0.5 }}>{value}</span>
+              <span style={{ ...monoSmall, color: contrastColor(value), opacity: 0.85 }}>{varName}</span>
+              <span style={{ ...monoSmall, color: contrastColor(value), opacity: 0.75 }}>{value}</span>
             </div>
           );
         })}
@@ -177,7 +194,7 @@ function TokenTable({ title, tokens }: { title: string; tokens: Record<string, s
       {Object.entries(tokens).map(([key, value]) => (
         <div key={key} style={tokenRowStyle}>
           <span style={{ fontFamily: 'var(--mono)', fontSize: '14px' }}>{key}</span>
-          <span style={{ fontFamily: 'var(--mono)', fontSize: '14px', opacity: 0.6 }}>{value}</span>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: '14px', opacity: 0.75 }}>{value}</span>
         </div>
       ))}
     </div>
@@ -190,7 +207,7 @@ export default function DesignSystem() {
   const { t } = useTranslation();
 
   return (
-    <div style={{ maxWidth: '1120px', margin: '0 auto', padding: '48px 32px', textAlign: 'left' }}>
+    <main style={{ maxWidth: '1120px', margin: '0 auto', padding: '48px 32px', textAlign: 'left' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '64px' }}>
         <div>
@@ -198,7 +215,7 @@ export default function DesignSystem() {
           <h1 style={{ fontSize: '48px', fontFamily: 'var(--heading)', letterSpacing: '-1.5px', margin: '8px 0 16px' }}>
             {t('designSystemTitle')}
           </h1>
-          <p style={{ fontSize: '18px', maxWidth: '640px', lineHeight: '1.6', opacity: 0.7 }}>
+          <p style={{ fontSize: '18px', maxWidth: '640px', lineHeight: '1.6' }}>
             <Trans i18nKey="designSystemDescriptionFull">
               All design tokens and components for the law firm website. Values are defined once in <code>src/theme/tokens.ts</code> and injected as CSS custom properties at runtime.
             </Trans>
@@ -224,6 +241,7 @@ export default function DesignSystem() {
             <Button variant="primary" size="lg">Primary LG</Button>
             <Button variant="secondary">Secondary</Button>
             <Button variant="ghost">Ghost</Button>
+            <Button variant="glass">Glass</Button>
             <Button disabled>Disabled</Button>
           </div>
         </div>
@@ -231,7 +249,7 @@ export default function DesignSystem() {
         {/* Text & Heading */}
         <div style={showcaseBox}>
           <span style={showcaseLabel}>Heading & Text</span>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }} aria-hidden="true">
             <Heading level={1}>Heading Level 1</Heading>
             <Heading level={2}>Heading Level 2</Heading>
             <Heading level={3}>Heading Level 3</Heading>
@@ -298,12 +316,12 @@ export default function DesignSystem() {
           <span style={showcaseLabel}>Card</span>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
             <Card variant="bordered">
-              <CardHeader><Heading level={4}>Bordered Card</Heading></CardHeader>
+              <CardHeader><Heading level={3}>Bordered Card</Heading></CardHeader>
               <CardBody><Text variant="small">A card with a subtle border and structured sub-components.</Text></CardBody>
               <CardFooter><Button variant="ghost" size="sm">Learn More</Button></CardFooter>
             </Card>
             <Card variant="elevated">
-              <CardHeader><Heading level={4}>Elevated Card</Heading></CardHeader>
+              <CardHeader><Heading level={3}>Elevated Card</Heading></CardHeader>
               <CardBody><Text variant="small">A card with shadow elevation for emphasis.</Text></CardBody>
               <CardFooter><Button variant="primary" size="sm">Action</Button></CardFooter>
             </Card>
@@ -320,19 +338,19 @@ export default function DesignSystem() {
           <div style={{ padding: '16px 32px 0' }}><span style={{ ...showcaseLabel, color: '#fff' }}>Glass Card</span></div>
           <div style={{ padding: '16px 32px 32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
             <GlassCard intensity="light">
-              <Heading level={4} className="glass-demo-heading">Light Glass</Heading>
+              <Heading level={3} className="glass-demo-heading">Light Glass</Heading>
               <Text variant="small" className="glass-demo-text">A subtle frosted glass effect with a light blur — ideal for overlaying colorful backgrounds.</Text>
             </GlassCard>
             <GlassCard intensity="medium">
-              <Heading level={4} className="glass-demo-heading">Medium Glass</Heading>
+              <Heading level={3} className="glass-demo-heading">Medium Glass</Heading>
               <Text variant="small" className="glass-demo-text">The default intensity — balanced translucency and readability.</Text>
             </GlassCard>
             <GlassCard intensity="strong">
-              <Heading level={4} className="glass-demo-heading">Strong Glass</Heading>
+              <Heading level={3} className="glass-demo-heading">Strong Glass</Heading>
               <Text variant="small" className="glass-demo-text">Higher opacity and stronger blur for maximum content legibility.</Text>
             </GlassCard>
             <GlassCard intensity="medium" glow>
-              <Heading level={4} className="glass-demo-heading">Glow Effect</Heading>
+              <Heading level={3} className="glass-demo-heading">Glow Effect</Heading>
               <Text variant="small" className="glass-demo-text">Glass card with an ambient accent glow — great for featured items and CTAs.</Text>
             </GlassCard>
           </div>
@@ -348,12 +366,12 @@ export default function DesignSystem() {
           <div style={{ padding: '16px 32px 0' }}><span style={{ ...showcaseLabel, color: '#fff' }}>Card — Glass Variants</span></div>
           <div style={{ padding: '16px 32px 32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
             <Card variant="glass">
-              <CardHeader><Heading level={4} className="glass-demo-heading">Glass Card</Heading></CardHeader>
+              <CardHeader><Heading level={3} className="glass-demo-heading">Glass Card</Heading></CardHeader>
               <CardBody><Text variant="small" className="glass-demo-text">The standard Card component with the glass variant applied.</Text></CardBody>
               <CardFooter><Button variant="secondary" size="sm">Details</Button></CardFooter>
             </Card>
             <Card variant="glass-strong">
-              <CardHeader><Heading level={4} className="glass-demo-heading">Glass Strong</Heading></CardHeader>
+              <CardHeader><Heading level={3} className="glass-demo-heading">Glass Strong</Heading></CardHeader>
               <CardBody><Text variant="small" className="glass-demo-text">Stronger glass variant for higher contrast on busy backgrounds.</Text></CardBody>
               <CardFooter><Button size="sm">Contact Us</Button></CardFooter>
             </Card>
@@ -519,7 +537,7 @@ export default function DesignSystem() {
               <p style={{ fontFamily: family, fontSize: '28px', marginTop: '12px', letterSpacing: '-0.5px' }}>
                 {t('pangram')}
               </p>
-              <p style={{ ...monoSmall, marginTop: '8px', opacity: 0.5 }}>{family}</p>
+              <p style={{ ...monoSmall, marginTop: '8px', opacity: 0.75 }}>{family}</p>
             </div>
           ))}
         </div>
@@ -539,7 +557,7 @@ export default function DesignSystem() {
             <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <span style={{ fontFamily: 'var(--mono)', fontSize: '14px', width: '30px' }}>{key}</span>
               <div style={{ width: value, height: '24px', background: 'var(--accent)', borderRadius: '2px', minWidth: '2px' }} />
-              <span style={{ fontFamily: 'var(--mono)', fontSize: '12px', opacity: 0.5 }}>{value}</span>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: '12px', opacity: 0.75 }}>{value}</span>
             </div>
           ))}
         </div>
@@ -554,7 +572,7 @@ export default function DesignSystem() {
               <div style={{ width: '80px', height: '80px', background: 'var(--accent)', borderRadius: value, marginBottom: '8px' }} />
               <span style={{ fontFamily: 'var(--mono)', fontSize: '13px' }}>{key}</span>
               <br />
-              <span style={{ fontFamily: 'var(--mono)', fontSize: '11px', opacity: 0.5 }}>{value}</span>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: '11px', opacity: 0.75 }}>{value}</span>
             </div>
           ))}
         </div>
@@ -578,6 +596,6 @@ export default function DesignSystem() {
           <TokenTable title={t('transitions')} tokens={transitions} />
         </div>
       </section>
-    </div>
+    </main>
   );
 }

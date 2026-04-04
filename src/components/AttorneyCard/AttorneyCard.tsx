@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import './AttorneyCard.css';
 
+type HeadingLevel = 'h2' | 'h3' | 'h4';
+
 interface AttorneyCardProps {
   name: string;
   title: string;
@@ -8,16 +10,17 @@ interface AttorneyCardProps {
   specialties?: string[];
   bio?: string;
   href?: string;
+  headingLevel?: HeadingLevel;
 }
 
-export function AttorneyCard({ name, title, image, specialties, bio, href }: AttorneyCardProps) {
+export function AttorneyCard({ name, title, image, specialties, bio, href, headingLevel: Tag = 'h3' }: AttorneyCardProps) {
   return (
     <div className="attorney-card">
       {image && <div className="attorney-card__image">{image}</div>}
       <div className="attorney-card__content">
-        <h3 className="attorney-card__name">
+        <Tag className="attorney-card__name">
           {href ? <a href={href}>{name}</a> : name}
-        </h3>
+        </Tag>
         <span className="attorney-card__title">{title}</span>
         {specialties && specialties.length > 0 && (
           <div className="attorney-card__specialties">

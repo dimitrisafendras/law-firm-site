@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, breakpoints, layout, transitions, colorVarNames } from '../theme';
-import { setTheme } from '../theme';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import {
   Button,
@@ -29,24 +27,15 @@ import {
 
 // ─── Theme Toggle ────────────────────────────────────────────────────────────
 
-type ThemeMode = 'system' | 'light' | 'dark';
-
 function ThemeToggle() {
   const { t } = useTranslation();
-  const [mode, setMode] = useState<ThemeMode>('system');
 
-  function cycle() {
-    const next: ThemeMode = mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system';
-    setMode(next);
-    setTheme(next);
-  }
-
-  const icon = mode === 'light' ? '\u2600' : mode === 'dark' ? '\u263E' : '\u25D0';
-  const label = mode === 'system' ? t('themeSystem') : mode === 'light' ? t('themeLight') : t('themeDark');
+  const icon = '\u263E';
+  const label = t('themeDark');
 
   return (
     <button
-      onClick={cycle}
+      onClick={() => {}}
       aria-label={t('themeLabel', { mode: label })}
       style={{
         background: 'var(--accent-bg)',

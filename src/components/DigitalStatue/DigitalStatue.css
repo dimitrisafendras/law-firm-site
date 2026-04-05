@@ -52,10 +52,17 @@
   border-radius: 50%;
 }
 
-/* Flame in the left scale basket */
-.digital-statue__flame {
+/* Flames in the scale baskets */
+.digital-statue__flame--left {
   top: 28%;
   left: 64%;
+  width: 10%;
+  height: 14%;
+}
+
+.digital-statue__flame--right {
+  top: 25%;
+  left: 82%;
   width: 10%;
   height: 14%;
 }

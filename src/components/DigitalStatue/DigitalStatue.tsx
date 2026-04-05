@@ -7,6 +7,15 @@ import './DigitalStatue.css';
 const CHARS = '01';
 const TRAIL_LENGTH = 12;
 
+// Pre-compute rain fill styles (avoids template literal in hot loop)
+const RAIN_COLORS: string[] = [];
+for (let j = 0; j < TRAIL_LENGTH; j++) {
+  const fade = 1 - j / TRAIL_LENGTH;
+  RAIN_COLORS[j] = j === 0
+    ? `rgba(188,232,255,${(0.9 * fade).toFixed(3)})`
+    : `rgba(137,207,240,${(0.7 * fade).toFixed(3)})`;
+}
+
 interface DigitalStatueProps {
   className?: string;
 }
@@ -14,15 +23,14 @@ interface DigitalStatueProps {
 export function DigitalStatue({ className = '' }: DigitalStatueProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const visibleRef = useRef(true);
 
-  // Matrix rain effect
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
+    const ctx = canvas.getContext('2d')!;
     let animId: number;
     const fontSize = 10;
     let endCol: number;
@@ -42,7 +50,7 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       drops = Array.from({ length: Math.max(1, endCol) }, () => ({
         y: Math.random() * -30,
         speed: 0.1 + Math.random() * 0.15,
-        chars: Array.from({ length: TRAIL_LENGTH }, () => CHARS[Math.floor(Math.random() * CHARS.length)]),
+        chars: Array.from({ length: TRAIL_LENGTH }, () => CHARS[(Math.random() * 2) | 0]),
       }));
     }
 
@@ -50,46 +58,51 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
     window.addEventListener('resize', resize);
 
     function draw() {
-      ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
-      ctx!.font = `${fontSize}px monospace`;
+      animId = requestAnimationFrame(draw);
+      if (!visibleRef.current) return;
+
+      ctx.clearRect(0, 0, canvas!.width, canvas!.height);
+      ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < endCol; i++) {
         const drop = drops[i];
         const x = i * fontSize;
 
         for (let j = 0; j < TRAIL_LENGTH; j++) {
-          const row = Math.floor(drop.y) - j;
+          const row = (drop.y | 0) - j;
           if (row < 0) continue;
           const yPx = row * fontSize;
           if (yPx > canvas!.height) continue;
 
-          const fade = 1 - j / TRAIL_LENGTH;
-          ctx!.fillStyle = j === 0
-            ? `rgba(188, 232, 255, ${0.9 * fade})`
-            : `rgba(137, 207, 240, ${0.7 * fade})`;
-          ctx!.fillText(drop.chars[j], x, yPx);
+          ctx.fillStyle = RAIN_COLORS[j];
+          ctx.fillText(drop.chars[j], x, yPx);
         }
 
         drop.y += drop.speed;
 
         if (Math.random() > 0.92) {
-          const idx = Math.floor(Math.random() * TRAIL_LENGTH);
-          drop.chars[idx] = CHARS[Math.floor(Math.random() * CHARS.length)];
+          drop.chars[(Math.random() * TRAIL_LENGTH) | 0] = CHARS[(Math.random() * 2) | 0];
         }
-
         if (drop.y - TRAIL_LENGTH > maxRow && Math.random() > 0.97) {
           drop.y = 0;
           drop.speed = 0.1 + Math.random() * 0.15;
         }
       }
-
-      animId = requestAnimationFrame(draw);
     }
 
     draw();
+
+    // Pause when hero scrolls off-screen
+    const observer = new IntersectionObserver(
+      ([entry]) => { visibleRef.current = entry.isIntersecting; },
+      { threshold: 0 },
+    );
+    observer.observe(container);
+
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
+      observer.disconnect();
     };
   }, []);
 

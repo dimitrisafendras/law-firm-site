@@ -1,15 +1,10 @@
 import { useEffect, useRef } from 'react';
 
 interface SparklesProps {
-  /** Number of sparkles */
   count?: number;
-  /** Min size of sparkle (default 0.5) */
   minSize?: number;
-  /** Max size of sparkle (default 1.7) */
   maxSize?: number;
-  /** Fade speed multiplier — higher = faster pulse (default 1) */
   speed?: number;
-  /** CSS class for the wrapper div (use to position & size) */
   className?: string;
 }
 
@@ -23,70 +18,55 @@ interface Sparkle {
   age: number;
 }
 
-function drawStar(ctx: CanvasRenderingContext2D, px: number, py: number, r: number, opacity: number) {
-  // Soft glow
-  ctx.beginPath();
-  ctx.arc(px, py, r * 4, 0, Math.PI * 2);
-  ctx.fillStyle = `rgba(188, 232, 255, ${opacity * 0.1})`;
-  ctx.fill();
+// Pre-rendered star sprite (drawn once, reused via drawImage)
+const SPRITE_SIZE = 32;
+let starSprite: HTMLCanvasElement | null = null;
 
-  // 4-point star
-  ctx.save();
-  ctx.translate(px, py);
-  ctx.fillStyle = `rgba(220, 245, 255, ${opacity * 0.9})`;
+function getStarSprite(): HTMLCanvasElement {
+  if (starSprite) return starSprite;
+  starSprite = document.createElement('canvas');
+  starSprite.width = SPRITE_SIZE;
+  starSprite.height = SPRITE_SIZE;
+  const c = starSprite.getContext('2d')!;
+  const cx = SPRITE_SIZE / 2;
+  const r = SPRITE_SIZE / 2;
 
-  // Vertical spikes
-  ctx.beginPath();
-  ctx.moveTo(0, -r * 3);
-  ctx.lineTo(r * 0.3, -r * 0.3);
-  ctx.lineTo(0, 0);
-  ctx.lineTo(-r * 0.3, -r * 0.3);
-  ctx.closePath();
-  ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(0, r * 3);
-  ctx.lineTo(r * 0.3, r * 0.3);
-  ctx.lineTo(0, 0);
-  ctx.lineTo(-r * 0.3, r * 0.3);
-  ctx.closePath();
-  ctx.fill();
+  // Glow
+  c.beginPath();
+  c.arc(cx, cx, r, 0, Math.PI * 2);
+  c.fillStyle = 'rgba(188,232,255,0.1)';
+  c.fill();
 
-  // Horizontal spikes
-  ctx.beginPath();
-  ctx.moveTo(-r * 3, 0);
-  ctx.lineTo(-r * 0.3, r * 0.3);
-  ctx.lineTo(0, 0);
-  ctx.lineTo(-r * 0.3, -r * 0.3);
-  ctx.closePath();
-  ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(r * 3, 0);
-  ctx.lineTo(r * 0.3, -r * 0.3);
-  ctx.lineTo(0, 0);
-  ctx.lineTo(r * 0.3, r * 0.3);
-  ctx.closePath();
-  ctx.fill();
+  // 4-point star spikes
+  c.fillStyle = 'rgba(220,245,255,0.9)';
+  const s = r * 0.25;
+  const l = r * 0.9;
+  c.beginPath(); c.moveTo(cx, cx - l); c.lineTo(cx + s, cx - s); c.lineTo(cx, cx); c.lineTo(cx - s, cx - s); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(cx, cx + l); c.lineTo(cx + s, cx + s); c.lineTo(cx, cx); c.lineTo(cx - s, cx + s); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(cx - l, cx); c.lineTo(cx - s, cx + s); c.lineTo(cx, cx); c.lineTo(cx - s, cx - s); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(cx + l, cx); c.lineTo(cx + s, cx - s); c.lineTo(cx, cx); c.lineTo(cx + s, cx + s); c.closePath(); c.fill();
 
   // Bright center
-  ctx.beginPath();
-  ctx.arc(0, 0, r * 0.5, 0, Math.PI * 2);
-  ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-  ctx.fill();
-  ctx.restore();
+  c.beginPath();
+  c.arc(cx, cx, r * 0.15, 0, Math.PI * 2);
+  c.fillStyle = 'rgba(255,255,255,1)';
+  c.fill();
+
+  return starSprite;
 }
 
 export function Sparkles({ count = 20, minSize = 0.5, maxSize = 1.7, speed = 1, className = '' }: SparklesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const visibleRef = useRef(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
+    const ctx = canvas.getContext('2d')!;
     let animId: number;
     let sparkles: Sparkle[] = [];
+    const sprite = getStarSprite();
 
     function makeSparkle(): Sparkle {
       return {
@@ -112,32 +92,40 @@ export function Sparkles({ count = 20, minSize = 0.5, maxSize = 1.7, speed = 1, 
     window.addEventListener('resize', resize);
 
     function draw() {
-      ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+      animId = requestAnimationFrame(draw);
+      if (!visibleRef.current) return;
+
+      const w = canvas!.width;
+      const h = canvas!.height;
+      ctx.clearRect(0, 0, w, h);
 
       for (const s of sparkles) {
         s.age++;
         if (s.age < s.delay) continue;
 
         s.opacity += s.fadeSpeed;
-        if (s.opacity > 1) {
-          s.opacity = 1;
-          s.fadeSpeed = -Math.abs(s.fadeSpeed);
-        }
-        if (s.opacity <= 0) {
-          Object.assign(s, makeSparkle());
-          continue;
-        }
+        if (s.opacity > 1) { s.opacity = 1; s.fadeSpeed = -Math.abs(s.fadeSpeed); }
+        if (s.opacity <= 0) { Object.assign(s, makeSparkle()); continue; }
 
-        drawStar(ctx!, s.x * canvas!.width, s.y * canvas!.height, s.size, s.opacity);
+        const drawSize = s.size * 6;
+        ctx.globalAlpha = s.opacity;
+        ctx.drawImage(sprite, s.x * w - drawSize / 2, s.y * h - drawSize / 2, drawSize, drawSize);
       }
-
-      animId = requestAnimationFrame(draw);
+      ctx.globalAlpha = 1;
     }
 
     draw();
+
+    const observer = new IntersectionObserver(
+      ([entry]) => { visibleRef.current = entry.isIntersecting; },
+      { threshold: 0 },
+    );
+    observer.observe(canvas.parentElement!);
+
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
+      observer.disconnect();
     };
   }, [count, minSize, maxSize, speed]);
 

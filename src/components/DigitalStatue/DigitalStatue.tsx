@@ -97,10 +97,6 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
     let cancelled = false;
 
     async function start() {
-      const rect = container!.getBoundingClientRect();
-      const W = rect.width, H = rect.height;
-      if (W === 0 || H === 0 || cancelled) return;
-
       // Pre-render sprites on main thread
       const [rainSprite, starSprite] = await Promise.all([createRainSprite(), createStarSprite()]);
       if (cancelled) return;
@@ -147,11 +143,24 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       observer.observe(container!);
     }
 
-    // Start after image loads (onLoad triggers resize → start)
-    start();
+    // Try immediately; if container has no size yet, retry on resize
+    // (the <img onLoad> dispatches a resize event once it loads)
+    let started = false;
+    async function tryStart() {
+      if (started || cancelled) return;
+      const rect = container!.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      started = true;
+      window.removeEventListener('resize', tryStart);
+      await start();
+    }
+
+    tryStart();
+    window.addEventListener('resize', tryStart);
 
     return () => {
       cancelled = true;
+      window.removeEventListener('resize', tryStart);
       observer?.disconnect();
       for (const w of workers) w.terminate();
     };

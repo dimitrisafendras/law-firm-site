@@ -70,6 +70,7 @@ export function NetworkMap() {
               />
               <div className="network-map__map-glow" />
               <div className="network-map__pin">
+                <span className="network-map__pin-label">Athens</span>
                 <svg className="network-map__pin-icon" viewBox="0 0 24 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 24 12 24s12-15 12-24c0-6.627-5.373-12-12-12z" fill="var(--accent)" />
                   <circle cx="12" cy="12" r="5" fill="var(--bg)" />

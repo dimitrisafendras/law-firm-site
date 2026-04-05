@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Sparkles } from '@/components/Sparkles/Sparkles';
 import { DigitalFlame } from '@/components/DigitalFlame/DigitalFlame';
+import { registerDraw } from './animationLoop';
 import statueImg from '@/assets/images/hero-acropolis.png';
 import './DigitalStatue.css';
 
@@ -31,7 +32,6 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
     if (!canvas || !container) return;
 
     const ctx = canvas.getContext('2d')!;
-    let animId: number;
     const fontSize = 10;
     let endCol: number;
     let maxRow: number;
@@ -58,7 +58,6 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
     window.addEventListener('resize', resize);
 
     function draw() {
-      animId = requestAnimationFrame(draw);
       if (!visibleRef.current) return;
 
       ctx.clearRect(0, 0, canvas!.width, canvas!.height);
@@ -90,7 +89,7 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       }
     }
 
-    draw();
+    const unregister = registerDraw(draw);
 
     // Pause when hero scrolls off-screen
     const observer = new IntersectionObserver(
@@ -100,7 +99,7 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
     observer.observe(container);
 
     return () => {
-      cancelAnimationFrame(animId);
+      unregister();
       window.removeEventListener('resize', resize);
       observer.disconnect();
     };

@@ -67,12 +67,6 @@
   object-fit: cover;
   filter: grayscale(100%);
   opacity: 0.8;
-  transition: filter 0.7s ease, opacity 0.7s ease;
-}
-
-.partner-ethos__image-wrapper:hover .partner-ethos__image {
-  filter: grayscale(0%);
-  opacity: 1;
 }
 
 .partner-ethos__image-overlay {

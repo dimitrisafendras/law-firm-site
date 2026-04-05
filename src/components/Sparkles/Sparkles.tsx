@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { registerDraw, QUALITY } from '@/components/DigitalStatue/animationLoop';
 
 interface SparklesProps {
   count?: number;
@@ -64,7 +65,6 @@ export function Sparkles({ count = 20, minSize = 0.5, maxSize = 1.7, speed = 1, 
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d')!;
-    let animId: number;
     let sparkles: Sparkle[] = [];
     const sprite = getStarSprite();
 
@@ -80,19 +80,20 @@ export function Sparkles({ count = 20, minSize = 0.5, maxSize = 1.7, speed = 1, 
       };
     }
 
+    const effectiveCount = Math.round(count * QUALITY);
+
     function resize() {
       const wrap = canvas!.parentElement!;
       const rect = wrap.getBoundingClientRect();
       canvas!.width = rect.width;
       canvas!.height = rect.height;
-      sparkles = Array.from({ length: count }, makeSparkle);
+      sparkles = Array.from({ length: effectiveCount }, makeSparkle);
     }
 
     resize();
     window.addEventListener('resize', resize);
 
     function draw() {
-      animId = requestAnimationFrame(draw);
       if (!visibleRef.current) return;
 
       const w = canvas!.width;
@@ -114,7 +115,7 @@ export function Sparkles({ count = 20, minSize = 0.5, maxSize = 1.7, speed = 1, 
       ctx.globalAlpha = 1;
     }
 
-    draw();
+    const unregister = registerDraw(draw);
 
     const observer = new IntersectionObserver(
       ([entry]) => { visibleRef.current = entry.isIntersecting; },
@@ -123,7 +124,7 @@ export function Sparkles({ count = 20, minSize = 0.5, maxSize = 1.7, speed = 1, 
     observer.observe(canvas.parentElement!);
 
     return () => {
-      cancelAnimationFrame(animId);
+      unregister();
       window.removeEventListener('resize', resize);
       observer.disconnect();
     };

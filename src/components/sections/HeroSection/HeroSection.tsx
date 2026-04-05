@@ -62,6 +62,12 @@ export function HeroSection() {
           </div>
         </FadeInSection>
       </div>
+
+      <div className="hero-section__scroll-hint" aria-hidden="true">
+        <svg width="20" height="12" viewBox="0 0 20 12" fill="none">
+          <path d="M1 1l9 9 9-9" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
     </header>
   );
 }

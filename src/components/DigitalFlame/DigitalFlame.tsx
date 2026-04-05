@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { registerDraw, QUALITY } from '@/components/DigitalStatue/animationLoop';
 import './DigitalFlame.css';
 
 interface DigitalFlameProps {
@@ -50,12 +51,11 @@ export function DigitalFlame({ className = '', variant = 'blue', height: hMul = 
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d')!;
-    let animId: number;
     const styles = FLAME_STYLES[variant];
     const c = COLORS[variant];
 
-    // Pre-allocate particle pool
-    const particles: Particle[] = Array.from({ length: MAX_PARTICLES }, () => ({
+    const poolSize = Math.round(MAX_PARTICLES * QUALITY);
+    const particles: Particle[] = Array.from({ length: poolSize }, () => ({
       x: 0, y: 0, vx: 0, vy: 0, size: 0, life: 0, maxLife: 1, alive: false,
     }));
 
@@ -79,7 +79,6 @@ export function DigitalFlame({ className = '', variant = 'blue', height: hMul = 
     window.addEventListener('resize', resize);
 
     function draw() {
-      animId = requestAnimationFrame(draw);
       if (!visibleRef.current) return;
 
       const w = canvas!.width;
@@ -127,7 +126,7 @@ export function DigitalFlame({ className = '', variant = 'blue', height: hMul = 
       }
     }
 
-    draw();
+    const unregister = registerDraw(draw);
 
     const observer = new IntersectionObserver(
       ([entry]) => { visibleRef.current = entry.isIntersecting; },
@@ -136,7 +135,7 @@ export function DigitalFlame({ className = '', variant = 'blue', height: hMul = 
     observer.observe(canvas.parentElement!);
 
     return () => {
-      cancelAnimationFrame(animId);
+      unregister();
       window.removeEventListener('resize', resize);
       observer.disconnect();
     };

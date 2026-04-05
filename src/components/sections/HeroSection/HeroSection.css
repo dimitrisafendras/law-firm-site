@@ -24,20 +24,6 @@
   }
 }
 
-.hero-section__bg-img {
-  height: 100%;
-  width: auto;
-  display: block;
-}
-
-.hero-section__bg-overlay {
-  display: none;
-}
-
-.hero-section__matrix {
-  z-index: 0;
-  opacity: 1;
-}
 
 /* ─── Digital Lines ───────────────────────────────────────────────────────── */
 

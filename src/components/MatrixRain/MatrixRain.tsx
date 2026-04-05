@@ -5,6 +5,7 @@ interface MatrixRainProps {
 }
 
 const CHARS = '01';
+const TRAIL_LENGTH = 12;
 
 export function MatrixRain({ className = '' }: MatrixRainProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,54 +18,66 @@ export function MatrixRain({ className = '' }: MatrixRainProps) {
     if (!ctx) return;
 
     let animId: number;
-    const fontSize = 14;
-    let columns: number;
+    const fontSize = 10;
     let startCol: number;
     let endCol: number;
-    let drops: number[];
+    let drops: { y: number; speed: number; chars: string[] }[];
 
     function resize() {
       canvas!.width = canvas!.offsetWidth;
       canvas!.height = canvas!.offsetHeight;
-      columns = Math.floor(canvas!.width / fontSize);
-      // Rain from 30% to 65% of the canvas width (left side of statue)
-      startCol = Math.floor(columns * 0.30);
-      endCol = Math.floor(columns * 0.65);
+      const columns = Math.floor(canvas!.width / fontSize);
+      startCol = Math.floor(columns * 0.35);
+      endCol = Math.floor(columns * 0.55);
       const count = endCol - startCol;
-      drops = Array(count).fill(0).map(() => Math.random() * -80);
+      drops = Array.from({ length: count }, () => ({
+        y: Math.random() * -80,
+        speed: 0.2 + Math.random() * 0.3,
+        chars: Array.from({ length: TRAIL_LENGTH }, () => CHARS[Math.floor(Math.random() * CHARS.length)]),
+      }));
     }
 
     resize();
     window.addEventListener('resize', resize);
 
     function draw() {
-      ctx!.fillStyle = 'rgba(17, 19, 23, 0.04)';
-      ctx!.fillRect(0, 0, canvas!.width, canvas!.height);
-
+      ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
       ctx!.font = `${fontSize}px monospace`;
 
-      const count = endCol - startCol;
-      for (let i = 0; i < count; i++) {
-        const char = CHARS[Math.floor(Math.random() * CHARS.length)];
+      for (let i = 0; i < drops.length; i++) {
+        const drop = drops[i];
         const x = (startCol + i) * fontSize;
-        const y = drops[i] * fontSize;
 
-        // Bright baby blue
-        const opacity = 0.5 + Math.random() * 0.4;
-        ctx!.fillStyle = `rgba(137, 207, 240, ${opacity})`;
-        ctx!.fillText(char, x, y);
+        for (let j = 0; j < TRAIL_LENGTH; j++) {
+          const row = Math.floor(drop.y) - j;
+          if (row < 0) continue;
+          const yPx = row * fontSize;
+          if (yPx > canvas!.height) continue;
 
-        // Extra bright head character
-        if (Math.random() > 0.85) {
-          ctx!.fillStyle = 'rgba(188, 232, 255, 0.95)';
-          ctx!.fillText(char, x, y);
+          // Fade trail: head is brightest, tail fades out
+          const fade = 1 - j / TRAIL_LENGTH;
+          if (j === 0) {
+            ctx!.fillStyle = `rgba(188, 232, 255, ${0.9 * fade})`;
+          } else {
+            ctx!.fillStyle = `rgba(137, 207, 240, ${0.7 * fade})`;
+          }
+          ctx!.fillText(drop.chars[j], x, yPx);
         }
 
-        if (y > canvas!.height && Math.random() > 0.97) {
-          drops[i] = 0;
+        drop.y += drop.speed;
+
+        // Randomly swap a trail character
+        if (Math.random() > 0.92) {
+          const idx = Math.floor(Math.random() * TRAIL_LENGTH);
+          drop.chars[idx] = CHARS[Math.floor(Math.random() * CHARS.length)];
         }
-        // Slow speed
-        drops[i] += 0.2 + Math.random() * 0.3;
+
+        // Reset when fully off screen
+        const maxRow = canvas!.height / fontSize;
+        if (drop.y - TRAIL_LENGTH > maxRow && Math.random() > 0.97) {
+          drop.y = 0;
+          drop.speed = 0.2 + Math.random() * 0.3;
+        }
       }
 
       animId = requestAnimationFrame(draw);

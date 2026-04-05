@@ -98,7 +98,12 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       <div className="digital-statue__rain-wrap">
         <canvas ref={canvasRef} className="digital-statue__rain" aria-hidden="true" />
       </div>
-      <img src={statueImg} alt="" className="digital-statue__img" />
+      <img
+        src={statueImg}
+        alt=""
+        className="digital-statue__img"
+        onLoad={() => window.dispatchEvent(new Event('resize'))}
+      />
       <Sparkles speed={0.4} count={70} className="digital-statue__sparkles-wrap digital-statue__sparkles-body" />
       <Sparkles speed={0.4} count={20} className="digital-statue__sparkles-wrap digital-statue__sparkles-scale" />
       <DigitalFlame width={0.4} variant="blue" className="digital-statue__flame digital-statue__flame--left" />

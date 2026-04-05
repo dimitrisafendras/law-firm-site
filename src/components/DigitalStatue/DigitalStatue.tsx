@@ -22,7 +22,7 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
     if (!ctx) return;
 
     let animId: number;
-    const fontSize = 8;
+    const fontSize = 10;
     let startCol: number;
     let endCol: number;
     let startRow: number;
@@ -30,16 +30,17 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
     let drops: { y: number; speed: number; chars: string[] }[];
 
     function resize() {
-      const rect = container!.getBoundingClientRect();
+      const wrap = canvas!.parentElement!;
+      const rect = wrap.getBoundingClientRect();
       canvas!.width = rect.width;
       canvas!.height = rect.height;
 
       const columns = Math.floor(rect.width / fontSize);
       const rows = Math.floor(rect.height / fontSize);
 
-      // Rain on the left 40% of the container (the digital side of the statue)
+      // Rain fills the full canvas (which is already positioned over the digital side)
       startCol = 0;
-      endCol = Math.floor(columns * 0.40);
+      endCol = columns;
       startRow = 0;
       maxRow = rows;
 
@@ -104,7 +105,9 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
 
   return (
     <div ref={containerRef} className={`digital-statue ${className}`.trim()}>
-      <canvas ref={canvasRef} className="digital-statue__rain" aria-hidden="true" />
+      <div className="digital-statue__rain-wrap">
+        <canvas ref={canvasRef} className="digital-statue__rain" aria-hidden="true" />
+      </div>
       <img src={statueImg} alt="" className="digital-statue__img" />
     </div>
   );

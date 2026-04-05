@@ -4,7 +4,7 @@ interface MatrixRainProps {
   className?: string;
 }
 
-const CHARS = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+const CHARS = '01';
 
 export function MatrixRain({ className = '' }: MatrixRainProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,44 +19,52 @@ export function MatrixRain({ className = '' }: MatrixRainProps) {
     let animId: number;
     const fontSize = 14;
     let columns: number;
+    let startCol: number;
+    let endCol: number;
     let drops: number[];
 
     function resize() {
       canvas!.width = canvas!.offsetWidth;
       canvas!.height = canvas!.offsetHeight;
       columns = Math.floor(canvas!.width / fontSize);
-      drops = Array(columns).fill(0).map(() => Math.random() * -100);
+      // Rain from 30% to 65% of the canvas width (left side of statue)
+      startCol = Math.floor(columns * 0.30);
+      endCol = Math.floor(columns * 0.65);
+      const count = endCol - startCol;
+      drops = Array(count).fill(0).map(() => Math.random() * -80);
     }
 
     resize();
     window.addEventListener('resize', resize);
 
     function draw() {
-      ctx!.fillStyle = 'rgba(17, 19, 23, 0.06)';
+      ctx!.fillStyle = 'rgba(17, 19, 23, 0.04)';
       ctx!.fillRect(0, 0, canvas!.width, canvas!.height);
 
       ctx!.font = `${fontSize}px monospace`;
 
-      for (let i = 0; i < columns; i++) {
+      const count = endCol - startCol;
+      for (let i = 0; i < count; i++) {
         const char = CHARS[Math.floor(Math.random() * CHARS.length)];
-        const x = i * fontSize;
+        const x = (startCol + i) * fontSize;
         const y = drops[i] * fontSize;
 
-        // Baby blue with varying opacity
-        const opacity = 0.15 + Math.random() * 0.25;
+        // Bright baby blue
+        const opacity = 0.5 + Math.random() * 0.4;
         ctx!.fillStyle = `rgba(137, 207, 240, ${opacity})`;
         ctx!.fillText(char, x, y);
 
-        // Brighter head character
-        if (Math.random() > 0.95) {
-          ctx!.fillStyle = 'rgba(188, 232, 255, 0.6)';
+        // Extra bright head character
+        if (Math.random() > 0.85) {
+          ctx!.fillStyle = 'rgba(188, 232, 255, 0.95)';
           ctx!.fillText(char, x, y);
         }
 
-        if (y > canvas!.height && Math.random() > 0.98) {
+        if (y > canvas!.height && Math.random() > 0.97) {
           drops[i] = 0;
         }
-        drops[i] += 0.5 + Math.random() * 0.5;
+        // Slow speed
+        drops[i] += 0.2 + Math.random() * 0.3;
       }
 
       animId = requestAnimationFrame(draw);

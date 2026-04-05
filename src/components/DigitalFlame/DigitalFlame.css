@@ -1,0 +1,92 @@
+.digital-flame {
+  position: absolute;
+  pointer-events: none;
+}
+
+.digital-flame__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  filter: blur(1px);
+}
+
+.digital-flame__layer {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: flame-flicker var(--duration) ease-in-out infinite alternate;
+  opacity: var(--opacity);
+}
+
+/* Outer glow */
+.digital-flame__layer--outer {
+  --duration: 1.8s;
+  --opacity: 0.25;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 80%, rgba(137, 207, 240, 0.5), transparent 70%);
+  animation-name: flame-outer;
+}
+
+/* Mid layer */
+.digital-flame__layer--mid {
+  --duration: 1.4s;
+  --opacity: 0.5;
+  width: 70%;
+  height: 80%;
+  background: radial-gradient(ellipse at 50% 70%, rgba(188, 232, 255, 0.6), transparent 70%);
+  animation-name: flame-mid;
+  animation-delay: 0.1s;
+}
+
+/* Core */
+.digital-flame__layer--core {
+  --duration: 1s;
+  --opacity: 0.8;
+  width: 40%;
+  height: 60%;
+  background: radial-gradient(ellipse at 50% 60%, rgba(220, 245, 255, 0.9), rgba(188, 232, 255, 0.4) 60%, transparent 80%);
+  animation-name: flame-core;
+  animation-delay: 0.2s;
+}
+
+/* Sparks */
+.digital-flame__spark {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(220, 245, 255, 0.8);
+  animation: flame-spark var(--duration) ease-out infinite;
+  opacity: 0;
+}
+
+.digital-flame__spark:nth-child(1) { --duration: 2s; left: 40%; bottom: 50%; animation-delay: 0s; }
+.digital-flame__spark:nth-child(2) { --duration: 2.4s; left: 55%; bottom: 45%; animation-delay: 0.6s; }
+.digital-flame__spark:nth-child(3) { --duration: 1.8s; left: 35%; bottom: 55%; animation-delay: 1.2s; }
+
+@keyframes flame-outer {
+  0% { transform: translateX(-50%) scaleX(1) scaleY(1); opacity: 0.2; }
+  50% { transform: translateX(-48%) scaleX(1.1) scaleY(1.05); opacity: 0.3; }
+  100% { transform: translateX(-52%) scaleX(0.95) scaleY(1.1); opacity: 0.2; }
+}
+
+@keyframes flame-mid {
+  0% { transform: translateX(-50%) scaleX(1) scaleY(1); opacity: 0.45; }
+  50% { transform: translateX(-52%) scaleX(1.1) scaleY(1.08); opacity: 0.55; }
+  100% { transform: translateX(-48%) scaleX(0.9) scaleY(1.12); opacity: 0.4; }
+}
+
+@keyframes flame-core {
+  0% { transform: translateX(-50%) scaleX(1) scaleY(1); opacity: 0.7; }
+  50% { transform: translateX(-50%) scaleX(1.15) scaleY(0.95); opacity: 0.9; }
+  100% { transform: translateX(-50%) scaleX(0.85) scaleY(1.1); opacity: 0.75; }
+}
+
+@keyframes flame-spark {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  20% { opacity: 0.9; }
+  100% { transform: translate(calc(var(--dx, 5px)), -30px) scale(0); opacity: 0; }
+}

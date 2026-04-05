@@ -51,3 +51,11 @@
   height: 19%;
   border-radius: 50%;
 }
+
+/* Flame in the left scale basket */
+.digital-statue__flame {
+  top: 28%;
+  left: 64%;
+  width: 10%;
+  height: 14%;
+}

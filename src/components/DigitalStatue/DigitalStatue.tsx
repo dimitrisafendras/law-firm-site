@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Sparkles } from '@/components/Sparkles/Sparkles';
+import { DigitalFlame } from '@/components/DigitalFlame/DigitalFlame';
 import statueImg from '@/assets/images/hero-acropolis.png';
 import './DigitalStatue.css';
 
@@ -100,6 +101,7 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       <img src={statueImg} alt="" className="digital-statue__img" />
       <Sparkles speed={0.4} count={70} className="digital-statue__sparkles-wrap digital-statue__sparkles-body" />
       <Sparkles speed={0.4} count={20} className="digital-statue__sparkles-wrap digital-statue__sparkles-scale" />
+      <DigitalFlame className="digital-statue__flame" />
     </div>
   );
 }

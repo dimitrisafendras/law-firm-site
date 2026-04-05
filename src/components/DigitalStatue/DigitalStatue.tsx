@@ -1,125 +1,191 @@
 import { useEffect, useRef } from 'react';
-import { Sparkles } from '@/components/Sparkles/Sparkles';
-import { DigitalFlame } from '@/components/DigitalFlame/DigitalFlame';
-import { registerDraw } from './animationLoop';
 import statueImg from '@/assets/images/hero-acropolis.png';
+import RainWorkerUrl from './rainWorker.ts?worker&url';
+import SparkleWorkerUrl from './sparkleWorker.ts?worker&url';
+import FlameWorkerUrl from './flameWorker.ts?worker&url';
 import './DigitalStatue.css';
 
-const CHARS = '01';
-const TRAIL_LENGTH = 12;
+// ── Pre-render rain sprite sheet (main thread, once) ─────────────────────────
+const FONT_SIZE = 10;
+const TRAIL = 12;
+const CELL = FONT_SIZE + 2;
 
-// Pre-compute rain fill styles (avoids template literal in hot loop)
-const RAIN_COLORS: string[] = [];
-for (let j = 0; j < TRAIL_LENGTH; j++) {
-  const fade = 1 - j / TRAIL_LENGTH;
-  RAIN_COLORS[j] = j === 0
-    ? `rgba(188,232,255,${(0.9 * fade).toFixed(3)})`
-    : `rgba(137,207,240,${(0.7 * fade).toFixed(3)})`;
+function createRainSprite(): Promise<ImageBitmap> {
+  const c = document.createElement('canvas');
+  c.width = CELL * 2;
+  c.height = CELL * TRAIL;
+  const ctx = c.getContext('2d')!;
+  ctx.font = `${FONT_SIZE}px monospace`;
+  ctx.textBaseline = 'top';
+  for (let j = 0; j < TRAIL; j++) {
+    const fade = 1 - j / TRAIL;
+    ctx.fillStyle = j === 0
+      ? `rgba(188,232,255,${(0.9 * fade).toFixed(3)})`
+      : `rgba(137,207,240,${(0.7 * fade).toFixed(3)})`;
+    ctx.fillText('0', 0, j * CELL);
+    ctx.fillText('1', CELL, j * CELL);
+  }
+  return createImageBitmap(c);
 }
 
-interface DigitalStatueProps {
-  className?: string;
+// ── Pre-render star sprite (main thread, once) ───────────────────────────────
+function createStarSprite(): Promise<ImageBitmap> {
+  const SIZE = 32;
+  const c = document.createElement('canvas');
+  c.width = SIZE; c.height = SIZE;
+  const ctx = c.getContext('2d')!;
+  const cx = SIZE / 2, r = SIZE / 2;
+
+  ctx.beginPath(); ctx.arc(cx, cx, r, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(188,232,255,0.1)'; ctx.fill();
+
+  ctx.fillStyle = 'rgba(220,245,255,0.9)';
+  const s = r * 0.25, l = r * 0.9;
+  ctx.beginPath(); ctx.moveTo(cx, cx - l); ctx.lineTo(cx + s, cx - s); ctx.lineTo(cx, cx); ctx.lineTo(cx - s, cx - s); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(cx, cx + l); ctx.lineTo(cx + s, cx + s); ctx.lineTo(cx, cx); ctx.lineTo(cx - s, cx + s); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(cx - l, cx); ctx.lineTo(cx - s, cx + s); ctx.lineTo(cx, cx); ctx.lineTo(cx - s, cx - s); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(cx + l, cx); ctx.lineTo(cx + s, cx - s); ctx.lineTo(cx, cx); ctx.lineTo(cx + s, cx + s); ctx.closePath(); ctx.fill();
+
+  ctx.beginPath(); ctx.arc(cx, cx, r * 0.15, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,1)'; ctx.fill();
+
+  return createImageBitmap(c);
 }
+
+// ── Helper: create worker + transfer canvas ──────────────────────────────────
+function spawnWorker(
+  url: string,
+  canvas: HTMLCanvasElement,
+  initMsg: Record<string, unknown>,
+): Worker | null {
+  try {
+    // Set canvas pixel dimensions to match its CSS container BEFORE transferring
+    const wrap = canvas.parentElement!;
+    const rect = wrap.getBoundingClientRect();
+    const w = Math.round(rect.width);
+    const h = Math.round(rect.height);
+    canvas.width = w;
+    canvas.height = h;
+
+    const offscreen = canvas.transferControlToOffscreen();
+    const worker = new Worker(url, { type: 'module' });
+    worker.postMessage({ type: 'init', canvas: offscreen, width: w, height: h, ...initMsg }, [offscreen]);
+    return worker;
+  } catch {
+    return null;
+  }
+}
+
+interface DigitalStatueProps { className?: string }
 
 export function DigitalStatue({ className = '' }: DigitalStatueProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const visibleRef = useRef(true);
+  const rainRef = useRef<HTMLCanvasElement>(null);
+  const spkBodyRef = useRef<HTMLCanvasElement>(null);
+  const spkScaleRef = useRef<HTMLCanvasElement>(null);
+  const flameLRef = useRef<HTMLCanvasElement>(null);
+  const flameRRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const container = containerRef.current;
-    if (!canvas || !container) return;
+    if (!container) return;
 
-    const ctx = canvas.getContext('2d')!;
-    const fontSize = 10;
-    let endCol: number;
-    let maxRow: number;
-    let drops: { y: number; speed: number; chars: string[] }[];
+    const workers: Worker[] = [];
+    let observer: IntersectionObserver | null = null;
+    let cancelled = false;
 
-    function resize() {
-      const wrap = canvas!.parentElement!;
-      const rect = wrap.getBoundingClientRect();
-      canvas!.width = rect.width;
-      canvas!.height = rect.height;
+    async function start() {
+      const rect = container!.getBoundingClientRect();
+      const W = rect.width, H = rect.height;
+      if (W === 0 || H === 0 || cancelled) return;
 
-      const columns = Math.floor(rect.width / fontSize);
-      endCol = columns;
-      maxRow = Math.floor(rect.height / fontSize);
+      // Pre-render sprites on main thread
+      const [rainSprite, starSprite] = await Promise.all([createRainSprite(), createStarSprite()]);
+      if (cancelled) return;
 
-      drops = Array.from({ length: Math.max(1, endCol) }, () => ({
-        y: Math.random() * -30,
-        speed: 0.1 + Math.random() * 0.15,
-        chars: Array.from({ length: TRAIL_LENGTH }, () => CHARS[(Math.random() * 2) | 0]),
-      }));
-    }
-
-    resize();
-    window.addEventListener('resize', resize);
-
-    function draw() {
-      if (!visibleRef.current) return;
-
-      ctx.clearRect(0, 0, canvas!.width, canvas!.height);
-      ctx.font = `${fontSize}px monospace`;
-
-      for (let i = 0; i < endCol; i++) {
-        const drop = drops[i];
-        const x = i * fontSize;
-
-        for (let j = 0; j < TRAIL_LENGTH; j++) {
-          const row = (drop.y | 0) - j;
-          if (row < 0) continue;
-          const yPx = row * fontSize;
-          if (yPx > canvas!.height) continue;
-
-          ctx.fillStyle = RAIN_COLORS[j];
-          ctx.fillText(drop.chars[j], x, yPx);
-        }
-
-        drop.y += drop.speed;
-
-        if (Math.random() > 0.92) {
-          drop.chars[(Math.random() * TRAIL_LENGTH) | 0] = CHARS[(Math.random() * 2) | 0];
-        }
-        if (drop.y - TRAIL_LENGTH > maxRow && Math.random() > 0.97) {
-          drop.y = 0;
-          drop.speed = 0.1 + Math.random() * 0.15;
-        }
+      // Rain worker
+      if (rainRef.current) {
+        const w = spawnWorker(RainWorkerUrl, rainRef.current, { sprite: rainSprite });
+        if (w) workers.push(w);
       }
+
+      // Sparkle body worker
+      if (spkBodyRef.current) {
+        const w = spawnWorker(SparkleWorkerUrl, spkBodyRef.current, { sprite: starSprite, count: 70, speed: 0.2 });
+        if (w) workers.push(w);
+      }
+
+      // Sparkle scale worker
+      if (spkScaleRef.current) {
+        const w = spawnWorker(SparkleWorkerUrl, spkScaleRef.current, { sprite: starSprite, count: 20, speed: 0.2 });
+        if (w) workers.push(w);
+      }
+
+      // Flame left worker
+      if (flameLRef.current) {
+        const w = spawnWorker(FlameWorkerUrl, flameLRef.current, { wMul: 0.4, hMul: 1,
+          colors: { hot: '220,245,255', mid: '137,207,240', outer: '137,207,240', glow: '137,207,240' },
+        });
+        if (w) workers.push(w);
+      }
+
+      // Flame right worker
+      if (flameRRef.current) {
+        const w = spawnWorker(FlameWorkerUrl, flameRRef.current, {
+          wMul: 0.4, hMul: 1,
+          colors: { hot: '255,240,200', mid: '255,180,80', outer: '255,120,40', glow: '255,160,60' },
+        });
+        if (w) workers.push(w);
+      }
+
+      // Visibility observer — pause/resume all workers
+      observer = new IntersectionObserver(([entry]) => {
+        for (const w of workers) w.postMessage({ type: 'visibility', visible: entry.isIntersecting });
+      }, { threshold: 0 });
+      observer.observe(container!);
     }
 
-    const unregister = registerDraw(draw);
-
-    // Pause when hero scrolls off-screen
-    const observer = new IntersectionObserver(
-      ([entry]) => { visibleRef.current = entry.isIntersecting; },
-      { threshold: 0 },
-    );
-    observer.observe(container);
+    // Start after image loads (onLoad triggers resize → start)
+    start();
 
     return () => {
-      unregister();
-      window.removeEventListener('resize', resize);
-      observer.disconnect();
+      cancelled = true;
+      observer?.disconnect();
+      for (const w of workers) w.terminate();
     };
   }, []);
 
   return (
     <div ref={containerRef} className={`digital-statue ${className}`.trim()}>
+      {/* Back layer: rain + flames (behind statue) */}
       <div className="digital-statue__rain-wrap">
-        <canvas ref={canvasRef} className="digital-statue__rain" aria-hidden="true" />
+        <canvas ref={rainRef} className="digital-statue__rain" />
       </div>
+
       <img
         src={statueImg}
         alt=""
         className="digital-statue__img"
         onLoad={() => window.dispatchEvent(new Event('resize'))}
       />
-      <Sparkles speed={0.4} count={70} className="digital-statue__sparkles-wrap digital-statue__sparkles-body" />
-      <Sparkles speed={0.4} count={20} className="digital-statue__sparkles-wrap digital-statue__sparkles-scale" />
-      <DigitalFlame width={0.4} variant="blue" className="digital-statue__flame digital-statue__flame--left" />
-      <DigitalFlame width={0.4} variant="warm" className="digital-statue__flame digital-statue__flame--right" />
+
+      {/* Front layer: sparkles (on top of statue) */}
+      <div className="digital-statue__sparkles-wrap digital-statue__sparkles-body">
+        <canvas ref={spkBodyRef} className="digital-statue__sparkle-canvas" />
+      </div>
+      <div className="digital-statue__sparkles-wrap digital-statue__sparkles-scale">
+        <canvas ref={spkScaleRef} className="digital-statue__sparkle-canvas" />
+      </div>
+
+      {/* Flames (behind statue, inside back layer z-index) */}
+      <div className="digital-statue__flame digital-statue__flame--left">
+        <canvas ref={flameLRef} className="digital-statue__flame-canvas" />
+      </div>
+      <div className="digital-statue__flame digital-statue__flame--right">
+        <canvas ref={flameRRef} className="digital-statue__flame-canvas" />
+      </div>
     </div>
   );
 }

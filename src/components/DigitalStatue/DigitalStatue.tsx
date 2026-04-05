@@ -98,8 +98,8 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
         <canvas ref={canvasRef} className="digital-statue__rain" aria-hidden="true" />
       </div>
       <img src={statueImg} alt="" className="digital-statue__img" />
-      <Sparkles count={20} className="digital-statue__sparkles-wrap digital-statue__sparkles-body" />
-      <Sparkles count={10} className="digital-statue__sparkles-wrap digital-statue__sparkles-scale" />
+      <Sparkles speed={0.3} count={40} className="digital-statue__sparkles-wrap digital-statue__sparkles-body" />
+      <Sparkles speed={0.4} count={20} className="digital-statue__sparkles-wrap digital-statue__sparkles-scale" />
     </div>
   );
 }

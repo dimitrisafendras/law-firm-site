@@ -3,6 +3,12 @@ import { useEffect, useRef } from 'react';
 interface SparklesProps {
   /** Number of sparkles */
   count?: number;
+  /** Min size of sparkle (default 0.5) */
+  minSize?: number;
+  /** Max size of sparkle (default 1.7) */
+  maxSize?: number;
+  /** Fade speed multiplier — higher = faster pulse (default 1) */
+  speed?: number;
   /** CSS class for the wrapper div (use to position & size) */
   className?: string;
 }
@@ -15,18 +21,6 @@ interface Sparkle {
   fadeSpeed: number;
   delay: number;
   age: number;
-}
-
-function randomSparkle(): Sparkle {
-  return {
-    x: Math.random(),
-    y: Math.random(),
-    size: 1 + Math.random() * 2.5,
-    opacity: 0,
-    fadeSpeed: 0.005 + Math.random() * 0.015,
-    delay: Math.random() * 200,
-    age: 0,
-  };
 }
 
 function drawStar(ctx: CanvasRenderingContext2D, px: number, py: number, r: number, opacity: number) {
@@ -81,7 +75,7 @@ function drawStar(ctx: CanvasRenderingContext2D, px: number, py: number, r: numb
   ctx.restore();
 }
 
-export function Sparkles({ count = 20, className = '' }: SparklesProps) {
+export function Sparkles({ count = 20, minSize = 0.5, maxSize = 1.7, speed = 1, className = '' }: SparklesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -94,12 +88,24 @@ export function Sparkles({ count = 20, className = '' }: SparklesProps) {
     let animId: number;
     let sparkles: Sparkle[] = [];
 
+    function makeSparkle(): Sparkle {
+      return {
+        x: Math.random(),
+        y: Math.random(),
+        size: minSize + Math.random() * (maxSize - minSize),
+        opacity: 0,
+        fadeSpeed: (0.015 + Math.random() * 0.03) * speed,
+        delay: Math.random() * 80,
+        age: 0,
+      };
+    }
+
     function resize() {
       const wrap = canvas!.parentElement!;
       const rect = wrap.getBoundingClientRect();
       canvas!.width = rect.width;
       canvas!.height = rect.height;
-      sparkles = Array.from({ length: count }, randomSparkle);
+      sparkles = Array.from({ length: count }, makeSparkle);
     }
 
     resize();
@@ -118,7 +124,7 @@ export function Sparkles({ count = 20, className = '' }: SparklesProps) {
           s.fadeSpeed = -Math.abs(s.fadeSpeed);
         }
         if (s.opacity <= 0) {
-          Object.assign(s, randomSparkle());
+          Object.assign(s, makeSparkle());
           continue;
         }
 
@@ -133,11 +139,11 @@ export function Sparkles({ count = 20, className = '' }: SparklesProps) {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
     };
-  }, [count]);
+  }, [count, minSize, maxSize, speed]);
 
   return (
-    <div className={className} style={{ overflow: 'hidden' }}>
-      <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} aria-hidden="true" />
+    <div className={className} style={{ overflow: 'hidden', position: 'absolute' }}>
+      <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, display: 'block' }} aria-hidden="true" />
     </div>
   );
 }

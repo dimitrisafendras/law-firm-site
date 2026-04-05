@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { FadeInSection } from '@/components/animations/FadeInSection';
+import { MatrixRain } from '@/components/MatrixRain/MatrixRain';
 import heroBg from '@/assets/images/hero-acropolis.png';
 import './HeroSection.css';
 
@@ -8,6 +9,7 @@ export function HeroSection() {
 
   return (
     <header className="hero-section">
+      <MatrixRain className="hero-section__matrix" />
       <div className="hero-section__bg">
         <img src={heroBg} alt="" className="hero-section__bg-img" />
         <div className="hero-section__bg-overlay" />

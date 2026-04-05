@@ -101,8 +101,8 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       <img src={statueImg} alt="" className="digital-statue__img" />
       <Sparkles speed={0.4} count={70} className="digital-statue__sparkles-wrap digital-statue__sparkles-body" />
       <Sparkles speed={0.4} count={20} className="digital-statue__sparkles-wrap digital-statue__sparkles-scale" />
-      <DigitalFlame variant="blue" className="digital-statue__flame digital-statue__flame--left" />
-      <DigitalFlame variant="warm" className="digital-statue__flame digital-statue__flame--right" />
+      <DigitalFlame width={0.4} variant="blue" className="digital-statue__flame digital-statue__flame--left" />
+      <DigitalFlame width={0.4} variant="warm" className="digital-statue__flame digital-statue__flame--right" />
     </div>
   );
 }

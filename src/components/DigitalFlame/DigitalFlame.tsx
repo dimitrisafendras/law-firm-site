@@ -5,6 +5,10 @@ interface DigitalFlameProps {
   className?: string;
   /** 'blue' for digital flame, 'warm' for traditional flame */
   variant?: 'blue' | 'warm';
+  /** Flame height multiplier (default 1) */
+  height?: number;
+  /** Flame width multiplier (default 1) */
+  width?: number;
 }
 
 interface Particle {
@@ -32,19 +36,19 @@ const COLORS = {
   },
 };
 
-function createParticle(w: number, h: number): Particle {
+function createParticle(w: number, h: number, wScale: number, hScale: number): Particle {
   return {
-    x: w * 0.5 + (Math.random() - 0.5) * w * 0.3,
+    x: w * 0.5 + (Math.random() - 0.5) * w * 0.3 * wScale,
     y: h * 0.85 + Math.random() * h * 0.1,
-    vx: (Math.random() - 0.5) * 0.4,
-    vy: -(0.5 + Math.random() * 1.2),
-    size: 2 + Math.random() * 4,
+    vx: (Math.random() - 0.5) * 0.4 * wScale,
+    vy: -(0.5 + Math.random() * 1.2) * hScale,
+    size: (2 + Math.random() * 4) * Math.max(wScale, hScale),
     life: 0,
-    maxLife: 30 + Math.random() * 40,
+    maxLife: (30 + Math.random() * 40) * hScale,
   };
 }
 
-export function DigitalFlame({ className = '', variant = 'blue' }: DigitalFlameProps) {
+export function DigitalFlame({ className = '', variant = 'blue', height: hMul = 1, width: wMul = 1 }: DigitalFlameProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -74,10 +78,11 @@ export function DigitalFlame({ className = '', variant = 'blue' }: DigitalFlameP
 
       ctx!.clearRect(0, 0, w, h);
 
-      // Spawn particles
-      if (particles.length < 50) {
-        particles.push(createParticle(w, h));
-        if (Math.random() > 0.5) particles.push(createParticle(w, h));
+      // Always spawn 2-3 particles per frame to keep the flame alive
+      for (let s = 0; s < 3; s++) {
+        if (particles.length < 60) {
+          particles.push(createParticle(w, h, wMul, hMul));
+        }
       }
 
       for (let i = particles.length - 1; i >= 0; i--) {
@@ -87,11 +92,11 @@ export function DigitalFlame({ className = '', variant = 'blue' }: DigitalFlameP
         p.y += p.vy;
         p.vy *= 0.98;
         p.vx *= 0.99;
-        p.size *= 0.985;
+        p.size *= 0.988;
 
         const progress = p.life / p.maxLife;
 
-        if (progress >= 1 || p.size < 0.3) {
+        if (progress >= 1 || p.size < 0.2) {
           particles.splice(i, 1);
           continue;
         }
@@ -132,7 +137,7 @@ export function DigitalFlame({ className = '', variant = 'blue' }: DigitalFlameP
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
     };
-  }, [variant]);
+  }, [variant, hMul, wMul]);
 
   return (
     <div className={`digital-flame ${className}`.trim()} aria-hidden="true">

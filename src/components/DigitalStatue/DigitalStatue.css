@@ -70,15 +70,15 @@
 }
 
 .digital-statue__flame--left {
-  top: 27%;
-  left: 64%;
-  width: 10%;
-  height: 14%;
+  width: 15%;
+  height: 10%;
+  top: 32%;
+  left: 61%;
 }
 
 .digital-statue__flame--right {
-  top: 27%;
-  left: 80%;
-  width: 10%;
-  height: 14%;
+  top: 32%;
+  left: 79%;
+  width: 15%;
+  height: 10%;
 }

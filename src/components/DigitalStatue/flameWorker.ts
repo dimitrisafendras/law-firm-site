@@ -16,8 +16,6 @@ let wMul = 1, hMul = 1;
 let hotColor = '220,245,255';
 let midColor = '137,207,240';
 let outerColor = '137,207,240';
-let glowColor = '137,207,240';
-let glowGrad: CanvasGradient | null = null;
 
 function resetP(p: Particle) {
   p.x = cw * 0.5 + (Math.random() - 0.5) * cw * 0.3 * wMul;
@@ -28,13 +26,6 @@ function resetP(p: Particle) {
   p.life = 0;
   p.maxLife = (30 + Math.random() * 40) * hMul;
   p.alive = true;
-}
-
-function buildGrad() {
-  if (!ctx) return;
-  glowGrad = ctx.createRadialGradient(cw * 0.5, ch * 0.8, 0, cw * 0.5, ch * 0.8, cw * 0.4);
-  glowGrad.addColorStop(0, `rgba(${glowColor},0.15)`);
-  glowGrad.addColorStop(1, `rgba(${glowColor},0)`);
 }
 
 function draw() {
@@ -73,11 +64,6 @@ function draw() {
     ctx.fill();
   }
 
-  if (glowGrad) {
-    ctx.fillStyle = glowGrad;
-    ctx.fillRect(0, 0, cw, ch);
-  }
-
   requestAnimationFrame(draw);
 }
 
@@ -95,12 +81,10 @@ self.onmessage = (e: MessageEvent) => {
       hotColor = e.data.colors.hot;
       midColor = e.data.colors.mid;
       outerColor = e.data.colors.outer;
-      glowColor = e.data.colors.glow;
     }
     particles = Array.from({ length: MAX }, () => ({
       x: 0, y: 0, vx: 0, vy: 0, size: 0, life: 0, maxLife: 1, alive: false,
     }));
-    buildGrad();
     requestAnimationFrame(draw);
   }
 
@@ -109,7 +93,6 @@ self.onmessage = (e: MessageEvent) => {
     ch = e.data.height;
     canvas.width = cw;
     canvas.height = ch;
-    buildGrad();
   }
 
   if (type === 'visibility') {

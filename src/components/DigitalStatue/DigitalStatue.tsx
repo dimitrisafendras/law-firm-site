@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import statueImg from '@/assets/images/hero-acropolis.png';
+import statueImg from '@/assets/images/hero-statue.png';
 import RainWorkerUrl from './rainWorker.ts?worker&url';
 import SparkleWorkerUrl from './sparkleWorker.ts?worker&url';
 import FlameWorkerUrl from './flameWorker.ts?worker&url';

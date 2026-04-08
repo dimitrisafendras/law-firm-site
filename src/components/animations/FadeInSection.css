@@ -45,6 +45,27 @@
 .stagger-group > .fade-section:nth-child(5) { --fade-delay: calc(var(--stagger-interval, 0.12s) * 4); }
 .stagger-group > .fade-section:nth-child(6) { --fade-delay: calc(var(--stagger-interval, 0.12s) * 5); }
 
+/* ─── Mobile: soften all animations ───────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .fade-section--fade-up {
+    transform: translateY(20px);
+  }
+
+  .fade-section--fade-left,
+  .fade-section--fade-right {
+    transform: translateY(20px);
+  }
+
+  .fade-section--scale {
+    transform: scale(0.98);
+  }
+
+  .fade-section {
+    transition-duration: 0.5s;
+  }
+}
+
 /* ─── Reduce motion ────────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {

@@ -36,6 +36,10 @@ export function TestimonialsSection() {
     totalSlides,
     itemCount,
     currentIndex,
+    realIndex,
+    next,
+    prev,
+    goToReal,
     pause,
     resume,
   } = useCarousel({
@@ -89,7 +93,7 @@ export function TestimonialsSection() {
                     role="group"
                     aria-roledescription="slide"
                     aria-label={`${realIndex + 1} of ${itemCount}`}
-                    style={{ flex: `0 0 calc(100% / ${visibleCount})` }}
+                    style={{ width: `calc(100% / ${visibleCount})` }}
                   >
                     <TestimonialCard
                       quote={item.quote}
@@ -100,6 +104,25 @@ export function TestimonialsSection() {
                 );
               })}
             </div>
+          </div>
+
+          <div className="testimonials-carousel__controls">
+            <button className="testimonials-carousel__btn" onClick={prev} aria-label="Previous testimonial">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+            <div className="testimonials-carousel__dots">
+              {testimonials.map((_, i) => (
+                <button
+                  key={i}
+                  className={`testimonials-carousel__dot${i === realIndex ? ' testimonials-carousel__dot--active' : ''}`}
+                  onClick={() => goToReal(i)}
+                  aria-label={`Go to testimonial ${i + 1}`}
+                />
+              ))}
+            </div>
+            <button className="testimonials-carousel__btn" onClick={next} aria-label="Next testimonial">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
           </div>
         </FadeInSection>
       </div>

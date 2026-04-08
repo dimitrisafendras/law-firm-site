@@ -42,6 +42,8 @@ export function useCarousel({
   );
 
   const next = useCallback(() => goTo(current + 1), [current, goTo]);
+  const prev = useCallback(() => goTo(current - 1), [current, goTo]);
+  const goToReal = useCallback((realIndex: number) => goTo(startIndex + realIndex), [startIndex, goTo]);
 
   /* After a CSS transition ends, check if we need to teleport */
   useEffect(() => {
@@ -91,6 +93,10 @@ export function useCarousel({
     totalSlides,
     itemCount,
     currentIndex: current,
+    realIndex: ((current - startIndex) % itemCount + itemCount) % itemCount,
+    next,
+    prev,
+    goToReal,
     pause,
     resume,
   };

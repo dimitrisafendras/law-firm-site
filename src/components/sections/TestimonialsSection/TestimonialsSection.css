@@ -24,7 +24,7 @@
 .testimonials-carousel {
   overflow: hidden;
   margin: 0 -48px;
-  padding: 24px 0;
+  padding: 16px 0;
 
   @media (max-width: 1024px) {
     margin: 0 -16px;
@@ -33,13 +33,16 @@
 
 .testimonials-carousel__track {
   display: flex;
+  align-items: stretch;
   will-change: transform;
 }
 
 .testimonials-carousel__slide {
-  min-width: 0;
   padding: 0 12px;
   box-sizing: border-box;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
   transition: opacity 0.5s ease, transform 0.5s ease;
   opacity: 0.55;
   transform: scale(0.97);
@@ -58,6 +61,56 @@
 .testimonials-carousel__slide--active .testimonial-card {
   border-left-width: 4px;
   border-left-color: var(--accent);
+}
+
+/* ── Controls: prev / dots / next ───────────────────────────────────────────── */
+
+.testimonials-carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.testimonials-carousel__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.25s ease;
+}
+
+.testimonials-carousel__btn:hover {
+  opacity: 1;
+}
+
+.testimonials-carousel__dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.testimonials-carousel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  opacity: 0.25;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.testimonials-carousel__dot--active {
+  opacity: 1;
+  transform: scale(1.3);
 }
 
 /* Respect reduced-motion preferences */

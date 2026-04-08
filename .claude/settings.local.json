@@ -15,7 +15,9 @@
       "Bash(npm install:*)",
       "Bash(node -e ':*)",
       "Bash(npx tsc:*)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(curl -s http://localhost:5173/law-firm-site/)",
+      "Bash(npx vite:*)"
     ]
   }
 }

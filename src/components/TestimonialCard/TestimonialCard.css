@@ -16,6 +16,10 @@
   line-height: 145%;
   color: var(--text-h);
   margin: 0 0 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .testimonial-card__quote::before {

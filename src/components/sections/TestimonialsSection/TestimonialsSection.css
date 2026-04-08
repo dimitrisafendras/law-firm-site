@@ -63,6 +63,23 @@
   border-left-color: var(--accent);
 }
 
+/* Hovered slide: expand to show full text */
+.testimonials-carousel__slide:hover {
+  opacity: 1;
+  transform: scale(1.05);
+  z-index: 2;
+}
+
+.testimonials-carousel__slide:hover .testimonial-card {
+  border-left-width: 4px;
+  border-left-color: var(--accent);
+}
+
+.testimonials-carousel__slide:hover .testimonial-card__quote {
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
 /* ── Controls: prev / dots / next ───────────────────────────────────────────── */
 
 .testimonials-carousel__controls {

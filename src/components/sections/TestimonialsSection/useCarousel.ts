@@ -28,7 +28,7 @@ export function useCarousel({
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
+  const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
 
   /* Centre offset: the centred card is the middle of the visible window */
   const centerOffset = Math.floor(visibleCount / 2);

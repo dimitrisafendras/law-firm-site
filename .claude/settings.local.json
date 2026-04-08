@@ -8,7 +8,13 @@
       "Bash(npm run:*)",
       "Bash(/tmp/process_image5.py:*)",
       "Bash(/tmp/process_image6.py:*)",
-      "Bash(/tmp/process_final.py:*)"
+      "Bash(/tmp/process_final.py:*)",
+      "Bash(npx sharp-cli:*)",
+      "Bash(python3 -c \"from PIL import Image; i=Image.open\\('src/assets/images/hero-statue.png'\\); print\\(f'{i.size[0]}x{i.size[1]}, mode={i.mode}'\\)\")",
+      "Bash(identify src/assets/images/hero-statue.png)",
+      "Bash(npm install:*)",
+      "Bash(node -e ':*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

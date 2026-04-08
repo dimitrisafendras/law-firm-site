@@ -1,5 +1,11 @@
 /* Base styles — CSS variable declarations are generated from src/theme/tokens.ts */
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;

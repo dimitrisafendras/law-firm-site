@@ -1,11 +1,11 @@
 .partner-ethos {
   position: relative;
   overflow: hidden;
-  padding: 128px 0;
+  padding: 100px 0;
   background: var(--grad-2);
 
   @media (max-width: 1024px) {
-    padding: 64px 0;
+    padding: 40px 0;
   }
 }
 

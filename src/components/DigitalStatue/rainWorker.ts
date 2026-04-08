@@ -23,7 +23,7 @@ const CELL = FONT_SIZE + 2;
 function initDrops() {
   drops = Array.from({ length: Math.max(1, endCol) }, () => ({
     y: Math.random() * -30,
-    speed: 0.05 + Math.random() * 0.08,
+    speed: 0.015 + Math.random() * 0.025,
     chars: Array.from({ length: TRAIL }, () => CHARS[(Math.random() * 2) | 0]),
   }));
 }
@@ -40,10 +40,8 @@ function draw() {
       const x = i * FONT_SIZE;
 
       for (let j = 0; j < TRAIL; j++) {
-        const row = (drop.y | 0) - j;
-        if (row < 0) continue;
-        const yPx = row * FONT_SIZE;
-        if (yPx > ch) continue;
+        const yPx = (drop.y - j) * FONT_SIZE;
+        if (yPx < -CELL || yPx > ch) continue;
 
         const charIdx = drop.chars[j] === '1' ? 1 : 0;
         ctx.globalAlpha = ALPHAS[j];
@@ -57,7 +55,7 @@ function draw() {
       }
       if (drop.y - TRAIL > maxRow && Math.random() > 0.97) {
         drop.y = 0;
-        drop.speed = 0.1 + Math.random() * 0.15;
+        drop.speed = 0.02 + Math.random() * 0.03;
       }
     }
     ctx.globalAlpha = 1;
@@ -69,10 +67,8 @@ function draw() {
       const x = i * FONT_SIZE;
 
       for (let j = 0; j < TRAIL; j++) {
-        const row = (drop.y | 0) - j;
-        if (row < 0) continue;
-        const yPx = row * FONT_SIZE;
-        if (yPx > ch) continue;
+        const yPx = (drop.y - j) * FONT_SIZE;
+        if (yPx < -CELL || yPx > ch) continue;
 
         const fade = 1 - j / TRAIL;
         ctx.fillStyle = j === 0
@@ -88,7 +84,7 @@ function draw() {
       }
       if (drop.y - TRAIL > maxRow && Math.random() > 0.97) {
         drop.y = 0;
-        drop.speed = 0.1 + Math.random() * 0.15;
+        drop.speed = 0.02 + Math.random() * 0.03;
       }
     }
   }

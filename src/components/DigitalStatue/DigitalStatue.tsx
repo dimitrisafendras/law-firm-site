@@ -168,10 +168,10 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
 
   return (
     <div ref={containerRef} className={`digital-statue ${className}`.trim()}>
-      {/* Back layer: rain + flames (behind statue) */}
-      {/*<div className="digital-statue__rain-wrap">*/}
-      {/*  <canvas ref={rainRef} className="digital-statue__rain" />*/}
-      {/*</div>*/}
+       {/*Back layer: rain + flames (behind statue)*/}
+      <div className="digital-statue__rain-wrap">
+        <canvas ref={rainRef} className="digital-statue__rain" />
+      </div>
 
       <img
         src={statueImg}

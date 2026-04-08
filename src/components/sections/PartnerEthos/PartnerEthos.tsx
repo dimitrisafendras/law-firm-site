@@ -3,6 +3,7 @@ import { FadeInSection } from '@/components/animations/FadeInSection';
 import partnerMaleImg from '@/assets/images/partner-male.jpg';
 import partnerFemaleImg from '@/assets/images/partner-female.jpg';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
+import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import './PartnerEthos.css';
 
 export function PartnerEthos() {
@@ -12,6 +13,15 @@ export function PartnerEthos() {
     <section id="team" className="partner-ethos">
       <CircuitLines variant="a" />
       <div className="partner-ethos__inner">
+        <FadeInSection variant="fade-up">
+          <SectionHeader
+            overline={t('teamOverline')}
+            title={t('teamTitle')}
+            subtitle={t('teamSubtitle')}
+            label="Section 02 / Team"
+          />
+        </FadeInSection>
+
         <div className="partner-ethos__profiles">
           {/* Partner 1 — image left, text right */}
           <div className="partner-ethos__row">

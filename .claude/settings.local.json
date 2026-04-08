@@ -14,7 +14,8 @@
       "Bash(identify src/assets/images/hero-statue.png)",
       "Bash(npm install:*)",
       "Bash(node -e ':*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(echo \"EXIT: $?\")"
     ]
   }
 }

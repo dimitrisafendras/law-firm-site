@@ -13,6 +13,7 @@ import {
   CryptoBg,
 } from '@/assets/domainBackgrounds';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
+import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import './PracticeGrid.css';
 
 import type { ComponentType } from 'react';
@@ -37,13 +38,12 @@ export function PracticeGrid() {
       <CircuitLines variant="a" />
       <div className="practice-section__inner">
         <FadeInSection>
-          <div className="practice-section__header">
-            <div className="practice-section__header-text">
-              <h2 className="practice-section__title">{t('practiceTitle')}</h2>
-              <p className="practice-section__subtitle">{t('practiceSubtitle')}</p>
-            </div>
-            <span className="practice-section__label">Section 01 / Expertise</span>
-          </div>
+          <SectionHeader
+            overline={t('practiceOverline')}
+            title={t('practiceTitle')}
+            subtitle={t('practiceSubtitle')}
+            label="Section 01 / Expertise"
+          />
         </FadeInSection>
 
         <StaggerGroup className="practice-bento" interval={0.15}>

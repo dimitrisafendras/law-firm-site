@@ -21,9 +21,9 @@ const en = {
 
   // ─── Practice Areas ──────────────────────────────────────────────────────────
   practiceOverline: 'Practice Areas',
-  practiceTitle: 'Structural Domains',
+  practiceTitle: 'Our Expertise',
   practiceSubtitle:
-    'Four pillars of specialization designed for forward-thinking clients who need precision, speed, and strategic depth.',
+    'Four pillars of specialization for clients who need precision and depth.',
 
   practiceRealEstateTitle: 'Real Estate',
   practiceRealEstateDesc:
@@ -43,12 +43,12 @@ const en = {
 
   // ─── Team / Attorneys ────────────────────────────────────────────────────────
   teamOverline: 'Partner Ethos',
-  teamTitle: 'Partners who understand your world',
+  teamTitle: 'Meet the Partners',
   partnerEthosLine1: 'Architectural',
   partnerEthosLine2: 'Jurisprudence',
   partnerQuote: 'Law is not a reactive barrier; it is the blueprint upon which empires are constructed.',
   teamSubtitle:
-    'Two attorneys. Two complementary visions. One commitment to delivering results that move you forward.',
+    'Two attorneys, two visions, one commitment to moving you forward.',
 
   attorney1Name: 'Dimitris Afendras',
   attorney1Title: 'Founding Partner',
@@ -74,8 +74,9 @@ const en = {
   teamOriginLabel: 'Origin',
 
   // ─── Network / Map ──────────────────────────────────────────────────────────
+  networkOverline: 'Our Reach',
   networkTitle: 'Global Network',
-  networkSubtitle: 'Strategic presence in key jurisdictions for seamless cross-border counsel.',
+  networkSubtitle: 'Strategic presence in key jurisdictions for cross-border counsel.',
 
   networkAthensLabel: 'European HQ',
   networkAthensCity: 'Athens, GR',
@@ -105,7 +106,8 @@ const en = {
 
   // ─── Testimonials ────────────────────────────────────────────────────────────
   testimonialsOverline: 'What Clients Say',
-  testimonialsTitle: 'Trusted by ambitious professionals',
+  testimonialsTitle: 'Client Testimonials',
+  testimonialsSubtitle: 'Trusted by ambitious professionals across industries.',
 
   testimonial1Quote:
     'NOMOS guided our Series A from term sheet to close in 6 weeks. Their understanding of both Greek and EU venture frameworks saved us months of back-and-forth.',
@@ -129,9 +131,9 @@ const en = {
 
   // ─── Contact ─────────────────────────────────────────────────────────────────
   contactOverline: 'Get in Touch',
-  contactTitle: 'Let\u2019s discuss your next move',
+  contactTitle: 'Get in Touch',
   contactSubtitle:
-    'Whether you\u2019re closing a deal, launching a venture, or navigating regulatory waters \u2014 we\u2019re ready to help.',
+    'Closing a deal, launching a venture, or navigating regulation \u2014 we\u2019re ready.',
   contactAddress: '12 Vasilissis Sofias Avenue, Athens 10674, Greece',
   contactEmail: 'info@nomos.legal',
   contactPhone: '+30 210 123 4567',

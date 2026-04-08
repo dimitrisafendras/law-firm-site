@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { ContactForm } from '@/components/ContactForm';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
+import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import './ContactSection.css';
 
 export function ContactSection() {
@@ -11,12 +12,17 @@ export function ContactSection() {
     <section id="contact" className="contact-section">
       <CircuitLines variant="b" />
       <div className="contact-section__inner">
+        <FadeInSection>
+          <SectionHeader
+            overline={t('contactOverline')}
+            title={t('contactTitle')}
+            subtitle={t('contactSubtitle')}
+            label="Section 05 / Contact"
+          />
+        </FadeInSection>
+
         <div className="contact-section__grid">
           <FadeInSection variant="fade-left" className="contact-section__info">
-            <span className="contact-section__overline">{t('contactOverline')}</span>
-            <h2 className="contact-section__title">{t('contactTitle')}</h2>
-            <p className="contact-section__desc">{t('contactSubtitle')}</p>
-
             <div className="contact-section__details">
               <div className="contact-section__detail">
                 <span className="contact-section__detail-icon" aria-hidden="true">&#9906;</span>

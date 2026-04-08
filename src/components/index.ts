@@ -8,6 +8,8 @@ export { Divider } from './Divider';
 export { Input } from './Input';
 export { Textarea } from './Textarea';
 
+export { SectionHeader } from './SectionHeader/SectionHeader';
+
 // Composite
 export { Navbar } from './Navbar';
 export { Footer } from './Footer';

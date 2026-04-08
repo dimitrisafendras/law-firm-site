@@ -20,8 +20,8 @@ let outerColor = '137,207,240';
 function resetP(p: Particle) {
   p.x = cw * 0.5 + (Math.random() - 0.5) * cw * 0.3 * wMul;
   p.y = ch * 0.85 + Math.random() * ch * 0.1;
-  p.vx = (Math.random() - 0.5) * 0.4 * wMul;
-  p.vy = -(0.5 + Math.random() * 1.2) * hMul;
+  p.vx = (Math.random() - 0.5) * 0.25 * wMul;
+  p.vy = -(0.3 + Math.random() * 0.7) * hMul;
   p.size = (2 + Math.random() * 4) * Math.max(wMul, hMul);
   p.life = 0;
   p.maxLife = (30 + Math.random() * 40) * hMul;
@@ -36,14 +36,14 @@ function draw() {
   // Spawn
   let spawned = 0;
   for (const p of particles) {
-    if (spawned >= 3) break;
+    if (spawned >= 2) break;
     if (!p.alive) { resetP(p); spawned++; }
   }
 
   for (const p of particles) {
     if (!p.alive) continue;
     p.life++;
-    p.x += p.vx + (Math.random() - 0.5) * 0.3;
+    p.x += p.vx + (Math.random() - 0.5) * 0.15;
     p.y += p.vy;
     p.vy *= 0.98;
     p.vx *= 0.99;

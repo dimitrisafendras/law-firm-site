@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TestimonialCard } from '@/components/TestimonialCard';
-import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
+import { FadeInSection } from '@/components/animations/FadeInSection';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
+import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
+import { useCarousel } from './useCarousel';
 import './TestimonialsSection.css';
 
 export function TestimonialsSection() {
@@ -11,26 +14,94 @@ export function TestimonialsSection() {
     { quote: t('testimonial1Quote'), author: t('testimonial1Author'), role: t('testimonial1Role') },
     { quote: t('testimonial2Quote'), author: t('testimonial2Author'), role: t('testimonial2Role') },
     { quote: t('testimonial3Quote'), author: t('testimonial3Author'), role: t('testimonial3Role') },
+    { quote: t('testimonial4Quote'), author: t('testimonial4Author'), role: t('testimonial4Role') },
+    { quote: t('testimonial5Quote'), author: t('testimonial5Author'), role: t('testimonial5Role') },
+    { quote: t('testimonial6Quote'), author: t('testimonial6Author'), role: t('testimonial6Role') },
   ];
+
+  /* Responsive visible count: 3 on desktop, 1 on mobile */
+  const [visibleCount, setVisibleCount] = useState(3);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1024px)');
+    const update = () => setVisibleCount(mq.matches ? 1 : 3);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
+  const {
+    trackRef,
+    trackStyle,
+    totalSlides,
+    itemCount,
+    currentIndex,
+    pause,
+    resume,
+  } = useCarousel({
+    itemCount: testimonials.length,
+    visibleCount,
+    interval: 4000,
+  });
+
+  /* Build the tripled slide array: [clone] [real] [clone] */
+  const slides = Array.from({ length: totalSlides }, (_, i) => {
+    const realIndex = ((i % itemCount) + itemCount) % itemCount;
+    return { ...testimonials[realIndex], slideIndex: i };
+  });
 
   return (
     <section id="testimonials" className="testimonials-section">
       <CircuitLines variant="c" />
       <div className="testimonials-section__inner">
         <FadeInSection>
-          <div className="testimonials-section__header">
-            <span className="testimonials-section__overline">{t('testimonialsOverline')}</span>
-            <h2 className="testimonials-section__title">{t('testimonialsTitle')}</h2>
-          </div>
+          <SectionHeader
+            overline={t('testimonialsOverline')}
+            title={t('testimonialsTitle')}
+            subtitle={t('testimonialsSubtitle')}
+            label="Section 04 / Testimonials"
+          />
         </FadeInSection>
 
-        <StaggerGroup className="testimonials-section__grid" interval={0.15}>
-          {testimonials.map((item) => (
-            <FadeInSection key={item.author} variant="fade-up">
-              <TestimonialCard quote={item.quote} author={item.author} role={item.role} />
-            </FadeInSection>
-          ))}
-        </StaggerGroup>
+        <FadeInSection variant="fade-up">
+          <div
+            className="testimonials-carousel"
+            onMouseEnter={pause}
+            onMouseLeave={resume}
+            role="region"
+            aria-roledescription="carousel"
+            aria-label={t('testimonialsTitle')}
+          >
+            <div
+              ref={trackRef}
+              className="testimonials-carousel__track"
+              style={trackStyle}
+              aria-live="off"
+            >
+              {slides.map((item) => {
+                const realIndex = ((item.slideIndex % itemCount) + itemCount) % itemCount;
+                const isActive = item.slideIndex === currentIndex;
+
+                return (
+                  <div
+                    key={item.slideIndex}
+                    className={`testimonials-carousel__slide${isActive ? ' testimonials-carousel__slide--active' : ''}`}
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label={`${realIndex + 1} of ${itemCount}`}
+                    style={{ flex: `0 0 calc(100% / ${visibleCount})` }}
+                  >
+                    <TestimonialCard
+                      quote={item.quote}
+                      author={item.author}
+                      role={item.role}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </FadeInSection>
       </div>
     </section>
   );

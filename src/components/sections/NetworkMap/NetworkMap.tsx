@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
 import worldMapImg from '@/assets/images/world-map.jpg';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
+import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import './NetworkMap.css';
 
 const nodes = [
@@ -36,10 +37,12 @@ export function NetworkMap() {
       <CircuitLines variant="f" />
       <div className="network-map__inner">
         <FadeInSection>
-          <div className="network-map__header">
-            <h2 className="network-map__title">{t('networkTitle')}</h2>
-            <p className="network-map__subtitle">{t('networkSubtitle')}</p>
-          </div>
+          <SectionHeader
+            overline={t('networkOverline')}
+            title={t('networkTitle')}
+            subtitle={t('networkSubtitle')}
+            label="Section 03 / Network"
+          />
         </FadeInSection>
 
         <div className="network-map__grid">
@@ -71,9 +74,11 @@ export function NetworkMap() {
               <div className="network-map__map-glow" />
               <div className="network-map__pin">
                 <span className="network-map__pin-label">Athens</span>
-                <svg className="network-map__pin-icon" viewBox="0 0 24 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 24 12 24s12-15 12-24c0-6.627-5.373-12-12-12z" fill="var(--accent)" />
-                  <circle cx="12" cy="12" r="5" fill="var(--bg)" />
+                <svg className="network-map__pin-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path fill="var(--accent)" d="M256,0C160.798,0,83.644,77.155,83.644,172.356c0,97.162,48.158,117.862,101.386,182.495
+                    C248.696,432.161,256,512,256,512s7.304-79.839,70.97-157.148c53.228-64.634,101.386-85.334,101.386-182.495
+                    C428.356,77.155,351.202,0,256,0z M256,231.921c-32.897,0-59.564-26.668-59.564-59.564s26.668-59.564,59.564-59.564
+                    c32.896,0,59.564,26.668,59.564,59.564S288.896,231.921,256,231.921z"/>
                 </svg>
               </div>
             </div>

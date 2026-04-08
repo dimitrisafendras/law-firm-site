@@ -10,47 +10,13 @@
 }
 
 .network-map__inner {
-  max-width: 1280px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 0 48px;
 
   @media (max-width: 1024px) {
     padding: 0 16px;
   }
-}
-
-/* ─── Header ──────────────────────────────────────────────────────────────── */
-
-.network-map__header {
-  text-align: center;
-  margin-bottom: 80px;
-
-  @media (max-width: 1024px) {
-    margin-bottom: 48px;
-  }
-}
-
-.network-map__title {
-  font-family: var(--label);
-  font-size: 40px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  color: var(--text-h);
-  margin: 0 0 16px;
-
-  @media (max-width: 1024px) {
-    font-size: 28px;
-  }
-}
-
-.network-map__subtitle {
-  font-family: var(--heading);
-  font-size: 20px;
-  font-style: italic;
-  color: var(--text);
-  opacity: 0.6;
-  margin: 0;
 }
 
 /* ─── Two-Column Grid: Cards Left, Map Right ─────────────────────────────── */
@@ -222,7 +188,7 @@
   text-transform: uppercase;
   color: var(--accent);
   text-shadow: 0 0 8px var(--accent), 0 0 16px var(--accent);
-  margin-bottom: 4px;
+  margin-bottom: 0;
   white-space: nowrap;
 }
 

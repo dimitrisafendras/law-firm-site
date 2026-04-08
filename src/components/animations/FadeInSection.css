@@ -52,11 +52,11 @@
   .fade-section--fade-left,
   .fade-section--fade-right,
   .fade-section--scale {
-    transform: none;
+    transform: scale(0.97);
   }
 
   .fade-section {
-    transition-duration: 0.4s;
+    transition-duration: 0.5s;
   }
 }
 

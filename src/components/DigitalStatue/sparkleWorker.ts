@@ -15,6 +15,7 @@ interface Sparkle {
 let sparkles: Sparkle[] = [];
 let count = 20;
 let speed = 1;
+let drawScale = 6;
 
 function makeSparkle(): Sparkle {
   return {
@@ -53,7 +54,7 @@ function draw() {
     const py = s.y * ch;
 
     if (starSprite) {
-      const drawSize = s.size * 6;
+      const drawSize = s.size * drawScale;
       ctx.globalAlpha = s.opacity;
       ctx.drawImage(starSprite, px - drawSize / 2, py - drawSize / 2, drawSize, drawSize);
     } else {
@@ -81,6 +82,7 @@ self.onmessage = (e: MessageEvent) => {
     ch = e.data.height;
     count = e.data.count || 20;
     speed = e.data.speed || 1;
+    drawScale = e.data.drawScale || 6;
     sparkles = Array.from({ length: count }, makeSparkle);
     requestAnimationFrame(draw);
   }

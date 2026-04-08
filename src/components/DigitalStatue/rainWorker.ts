@@ -1,15 +1,20 @@
 /// <reference lib="webworker" />
 
-const TRAIL = 12;
-const FONT_SIZE = 10;
 const CHARS = '01';
 
-// Pre-computed alphas
-const ALPHAS: number[] = [];
-for (let j = 0; j < TRAIL; j++) {
-  const fade = 1 - j / TRAIL;
-  ALPHAS[j] = j === 0 ? 0.9 * fade : 0.7 * fade;
+let TRAIL = 12;
+let FONT_SIZE = 8;
+let CELL = FONT_SIZE + 2;
+let ALPHAS: number[] = [];
+
+function computeAlphas() {
+  ALPHAS = [];
+  for (let j = 0; j < TRAIL; j++) {
+    const fade = 1 - j / TRAIL;
+    ALPHAS[j] = j === 0 ? 0.9 * fade : 0.7 * fade;
+  }
 }
+computeAlphas();
 
 let ctx: OffscreenCanvasRenderingContext2D | null = null;
 let canvas: OffscreenCanvas;
@@ -18,7 +23,6 @@ let endCol = 0, maxRow = 0;
 let drops: { y: number; speed: number; chars: string[] }[] = [];
 let visible = true;
 let spriteSheet: ImageBitmap | null = null;
-const CELL = FONT_SIZE + 2;
 
 function initDrops() {
   drops = Array.from({ length: Math.max(1, endCol) }, () => ({
@@ -99,6 +103,8 @@ self.onmessage = (e: MessageEvent) => {
     canvas = e.data.canvas as OffscreenCanvas;
     ctx = canvas.getContext('2d');
     if (e.data.sprite) spriteSheet = e.data.sprite as ImageBitmap;
+    if (e.data.fontSize) { FONT_SIZE = e.data.fontSize; CELL = FONT_SIZE + 2; }
+    if (e.data.trail) { TRAIL = e.data.trail; computeAlphas(); }
     cw = e.data.width;
     ch = e.data.height;
     endCol = Math.floor(cw / FONT_SIZE);

@@ -7,7 +7,7 @@ import FlameWorkerUrl from './flameWorker.ts?worker&url';
 import './DigitalStatue.css';
 
 // ── Pre-render rain sprite sheet (main thread, once) ─────────────────────────
-const FONT_SIZE = 10;
+const FONT_SIZE = 8;
 const TRAIL = 12;
 const CELL = FONT_SIZE + 2;
 
@@ -29,9 +29,13 @@ function createRainSprite(): Promise<ImageBitmap> {
   return createImageBitmap(c);
 }
 
+// ── Star constants ──────────────────────────────────────────────────────────
+const STAR_SPRITE_SIZE = 32;
+const STAR_DRAW_SCALE = 8;
+
 // ── Pre-render star sprite (main thread, once) ───────────────────────────────
 function createStarSprite(): Promise<ImageBitmap> {
-  const SIZE = 32;
+  const SIZE = STAR_SPRITE_SIZE;
   const c = document.createElement('canvas');
   c.width = SIZE; c.height = SIZE;
   const ctx = c.getContext('2d')!;
@@ -104,19 +108,19 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
 
       // Rain worker
       if (rainRef.current) {
-        const w = spawnWorker(RainWorkerUrl, rainRef.current, { sprite: rainSprite });
+        const w = spawnWorker(RainWorkerUrl, rainRef.current, { sprite: rainSprite, fontSize: FONT_SIZE, trail: TRAIL });
         if (w) workers.push(w);
       }
 
       // Sparkle body worker
       if (spkBodyRef.current) {
-        const w = spawnWorker(SparkleWorkerUrl, spkBodyRef.current, { sprite: starSprite, count: 150, speed: 0.1 });
+        const w = spawnWorker(SparkleWorkerUrl, spkBodyRef.current, { sprite: starSprite, count: 150, speed: 0.3, drawScale: STAR_DRAW_SCALE });
         if (w) workers.push(w);
       }
 
       // Sparkle scale worker
       if (spkScaleRef.current) {
-        const w = spawnWorker(SparkleWorkerUrl, spkScaleRef.current, { sprite: starSprite, count: 10, speed: 0.1 });
+        const w = spawnWorker(SparkleWorkerUrl, spkScaleRef.current, { sprite: starSprite, count: 10, speed: 0.1, drawScale: STAR_DRAW_SCALE });
         if (w) workers.push(w);
       }
 

@@ -15,7 +15,7 @@
   overflow: hidden;
   border-radius: 50% 0 0 50%;
   z-index: 0;
-  background: rgba(0, 100, 255, 0.25); /* DEBUG */
+
 }
 
 .digital-statue__rain {
@@ -48,7 +48,7 @@
   height: 95%;
   top: 5%;
   left: 4%;
-  background: rgba(0, 255, 0, 0.25); /* DEBUG */
+
   clip-path: polygon(
     /* ── right edge: straight down statue center ── */
     44% -2%,
@@ -68,15 +68,15 @@
     /* mid drape */
     17% 62%, 15% 60%, 14% 58%,
     /* upper drape / hip */
-    6.5% 54%, 6% 52%, 3.5% 49%,
+    9% 54%, 9% 52%, 7% 49%,
     /* sword hand area */
-    3.7% 47%, 3.6% 45%, 3% 43%,
-    /* sword / dissolving arm — extended further left */
-    4% 41%, 5% 39%, 7% 37%,
-    /* dissolving arm — wider coverage */
-    9% 35%, 10% 33%, 12% 31%, 14% 28%,
+    7% 47%, 7% 45%, 8% 43%,
+    /* sword / dissolving arm */
+    13% 41%, 15% 39%, 15% 37%,
+    /* dissolving arm upper */
+    16% 35%, 18% 33%, 19% 31%, 20% 28%,
     /* scattered pixels */
-    16% 26%, 19% 24%, 22% 22%,
+    20% 26%, 22% 24%, 22% 22%,
     /* upper dissolving area */
     22% 18%, 27% 16%, 30% 14%,
     /* neck — tight to actual outline */
@@ -99,7 +99,7 @@
   width: 15%;
   height: 19%;
   border-radius: 50%;
-  background: rgba(255, 255, 0, 0.25); /* DEBUG */
+
 }
 
 /* Flames — behind statue */
@@ -118,7 +118,7 @@
   height: 10%;
   top: 32%;
   left: 58%;
-  background: rgba(255, 0, 0, 0.25); /* DEBUG */
+
 }
 
 .digital-statue__flame--right {
@@ -126,5 +126,5 @@
   left: 79%;
   width: 15%;
   height: 10%;
-  background: rgba(255, 0, 255, 0.25); /* DEBUG */
+
 }

@@ -109,13 +109,13 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
 
       // Sparkle body worker
       if (spkBodyRef.current) {
-        const w = spawnWorker(SparkleWorkerUrl, spkBodyRef.current, { sprite: starSprite, count: 70, speed: 0.2 });
+        const w = spawnWorker(SparkleWorkerUrl, spkBodyRef.current, { sprite: starSprite, count: 150, speed: 0.2 });
         if (w) workers.push(w);
       }
 
       // Sparkle scale worker
       if (spkScaleRef.current) {
-        const w = spawnWorker(SparkleWorkerUrl, spkScaleRef.current, { sprite: starSprite, count: 20, speed: 0.2 });
+        const w = spawnWorker(SparkleWorkerUrl, spkScaleRef.current, { sprite: starSprite, count: 10, speed: 0.2 });
         if (w) workers.push(w);
       }
 

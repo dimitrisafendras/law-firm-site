@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from PIL import Image; print\\(''Pillow OK''\\)\")",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(ls:*)",
+      "Bash(npm run:*)",
+      "Bash(/tmp/process_image5.py:*)",
+      "Bash(/tmp/process_image6.py:*)",
+      "Bash(/tmp/process_final.py:*)"
+    ]
+  }
+}

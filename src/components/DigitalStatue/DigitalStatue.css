@@ -15,6 +15,7 @@
   overflow: hidden;
   border-radius: 50% 0 0 50%;
   z-index: 0;
+  background: rgba(0, 100, 255, 0.25); /* DEBUG */
 }
 
 .digital-statue__rain {
@@ -43,19 +44,62 @@
 }
 
 .digital-statue__sparkles-body {
-  top: 5%;
-  left: 29%;
-  width: 25%;
+  width: 90%;
   height: 95%;
-  border-radius: 50% 0 0 50%;
+  top: 5%;
+  left: 4%;
+  background: rgba(0, 255, 0, 0.25); /* DEBUG */
+  clip-path: polygon(
+    /* ── right edge: straight down statue center ── */
+    44% -2%,
+    44% 100%,
+    /* ── bottom: pedestal base ── */
+    11% 100%,
+    /* ── left edge: pixel-traced outer silhouette going up ── */
+    14% 98%, 15% 96%, 14.5% 94%,
+    /* pedestal top */
+    13% 92%, 17% 89%,
+    /* above pedestal / ankle */
+    24% 87%, 25% 85%, 26% 83%, 26% 81%,
+    /* lower leg / shin */
+    19% 77%, 24% 75%, 20% 73%, 24% 71%,
+    /* knee / thigh */
+    20% 69%, 19% 66%, 19% 64%,
+    /* mid drape */
+    17% 62%, 15% 60%, 14% 58%,
+    /* upper drape / hip */
+    6.5% 54%, 6% 52%, 3.5% 49%,
+    /* sword hand area */
+    3.7% 47%, 3.6% 45%, 3% 43%,
+    /* sword / dissolving arm — extended further left */
+    4% 41%, 5% 39%, 7% 37%,
+    /* dissolving arm — wider coverage */
+    9% 35%, 10% 33%, 12% 31%, 14% 28%,
+    /* scattered pixels */
+    16% 26%, 19% 24%, 22% 22%,
+    /* upper dissolving area */
+    22% 18%, 27% 16%, 30% 14%,
+    /* neck — tight to actual outline */
+    33% 13%, 34% 12%, 34% 11.5%,
+    /* neck narrows into jaw */
+    33% 10.5%, 32% 10%, 32% 9.5%,
+    /* jaw / ear level — widest part of head */
+    32% 9%, 32% 8%, 32% 7.5%,
+    /* mid head */
+    33% 6.5%, 33% 5.5%, 33.5% 5%,
+    /* upper head — curves back toward crown */
+    34.5% 4%, 35% 3%, 36% 2%,
+    37.5% 1%, 39% 0%, 40% -0.5%, 44% -20%
+  );
 }
 
 .digital-statue__sparkles-scale {
   top: 26%;
-  left: 62%;
+  left: 58%;
   width: 15%;
   height: 19%;
   border-radius: 50%;
+  background: rgba(255, 255, 0, 0.25); /* DEBUG */
 }
 
 /* Flames — behind statue */
@@ -73,7 +117,8 @@
   width: 15%;
   height: 10%;
   top: 32%;
-  left: 61%;
+  left: 58%;
+  background: rgba(255, 0, 0, 0.25); /* DEBUG */
 }
 
 .digital-statue__flame--right {
@@ -81,4 +126,5 @@
   left: 79%;
   width: 15%;
   height: 10%;
+  background: rgba(255, 0, 255, 0.25); /* DEBUG */
 }

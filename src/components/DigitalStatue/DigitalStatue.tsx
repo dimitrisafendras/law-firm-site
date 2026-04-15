@@ -106,28 +106,30 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       const [rainSprite, starSprite] = await Promise.all([createRainSprite(), createStarSprite()]);
       if (cancelled) return;
 
+      const mobile = window.innerWidth <= 1024;
+
       // Rain worker
       if (rainRef.current) {
-        const w = spawnWorker(RainWorkerUrl, rainRef.current, { sprite: rainSprite, fontSize: FONT_SIZE, trail: TRAIL });
+        const w = spawnWorker(RainWorkerUrl, rainRef.current, { sprite: rainSprite, fontSize: FONT_SIZE, trail: mobile ? 8 : TRAIL });
         if (w) workers.push(w);
       }
 
       // Sparkle body worker
       if (spkBodyRef.current) {
-        const w = spawnWorker(SparkleWorkerUrl, spkBodyRef.current, { sprite: starSprite, count: 150, speed: 0.3, drawScale: STAR_DRAW_SCALE });
+        const w = spawnWorker(SparkleWorkerUrl, spkBodyRef.current, { sprite: starSprite, count: mobile ? 50 : 150, speed: mobile ? 0.2 : 0.3, drawScale: STAR_DRAW_SCALE });
         if (w) workers.push(w);
       }
 
       // Sparkle scale worker
       if (spkScaleRef.current) {
-        const w = spawnWorker(SparkleWorkerUrl, spkScaleRef.current, { sprite: starSprite, count: 10, speed: 0.1, drawScale: STAR_DRAW_SCALE });
+        const w = spawnWorker(SparkleWorkerUrl, spkScaleRef.current, { sprite: starSprite, count: mobile ? 4 : 10, speed: 0.1, drawScale: STAR_DRAW_SCALE });
         if (w) workers.push(w);
       }
 
       // Flame left worker
       if (flameLRef.current) {
-        const w = spawnWorker(FlameWorkerUrl, flameLRef.current, { wMul: 0.4, hMul: 1,
-          colors: { hot: '220,245,255', mid: '137,207,240', outer: '137,207,240' },
+        const w = spawnWorker(FlameWorkerUrl, flameLRef.current, { wMul: 0.4, hMul: 1, max: mobile ? 25 : 60,
+          colors: { hot: '255,240,200', mid: '255,180,80', outer: '255,120,40' },
         });
         if (w) workers.push(w);
       }
@@ -135,8 +137,8 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       // Flame right worker
       if (flameRRef.current) {
         const w = spawnWorker(FlameWorkerUrl, flameRRef.current, {
-          wMul: 0.4, hMul: 1,
-          colors: { hot: '255,240,200', mid: '255,180,80', outer: '255,120,40' },
+          wMul: 0.4, hMul: 1, max: mobile ? 25 : 60,
+          colors: { hot: '220,245,255', mid: '137,207,240', outer: '137,207,240' },
         });
         if (w) workers.push(w);
       }

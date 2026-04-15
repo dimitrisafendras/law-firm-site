@@ -10,7 +10,7 @@ interface Particle {
   size: number; life: number; maxLife: number; alive: boolean;
 }
 
-const MAX = 60;
+let MAX = 60;
 let particles: Particle[] = [];
 let wMul = 1, hMul = 1;
 let hotColor = '220,245,255';
@@ -77,6 +77,7 @@ self.onmessage = (e: MessageEvent) => {
     ch = e.data.height;
     wMul = e.data.wMul || 1;
     hMul = e.data.hMul || 1;
+    if (e.data.max) MAX = e.data.max;
     if (e.data.colors) {
       hotColor = e.data.colors.hot;
       midColor = e.data.colors.mid;

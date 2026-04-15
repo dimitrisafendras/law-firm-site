@@ -11,9 +11,9 @@ const en = {
 
   // ─── Hero ────────────────────────────────────────────────────────────────────
   heroOverline: 'The Intersection of Legacy & Innovation',
-  heroTitleLine1: 'Architects of',
-  heroTitleLine2: 'Growth & Sovereignty',
-  heroTitle: 'Architects of Growth & Sovereignty',
+  heroTitleLine1: 'Super Prime',
+  heroTitleLine2: 'Legal Counsel',
+  heroTitle: 'Super Prime Legal Counsel',
   heroSubtitle:
     'A new-generation legal practice combining deep expertise in real estate, startup funding, maritime, and cryptocurrency law. Built for ambitious professionals navigating tomorrow\u2019s challenges.',
   heroCta: 'Establish Protocol',

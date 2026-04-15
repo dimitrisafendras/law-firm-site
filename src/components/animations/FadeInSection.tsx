@@ -19,7 +19,7 @@ export function FadeInSection({
   variant = 'fade-up',
   delay = 0,
   duration = 0.7,
-  threshold = 0.15,
+  threshold = 0.35,
   className = '',
   as: Tag = 'div',
   stagger = 0,

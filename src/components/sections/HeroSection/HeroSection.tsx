@@ -61,7 +61,7 @@ export function HeroSection() {
 
         <FadeInSection variant="fade-up" delay={0.8}>
           <div className="hero-section__stat-card">
-            <span className="hero-section__stat-value">20+</span>
+            <span className="hero-section__stat-value">30+</span>
             <span className="hero-section__stat-label">{t('statYears')}</span>
           </div>
         </FadeInSection>

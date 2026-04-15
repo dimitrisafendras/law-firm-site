@@ -60,7 +60,8 @@
   padding: 120px 48px 48px;
   display: flex;
   flex-direction: column;
-
+  justify-content: center;
+  gap: 18px;
   @media (max-width: 1024px) {
     z-index: 2;
     padding: calc(80px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) 0 calc(16px + env(safe-area-inset-left, 0px));
@@ -88,9 +89,6 @@
   }
 }
 
-.hero-section__content > :last-child {
-  margin-top: auto;
-}
 
 /* Pill badge */
 .hero-section__badge {

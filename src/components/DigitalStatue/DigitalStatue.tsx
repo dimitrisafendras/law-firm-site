@@ -128,7 +128,7 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
 
       // Flame left worker
       if (flameLRef.current) {
-        const w = spawnWorker(FlameWorkerUrl, flameLRef.current, { wMul: 0.4, hMul: 1, max: mobile ? 25 : 60,
+        const w = spawnWorker(FlameWorkerUrl, flameLRef.current, { wMul: mobile ? 0.4 : 0.5, hMul: mobile ? 1 : 1.15, max: mobile ? 25 : 60,
           colors: { hot: '255,240,200', mid: '255,180,80', outer: '255,120,40' },
         });
         if (w) workers.push(w);
@@ -137,7 +137,7 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       // Flame right worker
       if (flameRRef.current) {
         const w = spawnWorker(FlameWorkerUrl, flameRRef.current, {
-          wMul: 0.4, hMul: 1, max: mobile ? 25 : 60,
+          wMul: mobile ? 0.4 : 0.5, hMul: mobile ? 1 : 1.15, max: mobile ? 25 : 60,
           colors: { hot: '220,245,255', mid: '137,207,240', outer: '137,207,240' },
         });
         if (w) workers.push(w);

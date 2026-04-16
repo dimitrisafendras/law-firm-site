@@ -6,9 +6,62 @@ import SparkleWorkerUrl from './sparkleWorker.ts?worker&url';
 import FlameWorkerUrl from './flameWorker.ts?worker&url';
 import './DigitalStatue.css';
 
+// ── Animation configuration ──────────────────────────────────────────────────
+// Single source of truth for tuning every canvas effect in the statue scene.
+// Values suffixed with `Mobile` apply at viewport widths ≤ MOBILE_BREAKPOINT.
+const ANIMATION_CONFIG = {
+  mobileBreakpoint: 1024,
+
+  rain: {
+    fontSize: 10,
+    trail: 12,
+    trailMobile: 8,
+  },
+
+  sparkleBody: {
+    count: 250,
+    countMobile: 50,
+    speed: 0.2,
+    speedMobile: 0.2,
+    drawScale: 5,
+  },
+
+  sparkleScale: {
+    count: 20,
+    countMobile: 4,
+    speed: 0.1,
+    speedMobile: 0.1,
+    drawScale: 4,
+  },
+
+  star: {
+    spriteSize: 32,
+  },
+
+  flameLeft: {
+    wMul: 0.5,
+    wMulMobile: 0.4,
+    hMul: 1.15,
+    hMulMobile: 1,
+    max: 60,
+    maxMobile: 25,
+    colors: { hot: '255,240,200', mid: '255,180,80', outer: '255,120,40' },
+  },
+
+  flameRight: {
+    wMul: 0.5,
+    wMulMobile: 0.4,
+    hMul: 1.15,
+    hMulMobile: 1,
+    max: 60,
+    maxMobile: 25,
+    colors: { hot: '220,245,255', mid: '137,207,240', outer: '137,207,240' },
+  },
+} as const;
+
 // ── Pre-render rain sprite sheet (main thread, once) ─────────────────────────
-const FONT_SIZE = 8;
-const TRAIL = 12;
+const FONT_SIZE = ANIMATION_CONFIG.rain.fontSize;
+const TRAIL = ANIMATION_CONFIG.rain.trail;
 const CELL = FONT_SIZE + 2;
 
 function createRainSprite(): Promise<ImageBitmap> {
@@ -30,8 +83,7 @@ function createRainSprite(): Promise<ImageBitmap> {
 }
 
 // ── Star constants ──────────────────────────────────────────────────────────
-const STAR_SPRITE_SIZE = 32;
-const STAR_DRAW_SCALE = 8;
+const STAR_SPRITE_SIZE = ANIMATION_CONFIG.star.spriteSize;
 
 // ── Pre-render star sprite (main thread, once) ───────────────────────────────
 function createStarSprite(): Promise<ImageBitmap> {
@@ -106,30 +158,48 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       const [rainSprite, starSprite] = await Promise.all([createRainSprite(), createStarSprite()]);
       if (cancelled) return;
 
-      const mobile = window.innerWidth <= 1024;
+      const mobile = window.innerWidth <= ANIMATION_CONFIG.mobileBreakpoint;
+      const { rain, sparkleBody, sparkleScale, flameLeft, flameRight } = ANIMATION_CONFIG;
 
       // Rain worker
       if (rainRef.current) {
-        const w = spawnWorker(RainWorkerUrl, rainRef.current, { sprite: rainSprite, fontSize: FONT_SIZE, trail: mobile ? 8 : TRAIL });
+        const w = spawnWorker(RainWorkerUrl, rainRef.current, {
+          sprite: rainSprite,
+          fontSize: rain.fontSize,
+          trail: mobile ? rain.trailMobile : rain.trail,
+        });
         if (w) workers.push(w);
       }
 
       // Sparkle body worker
       if (spkBodyRef.current) {
-        const w = spawnWorker(SparkleWorkerUrl, spkBodyRef.current, { sprite: starSprite, count: mobile ? 50 : 150, speed: mobile ? 0.2 : 0.3, drawScale: STAR_DRAW_SCALE });
+        const w = spawnWorker(SparkleWorkerUrl, spkBodyRef.current, {
+          sprite: starSprite,
+          count: mobile ? sparkleBody.countMobile : sparkleBody.count,
+          speed: mobile ? sparkleBody.speedMobile : sparkleBody.speed,
+          drawScale: sparkleBody.drawScale,
+        });
         if (w) workers.push(w);
       }
 
       // Sparkle scale worker
       if (spkScaleRef.current) {
-        const w = spawnWorker(SparkleWorkerUrl, spkScaleRef.current, { sprite: starSprite, count: mobile ? 4 : 10, speed: 0.1, drawScale: STAR_DRAW_SCALE });
+        const w = spawnWorker(SparkleWorkerUrl, spkScaleRef.current, {
+          sprite: starSprite,
+          count: mobile ? sparkleScale.countMobile : sparkleScale.count,
+          speed: mobile ? sparkleScale.speedMobile : sparkleScale.speed,
+          drawScale: sparkleScale.drawScale,
+        });
         if (w) workers.push(w);
       }
 
       // Flame left worker
       if (flameLRef.current) {
-        const w = spawnWorker(FlameWorkerUrl, flameLRef.current, { wMul: mobile ? 0.4 : 0.5, hMul: mobile ? 1 : 1.15, max: mobile ? 25 : 60,
-          colors: { hot: '255,240,200', mid: '255,180,80', outer: '255,120,40' },
+        const w = spawnWorker(FlameWorkerUrl, flameLRef.current, {
+          wMul: mobile ? flameLeft.wMulMobile : flameLeft.wMul,
+          hMul: mobile ? flameLeft.hMulMobile : flameLeft.hMul,
+          max: mobile ? flameLeft.maxMobile : flameLeft.max,
+          colors: flameLeft.colors,
         });
         if (w) workers.push(w);
       }
@@ -137,8 +207,10 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       // Flame right worker
       if (flameRRef.current) {
         const w = spawnWorker(FlameWorkerUrl, flameRRef.current, {
-          wMul: mobile ? 0.4 : 0.5, hMul: mobile ? 1 : 1.15, max: mobile ? 25 : 60,
-          colors: { hot: '220,245,255', mid: '137,207,240', outer: '137,207,240' },
+          wMul: mobile ? flameRight.wMulMobile : flameRight.wMul,
+          hMul: mobile ? flameRight.hMulMobile : flameRight.hMul,
+          max: mobile ? flameRight.maxMobile : flameRight.max,
+          colors: flameRight.colors,
         });
         if (w) workers.push(w);
       }

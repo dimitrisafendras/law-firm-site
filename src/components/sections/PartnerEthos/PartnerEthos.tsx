@@ -18,7 +18,7 @@ export function PartnerEthos() {
             overline={t('teamOverline')}
             title={t('teamTitle')}
             subtitle={t('teamSubtitle')}
-            label="Section 02 / Team"
+            label="Chapter 02 / Team"
           />
         </FadeInSection>
 

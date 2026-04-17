@@ -42,7 +42,7 @@ export function PracticeGrid() {
             overline={t('practiceOverline')}
             title={t('practiceTitle')}
             subtitle={t('practiceSubtitle')}
-            label="Section 01 / Expertise"
+            label="Chapter 01 / Expertise"
           />
         </FadeInSection>
 

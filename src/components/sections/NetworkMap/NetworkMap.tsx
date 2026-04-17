@@ -41,7 +41,7 @@ export function NetworkMap() {
             overline={t('networkOverline')}
             title={t('networkTitle')}
             subtitle={t('networkSubtitle')}
-            label="Section 03 / Network"
+            label="Chapter 03 / Network"
           />
         </FadeInSection>
 

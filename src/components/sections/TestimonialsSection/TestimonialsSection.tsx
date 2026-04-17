@@ -63,7 +63,7 @@ export function TestimonialsSection() {
             overline={t('testimonialsOverline')}
             title={t('testimonialsTitle')}
             subtitle={t('testimonialsSubtitle')}
-            label="Section 04 / Testimonials"
+            label="Chapter 04 / Testimonials"
           />
         </FadeInSection>
 

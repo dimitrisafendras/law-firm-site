@@ -17,7 +17,7 @@ export function ContactSection() {
             overline={t('contactOverline')}
             title={t('contactTitle')}
             subtitle={t('contactSubtitle')}
-            label="Section 05 / Contact"
+            label="Chapter 05 / Contact"
           />
         </FadeInSection>
 

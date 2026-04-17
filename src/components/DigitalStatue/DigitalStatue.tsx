@@ -13,8 +13,8 @@ const ANIMATION_CONFIG = {
   mobileBreakpoint: 1024,
 
   rain: {
-    fontSize: 10,
-    trail: 12,
+    fontSize: 4,
+    trail: 24,
     trailMobile: 8,
   },
 

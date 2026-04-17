@@ -26,7 +26,7 @@ let spriteSheet: ImageBitmap | null = null;
 
 function initDrops() {
   drops = Array.from({ length: Math.max(1, endCol) }, () => ({
-    y: Math.random() * -30,
+    y: Math.random() * (maxRow + TRAIL) - TRAIL,
     speed: 0.015 + Math.random() * 0.025,
     chars: Array.from({ length: TRAIL }, () => CHARS[(Math.random() * 2) | 0]),
   }));

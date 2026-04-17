@@ -6,16 +6,15 @@
 
 /* Rain — behind statue */
 .digital-statue__rain-wrap {
+  z-index: 0;
+  border-radius: 55% 0 0 35%;
+  width: 35%;
+  height: 100%;
   position: absolute;
   top: 5%;
   bottom: 0;
   left: 9%;
-  width: 35%;
-  height: 100%;
   overflow: hidden;
-  border-radius: 50% 0 0 50%;
-  z-index: 0;
-
 }
 
 .digital-statue__rain {

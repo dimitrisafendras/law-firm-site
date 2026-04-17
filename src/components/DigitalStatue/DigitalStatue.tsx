@@ -14,8 +14,8 @@ const ANIMATION_CONFIG = {
 
   rain: {
     fontSize: 4,
-    trail: 24,
-    trailMobile: 8,
+    trail: 20,
+    trailMobile: 10,
   },
 
   sparkleBody: {

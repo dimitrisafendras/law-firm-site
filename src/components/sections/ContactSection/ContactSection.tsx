@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { ContactForm } from '@/components/ContactForm';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';

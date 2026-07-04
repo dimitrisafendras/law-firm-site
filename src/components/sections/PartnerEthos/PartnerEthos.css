@@ -4,6 +4,11 @@
   padding: 100px 0;
   background: var(--grad-2);
 
+  /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
+     height (self-corrects after first render via the `auto` keyword). */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1900px;
+
   @media (max-width: 1024px) {
     padding: 40px 0;
   }

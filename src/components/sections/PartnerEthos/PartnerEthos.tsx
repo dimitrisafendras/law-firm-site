@@ -1,7 +1,9 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import partnerMaleImg from '@/assets/images/partner-male.jpg';
 import partnerFemaleImg from '@/assets/images/partner-female.jpg';
+import partnerMaleAvif from '@/assets/images/partner-male.avif';
+import partnerFemaleAvif from '@/assets/images/partner-female.avif';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import './PartnerEthos.css';
@@ -27,11 +29,18 @@ export function PartnerEthos() {
           <div className="partner-ethos__row">
             <FadeInSection variant="fade-left" className="partner-ethos__image-col">
               <div className="partner-ethos__image-wrapper">
-                <img
-                  src={partnerMaleImg}
-                  alt={t('attorney1Name')}
-                  className="partner-ethos__image"
-                />
+                <picture>
+                  <source type="image/avif" srcSet={partnerMaleAvif} />
+                  <img
+                    src={partnerMaleImg}
+                    alt={t('attorney1Name')}
+                    className="partner-ethos__image"
+                    width={512}
+                    height={512}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div className="partner-ethos__image-overlay" />
                 <span className="partner-ethos__badge partner-ethos__badge--left">
                   {t('attorney1Title')}
@@ -84,11 +93,18 @@ export function PartnerEthos() {
 
             <FadeInSection variant="fade-right" className="partner-ethos__image-col">
               <div className="partner-ethos__image-wrapper">
-                <img
-                  src={partnerFemaleImg}
-                  alt={t('attorney2Name')}
-                  className="partner-ethos__image"
-                />
+                <picture>
+                  <source type="image/avif" srcSet={partnerFemaleAvif} />
+                  <img
+                    src={partnerFemaleImg}
+                    alt={t('attorney2Name')}
+                    className="partner-ethos__image"
+                    width={512}
+                    height={512}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div className="partner-ethos__image-overlay" />
                 <span className="partner-ethos__badge partner-ethos__badge--right">
                   {t('attorney2Title')}

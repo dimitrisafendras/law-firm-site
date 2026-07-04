@@ -1,6 +1,14 @@
 import { useEffect, useRef } from 'react';
-import statueWebp from '@/assets/images/hero-statue.webp';
-import statuePng from '@/assets/images/hero-statue-fallback.png';
+import { breakpoints } from '@/theme';
+// Responsive statue variants — Vite hashes each import to its own URL, so the
+// srcSet strings below are built from these imported URLs (a single import can't
+// express a multi-file srcset).
+import statue700Avif from '@/assets/images/hero-statue-700.avif';
+import statue1050Avif from '@/assets/images/hero-statue-1050.avif';
+import statue1400Avif from '@/assets/images/hero-statue-1400.avif';
+import statue700Webp from '@/assets/images/hero-statue-700.webp';
+import statue1050Webp from '@/assets/images/hero-statue-1050.webp';
+import statue1400Webp from '@/assets/images/hero-statue-1400.webp';
 import RainWorkerUrl from './rainWorker.ts?worker&url';
 import SparkleWorkerUrl from './sparkleWorker.ts?worker&url';
 import FlameWorkerUrl from './flameWorker.ts?worker&url';
@@ -10,7 +18,9 @@ import './DigitalStatue.css';
 // Single source of truth for tuning every canvas effect in the statue scene.
 // Values suffixed with `Mobile` apply at viewport widths ≤ MOBILE_BREAKPOINT.
 const ANIMATION_CONFIG = {
-  mobileBreakpoint: 1024,
+  // Single source of truth is the theme token; CSS media queries duplicate the
+  // literal 1024px by necessity (see tokens.ts breakpoints).
+  mobileBreakpoint: parseInt(breakpoints.mobile, 10),
 
   rain: {
     fontSize: 4,
@@ -110,28 +120,47 @@ function createStarSprite(): Promise<ImageBitmap> {
 }
 
 // ── Helper: create worker + transfer canvas ──────────────────────────────────
+/** Cap the device-pixel-ratio so we never allocate an absurd canvas buffer. */
+function getDpr(): number {
+  return Math.min(window.devicePixelRatio || 1, 2);
+}
+
 function spawnWorker(
   url: string,
   canvas: HTMLCanvasElement,
   initMsg: Record<string, unknown>,
 ): Worker | null {
   try {
-    // Set canvas pixel dimensions to match its CSS container BEFORE transferring
+    // Size the canvas buffer to its CSS container × dpr BEFORE transferring.
+    // The worker draws in CSS-pixel coordinates (ctx.scale(dpr, dpr)), while
+    // the CSS `width/height: 100%` keeps the element at its display size.
     const wrap = canvas.parentElement!;
     const rect = wrap.getBoundingClientRect();
     const w = Math.round(rect.width);
     const h = Math.round(rect.height);
-    canvas.width = w;
-    canvas.height = h;
+    const dpr = getDpr();
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
 
     const offscreen = canvas.transferControlToOffscreen();
     const worker = new Worker(url, { type: 'module' });
-    worker.postMessage({ type: 'init', canvas: offscreen, width: w, height: h, ...initMsg }, [offscreen]);
+    worker.postMessage({ type: 'init', canvas: offscreen, width: w, height: h, dpr, ...initMsg }, [offscreen]);
     return worker;
   } catch {
     return null;
   }
 }
+
+// ── Responsive statue sources ────────────────────────────────────────────────
+const STATUE_AVIF_SRCSET = `${statue700Avif} 700w, ${statue1050Avif} 1050w, ${statue1400Avif} 1400w`;
+const STATUE_WEBP_SRCSET = `${statue700Webp} 700w, ${statue1050Webp} 1050w, ${statue1400Webp} 1400w`;
+// Honest heuristic: the statue is sized by HEIGHT (CSS `height:100%; width:auto`
+// inside .hero-section__bg), so its rendered *width* isn't a clean function of
+// viewport width. In practice it lands near 45vw on desktop (~684px on a ~1520px
+// viewport) and close to full width on the ≤1024px mobile layout. This `sizes`
+// approximation drives the srcset picker toward the right variant at up to
+// ~2 DPR (desktop) / ~3 DPR (mobile).
+const STATUE_SIZES = '(max-width: 1024px) 90vw, 45vw';
 
 interface DigitalStatueProps { className?: string }
 
@@ -149,9 +178,13 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
     const container = containerRef.current;
     if (!container) return;
 
-    const workers: Worker[] = [];
-    let observer: IntersectionObserver | null = null;
+    // Track each worker with the canvas element it drives, so a resize can
+    // re-measure the correct wrapper per canvas.
+    const entries: { worker: Worker; canvas: HTMLCanvasElement }[] = [];
+    let intersectionObserver: IntersectionObserver | null = null;
     let cancelled = false;
+    let started = false;
+    let debounceId: ReturnType<typeof setTimeout> | undefined;
 
     async function start() {
       // Pre-render sprites on main thread
@@ -161,87 +194,100 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       const mobile = window.innerWidth <= ANIMATION_CONFIG.mobileBreakpoint;
       const { rain, sparkleBody, sparkleScale, flameLeft, flameRight } = ANIMATION_CONFIG;
 
+      const add = (
+        canvasEl: HTMLCanvasElement | null,
+        url: string,
+        msg: Record<string, unknown>,
+      ) => {
+        if (!canvasEl) return;
+        const worker = spawnWorker(url, canvasEl, msg);
+        if (worker) entries.push({ worker, canvas: canvasEl });
+      };
+
       // Rain worker
-      if (rainRef.current) {
-        const w = spawnWorker(RainWorkerUrl, rainRef.current, {
-          sprite: rainSprite,
-          fontSize: rain.fontSize,
-          trail: mobile ? rain.trailMobile : rain.trail,
-        });
-        if (w) workers.push(w);
-      }
+      add(rainRef.current, RainWorkerUrl, {
+        sprite: rainSprite,
+        fontSize: rain.fontSize,
+        trail: mobile ? rain.trailMobile : rain.trail,
+      });
 
       // Sparkle body worker
-      if (spkBodyRef.current) {
-        const w = spawnWorker(SparkleWorkerUrl, spkBodyRef.current, {
-          sprite: starSprite,
-          count: mobile ? sparkleBody.countMobile : sparkleBody.count,
-          speed: mobile ? sparkleBody.speedMobile : sparkleBody.speed,
-          drawScale: sparkleBody.drawScale,
-        });
-        if (w) workers.push(w);
-      }
+      add(spkBodyRef.current, SparkleWorkerUrl, {
+        sprite: starSprite,
+        count: mobile ? sparkleBody.countMobile : sparkleBody.count,
+        speed: mobile ? sparkleBody.speedMobile : sparkleBody.speed,
+        drawScale: sparkleBody.drawScale,
+      });
 
       // Sparkle scale worker
-      if (spkScaleRef.current) {
-        const w = spawnWorker(SparkleWorkerUrl, spkScaleRef.current, {
-          sprite: starSprite,
-          count: mobile ? sparkleScale.countMobile : sparkleScale.count,
-          speed: mobile ? sparkleScale.speedMobile : sparkleScale.speed,
-          drawScale: sparkleScale.drawScale,
-        });
-        if (w) workers.push(w);
-      }
+      add(spkScaleRef.current, SparkleWorkerUrl, {
+        sprite: starSprite,
+        count: mobile ? sparkleScale.countMobile : sparkleScale.count,
+        speed: mobile ? sparkleScale.speedMobile : sparkleScale.speed,
+        drawScale: sparkleScale.drawScale,
+      });
 
       // Flame left worker
-      if (flameLRef.current) {
-        const w = spawnWorker(FlameWorkerUrl, flameLRef.current, {
-          wMul: mobile ? flameLeft.wMulMobile : flameLeft.wMul,
-          hMul: mobile ? flameLeft.hMulMobile : flameLeft.hMul,
-          max: mobile ? flameLeft.maxMobile : flameLeft.max,
-          colors: flameLeft.colors,
-        });
-        if (w) workers.push(w);
-      }
+      add(flameLRef.current, FlameWorkerUrl, {
+        wMul: mobile ? flameLeft.wMulMobile : flameLeft.wMul,
+        hMul: mobile ? flameLeft.hMulMobile : flameLeft.hMul,
+        max: mobile ? flameLeft.maxMobile : flameLeft.max,
+        colors: flameLeft.colors,
+      });
 
       // Flame right worker
-      if (flameRRef.current) {
-        const w = spawnWorker(FlameWorkerUrl, flameRRef.current, {
-          wMul: mobile ? flameRight.wMulMobile : flameRight.wMul,
-          hMul: mobile ? flameRight.hMulMobile : flameRight.hMul,
-          max: mobile ? flameRight.maxMobile : flameRight.max,
-          colors: flameRight.colors,
-        });
-        if (w) workers.push(w);
-      }
+      add(flameRRef.current, FlameWorkerUrl, {
+        wMul: mobile ? flameRight.wMulMobile : flameRight.wMul,
+        hMul: mobile ? flameRight.hMulMobile : flameRight.hMul,
+        max: mobile ? flameRight.maxMobile : flameRight.max,
+        colors: flameRight.colors,
+      });
 
       // Visibility observer — pause/resume all workers
-      observer = new IntersectionObserver(([entry]) => {
-        for (const w of workers) w.postMessage({ type: 'visibility', visible: entry.isIntersecting });
+      intersectionObserver = new IntersectionObserver(([entry]) => {
+        for (const { worker } of entries) {
+          worker.postMessage({ type: 'visibility', visible: entry.isIntersecting });
+        }
       }, { threshold: 0 });
-      observer.observe(container!);
+      intersectionObserver.observe(container!);
     }
 
-    // Try immediately; if container has no size yet, retry on resize
-    // (the <img onLoad> dispatches a resize event once it loads)
-    let started = false;
-    async function tryStart() {
-      if (started || cancelled) return;
+    // A single ResizeObserver drives both startup (fires once the container has
+    // a non-zero size — replacing the old synthetic resize-on-img-load hack)
+    // and subsequent debounced resize propagation to each worker.
+    const resizeObserver = new ResizeObserver(() => {
       const rect = container!.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) return;
-      started = true;
-      window.removeEventListener('resize', tryStart);
-      await start();
-    }
 
-    tryStart();
-    window.addEventListener('resize', tryStart);
+      if (!started) {
+        started = true;
+        void start();
+        return;
+      }
+
+      clearTimeout(debounceId);
+      debounceId = setTimeout(() => {
+        if (cancelled) return;
+        const dpr = getDpr();
+        for (const { worker, canvas } of entries) {
+          const r = canvas.parentElement!.getBoundingClientRect();
+          worker.postMessage({
+            type: 'resize',
+            width: Math.round(r.width),
+            height: Math.round(r.height),
+            dpr,
+          });
+        }
+      }, 150);
+    });
+    resizeObserver.observe(container);
 
     return () => {
       cancelled = true;
-      window.removeEventListener('resize', tryStart);
-      observer?.disconnect();
-      for (const w of workers) w.terminate();
+      clearTimeout(debounceId);
+      resizeObserver.disconnect();
+      intersectionObserver?.disconnect();
+      for (const { worker } of entries) worker.terminate();
     };
   }, []);
 
@@ -253,12 +299,16 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       </div>
 
       <picture>
-        <source srcSet={statueWebp} type="image/webp" />
+        <source type="image/avif" srcSet={STATUE_AVIF_SRCSET} sizes={STATUE_SIZES} />
+        <source type="image/webp" srcSet={STATUE_WEBP_SRCSET} sizes={STATUE_SIZES} />
         <img
-          src={statuePng}
+          src={statue1400Webp}
           alt=""
           className="digital-statue__img"
-          onLoad={() => window.dispatchEvent(new Event('resize'))}
+          width={1400}
+          height={1875}
+          fetchPriority="high"
+          decoding="async"
         />
       </picture>
 

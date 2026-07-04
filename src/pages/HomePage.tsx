@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { Navbar, Footer, Button } from '@/components';
 import { ScaleOfJustice } from '@/assets/illustrations';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
@@ -44,13 +44,15 @@ export default function HomePage() {
         }
       />
 
-      <HeroSection />
-      <StatsBar />
-      <PracticeGrid />
-      <PartnerEthos />
-      <NetworkMap />
-      <TestimonialsSection />
-      <ContactSection />
+      <main>
+        <HeroSection />
+        <StatsBar />
+        <PracticeGrid />
+        <PartnerEthos />
+        <NetworkMap />
+        <TestimonialsSection />
+        <ContactSection />
+      </main>
 
       <Footer
         logo={

@@ -1,10 +1,5 @@
 /// <reference lib="webworker" />
-
-let ctx: OffscreenCanvasRenderingContext2D | null = null;
-let canvas: OffscreenCanvas;
-let cw = 0, ch = 0;
-let visible = true;
-let starSprite: ImageBitmap | null = null;
+import { registerEffectWorker } from './effectWorkerHarness';
 
 interface Sparkle {
   x: number; y: number; size: number;
@@ -16,6 +11,7 @@ let sparkles: Sparkle[] = [];
 let count = 20;
 let speed = 1;
 let drawScale = 6;
+let starSprite: ImageBitmap | null = null;
 
 function makeSparkle(): Sparkle {
   return {
@@ -37,65 +33,47 @@ function resetSparkle(s: Sparkle) {
   s.age = 0;
 }
 
-function draw() {
-  if (!ctx || !visible || cw === 0) return;
-
-  ctx.clearRect(0, 0, cw, ch);
-
-  for (const s of sparkles) {
-    s.age++;
-    if (s.age < s.delay) continue;
-
-    s.opacity += s.fadeSpeed;
-    if (s.opacity > 1) { s.opacity = 1; s.fadeSpeed = -Math.abs(s.fadeSpeed); }
-    if (s.opacity <= 0) { resetSparkle(s); continue; }
-
-    const px = s.x * cw;
-    const py = s.y * ch;
-
-    if (starSprite) {
-      const drawSize = s.size * drawScale;
-      ctx.globalAlpha = s.opacity;
-      ctx.drawImage(starSprite, px - drawSize / 2, py - drawSize / 2, drawSize, drawSize);
-    } else {
-      // Fallback: simple dot
-      ctx.globalAlpha = s.opacity;
-      ctx.fillStyle = '#DCF5FF';
-      ctx.beginPath();
-      ctx.arc(px, py, s.size * 2, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-  ctx.globalAlpha = 1;
-
-  requestAnimationFrame(draw);
+interface SparkleInit {
+  sprite?: ImageBitmap;
+  count?: number;
+  speed?: number;
+  drawScale?: number;
 }
 
-self.onmessage = (e: MessageEvent) => {
-  const { type } = e.data;
-
-  if (type === 'init') {
-    canvas = e.data.canvas as OffscreenCanvas;
-    ctx = canvas.getContext('2d');
-    if (e.data.sprite) starSprite = e.data.sprite as ImageBitmap;
-    cw = e.data.width;
-    ch = e.data.height;
-    count = e.data.count || 20;
-    speed = e.data.speed || 1;
-    drawScale = e.data.drawScale || 6;
+registerEffectWorker<SparkleInit>({
+  init(data) {
+    if (data.sprite) starSprite = data.sprite;
+    count = data.count || 20;
+    speed = data.speed || 1;
+    drawScale = data.drawScale || 6;
     sparkles = Array.from({ length: count }, makeSparkle);
-    requestAnimationFrame(draw);
-  }
+  },
 
-  if (type === 'resize') {
-    cw = e.data.width;
-    ch = e.data.height;
-    canvas.width = cw;
-    canvas.height = ch;
-  }
+  draw({ ctx, width: cw, height: ch }) {
+    for (const s of sparkles) {
+      s.age++;
+      if (s.age < s.delay) continue;
 
-  if (type === 'visibility') {
-    visible = e.data.visible;
-    if (visible) requestAnimationFrame(draw);
-  }
-};
+      s.opacity += s.fadeSpeed;
+      if (s.opacity > 1) { s.opacity = 1; s.fadeSpeed = -Math.abs(s.fadeSpeed); }
+      if (s.opacity <= 0) { resetSparkle(s); continue; }
+
+      const px = s.x * cw;
+      const py = s.y * ch;
+
+      if (starSprite) {
+        const drawSize = s.size * drawScale;
+        ctx.globalAlpha = s.opacity;
+        ctx.drawImage(starSprite, px - drawSize / 2, py - drawSize / 2, drawSize, drawSize);
+      } else {
+        // Fallback: simple dot
+        ctx.globalAlpha = s.opacity;
+        ctx.fillStyle = '#DCF5FF';
+        ctx.beginPath();
+        ctx.arc(px, py, s.size * 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+  },
+});

@@ -6,7 +6,6 @@
   transition-duration: var(--fade-duration, 0.7s);
   transition-delay: var(--fade-delay, 0s);
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
 }
 
 /* Variants — initial state */

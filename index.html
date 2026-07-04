@@ -3,11 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
-    <title>law-firm-site</title>
+    <meta name="description" content="NOMOS Legal & Advisory — super prime legal counsel in Athens. Real estate, startup & venture capital, maritime, and cryptocurrency law for ambitious clients." />
+    <meta name="theme-color" content="#111317" />
+    <link rel="canonical" href="https://dimitrisafendras.github.io/law-firm-site/" />
+
+    <!-- Open Graph / social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="NOMOS Legal & Advisory" />
+    <meta property="og:title" content="NOMOS — Legal & Advisory | Super Prime Legal Counsel" />
+    <meta property="og:description" content="A new-generation legal practice in Athens combining deep expertise in real estate, startup funding, maritime, and cryptocurrency law." />
+    <meta property="og:url" content="https://dimitrisafendras.github.io/law-firm-site/" />
+    <meta property="og:image" content="https://dimitrisafendras.github.io/law-firm-site/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="el_GR" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NOMOS — Legal & Advisory | Super Prime Legal Counsel" />
+    <meta name="twitter:description" content="A new-generation legal practice in Athens combining deep expertise in real estate, startup funding, maritime, and cryptocurrency law." />
+    <meta name="twitter:image" content="https://dimitrisafendras.github.io/law-firm-site/og-image.jpg" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LegalService",
+      "name": "NOMOS Legal & Advisory",
+      "url": "https://dimitrisafendras.github.io/law-firm-site/",
+      "image": "https://dimitrisafendras.github.io/law-firm-site/og-image.jpg",
+      "description": "A new-generation legal practice combining deep expertise in real estate, startup funding, maritime, and cryptocurrency law.",
+      "areaServed": { "@type": "City", "name": "Athens" },
+      "knowsLanguage": ["en", "el"],
+      "knowsAbout": ["Real estate law", "Startup and venture capital law", "Maritime law", "Cryptocurrency regulation"]
+    }
+    </script>
+    <!-- Preload the above-the-fold face; other subsets load on demand via @font-face -->
+    <link rel="preload" href="/fonts/jura-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <title>NOMOS — Legal & Advisory | Super Prime Legal Counsel</title>
   </head>
   <body>
     <div id="root"></div>

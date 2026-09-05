@@ -54,10 +54,14 @@
 }
 
 /* Accent-tinted glass — near-solid, so text on it holds contrast no matter how
-   dark the content behind the glass happens to be. */
+   dark the content behind the glass happens to be.
+   The foreground has to flip with it: this site's accent is a pale blue, and the
+   body text colour it would otherwise inherit is pale too, so the tint alone
+   leaves light-on-light. `--on-accent` is the paired colour for exactly this. */
 .ds-glass[data-tone='accent'] {
   --ds-glass-tint: color-mix(in oklab, var(--accent) 92%, transparent);
   --ds-glass-glow: color-mix(in oklab, var(--accent) 55%, white);
+  color: var(--on-accent);
 }
 
 /* ---- Layer 1: highlight — specular light cast on the top edge ------------- */

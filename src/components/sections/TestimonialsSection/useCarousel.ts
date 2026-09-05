@@ -33,12 +33,35 @@ export function useCarousel({
   /* Centre offset: the centred card is the middle of the visible window */
   const centerOffset = Math.floor(visibleCount / 2);
 
+  /** Fold an arbitrary index back onto the real set. */
+  const normalize = useCallback(
+    (index: number) => startIndex + ((((index - startIndex) % itemCount) + itemCount) % itemCount),
+    [itemCount, startIndex],
+  );
+
   const goTo = useCallback(
     (index: number, animate = true) => {
+      /*
+       * The seamless wrap below is driven by `transitionend`, which is not
+       * guaranteed to fire: the section carries `content-visibility: auto`, so
+       * while it is off-screen the browser skips rendering and runs no
+       * transition at all, and a backgrounded tab does the same. Autoplay keeps
+       * counting regardless, so without this guard the index walks past the
+       * cloned range and the track translates into empty space — the carousel
+       * goes blank and never recovers.
+       *
+       * Anything that far out of range is resynced without animation; there is
+       * nothing on screen to animate from.
+       */
+      if (index >= startIndex + itemCount * 2 || index < startIndex - itemCount) {
+        setIsTransitioning(false);
+        setCurrent(normalize(index));
+        return;
+      }
       setIsTransitioning(animate);
       setCurrent(index);
     },
-    [],
+    [itemCount, normalize, startIndex],
   );
 
   const next = useCallback(() => goTo(current + 1), [current, goTo]);

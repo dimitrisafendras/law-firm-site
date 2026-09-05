@@ -1,8 +1,11 @@
 .partner-ethos {
   position: relative;
   overflow: hidden;
-  padding: 100px 0;
-  background: var(--grad-2);
+  padding: var(--space-24) 0;
+  /* One link in a continuous page ramp: this section opens on the colour the
+     one above it closed on, so the two meet with no seam. See the gradient
+     stops in src/theme/tokens.ts. */
+  background: linear-gradient(180deg, var(--grad-1) 0%, var(--grad-2) 100%);
 
   /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
      height (self-corrects after first render via the `auto` keyword). */
@@ -10,17 +13,17 @@
   contain-intrinsic-size: auto 1900px;
 
   @media (max-width: 1024px) {
-    padding: 40px 0;
+    padding: var(--space-8) 0;
   }
 }
 
 .partner-ethos__inner {
-  max-width: 1440px;
+  max-width: var(--layout-max-width);
   margin: 0 auto;
-  padding: 0 48px;
+  padding: 0 var(--space-12);
 
   @media (max-width: 1024px) {
-    padding: 0 16px;
+    padding: 0 var(--space-4);
   }
 }
 
@@ -29,22 +32,22 @@
 .partner-ethos__profiles {
   display: flex;
   flex-direction: column;
-  gap: 96px;
+  gap: var(--space-24);
 
   @media (max-width: 1024px) {
-    gap: 64px;
+    gap: var(--space-16);
   }
 }
 
 .partner-ethos__row {
   display: grid;
   grid-template-columns: 5fr 7fr;
-  gap: 48px;
+  gap: var(--space-12);
   align-items: start;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: var(--space-8);
   }
 }
 
@@ -58,12 +61,19 @@
 
 /* ─── Image Column ────────────────────────────────────────────────────────── */
 
+/* Not a glass surface. The portrait covers the wrapper edge to edge (plus an
+   absolutely-positioned overlay on top of it), so a tint and a blurred backdrop
+   would only ever read at the photo's 20% transparency — per-frame compositing
+   cost for no visible result. The rim is an *outer* ring for the same reason:
+   an inset shadow paints beneath in-flow content, i.e. behind the photo. */
 .partner-ethos__image-wrapper {
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  border-radius: 4px;
-  background: var(--glass-bg);
+  border-radius: var(--radius-3xl);
+  box-shadow:
+    var(--elev-floating),
+    0 0 0 1px var(--glass-edge);
 }
 
 .partner-ethos__image {
@@ -86,35 +96,36 @@
 
 .partner-ethos__badge {
   position: absolute;
-  bottom: 24px;
+  bottom: var(--space-6);
   font-family: var(--label);
-  font-size: 11px;
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: 0.3em;
   color: var(--accent);
   background: var(--accent-bg);
-  padding: 6px 14px;
-  border-radius: 2px;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
 }
 
 .partner-ethos__badge--left {
-  left: 24px;
+  left: var(--space-6);
 }
 
 .partner-ethos__badge--right {
-  right: 24px;
+  right: var(--space-6);
 }
 
 /* ─── Text Column ─────────────────────────────────────────────────────────── */
 
+/* Background, edge and elevation come from `.glass` in the TSX. */
 .partner-ethos__text-col {
-  padding: 40px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 4px;
+  padding: var(--space-8);
+  border-radius: var(--radius-3xl);
 
   @media (max-width: 1024px) {
-    padding: 24px;
+    padding: var(--space-6);
   }
 }
 
@@ -138,26 +149,42 @@
   }
 }
 
+/* One rung under .section-header__title (h1 / h2 at 1024px) and one above the
+   role beneath it: this is an <h3> in the outline, and it used to outsize the
+   section heading that contains it. */
 .partner-ethos__name {
   font-family: var(--heading);
-  font-size: 40px;
-  font-weight: 400;
+  font-size: var(--type-h2-size);
+  font-weight: var(--type-h2-weight);
+  line-height: var(--type-h2-leading);
+  letter-spacing: var(--type-h2-tracking);
   color: var(--accent);
-  margin: 0 0 8px;
-  line-height: 1.1;
+  margin: 0 0 var(--space-2);
 
   @media (max-width: 1024px) {
-    font-size: 32px;
+    font-size: var(--type-h3-size);
+    font-weight: var(--type-h3-weight);
+    line-height: var(--type-h3-leading);
+    letter-spacing: var(--type-h3-tracking);
   }
 }
 
 .partner-ethos__role {
   font-family: var(--heading);
-  font-size: 20px;
+  font-size: var(--type-h3-size);
+  line-height: var(--type-h3-leading);
   font-style: italic;
   color: var(--text);
   opacity: 0.6;
-  margin: 0 0 32px;
+  margin: 0 0 var(--space-8);
+
+  /* Steps down with the name above it — the h3 rung is where the name lands at
+     this width, and the role must not tie the heading it qualifies. */
+  @media (max-width: 1024px) {
+    font-size: var(--type-body-lg-size);
+    line-height: var(--type-body-lg-leading);
+    letter-spacing: var(--type-body-lg-tracking);
+  }
 }
 
 .partner-ethos__bio {
@@ -165,11 +192,13 @@
 }
 
 .partner-ethos__bio p {
-  font-size: 18px;
-  line-height: 1.65;
+  font-size: var(--type-body-lg-size);
+  font-weight: var(--type-body-lg-weight);
+  line-height: var(--type-body-lg-leading);
+  letter-spacing: var(--type-body-lg-tracking);
   color: var(--text);
   opacity: 0.7;
-  margin: 0 0 24px;
+  margin: 0 0 var(--space-6);
 }
 
 .partner-ethos__bio p:last-child {
@@ -180,8 +209,8 @@
 
 .partner-ethos__meta {
   display: flex;
-  gap: 48px;
-  margin-top: 40px;
+  gap: var(--space-12);
+  margin-top: var(--space-8);
 }
 
 .partner-ethos__meta--right {
@@ -195,17 +224,19 @@
 .partner-ethos__meta-label {
   display: block;
   font-family: var(--label);
-  font-size: 10px;
+  font-size: var(--type-caption-size);
+  line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: 0.3em;
   color: var(--text);
-  opacity: 0.35;
-  margin-bottom: 4px;
+  opacity: var(--text-emphasis-muted);
+  margin-bottom: var(--space-1);
 }
 
 .partner-ethos__meta-value {
   font-family: var(--label);
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--type-small-size);
+  font-weight: var(--type-small-weight);
+  line-height: var(--type-small-leading);
   color: var(--text-h);
 }

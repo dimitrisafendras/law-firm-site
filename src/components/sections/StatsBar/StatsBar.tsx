@@ -86,7 +86,7 @@ export function StatsBar() {
   ];
 
   return (
-    <div className="stats-bar" ref={ref}>
+    <div className="stats-bar glass" ref={ref}>
       <div className="stats-bar__inner">
         {stats.map((s, i) => (
           <StatItem key={s.labelKey} valueKey={s.valueKey} labelKey={s.labelKey} trigger={visible} delay={i * 0.1} />

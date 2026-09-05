@@ -2,11 +2,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-2);
   font-family: var(--label);
   font-weight: 600;
   border: none;
-  border-radius: var(--radius-md, 4px);
+  /* Capsule. The shape is what makes a control read as a control rather than a
+     small card, and it is what the design system's own GlassButton uses. */
+  border-radius: var(--radius-full);
   cursor: pointer;
   transition:
     background var(--transition, 0.3s),
@@ -29,21 +31,42 @@
   cursor: not-allowed;
 }
 
-/* Sizes */
+/* Sizes — every size clears the 44px touch target; they tighten on desktop,
+   where the pointer is precise and a 44px pill next to body copy reads heavy. */
 .btn--sm {
-  font-size: 12px;
-  height: 36px;
-  padding: 0 20px;
+  font-size: var(--type-caption-size);
+  letter-spacing: var(--type-caption-tracking);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
 }
 
 .btn--md {
-  font-size: 15px;
-  padding: 12px 24px;
+  font-size: var(--type-small-size);
+  min-height: 48px;
+  padding: var(--space-3) var(--space-6);
 }
 
 .btn--lg {
-  font-size: 18px;
-  padding: 16px 32px;
+  font-size: var(--type-body-size);
+  min-height: 52px;
+  padding: var(--space-4) var(--space-8);
+}
+
+@media (min-width: 1025px) {
+  .btn--sm {
+    min-height: 32px;
+    padding: var(--space-1) var(--space-3);
+  }
+
+  .btn--md {
+    min-height: 40px;
+    padding: var(--space-2) var(--space-6);
+  }
+
+  .btn--lg {
+    min-height: 48px;
+    padding: var(--space-3) var(--space-8);
+  }
 }
 
 /* Primary */
@@ -54,7 +77,13 @@
 
 .btn--primary:hover:not(:disabled) {
   filter: brightness(0.92);
-  box-shadow: 0 4px 16px rgba(137, 207, 240, 0.3);
+}
+
+/* Pointer-only, for the reason given at .btn--glass:hover below. */
+@media (hover: hover) {
+  .btn--primary:hover:not(:disabled) {
+    box-shadow: 0 4px 16px color-mix(in oklab, var(--accent-container) 30%, transparent);
+  }
 }
 
 /* Secondary */
@@ -81,18 +110,106 @@
   opacity: 0.8;
 }
 
-/* Glass */
+/* Glass — the real material, inlined rather than via `.glass`.
+   A button's label is usually a bare text node, so `.glass > *` has no element
+   to lift above the illumination layer and the glow would wash the label. Here
+   the illumination sits at z-index -1 instead: `isolation` makes this element a
+   stacking context, so the layer paints over the tint but still under the text. */
 .btn--glass {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  position: relative;
+  isolation: isolate;
+  /* Clips both layers to the capsule. The illumination scales to 1.08 on hover
+     about the box centre, which carries its hot spot (15% 0%) past the top
+     edge and leaks a light halo outside the rim. `.card` clips the identical
+     layer for the same reason; the inlined copy here needs its own clip. The
+     button has no descendant that must escape — the glow and the rim are both
+     `inset: 0`. */
+  overflow: hidden;
   color: var(--text-h);
-  box-shadow: var(--glass-shadow);
+  background-color: var(--glass-tint);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow:
+    var(--elev-floating),
+    inset 0 0 0 1px var(--glass-edge);
+}
+
+.btn--glass::before,
+.btn--glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Illumination — interior glow that lenses the backdrop. */
+.btn--glass::before {
+  z-index: -1;
+  background:
+    radial-gradient(120% 90% at 15% 0%, var(--glass-glow) 0%, transparent 55%),
+    radial-gradient(100% 80% at 90% 110%, var(--glass-glow) 0%, transparent 60%);
+  opacity: 0.85;
+  transition:
+    transform 0.5s var(--ease-settle),
+    opacity 0.4s ease;
+}
+
+/* Highlight — specular light on the top edge, masked to the 1px rim, which is
+   why it can sit above the label without covering it. */
+.btn--glass::after {
+  z-index: 1;
+  background: linear-gradient(180deg, var(--glass-highlight) 0%, rgba(255, 255, 255, 0) 22%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1px;
+  opacity: 0.9;
 }
 
 .btn--glass:hover:not(:disabled) {
-  background: var(--glass-bg-strong);
-  border-color: var(--accent-border);
-  box-shadow:
-    var(--glass-shadow),
-    0 0 20px rgba(137, 207, 240, 0.1);
+  background-color: var(--glass-bg-strong);
+}
+
+/* Everything that lifts the button — the overlay shadow and the swelling glow —
+   is gated on a real pointer. A tap latches :hover on a touch device, and a
+   latched lift leaves one button looking permanently pressed-out until the next
+   tap elsewhere. The tint change above is safe to latch and carries the state. */
+@media (hover: hover) {
+  .btn--glass:hover:not(:disabled) {
+    box-shadow:
+      var(--elev-overlay),
+      inset 0 0 0 1px var(--glass-edge);
+  }
+
+  .btn--glass:hover:not(:disabled)::before {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  /* The hover state is repeated here because `.btn--glass:hover:not(:disabled)`
+     outranks a bare `.btn--glass`: without it, hovering would restore a
+     translucent tint after the blur had been switched off, which is worse than
+     either state on its own. The pointer-only lift still signals the hover. */
+  .btn--glass,
+  .btn--glass:hover:not(:disabled) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: var(--surface);
+  }
+
+  .btn--glass::before,
+  .btn--glass::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn--glass::before {
+    transition: none;
+  }
 }

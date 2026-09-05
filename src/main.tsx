@@ -4,6 +4,7 @@ import { createRoot, hydrateRoot } from 'react-dom/client'
 // first so :root vars are defined before index.css / component styles use them.
 import './theme/theme.generated.css'
 import './index.css'
+import './styles/liquid-glass.css'
 import { I18nProvider } from './i18n/I18nProvider'
 import { AuthProvider } from './lib/auth'
 import { ContentProvider } from './lib/content'

@@ -1,8 +1,8 @@
 .section-header {
-  margin-bottom: 80px;
+  margin-bottom: var(--space-20);
 
   @media (max-width: 1024px) {
-    margin-bottom: 56px;
+    margin-bottom: var(--space-16);
   }
 }
 
@@ -10,12 +10,16 @@
 
 .section-header__overline {
   font-family: var(--label);
-  font-size: 11px;
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
   text-transform: uppercase;
+  /* Wider than --type-caption-tracking on purpose: this is an engraved rule
+     over the title, not running caption text. */
   letter-spacing: 0.35em;
   color: var(--accent);
   display: block;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-6);
 }
 
 /* ─── Row: title left, label right ───────────────────────────────────────── */
@@ -24,11 +28,11 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 48px;
+  gap: var(--space-12);
 
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 24px;
+    gap: var(--space-6);
   }
 }
 
@@ -41,33 +45,39 @@
 
 /* ─── Title ──────────────────────────────────────────────────────────────── */
 
+/* Sized a full rung above anything a section can contain — partner names, card
+   titles — so the section title is always the largest type in its own section.
+   Deliberately does NOT mirror the h2 → h3 step in index.css: that step lands
+   the title on the same specimen as the h3s beneath it, and the two levels
+   become indistinguishable on every viewport at or below 1024px. */
 .section-header__title {
   font-family: var(--heading);
-  font-size: 52px;
-  font-weight: 400;
-  line-height: 1.15;
+  font-size: var(--type-h1-size);
+  font-weight: var(--type-h1-weight);
+  line-height: var(--type-h1-leading);
+  letter-spacing: var(--type-h1-tracking);
   color: var(--text-h);
   margin: 0;
   white-space: normal;
 
   @media (max-width: 1024px) {
-    font-size: 36px;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 30px;
+    font-size: var(--type-h2-size);
+    font-weight: var(--type-h2-weight);
+    line-height: var(--type-h2-leading);
+    letter-spacing: var(--type-h2-tracking);
   }
 }
 
 /* ─── Subtitle ───────────────────────────────────────────────────────────── */
 
 .section-header__subtitle {
-  font-size: 17px;
-  font-weight: 300;
+  font-size: var(--type-body-size);
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-leading);
+  letter-spacing: var(--type-body-tracking);
   color: var(--text);
   opacity: 0.6;
-  margin: 20px 0 0;
-  line-height: 1.7;
+  margin: var(--space-4) 0 0;
   max-width: 720px;
 }
 
@@ -76,7 +86,7 @@
 .section-header__label-col {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-4);
   flex-shrink: 0;
   align-self: flex-end;
 
@@ -99,7 +109,9 @@
 
 .section-header__label {
   font-family: var(--label);
-  font-size: 11px;
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--text);

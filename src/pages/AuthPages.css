@@ -1,5 +1,5 @@
 /* Shared layout for LoginPage, SignupPage and AccountPage.
-   All colours, fonts and radii come from the theme CSS custom properties. */
+   All colours, fonts, radii and spacing come from the theme custom properties. */
 
 .auth-page {
   flex: 1;
@@ -7,10 +7,12 @@
   align-items: center;
   justify-content: center;
   background: var(--bg);
-  padding: 88px 0 48px;
+  /* 88px clears the fixed navbar — a measurement of another element, not a
+     spacing step. */
+  padding: 88px 0 var(--space-12);
 
   @media (max-width: 1024px) {
-    padding: 88px 0 32px;
+    padding: 88px 0 var(--space-8);
   }
 }
 
@@ -19,15 +21,35 @@
   justify-content: center;
 }
 
-.auth-page__card {
+/* The auth card is the site's most prominent standalone surface — it floats on
+   an otherwise empty page — so it sits one step above the card default, at
+   overlay elevation. The material itself comes from `.glass`, which <Card>
+   already carries; only the halo and the edge have to be restated here because
+   box-shadow cannot be appended to. */
+.auth-page .auth-page__card {
   width: 100%;
   max-width: 440px;
+  border-radius: var(--radius-3xl);
+}
+
+/* The hover state is restated deliberately, not by accident. Page scoping beats
+   plain `.card--glow`, but it only *ties* `.card--glow:hover` — both are two
+   compound selectors — so without this the winner would be whichever stylesheet
+   the bundler emitted last. Holding the rest-state shadow through :hover
+   suppresses the glow variant's lift, which on this card would promise an
+   interaction it does not have: nothing here responds to a click. */
+.auth-page .auth-page__card,
+.auth-page .auth-page__card:hover {
+  box-shadow:
+    var(--elev-overlay),
+    inset 0 0 0 1px var(--glass-edge),
+    0 0 40px var(--glass-glow);
 }
 
 .auth-page__body {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-6);
 }
 
 /* ─── Card head ─────────────────────────────────────────────────────────── */
@@ -35,7 +57,7 @@
 .auth-page__head {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
   text-align: center;
 }
 
@@ -47,11 +69,15 @@
 
 .auth-page__link {
   font-family: var(--label);
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--type-small-size);
+  /* Not the small step's own 400: an inline link has to read heavier than the
+     copy it sits inside. The scale has no strong weight to name, so this stays
+     a literal until one exists. */
+  font-weight: var(--weight-semibold);
+  line-height: var(--type-small-leading);
   color: var(--accent-text);
   text-decoration: none;
-  border-radius: var(--radius-md, 4px);
+  border-radius: var(--radius-sm);
   transition: opacity var(--transition, 0.3s);
 }
 
@@ -65,12 +91,12 @@
 .auth-page__skeleton {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .auth-page__skeleton-bar {
   height: 20px;
-  border-radius: var(--radius-md, 4px);
+  border-radius: var(--radius-md);
   background: var(--surface-variant);
   animation: auth-page-pulse 1.4s ease-in-out infinite;
 }
@@ -107,15 +133,15 @@
 .account-panel {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .account-panel__row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 16px;
-  padding: 12px 0;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
   border-bottom: 1px solid var(--border);
 }
 
@@ -125,9 +151,10 @@
 
 .account-panel__label {
   font-family: var(--label);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.18px;
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  letter-spacing: var(--type-caption-tracking);
   text-transform: uppercase;
   color: var(--text);
   opacity: 0.7;
@@ -135,8 +162,8 @@
 
 .account-panel__value {
   font-family: var(--sans);
-  font-size: 15px;
-  line-height: 135%;
+  font-size: var(--type-small-size);
+  line-height: var(--type-small-leading);
   color: var(--text-h);
   overflow-wrap: anywhere;
   text-align: right;
@@ -144,33 +171,34 @@
 
 .account-panel__role {
   font-family: var(--label);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.18px;
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  letter-spacing: var(--type-caption-tracking);
   text-transform: uppercase;
   color: var(--accent-text);
   background: var(--accent-bg);
   border: 1px solid var(--accent-border);
-  border-radius: var(--radius-md, 4px);
-  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-2);
   white-space: nowrap;
 }
 
 .account-panel__hint {
   font-family: var(--sans);
-  font-size: 15px;
-  line-height: 135%;
+  font-size: var(--type-small-size);
+  line-height: var(--type-small-leading);
   color: var(--text);
   background: var(--accent-bg);
   border: 1px solid var(--accent-border);
-  border-radius: var(--radius-md, 4px);
-  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
 }
 
 .account-panel__actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-4);
   flex-wrap: wrap;
 }

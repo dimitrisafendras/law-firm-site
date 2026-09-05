@@ -6,13 +6,13 @@
 }
 
 .divider--sm {
-  margin: 16px 0;
+  margin: var(--space-4) 0;
 }
 
 .divider--md {
-  margin: 32px 0;
+  margin: var(--space-8) 0;
 }
 
 .divider--lg {
-  margin: 48px 0;
+  margin: var(--space-12) 0;
 }

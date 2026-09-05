@@ -55,7 +55,7 @@ export function PartnerEthos() {
               </div>
             </FadeInSection>
 
-            <FadeInSection variant="fade-right" delay={0.15} className="partner-ethos__text-col">
+            <FadeInSection variant="fade-right" delay={0.15} className="partner-ethos__text-col glass">
               <EditableText tKey="attorney1Name" as="h3" className="partner-ethos__name" />
               <p className="partner-ethos__role">
                 <EditableText tKey="attorney1Spec1" as="span" /> &amp;{' '}
@@ -79,7 +79,7 @@ export function PartnerEthos() {
 
           {/* Partner 2 — text left (right-aligned), image right */}
           <div className="partner-ethos__row partner-ethos__row--reversed">
-            <FadeInSection variant="fade-left" delay={0.15} className="partner-ethos__text-col partner-ethos__text-col--right">
+            <FadeInSection variant="fade-left" delay={0.15} className="partner-ethos__text-col partner-ethos__text-col--right glass">
               <EditableText tKey="attorney2Name" as="h3" className="partner-ethos__name" />
               <p className="partner-ethos__role">
                 <EditableText tKey="attorney2Spec1" as="span" /> &amp;{' '}
@@ -142,7 +142,7 @@ export function PartnerEthos() {
               </div>
             </FadeInSection>
 
-            <FadeInSection variant="fade-right" delay={0.15} className="partner-ethos__text-col">
+            <FadeInSection variant="fade-right" delay={0.15} className="partner-ethos__text-col glass">
               <EditableText tKey="attorney3Name" as="h3" className="partner-ethos__name" />
               <p className="partner-ethos__role">
                 <EditableText tKey="attorney3Spec1" as="span" /> &amp;{' '}

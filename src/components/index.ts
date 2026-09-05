@@ -5,6 +5,7 @@ export { Section } from './Section';
 export { Text, Heading } from './Text';
 export { Badge } from './Badge';
 export { Divider } from './Divider';
+export { GlassSurface } from './GlassSurface';
 export { Input } from './Input';
 export { Textarea } from './Textarea';
 

@@ -14,7 +14,7 @@ export function CtaSection() {
       <CircuitLines variant="e" />
       <div className="cta-section__inner">
         <FadeInSection variant="scale">
-          <div className="cta-section__card">
+          <div className="cta-section__card glass">
             <div className="cta-section__glow" />
             <DigitalAcropolis className="cta-section__illustration" />
             <div className="cta-section__content">

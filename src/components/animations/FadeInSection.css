@@ -47,10 +47,19 @@
 /* ─── Mobile: soften all animations ───────────────────────────────────────── */
 
 @media (max-width: 1024px) {
-  .fade-section--fade-up,
-  .fade-section--fade-left,
-  .fade-section--fade-right,
-  .fade-section--scale {
+  /*
+   * Scoped off the visible state deliberately. `.fade-section--visible` sets
+   * `transform: none` further up this file at the same specificity, so an
+   * unscoped rule here wins by source order and a *settled* section keeps its
+   * entrance transform for good: the mobile animation never finishes, and —
+   * worse since the glass material landed — the wrapper stays a permanent
+   * backdrop root, so `backdrop-filter` on any surface inside it composites
+   * against nothing and the material degrades to a flat tint.
+   */
+  .fade-section--fade-up:not(.fade-section--visible),
+  .fade-section--fade-left:not(.fade-section--visible),
+  .fade-section--fade-right:not(.fade-section--visible),
+  .fade-section--scale:not(.fade-section--visible) {
     transform: scale(0.97);
   }
 

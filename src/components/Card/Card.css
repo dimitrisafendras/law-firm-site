@@ -1,41 +1,98 @@
+/* The material (background, blur, edge, elevation, light layers) comes from
+   `.glass` in src/styles/liquid-glass.css — Card.tsx puts that class on the
+   surface. What is left here is the card's own shape, padding and states. */
+
 .card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 4px;
+  border-radius: var(--radius-3xl);
   overflow: hidden;
   text-align: left;
 }
 
-/* Only cards with links/actions get hover */
-.card--clickable {
-  transition: border-color 0.5s;
-  cursor: pointer;
-}
-
-.card--clickable:hover {
-  border-color: var(--accent-border);
-}
-
+/* The heavier tint goes through the material's own property, not a plain
+   `background-color`: `.glass` reads `var(--glass-surface-tint, …)`, so an
+   override here still passes through its reduced-transparency fallback instead
+   of shadowing it. That fallback is declared in liquid-glass.css, which the
+   bundle emits before this file, so at equal specificity the rule below would
+   win and leave the card translucent with the blur switched off — the one
+   state the fallback exists to prevent. Hence the restatement under the same
+   media query. */
 .card--strong {
-  background: var(--glass-bg-strong);
+  --glass-surface-tint: var(--glass-bg-strong);
 }
 
+@media (prefers-reduced-transparency: reduce) {
+  .card--strong {
+    --glass-surface-tint: var(--surface);
+  }
+}
+
+/* box-shadow cannot be appended to, so a glow variant has to re-state the
+   material's elevation and edge alongside its own halo. */
 .card--glow {
-  box-shadow: var(--glass-shadow), 0 0 40px rgba(137, 207, 240, 0.12);
+  box-shadow:
+    var(--elev-floating),
+    inset 0 0 0 1px var(--glass-edge),
+    0 0 40px var(--glass-glow);
 }
 
-.card--glow:hover {
-  box-shadow: var(--glass-shadow), 0 0 60px rgba(137, 207, 240, 0.18);
+/* Gated for the same reason as the clickable lift below: this swaps in a
+   heavier elevation and a wider halo, which touch browsers would leave latched
+   on the last-tapped card. */
+@media (hover: hover) {
+  .card--glow:hover {
+    box-shadow:
+      var(--elev-overlay),
+      inset 0 0 0 1px var(--glass-edge),
+      0 0 60px var(--glass-glow);
+  }
+}
+
+/* Only cards with links/actions lens on hover. */
+.card--clickable {
+  cursor: pointer;
+  transition:
+    transform 0.4s var(--ease-settle),
+    box-shadow 0.4s var(--ease-settle),
+    background-color 0.3s ease;
+}
+
+/* Gated on a real hovering pointer: touch browsers leave :hover latched on the
+   last-tapped element, so an ungated lift would stick after every tap. */
+@media (hover: hover) {
+  .card--clickable:hover {
+    /* Read back by `.glass`'s backdrop-filter, so the lift comes with a
+       saturation bump rather than a second filter declaration. */
+    --glass-saturate: 200%;
+
+    transform: translateY(-2px);
+    box-shadow:
+      var(--elev-overlay),
+      inset 0 0 0 1px var(--glass-edge);
+  }
+}
+
+.card--clickable:active {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card--clickable {
+    transition: none;
+  }
+
+  .card--clickable:hover {
+    transform: none;
+  }
 }
 
 .card__header {
-  padding: 24px 24px 0;
+  padding: var(--space-6) var(--space-6) 0;
 }
 
 .card__body {
-  padding: 24px;
+  padding: var(--space-6);
 }
 
 .card__footer {
-  padding: 0 24px 24px;
+  padding: 0 var(--space-6) var(--space-6);
 }

@@ -1,35 +1,56 @@
+/*
+ * A full-bleed glass band, not a floating panel.
+ *
+ * This element separates the hero from the practice grid, and its job is to
+ * read as one continuous seam across the page. Putting the material on an inner
+ * pill instead leaves the band itself bare, so the page background shows as a
+ * hard black strip between two much lighter sections — the panel floats, and
+ * the seam it was supposed to draw turns into a gap.
+ *
+ * Edge-to-edge means no corner radius: a rounded full-bleed band leaks the page
+ * behind its corners. The design system does the same thing for its own nav bar
+ * (GlassSurface at radius 0), so a square-cornered band is the system's answer
+ * for a control surface that spans the viewport, not an exception to it.
+ */
 .stats-bar {
-  background: var(--glass-bg);
-  border-radius: 4px;
-  border-top: 1px solid var(--glass-border);
-  border-bottom: 1px solid var(--glass-border);
-  padding: 48px 48px;
+  padding: var(--space-12) var(--space-12);
+  border-radius: 0;
 
-  /* Below-the-fold: let the browser skip layout/paint of this section until it
-     scrolls near the viewport. `contain-intrinsic-size: auto <h>` reserves a
-     realistic height up front (so the scrollbar doesn't jump) and then the
-     `auto` keyword remembers the real measured size after first render — keeping
-     CLS at 0. Height measured from the built page. */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 200px;
+  /* No `content-visibility: auto`. It always applies paint containment, which
+     makes this element a backdrop root — the material would then sample only
+     what paints inside the band, which is nothing, and the glass would flatten
+     to a plain tint. Four short stat items are not worth that. */
 
   @media (max-width: 1024px) {
-    padding: 48px 24px;
+    padding: var(--space-8) var(--space-4);
   }
+}
+
+/*
+ * Square the material's own corners and drop its floating shadow: both belong
+ * to a panel that sits above the page, and this band sits *in* it. The inset
+ * rim survives as the hairline that draws the seam.
+ */
+.stats-bar.glass {
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px var(--glass-edge);
 }
 
 .stats-bar__inner {
   display: flex;
-  justify-content: center;
-  gap: 64px;
-  max-width: 1440px;
+  /* Spread across the measure rather than clustering mid-band: with four short
+     items and a 1440px measure, centring leaves a dead third at each end. */
+  justify-content: space-evenly;
+  align-items: baseline;
+  gap: var(--space-8);
+  max-width: var(--layout-max-width);
   margin: 0 auto;
   text-align: center;
 
   @media (max-width: 1024px) {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 32px 48px;
+    gap: var(--space-8) var(--space-12);
     text-align: center;
   }
 }
@@ -44,25 +65,28 @@
 
 .stats-bar__value {
   font-family: var(--heading);
-  font-size: 48px;
-  font-weight: 300;
+  font-size: var(--type-h1-size);
+  /* Light weight, against the scale's 600: these are display numerals, and at
+     this size the semibold step reads as shouting rather than as data. */
+  font-weight: var(--weight-regular);
+  line-height: var(--type-h1-leading);
+  letter-spacing: var(--type-h1-tracking);
   color: var(--accent);
   display: block;
-  line-height: 1.1;
 
   @media (max-width: 1024px) {
-    font-size: 36px;
+    font-size: var(--type-h2-size);
   }
 }
 
 .stats-bar__label {
   font-family: var(--label);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  letter-spacing: var(--type-caps-tracking);
   text-transform: uppercase;
   color: var(--text);
-  opacity: 0.5;
+  opacity: var(--text-emphasis-muted);
   display: block;
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }

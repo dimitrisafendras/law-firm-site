@@ -28,6 +28,47 @@ function fireTransformEnd(track: HTMLElement) {
 }
 
 describe('useCarousel', () => {
+  describe('runaway index guard', () => {
+    /*
+     * The seamless wrap runs on `transitionend`, which does not fire while the
+     * section is unpainted (`content-visibility: auto`) or the tab is
+     * backgrounded — but autoplay keeps advancing. Before the guard, the index
+     * walked past the cloned range and the track translated into empty space,
+     * leaving the carousel permanently blank.
+     */
+    it('resyncs onto the real set when advanced without any transitionend', () => {
+      const itemCount = 6;
+      const { result } = renderHook(() =>
+        useCarousel({ itemCount, visibleCount: 3 }),
+      );
+
+      // Twenty-odd advances with no transition ever completing.
+      for (let i = 0; i < 25; i += 1) {
+        act(() => result.current.next());
+      }
+
+      const { currentIndex, realIndex } = result.current;
+      expect(currentIndex).toBeGreaterThanOrEqual(0);
+      expect(currentIndex).toBeLessThan(itemCount * 3);
+      expect(realIndex).toBeGreaterThanOrEqual(0);
+      expect(realIndex).toBeLessThan(itemCount);
+    });
+
+    it('resyncs when rewound the same way', () => {
+      const itemCount = 6;
+      const { result } = renderHook(() =>
+        useCarousel({ itemCount, visibleCount: 3 }),
+      );
+
+      for (let i = 0; i < 25; i += 1) {
+        act(() => result.current.prev());
+      }
+
+      expect(result.current.currentIndex).toBeGreaterThanOrEqual(0);
+      expect(result.current.currentIndex).toBeLessThan(itemCount * 3);
+    });
+  });
+
   describe('initial state', () => {
     it('starts on the first real slide with three cloned sets', () => {
       const { result } = renderHook(() =>

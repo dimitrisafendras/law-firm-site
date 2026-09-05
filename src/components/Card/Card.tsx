@@ -18,8 +18,9 @@ export function Card({
 }: CardProps) {
   const classes = [
     'card',
+    'glass',
     variant !== 'default' ? `card--${variant}` : '',
-    clickable ? 'card--clickable' : '',
+    clickable ? 'card--clickable glass--interactive' : '',
     className,
   ].filter(Boolean).join(' ');
 

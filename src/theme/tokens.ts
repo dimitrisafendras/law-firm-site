@@ -10,18 +10,27 @@
 
 // ─── Colors ───────────────────────────────────────────────────────────────────
 
+/**
+ * The six gradient stops run LIGHTEST to DARKEST, and the sections consume them
+ * in page order (PracticeGrid on 1, ContactSection on 6). The page therefore
+ * settles as it scrolls rather than opening up, which is what carries the eye
+ * down into the footer instead of pulling it back out at the bottom.
+ *
+ * Reverse these six values and the whole page ramp flips — no stylesheet needs
+ * to change, because every section references its stop by number.
+ */
 export const colors = {
   light: {
     text: '#002B49',
     textHeading: '#002B49',
     background: '#F5F5F5',
     surface: '#FFFFFF',
-    gradStop1: '#F2F4F7',
-    gradStop2: '#F4F5F8',
-    gradStop3: '#F6F6F9',
-    gradStop4: '#F8F7FA',
-    gradStop5: '#FAFAFA',
-    gradStop6: '#FFFFFF',
+    gradStop1: '#FFFFFF',
+    gradStop2: '#FAFAFA',
+    gradStop3: '#F8F7FA',
+    gradStop4: '#F6F6F9',
+    gradStop5: '#F4F5F8',
+    gradStop6: '#F2F4F7',
     border: 'rgba(0, 43, 73, 0.15)',
     codeBg: '#F0F0F0',
     accent: '#89CFF0',
@@ -44,12 +53,12 @@ export const colors = {
     textHeading: '#E2E2E8',
     background: '#111317',
     surface: '#181A1F',
-    gradStop1: '#131720',
-    gradStop2: '#151A24',
-    gradStop3: '#171D28',
-    gradStop4: '#1A202C',
-    gradStop5: '#1D2430',
-    gradStop6: '#202835',
+    gradStop1: '#202835',
+    gradStop2: '#1D2430',
+    gradStop3: '#1A202C',
+    gradStop4: '#171D28',
+    gradStop5: '#151A24',
+    gradStop6: '#131720',
     border: 'rgba(64, 72, 77, 0.15)',
     codeBg: '#1A1C20',
     accent: '#BCE8FF',
@@ -79,49 +88,125 @@ export const fonts = {
   mono: 'ui-monospace, Consolas, monospace',
 } as const;
 
+/**
+ * Type scale — the eight Liquid Glass steps, set in Jura.
+ *
+ * Sizes, weights, line heights and tracking come from the design system; the
+ * family does not. Jura is narrower and more geometric than the system's own
+ * Comfortaa, so it carries the tight display tracking comfortably.
+ *
+ * Each step is the whole specimen, not a loose size: a heading that takes the
+ * size but keeps a stray weight or tracking is the usual way a scale rots.
+ */
+export const typeScale = {
+  display: { size: '3.5rem', px: 56, weight: 620, lineHeight: '1.02', tracking: '-0.03em' },
+  h1: { size: '2.5rem', px: 40, weight: 600, lineHeight: '1.08', tracking: '-0.025em' },
+  h2: { size: '1.75rem', px: 28, weight: 600, lineHeight: '1.15', tracking: '-0.02em' },
+  h3: { size: '1.25rem', px: 20, weight: 600, lineHeight: '1.25', tracking: '-0.01em' },
+  bodyLg: { size: '1.125rem', px: 18, weight: 400, lineHeight: '1.6', tracking: '0' },
+  body: { size: '1rem', px: 16, weight: 400, lineHeight: '1.6', tracking: '0' },
+  small: { size: '0.875rem', px: 14, weight: 400, lineHeight: '1.5', tracking: '0' },
+  caption: { size: '0.75rem', px: 12, weight: 500, lineHeight: '1.4', tracking: '0.01em' },
+} as const;
+
+/**
+ * Tracking for uppercase micro-labels.
+ *
+ * The caption step's own 0.01em is tuned for mixed case; uppercase Jura at 12px
+ * closes up badly at that value, and every uppercase label on the site had
+ * independently invented its own wider tracking. This is that value, once.
+ */
+export const capsTracking = '0.05em';
+
+/**
+ * Text emphasis levels, as opacities applied to `--text`.
+ *
+ * These are contrast floors, not taste. Measured against the glass tint on a
+ * dark canvas: 0.5 lands a 12px label at 4.34:1, just under the 4.5:1 WCAG AA
+ * threshold, and the 0.35 the partner meta-labels were using measured 2.77:1.
+ * `muted` is the lowest value that still clears AA at 11-12px; anything quieter
+ * than this belongs to a decorative layer, not to text.
+ */
+export const textEmphasis = {
+  /** Body-adjacent secondary copy. */
+  secondary: '0.7',
+  /** Micro-labels and captions. The AA floor. */
+  muted: '0.65',
+} as const;
+
+/** Bare sizes, derived from the scale above so the two can never drift. */
 export const fontSizes = {
-  xs: '13px',
-  sm: '15px',
-  base: '18px',
-  baseMobile: '16px',
-  lg: '20px',
-  xl: '24px',
-  '2xl': '36px',
-  '3xl': '56px',
+  caption: typeScale.caption.size,
+  small: typeScale.small.size,
+  body: typeScale.body.size,
+  bodyLg: typeScale.bodyLg.size,
+  h3: typeScale.h3.size,
+  h2: typeScale.h2.size,
+  h1: typeScale.h1.size,
+  display: typeScale.display.size,
+} as const;
+
+export const weights = {
+  regular: 400,
+  medium: 500,
+  semibold: 600,
+  display: 620,
+  bold: 700,
 } as const;
 
 export const lineHeights = {
-  tight: '118%',
-  normal: '135%',
-  relaxed: '145%',
+  tight: typeScale.h1.lineHeight,
+  normal: typeScale.h3.lineHeight,
+  relaxed: typeScale.body.lineHeight,
 } as const;
 
 export const letterSpacings = {
-  tight: '-1.68px',
-  normal: '-0.24px',
-  wide: '0.18px',
+  tight: typeScale.display.tracking,
+  normal: typeScale.h2.tracking,
+  wide: typeScale.caption.tracking,
 } as const;
 
 // ─── Spacing ──────────────────────────────────────────────────────────────────
 
+/**
+ * Spacing — the design system's 4px grid.
+ *
+ * Steps 1-16 are the system's own. 20 and 24 are a documented extension: the
+ * scale stops at 64px, which is a control-layer measure, and this site's
+ * sections breathe at roughly 100px. Extending the same grid keeps section
+ * rhythm on it rather than sending every section back to a magic number.
+ */
 export const spacing = {
   0: '0px',
   1: '4px',
   2: '8px',
   3: '12px',
   4: '16px',
-  5: '20px',
   6: '24px',
-  7: '32px',
-  8: '48px',
-  9: '88px',
+  8: '32px',
+  12: '48px',
+  16: '64px',
+  20: '80px',
+  24: '96px',
 } as const;
 
 // ─── Radii ────────────────────────────────────────────────────────────────────
 
+/**
+ * Radii — the design system's scale.
+ *
+ * This is the change the eye notices most. The site's previous 2px/4px corners
+ * read as cut stone; glass is a poured material and needs the softer corner to
+ * be legible as glass at all. `full` is for pills and avatars.
+ */
 export const radii = {
-  sm: '2px',
-  md: '4px',
+  sm: '6px',
+  md: '8px',
+  lg: '10px',
+  xl: '14px',
+  '2xl': '18px',
+  '3xl': '22px',
+  full: '9999px',
 } as const;
 
 // ─── Breakpoints ──────────────────────────────────────────────────────────────
@@ -143,23 +228,75 @@ export const layout = {
 
 // ─── Glass ───────────────────────────────────────────────────────────────────
 
+/**
+ * Glass — the Liquid Glass material.
+ *
+ * Three conceptual layers, per the material's own description: a **highlight**
+ * (specular light on the top edge), an **illumination** (interior glow that
+ * lenses what is behind), and a **shadow** (depth separation). The material
+ * itself is `backdrop-filter: blur() saturate()` — the saturate is what makes
+ * it concentrate the colour of whatever it floats above, and dropping it is
+ * what turns glass back into a flat translucent panel.
+ *
+ * Tint and glow are this site's colours, not the system's: the tint is the
+ * surface grey (#181A1F) and the glow is the baby-blue accent (#BCE8FF), so
+ * the material reads as this brand rather than the reference blue. Highlight
+ * and edge stay white alphas — they are light, not brand.
+ *
+ * `bg` / `bgStrong` / `border` / `blur` are kept under their original names so
+ * the surfaces that already consume them keep working while they migrate.
+ */
 export const glass = {
   light: {
-    bg: 'rgba(255, 255, 255, 0.45)',
+    bg: 'rgba(255, 255, 255, 0.55)',
     bgStrong: 'rgba(255, 255, 255, 0.65)',
     border: 'rgba(255, 255, 255, 0.5)',
-    shadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-    blur: '16px',
-    blurStrong: '24px',
+    shadow: '0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08)',
+    blur: '20px',
+    blurStrong: '28px',
+    saturate: '180%',
+    tint: 'rgba(255, 255, 255, 0.55)',
+    tintClear: 'rgba(255, 255, 255, 0.24)',
+    highlight: 'rgba(255, 255, 255, 0.7)',
+    edge: 'rgba(255, 255, 255, 0.5)',
+    glow: 'rgba(255, 255, 255, 0.45)',
   },
   dark: {
-    bg: 'rgba(24, 26, 31, 0.8)',
-    bgStrong: 'rgba(24, 26, 31, 0.9)',
-    border: 'rgba(255, 255, 255, 0.1)',
-    shadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-    blur: '16px',
-    blurStrong: '24px',
+    bg: 'rgba(24, 26, 31, 0.5)',
+    bgStrong: 'rgba(24, 26, 31, 0.72)',
+    border: 'rgba(255, 255, 255, 0.14)',
+    shadow: '0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3)',
+    blur: '20px',
+    blurStrong: '28px',
+    saturate: '180%',
+    tint: 'rgba(24, 26, 31, 0.5)',
+    tintClear: 'rgba(24, 26, 31, 0.28)',
+    highlight: 'rgba(255, 255, 255, 0.28)',
+    edge: 'rgba(255, 255, 255, 0.14)',
+    glow: 'rgba(188, 232, 255, 0.14)',
   },
+} as const;
+
+/**
+ * The two material variants. `clear` is thinner and only belongs over bright,
+ * busy content — and needs a scrim there, or light text loses its contrast.
+ */
+export const materials = {
+  regular: { blur: '20px', saturate: '180%' },
+  clear: { blur: '14px', saturate: '150%' },
+} as const;
+
+/**
+ * Elevation — depth separation from the canvas.
+ *
+ * Dark-theme values: this app renders dark-only, and the system's light-theme
+ * shadows are far too weak to separate anything from a near-black canvas.
+ */
+export const elevations = {
+  flat: 'none',
+  raised: '0 2px 8px rgba(0, 0, 0, 0.3)',
+  floating: '0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3)',
+  overlay: '0 18px 46px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.35)',
 } as const;
 
 // ─── Gradients ───────────────────────────────────────────────────────────────
@@ -279,6 +416,60 @@ export const glassVarNames: Record<string, string> = {
   shadow: '--glass-shadow',
   blur: '--glass-blur',
   blurStrong: '--glass-blur-strong',
+  saturate: '--glass-saturate',
+  tint: '--glass-tint',
+  tintClear: '--glass-tint-clear',
+  highlight: '--glass-highlight',
+  edge: '--glass-edge',
+  glow: '--glass-glow',
+};
+
+export const radiusVarNames: Record<string, string> = {
+  sm: '--radius-sm',
+  md: '--radius-md',
+  lg: '--radius-lg',
+  xl: '--radius-xl',
+  '2xl': '--radius-2xl',
+  '3xl': '--radius-3xl',
+  full: '--radius-full',
+};
+
+export const spacingVarNames: Record<string, string> = {
+  0: '--space-0',
+  1: '--space-1',
+  2: '--space-2',
+  3: '--space-3',
+  4: '--space-4',
+  6: '--space-6',
+  8: '--space-8',
+  12: '--space-12',
+  16: '--space-16',
+  20: '--space-20',
+  24: '--space-24',
+};
+
+export const weightVarNames: Record<string, string> = {
+  regular: '--weight-regular',
+  medium: '--weight-medium',
+  semibold: '--weight-semibold',
+  display: '--weight-display',
+  bold: '--weight-bold',
+};
+
+export const textEmphasisVarNames: Record<string, string> = {
+  secondary: '--text-emphasis-secondary',
+  muted: '--text-emphasis-muted',
+};
+
+export const layoutVarNames: Record<string, string> = {
+  maxWidth: '--layout-max-width',
+};
+
+export const elevationVarNames: Record<string, string> = {
+  flat: '--elev-flat',
+  raised: '--elev-raised',
+  floating: '--elev-floating',
+  overlay: '--elev-overlay',
 };
 
 export const gradientVarNames: Record<string, string> = {
@@ -304,6 +495,12 @@ export const theme = {
   spacing,
   radii,
   glass,
+  materials,
+  elevations,
+  typeScale,
+  weights,
+  capsTracking,
+  textEmphasis,
   gradients,
   breakpoints,
   layout,

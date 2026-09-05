@@ -1,0 +1,329 @@
+/* ============================================================================
+   Liquid Glass — the material.
+
+   Ported from github.com/dimitrisafendras/liquid-glass (v0.4.0, src/styles.css).
+   The upstream package is built for React + Tailwind v4; its *material* is
+   plain CSS and needed no Tailwind, so it is vendored here rather than
+   installed. Only the Tailwind-dependent components (GlassNav, GlassButton,
+   GlassToggleGroup) were left behind — this site has its own Navbar, Button and
+   Card, and those are re-skinned with this material instead of replaced.
+
+   Every value that carries brand comes from the theme's own custom properties
+   (see src/theme/tokens.ts → `glass`): the tint is this site's surface grey and
+   the glow is its baby-blue accent, so the material concentrates *this* palette
+   rather than the reference blue. Highlight and edge stay white alphas, because
+   they are light rather than brand.
+
+   The app renders dark-only, so there is no light-theme block here — the theme
+   generator emits the dark values into :root and the material reads them.
+   ============================================================================ */
+
+.ds-glass {
+  --ds-glass-blur: var(--glass-blur);
+  --ds-glass-saturate: var(--glass-saturate);
+  --ds-glass-tint: var(--glass-tint);
+  --ds-glass-highlight: var(--glass-highlight);
+  --ds-glass-edge: var(--glass-edge);
+  --ds-glass-glow: var(--glass-glow);
+  --ds-glass-shadow: var(--elev-floating);
+
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--ds-glass-radius, var(--radius-3xl));
+  background-color: var(--ds-glass-tint);
+  -webkit-backdrop-filter: blur(var(--ds-glass-blur)) saturate(var(--ds-glass-saturate));
+  backdrop-filter: blur(var(--ds-glass-blur)) saturate(var(--ds-glass-saturate));
+  box-shadow:
+    var(--ds-glass-shadow),
+    inset 0 0 0 1px var(--ds-glass-edge);
+  transition:
+    transform 0.4s var(--ease-settle),
+    box-shadow 0.4s var(--ease-settle),
+    background-color 0.3s ease;
+}
+
+/* Clear — thinner and more transparent. Only over bright, busy content, and it
+   needs a scrim there or light text loses its contrast. */
+.ds-glass[data-variant='clear'] {
+  --ds-glass-blur: 14px;
+  --ds-glass-saturate: 150%;
+  --ds-glass-tint: var(--glass-tint-clear);
+  --ds-glass-highlight: rgba(255, 255, 255, 0.18);
+  --ds-glass-edge: rgba(255, 255, 255, 0.1);
+  --ds-glass-glow: rgba(188, 232, 255, 0.1);
+}
+
+/* Accent-tinted glass — near-solid, so text on it holds contrast no matter how
+   dark the content behind the glass happens to be.
+   The foreground has to flip with it: this site's accent is a pale blue, and the
+   body text colour it would otherwise inherit is pale too, so the tint alone
+   leaves light-on-light. `--on-accent` is the paired colour for exactly this. */
+.ds-glass[data-tone='accent'] {
+  --ds-glass-tint: color-mix(in oklab, var(--accent) 92%, transparent);
+  --ds-glass-glow: color-mix(in oklab, var(--accent) 55%, white);
+  color: var(--on-accent);
+}
+
+/* ---- Layer 1: highlight — specular light cast on the top edge ------------- */
+.ds-glass__highlight {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--ds-glass-highlight) 0%, rgba(255, 255, 255, 0) 22%);
+  /* Masked to the 1px border box: the gradient should light the rim, not wash
+     the whole surface. */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1px;
+  opacity: 0.9;
+}
+
+/* ---- Layer 2: illumination — interior glow that lenses the backdrop ------- */
+.ds-glass__illumination {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 15% 0%, var(--ds-glass-glow) 0%, transparent 55%),
+    radial-gradient(100% 80% at 90% 110%, var(--ds-glass-glow) 0%, transparent 60%);
+  opacity: 0.85;
+  transition:
+    transform 0.5s var(--ease-settle),
+    opacity 0.4s ease;
+}
+
+/* ---- Layer 3: scrim — opt-in dimming for legibility ----------------------- */
+/* A sibling of the content layer rather than a child of it: a scrim nested
+   among the children is positioned against the content box, so any padding on
+   the surface leaves it short on every side and it reads as a second, smaller
+   card. Here it always covers the whole surface. */
+.ds-glass__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--ds-glass-scrim, #000);
+}
+
+/* Content rides above every layer. */
+.ds-glass__content {
+  position: relative;
+  z-index: 3;
+  border-radius: inherit;
+}
+
+/* ---- Interactive lensing shift ------------------------------------------- */
+.ds-glass[data-interactive='true'] {
+  cursor: pointer;
+}
+
+/* Gated on a real hovering pointer: touch browsers leave :hover latched on the
+   last-tapped element, so an ungated lift would stick after every tap. */
+@media (hover: hover) {
+  .ds-glass[data-interactive='true']:hover {
+    transform: translateY(-2px);
+    --ds-glass-saturate: 200%;
+    box-shadow:
+      var(--elev-overlay),
+      inset 0 0 0 1px var(--ds-glass-edge);
+  }
+
+  .ds-glass[data-interactive='true']:hover .ds-glass__illumination {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+.ds-glass[data-interactive='true']:active {
+  transform: translateY(0);
+}
+
+/* ---- Accessibility fallbacks --------------------------------------------- */
+
+/* Reduced transparency → near-opaque surfaces, no blur, no light layers. */
+@media (prefers-reduced-transparency: reduce) {
+  .ds-glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: var(--surface);
+    box-shadow:
+      var(--elev-floating),
+      inset 0 0 0 1px var(--ds-glass-edge);
+  }
+
+  .ds-glass[data-tone='accent'] {
+    background-color: var(--accent);
+  }
+
+  /* The light layers are decorative, so they go. The scrim deliberately stays:
+     it is a legibility device, not an effect, and the content sitting on it was
+     authored against a dimmed surface. */
+  .ds-glass__highlight,
+  .ds-glass__illumination {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-glass,
+  .ds-glass__illumination {
+    transition: none;
+  }
+
+  .ds-glass[data-interactive='true']:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   `.glass` — the same material for surfaces that already exist in the markup.
+
+   GlassSurface renders its layers as real child spans, which it must: it also
+   carries an optional scrim, and three stacked layers plus a scrim cannot be
+   expressed with two pseudo-elements. Every other surface on this site already
+   has its markup, its animations and (for editable copy) a DOM shape that must
+   stay byte-identical for a visitor. Wrapping those in a component to gain a
+   background would change all three.
+
+   So this is the pseudo-element form: identical material, identical layer
+   order, no DOM change. `::before` is the illumination, `::after` the
+   highlight. A surface that needs a scrim, or that already spends both of its
+   pseudo-elements, should use the component instead.
+   ============================================================================ */
+
+.glass {
+  /*
+   * The tint is read through an overridable property rather than set directly,
+   * so a surface that needs a heavier tint (a full-screen menu, a dropdown)
+   * sets `--glass-surface-tint` instead of `background-color`. A plain
+   * `background-color` override lands at the same specificity as this rule but
+   * later in the bundle, which silently defeats the reduced-transparency
+   * fallback below: the blur switches off while the surface stays translucent,
+   * which is worse than either state on its own.
+   */
+  position: relative;
+  isolation: isolate;
+  background-color: var(--glass-surface-tint, var(--glass-tint));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow:
+    var(--elev-floating),
+    inset 0 0 0 1px var(--glass-edge);
+}
+
+.glass::before,
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Illumination — interior glow that lenses the backdrop. */
+.glass::before {
+  z-index: 0;
+  background:
+    radial-gradient(120% 90% at 15% 0%, var(--glass-glow) 0%, transparent 55%),
+    radial-gradient(100% 80% at 90% 110%, var(--glass-glow) 0%, transparent 60%);
+  opacity: 0.85;
+  transition:
+    transform 0.5s var(--ease-settle),
+    opacity 0.4s ease;
+}
+
+/* Highlight — specular light on the top edge, masked to the 1px rim. */
+.glass::after {
+  z-index: 1;
+  background: linear-gradient(180deg, var(--glass-highlight) 0%, rgba(255, 255, 255, 0) 22%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1px;
+  opacity: 0.9;
+}
+
+/* The surface's own children must ride above both layers. Scoped to direct
+   children so a card's inner absolutely-positioned decorations keep their own
+   stacking. */
+.glass > * {
+  position: relative;
+  z-index: 2;
+}
+
+/*
+ * A surface that fades in is solid-tinted rather than blurred.
+ *
+ * FadeInSection animates `opacity` on a wrapper, and an ancestor with
+ * `opacity < 1` is a backdrop root — so for the whole entrance a card's
+ * `backdrop-filter` has nothing to sample and paints tint only. The moment the
+ * wrapper reaches 1 the blur switches on and the surface visibly changes
+ * colour, which reads as a rendering fault rather than as an animation.
+ *
+ * The honest fix is to stop promising a lens these surfaces never had: they
+ * carry the heavier tint throughout, so they look the same before and after.
+ * Little is lost — the sections behind these cards paint a near-flat
+ * background, so the blur was buying almost nothing. Surfaces that are NOT
+ * faded in (the nav bar, the stats band, the auth card) sit over real content
+ * and keep the full material.
+ *
+ * Expressed by neutralising the tokens rather than by naming `.glass`, because
+ * a surface whose pseudo-elements are already spent on its own decoration
+ * inlines the material instead of taking the class. Both forms build their
+ * filter out of these same tokens — hardcoding one is a CLAUDE.md violation —
+ * so overriding the tokens reaches every consumer, present and future.
+ */
+.fade-section {
+  --glass-blur: 0px;
+  --glass-saturate: 100%;
+  --glass-tint: var(--glass-bg-strong);
+  --glass-surface-tint: var(--glass-bg-strong);
+}
+
+@media (hover: hover) {
+  .glass--interactive:hover::before {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  /*
+   * Repeated selector, deliberately. This sheet is imported from main.tsx before
+   * any component stylesheet, so a surface that sets `--glass-surface-tint` at
+   * the same specificity would win on source order and quietly reinstate a
+   * translucent tint after the blur had been switched off — a worse result than
+   * either state alone. Media queries add no specificity of their own, so the
+   * weight has to come from the selector. (0,3,0) clears the component
+   * overrides on this site, including the descendant selectors.
+   */
+  .glass.glass.glass {
+    --glass-surface-tint: var(--surface);
+  }
+
+  .glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .glass::before,
+  .glass::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass::before {
+    transition: none;
+  }
+}

@@ -10,7 +10,7 @@ order.
 supabase/migrations/
   0001_profiles_and_roles.sql   profiles table, sign-up trigger, is_admin(), RLS
   0002_site_content.sql         site_content table, stamp trigger, RLS
-  0003_seed_admin.sql           promote d.afendras@kiefer.gr to admin
+  0003_seed_admin.sql           promote dimitris.afendras@gmail.com to admin
 ```
 
 ## What each file sets up
@@ -18,7 +18,7 @@ supabase/migrations/
 **0001 — profiles and roles.** Creates `public.profiles` (`id` → `auth.users`,
 `email`, `role`, `created_at`) with `role` constrained to `'user' | 'admin'`. An
 `AFTER INSERT` trigger on `auth.users` (`public.handle_new_user`) writes the
-profile row at sign-up, defaulting to `'user'` and giving `d.afendras@kiefer.gr`
+profile row at sign-up, defaulting to `'user'` and giving `dimitris.afendras@gmail.com`
 `'admin'`. Adds the `SECURITY DEFINER` helpers `public.is_admin()` and
 `public.my_profile_role()`, which read the caller's own role without re-entering
 `profiles` RLS. RLS lets a user `select` and `update` only their own row, and a
@@ -34,7 +34,7 @@ profiles for any `auth.users` rows that predate the trigger.
 client never sends them.
 
 **0003 — seed admin.** Idempotently sets `role = 'admin'` for
-`d.afendras@kiefer.gr` if that user already exists in `auth.users`. If they have
+`dimitris.afendras@gmail.com` if that user already exists in `auth.users`. If they have
 not signed up yet it prints a notice and does nothing — the 0001 trigger handles
 that case at sign-up.
 
@@ -114,14 +114,14 @@ They use `create table if not exists`, `create or replace function`,
 `drop policy if exists` before each `create policy`, `drop trigger if exists`
 before each `create trigger`, and `on conflict do nothing` / `do update` for the
 data writes. Re-running does not drop data or reset anyone's role except forcing
-`d.afendras@kiefer.gr` back to `admin`.
+`dimitris.afendras@gmail.com` back to `admin`.
 
 ## Manual steps the repo owner must still do
 
 These are **not** covered by the SQL and have to be done by hand in the Supabase
 dashboard:
 
-- **Sign up `d.afendras@kiefer.gr`.** The migrations grant admin, they do not
+- **Sign up `dimitris.afendras@gmail.com`.** The migrations grant admin, they do not
   create the account. Sign up through the app (or **Auth → Users → Add user**),
   then optionally re-run `0003` to confirm the promotion.
 - **Enable the OAuth providers** listed in `src/lib/auth/providers.ts`

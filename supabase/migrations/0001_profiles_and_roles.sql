@@ -127,7 +127,7 @@ begin
     new.id,
     v_email,
     case
-      when lower(v_email) = 'd.afendras@kiefer.gr' then 'admin'
+      when lower(v_email) = 'dimitris.afendras@gmail.com' then 'admin'
       else 'user'
     end
   )
@@ -262,7 +262,7 @@ select
   u.id,
   u.email,
   case
-    when lower(u.email) = 'd.afendras@kiefer.gr' then 'admin'
+    when lower(u.email) = 'dimitris.afendras@gmail.com' then 'admin'
     else 'user'
   end
 from auth.users u

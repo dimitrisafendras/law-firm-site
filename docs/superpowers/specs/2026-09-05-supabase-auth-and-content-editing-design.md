@@ -110,7 +110,7 @@ primary key (key, locale)
 
 A trigger on `auth.users` insert creates the matching `profiles` row.
 
-`d.afendras@kiefer.gr` is granted `admin`. The migration handles both cases:
+`dimitris.afendras@gmail.com` is granted `admin`. The migration handles both cases:
 it updates the row if that user already exists, and the trigger checks the
 email on future signup so the grant applies whichever order things happen in.
 

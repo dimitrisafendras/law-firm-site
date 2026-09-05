@@ -2,7 +2,7 @@
 -- 0003_seed_admin.sql
 --
 -- WHAT THIS DOES
---   Promotes the firm owner (d.afendras@kiefer.gr) to role = 'admin'.
+--   Promotes the firm owner (dimitris.afendras@gmail.com) to role = 'admin'.
 --
 --   This covers the case where that account signed up BEFORE the trigger in
 --   0001 existed, or where its role was changed by hand. If the account has not
@@ -25,7 +25,7 @@
 
 do $$
 declare
-  v_admin_email constant text := 'd.afendras@kiefer.gr';
+  v_admin_email constant text := 'dimitris.afendras@gmail.com';
   v_user_id     uuid;
   v_user_email  text;
 begin

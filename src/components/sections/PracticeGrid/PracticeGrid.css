@@ -2,10 +2,6 @@
   position: relative;
   overflow: hidden;
   padding: var(--space-24) 0;
-  /* One link in a continuous page ramp: this section opens on the colour the
-     one above it closed on, so the two meet with no seam. See the gradient
-     stops in src/theme/tokens.ts. */
-  background: linear-gradient(180deg, var(--bg) 0%, var(--grad-1) 100%);
 
   /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
      height (self-corrects after first render via the `auto` keyword). */
@@ -79,8 +75,10 @@
   padding: var(--space-12);
   border-radius: var(--radius-3xl);
   background-color: var(--glass-tint);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  /* No backdrop-filter: this card only ever renders inside a FadeInSection,
+     whose opacity animation makes it a backdrop root — the blur would have
+     nothing to sample, while still costing a compositing layer. The tint above
+     resolves to the heavier `--glass-bg-strong` in that context. */
   box-shadow:
     var(--elev-floating),
     inset 0 0 0 1px var(--glass-edge);

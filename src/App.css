@@ -51,3 +51,30 @@
   height: 24px;
   color: var(--accent);
 }
+
+/*
+ * The page background ramp.
+ *
+ * It lives here, on the element that wraps every section, rather than on the
+ * sections themselves. Each section carries `content-visibility: auto`, so
+ * while one is off-screen the browser skips painting it entirely — and a
+ * section that owns its own background paints nothing at all, letting the page
+ * colour show through as a hard horizontal line at its edge. That line moves
+ * with the scroll position, which is what gave it away.
+ *
+ * With the ramp on the wrapper, a skipped section simply reveals the correct
+ * colour underneath, and there is no boundary left to mismatch. Stops are
+ * evenly spaced: nothing needs to align to a section edge any more, which is
+ * the point.
+ */
+.page-ramp {
+  background: linear-gradient(
+    180deg,
+    var(--bg) 0%,
+    var(--grad-1) 20%,
+    var(--grad-2) 40%,
+    var(--grad-3) 60%,
+    var(--grad-4) 80%,
+    var(--grad-5) 100%
+  );
+}

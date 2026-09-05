@@ -283,11 +283,28 @@
  * filter out of these same tokens — hardcoding one is a CLAUDE.md violation —
  * so overriding the tokens reaches every consumer, present and future.
  */
-.fade-section {
-  --glass-blur: 0px;
-  --glass-saturate: 100%;
+.fade-section,
+.fade-section.glass {
   --glass-tint: var(--glass-bg-strong);
   --glass-surface-tint: var(--glass-bg-strong);
+}
+
+/*
+ * Removed outright, not zeroed. Neutralising `--glass-blur`/`--glass-saturate`
+ * left `backdrop-filter: blur(0px) saturate(1)` standing, and a declared
+ * backdrop-filter still promotes the element to its own compositing layer and
+ * makes it a backdrop root even when the filter is a no-op — eleven of the
+ * page's sixteen filtered layers were paying that cost for no visible effect.
+ *
+ * A surface that inlines the material rather than taking this class has to say
+ * `backdrop-filter: none` for itself; there is no shared selector to hang it on.
+ */
+/* Both forms: the surface nested inside the animated wrapper, and the wrapper
+   that is itself the surface (FadeInSection takes a className). */
+.fade-section .glass,
+.fade-section.glass {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 @media (hover: hover) {

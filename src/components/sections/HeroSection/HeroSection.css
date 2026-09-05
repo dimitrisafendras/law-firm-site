@@ -283,7 +283,7 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text);
-  opacity: 0.5;
+  opacity: var(--text-emphasis-muted);
 }
 
 /* ─── Scroll Hint ─────────────────────────────────────────────────────────── */

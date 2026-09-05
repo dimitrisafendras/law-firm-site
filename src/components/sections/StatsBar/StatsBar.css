@@ -86,7 +86,7 @@
   letter-spacing: var(--type-caps-tracking);
   text-transform: uppercase;
   color: var(--text);
-  opacity: 0.5;
+  opacity: var(--text-emphasis-muted);
   display: block;
   margin-top: var(--space-2);
 }

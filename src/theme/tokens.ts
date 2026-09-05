@@ -10,18 +10,27 @@
 
 // ─── Colors ───────────────────────────────────────────────────────────────────
 
+/**
+ * The six gradient stops run LIGHTEST to DARKEST, and the sections consume them
+ * in page order (PracticeGrid on 1, ContactSection on 6). The page therefore
+ * settles as it scrolls rather than opening up, which is what carries the eye
+ * down into the footer instead of pulling it back out at the bottom.
+ *
+ * Reverse these six values and the whole page ramp flips — no stylesheet needs
+ * to change, because every section references its stop by number.
+ */
 export const colors = {
   light: {
     text: '#002B49',
     textHeading: '#002B49',
     background: '#F5F5F5',
     surface: '#FFFFFF',
-    gradStop1: '#F2F4F7',
-    gradStop2: '#F4F5F8',
-    gradStop3: '#F6F6F9',
-    gradStop4: '#F8F7FA',
-    gradStop5: '#FAFAFA',
-    gradStop6: '#FFFFFF',
+    gradStop1: '#FFFFFF',
+    gradStop2: '#FAFAFA',
+    gradStop3: '#F8F7FA',
+    gradStop4: '#F6F6F9',
+    gradStop5: '#F4F5F8',
+    gradStop6: '#F2F4F7',
     border: 'rgba(0, 43, 73, 0.15)',
     codeBg: '#F0F0F0',
     accent: '#89CFF0',
@@ -44,12 +53,12 @@ export const colors = {
     textHeading: '#E2E2E8',
     background: '#111317',
     surface: '#181A1F',
-    gradStop1: '#131720',
-    gradStop2: '#151A24',
-    gradStop3: '#171D28',
-    gradStop4: '#1A202C',
-    gradStop5: '#1D2430',
-    gradStop6: '#202835',
+    gradStop1: '#202835',
+    gradStop2: '#1D2430',
+    gradStop3: '#1A202C',
+    gradStop4: '#171D28',
+    gradStop5: '#151A24',
+    gradStop6: '#131720',
     border: 'rgba(64, 72, 77, 0.15)',
     codeBg: '#1A1C20',
     accent: '#BCE8FF',
@@ -108,6 +117,22 @@ export const typeScale = {
  * independently invented its own wider tracking. This is that value, once.
  */
 export const capsTracking = '0.05em';
+
+/**
+ * Text emphasis levels, as opacities applied to `--text`.
+ *
+ * These are contrast floors, not taste. Measured against the glass tint on a
+ * dark canvas: 0.5 lands a 12px label at 4.34:1, just under the 4.5:1 WCAG AA
+ * threshold, and the 0.35 the partner meta-labels were using measured 2.77:1.
+ * `muted` is the lowest value that still clears AA at 11-12px; anything quieter
+ * than this belongs to a decorative layer, not to text.
+ */
+export const textEmphasis = {
+  /** Body-adjacent secondary copy. */
+  secondary: '0.7',
+  /** Micro-labels and captions. The AA floor. */
+  muted: '0.65',
+} as const;
 
 /** Bare sizes, derived from the scale above so the two can never drift. */
 export const fontSizes = {
@@ -431,6 +456,11 @@ export const weightVarNames: Record<string, string> = {
   bold: '--weight-bold',
 };
 
+export const textEmphasisVarNames: Record<string, string> = {
+  secondary: '--text-emphasis-secondary',
+  muted: '--text-emphasis-muted',
+};
+
 export const layoutVarNames: Record<string, string> = {
   maxWidth: '--layout-max-width',
 };
@@ -470,6 +500,7 @@ export const theme = {
   typeScale,
   weights,
   capsTracking,
+  textEmphasis,
   gradients,
   breakpoints,
   layout,

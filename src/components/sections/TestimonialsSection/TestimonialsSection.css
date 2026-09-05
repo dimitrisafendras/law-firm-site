@@ -2,7 +2,10 @@
   position: relative;
   overflow: hidden;
   padding: 100px 0;
-  background: var(--grad-4);
+  /* One link in a continuous page ramp: this section opens on the colour the
+     one above it closed on, so the two meet with no seam. See the gradient
+     stops in src/theme/tokens.ts. */
+  background: linear-gradient(180deg, var(--grad-3) 0%, var(--grad-4) 100%);
 
   /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
      height (self-corrects after first render via the `auto` keyword). */
@@ -31,7 +34,14 @@
   /* Bleeds the track past the inner gutter so a slide can scale up without
      being clipped. */
   margin: 0 calc(var(--space-12) * -1);
-  padding: var(--space-4) 0;
+  /*
+   * The bottom gutter clears the card's floating shadow, which reaches 40px
+   * below it (10px offset + 30px blur). `overflow: hidden` is needed on the
+   * horizontal axis to hide the off-screen slides, and CSS cannot clip one axis
+   * while leaving the other visible — so without the room, the shadow is cut
+   * mid-fade and the card reads as though it were sliced off along a hard line.
+   */
+  padding: var(--space-4) 0 var(--space-12);
 
   @media (max-width: 1024px) {
     margin: 0 calc(var(--space-4) * -1);
@@ -51,7 +61,13 @@
   display: flex;
   flex-direction: column;
   transition: opacity 0.5s ease, transform 0.5s ease;
-  opacity: 0.55;
+  /*
+   * Dimmed, but not so far that the card stops being readable. At 0.55 the
+   * attribution underneath compounded to an effective 0.39 and measured
+   * 3.08:1 — under WCAG AA. The active slide is still clearly distinguished,
+   * by the scale step and the brighter rail as much as by opacity.
+   */
+  opacity: 0.8;
   transform: scale(0.97);
 
   @media (max-width: 1024px) {

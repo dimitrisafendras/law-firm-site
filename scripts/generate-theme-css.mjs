@@ -30,6 +30,7 @@ import {
   weights,
   layout,
   capsTracking,
+  textEmphasis,
   colorVarNames,
   fontVarNames,
   glassVarNames,
@@ -39,6 +40,7 @@ import {
   elevationVarNames,
   weightVarNames,
   layoutVarNames,
+  textEmphasisVarNames,
 } from '../src/theme/tokens.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -82,6 +84,7 @@ function buildVarBlock(colorTokens, fontTokens, glassTokens, gradientTokens) {
     ...mapVars(elevations, elevationVarNames),
     ...mapVars(weights, weightVarNames),
     ...mapVars(layout, layoutVarNames),
+    ...mapVars(textEmphasis, textEmphasisVarNames),
     `  --type-caps-tracking: ${capsTracking};`,
     ...typeVars(),
   ].join('\n');

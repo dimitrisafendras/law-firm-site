@@ -2,7 +2,10 @@
   position: relative;
   overflow: hidden;
   padding: 100px 0;
-  background: var(--grad-3);
+  /* One link in a continuous page ramp: this section opens on the colour the
+     one above it closed on, so the two meet with no seam. See the gradient
+     stops in src/theme/tokens.ts. */
+  background: linear-gradient(180deg, var(--grad-2) 0%, var(--grad-3) 100%);
 
   /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
      height (self-corrects after first render via the `auto` keyword). */

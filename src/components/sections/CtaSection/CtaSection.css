@@ -2,7 +2,12 @@
   position: relative;
   overflow: hidden;
   padding: 100px 0;
-  background: var(--grad-5);
+  /* This section is not mounted anywhere today, so it sits outside the page's
+     background ramp. If it is ever added back, re-chain the sections around it
+     — each one opens on the colour the section above it closes on, and dropping
+     a new link in without adjusting its neighbours reintroduces a visible seam
+     on both sides of it. */
+  background: linear-gradient(180deg, var(--grad-4) 0%, var(--grad-5) 100%);
 
   @media (max-width: 1024px) {
     padding: 40px 0;

@@ -31,9 +31,15 @@ jobs:
       - name: Test
         run: npm run test
 
-      # Builds without Supabase secrets on purpose: the site must render its
-      # shipped copy when the database is unreachable, and this is the only
-      # place that invariant gets exercised. The prerender in `postbuild` fails
-      # loudly if any component reaches for a provider that is not there.
+      # src/lib/supabase.ts throws at module load when either variable is
+      # missing, and the prerender imports the whole app — so the build needs
+      # real values, not a stub. (An earlier version of this job omitted them
+      # deliberately, on the theory that it exercised the site's ability to
+      # render from its shipped locale files with the database unreachable.
+      # That invariant does not exist at build time: the throw is by design and
+      # fires long before any component renders.)
       - name: Build and prerender
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}

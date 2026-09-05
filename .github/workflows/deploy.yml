@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   workflow_dispatch:
 
 permissions:
@@ -10,13 +10,19 @@ permissions:
   pages: write
   id-token: write
 
+# Keyed by ref so a dev build never cancels an in-flight production deploy.
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Selects which Supabase project the bundle is built against: main builds
+    # against production, dev against the Supabase dev branch. Each GitHub
+    # Environment holds its own copy of the two VITE_ vars, so the same
+    # `secrets.` references below resolve differently per branch.
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'dev' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,6 +39,10 @@ jobs:
           path: dist
 
   deploy:
+    # GitHub Pages serves a single site, so only main publishes. A dev push
+    # still builds above — proving it compiles against the dev Supabase branch —
+    # but stops short of overwriting the live site.
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     environment:

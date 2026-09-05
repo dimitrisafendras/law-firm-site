@@ -25,27 +25,43 @@ Supabase project first, then promote the identical schema to production.
 
 ## Environments
 
-Two Supabase projects, org `mine` (`puqrjbgfpkbdtdohftff`), free tier, $0/mo,
-region `eu-central-1`:
+The Supabase dashboard session and the automation token belong to two different
+accounts, which constrains how this is operated:
 
-| Env | Project | Ref |
-|---|---|---|
-| staging | law-firm-stg | lxjnhmizkdpdodpldwjr |
-| production | law-firm-prod | (created alongside) |
+- `dimitris.afendras@gmail.com` owns the org `dimitrisafendras's Org`
+  (`trmfffzkmabmanjwhcmh`) and the project below. This is the account the browser
+  is signed into, and the only one that can see these projects in the dashboard.
+- `d.afendras@kiefer.gr` holds the MCP automation token. It cannot see that org.
+
+Decision: operate everything through the browser on the gmail account. The
+automation token is not used for this project, so migrations are applied through
+the dashboard SQL editor rather than programmatically.
+
+| Env | Project | Ref | Region |
+|---|---|---|---|
+| primary | law firm | nyqfzoxdplvogflzkmpq | eu-west-1 |
+| dev | Supabase database branch off the above | — | — |
+
+An earlier `law-firm-stg` project (ref `lxjnhmizkdpdodpldwjr`) was created on the
+kiefer.gr account before the account split was understood. It has the full schema
+applied but is unreachable from the dashboard session and nothing points at it.
+It is orphaned and should be deleted or deliberately parked.
 
 Config via Vite env vars:
 
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_PUBLISHABLE_KEY`
 
-Files `.env.staging` and `.env.production`, both gitignored. `.env.example`
-is committed. Production values are also stored as GitHub Actions secrets,
-because the Pages build inlines them at build time.
+Files `.env.local` and `.env.production`, both gitignored. `.env.example` is
+committed. Production values are also stored as GitHub Actions secrets, because
+the Pages build inlines them at build time.
 
 Publishable keys are public by design. RLS is the security boundary, not the key.
 
-Rollout order: apply and verify everything on staging, then apply the identical
-migrations to production.
+Note on free-tier limits: the account is capped at two active free projects
+across all orgs, which is why `legal assist` was paused to free a slot. Supabase
+database branching is a paid feature, so the dev branch requires a plan upgrade;
+the cost must be confirmed before it is created.
 
 ## Auth
 

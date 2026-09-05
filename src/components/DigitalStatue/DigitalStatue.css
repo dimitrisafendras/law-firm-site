@@ -125,3 +125,58 @@
   width: 15%;
   height: 10%;
 }
+
+/* ─── Entrance ─────────────────────────────────────────────────────────────── */
+/*
+ * The statue rises out of the ground and phases in while its ambient canvas
+ * layers (rain / flames / sparkles) ramp up with it — they are already alive as
+ * it materialises, nothing waits for the entrance to finish. Everything above is
+ * the final resting state, so the reduced-motion path renders the scene already
+ * assembled, with the ambient loops running exactly as they always have.
+ *
+ * `animation-fill-mode: backwards` (never `forwards`/`both`) means no filter or
+ * clip-path survives the entrance — the ambient loops run on an unfiltered,
+ * uncomposited subtree exactly as they did before.
+ *
+ * Timings come from the motion tokens in src/index.css.
+ * `--statue-entrance-delay` is set by the consuming section (see HeroSection).
+ */
+
+@keyframes statue-rise {
+  from {
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+    transform: translate3d(0, 4%, 0);
+    filter: brightness(2.6) saturate(0.25);
+  }
+  55% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translate3d(0, 0, 0);
+    filter: brightness(1) saturate(1);
+  }
+}
+
+@keyframes statue-ambient-ignite {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .digital-statue {
+    animation: statue-rise var(--dur-materialize) var(--ease-wipe)
+      var(--statue-entrance-delay, 0s) backwards;
+  }
+
+  /* Ambient layers ramp up over the same window as the rise, so the statue
+     spawns already animated rather than switching on afterwards. */
+  .digital-statue__rain-wrap,
+  .digital-statue__sparkles-wrap,
+  .digital-statue__flame {
+    animation: statue-ambient-ignite var(--dur-materialize) var(--ease-spawn)
+      var(--statue-entrance-delay, 0s) backwards;
+  }
+}

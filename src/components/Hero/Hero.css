@@ -2,8 +2,26 @@
   padding: 88px 24px;
   text-align: left;
 
+  /* ── Entrance timeline ────────────────────────────────────────────────────
+   * Strictly sequential, on multiples of the single `--seq-beat` pacing token:
+   *   0.0 beats  image (sets the scene)
+   *   2.0        overline
+   *   3.5        title (its per-character stagger is this step's pace)
+   *   6.0        subtitle (per-word)
+   *   8.5        primary action, then one further beat per action after it
+   */
+  --hero-t-scene: 0s;
+  --hero-t-overline: calc(var(--seq-beat) * 2);
+  --hero-t-title: calc(var(--seq-beat) * 3.5);
+  --hero-t-subtitle: calc(var(--seq-beat) * 6);
+  --hero-t-actions: calc(var(--seq-beat) * 8.5);
+
   @media (max-width: 1024px) {
     padding: 48px 16px;
+
+    --seq-beat: var(--seq-beat-tight);
+    --stagger-char: var(--stagger-char-tight);
+    --blur-spawn: var(--blur-spawn-tight);
   }
 }
 
@@ -36,6 +54,7 @@
 }
 
 .hero__title {
+  --spawn-delay: var(--hero-t-title);
   font-family: var(--heading);
   font-size: 56px;
   font-weight: 500;
@@ -50,6 +69,8 @@
 }
 
 .hero__subtitle {
+  --spawn-delay: var(--hero-t-subtitle);
+  --spawn-blur: var(--blur-spawn-soft);
   font-size: 20px;
   line-height: 145%;
   color: var(--text);
@@ -80,4 +101,76 @@
 .hero__image img {
   max-width: 100%;
   height: auto;
+}
+
+
+/* ─── Entrance choreography ───────────────────────────────────────────────── */
+/*
+ * The rules above describe the FINAL state, so reduced motion (and first paint)
+ * gets the hero fully assembled with no layout shift. This block is additive
+ * and touches only opacity / transform / filter / clip-path.
+ *
+ * `animation-fill-mode: backwards` holds the pre-state through the delay and
+ * then hands back to the base rules, leaving no residual filter layer.
+ */
+
+@keyframes hero-overline-materialize {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+    filter: blur(var(--blur-spawn-soft));
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-action-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.96);
+    filter: blur(var(--blur-spawn-soft));
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-image-materialize {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+    filter: blur(var(--blur-spawn));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__overline {
+    animation: hero-overline-materialize var(--dur-spawn-element) var(--ease-wipe)
+      var(--hero-t-overline) backwards;
+  }
+
+  .hero__actions > * {
+    animation: hero-action-arrive var(--dur-spawn-element) var(--ease-spawn) backwards;
+    animation-delay: calc(var(--hero-t-actions) + var(--action-index, 0) * var(--seq-beat));
+  }
+
+  .hero__actions > *:nth-child(1) { --action-index: 0; }
+  .hero__actions > *:nth-child(2) { --action-index: 1; }
+  .hero__actions > *:nth-child(3) { --action-index: 2; }
+  .hero__actions > *:nth-child(4) { --action-index: 3; }
+
+  .hero__image {
+    animation: hero-image-materialize var(--dur-materialize) var(--ease-wipe)
+      var(--hero-t-scene) backwards;
+  }
 }

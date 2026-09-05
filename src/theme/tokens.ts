@@ -176,6 +176,64 @@ export const transitions = {
   default: '0.3s',
 } as const;
 
+// ─── Motion ───────────────────────────────────────────────────────────────────
+// Single source of truth for entrance/"spawn" choreography. Mirrored as CSS
+// custom properties in src/index.css — never inline these values in CSS.
+
+export const motion = {
+  /** Easing curves. All decelerating — nothing overshoots or bounces. */
+  easing: {
+    /** Expo-out. Fast commit, long settle. Used for elements arriving. */
+    spawn: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    /** Gentle deceleration for small positional settles. */
+    settle: 'cubic-bezier(0.22, 0.61, 0.36, 1)',
+    /** Slow-in/slow-out. Used for clip-path wipes and traces. */
+    wipe: 'cubic-bezier(0.7, 0, 0.2, 1)',
+  },
+
+  /** Durations. */
+  duration: {
+    /** One character/word of a split-text reveal. */
+    spawnChar: '0.7s',
+    /** One whole element (badge, card, hint). */
+    spawnElement: '0.8s',
+    /** A clip-path wipe across a decorative layer. Matches `materialize`
+     *  so a backdrop and its overlaid graphics land as one beat. */
+    wipe: '1.2s',
+    /** The hero backdrop materialize — exactly 3 sequence beats. */
+    materialize: '1.2s',
+  },
+
+  /**
+   * The single pacing dial. Every element in a hero starts at a whole (or half)
+   * multiple of one beat, so nothing arrives at the same time as anything else
+   * and the eye is led through the composition one step at a time.
+   * Raise it to slow the whole entrance down; lower it to tighten everything.
+   */
+  sequence: {
+    beat: '0.4s',
+    beatTight: '0.28s',
+  },
+
+  /** Per-unit offsets *within* a single sequence step. */
+  stagger: {
+    /** Between characters of a split display line. */
+    char: '0.03s',
+    charTight: '0.018s',
+    /** Between words of split body copy. */
+    word: '0.025s',
+    /** Between sibling decorations inside one step (e.g. circuit junctions). */
+    elementTight: '0.09s',
+  },
+
+  /** Blur radii for blur-to-sharp materialisation. */
+  blur: {
+    spawn: '12px',
+    spawnSoft: '6px',
+    spawnTight: '8px',
+  },
+} as const;
+
 // ─── Token → CSS variable name mapping ───────────────────────────────────────
 // Single place that defines the CSS custom property name for each token key.
 
@@ -245,6 +303,7 @@ export const theme = {
   breakpoints,
   layout,
   transitions,
+  motion,
 } as const;
 
 export type Theme = typeof theme;

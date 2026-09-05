@@ -219,6 +219,9 @@ const en = {
   dsAuthFormSignup: 'AuthForm — signup',
   dsProviderButtons: 'ProviderButtons',
   dsEditableText: 'EditableText',
+  dsSpawnText: 'SpawnText',
+  dsSpawnTextNote:
+    'Splits an already-translated string into per-character or per-word units for the hero entrance. Reduced motion renders it fully assembled.',
   dsEditableTextNote:
     'Renders a plain translated string for visitors. Signed in as an admin, it gains an inline edit affordance and writes to site_content.',
 } as const;

@@ -220,6 +220,9 @@ const el = {
   dsAuthFormSignup: 'AuthForm — εγγραφή',
   dsProviderButtons: 'ProviderButtons',
   dsEditableText: 'EditableText',
+  dsSpawnText: 'SpawnText',
+  dsSpawnTextNote:
+    'Χωρίζει ένα ήδη μεταφρασμένο κείμενο σε χαρακτήρες ή λέξεις για την είσοδο του hero. Με μειωμένη κίνηση εμφανίζεται ολοκληρωμένο.',
   dsEditableTextNote:
     'Για τους επισκέπτες αποδίδει απλό μεταφρασμένο κείμενο. Σε σύνδεση ως διαχειριστής αποκτά δυνατότητα άμεσης επεξεργασίας και γράφει στον πίνακα site_content.',
 } as const;

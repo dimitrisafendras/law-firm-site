@@ -1,6 +1,7 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, breakpoints, layout, transitions, colorVarNames } from '../theme';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
+import { SpawnText } from '../components/animations/SpawnText';
 import {
   Button,
   Container,
@@ -593,10 +594,24 @@ export default function DesignSystem() {
           <ProviderButtons />
         </div>
 
-        <div>
+        <div style={{ marginBottom: '32px' }}>
           <h3 style={{ fontFamily: 'var(--mono)', fontSize: '13px', opacity: 0.75, marginBottom: '16px' }}>{t('dsEditableText')}</h3>
           <p style={{ fontSize: '14px', opacity: 0.75, marginBottom: '16px', maxWidth: '60ch' }}>{t('dsEditableTextNote')}</p>
           <EditableText tKey="heroOverline" as="p" />
+        </div>
+
+        <div>
+          <h3 style={{ fontFamily: 'var(--mono)', fontSize: '13px', opacity: 0.75, marginBottom: '16px' }}>{t('dsSpawnText')}</h3>
+          <p style={{ fontSize: '14px', opacity: 0.75, marginBottom: '16px', maxWidth: '60ch' }}>{t('dsSpawnTextNote')}</p>
+          <div style={{ fontFamily: 'var(--heading)', fontSize: '40px', marginBottom: '16px' }}>
+            <SpawnText text={t('heroTitleLine1')} />
+          </div>
+          <div style={{ fontFamily: 'var(--heading)', fontSize: '40px', marginBottom: '16px' }}>
+            <SpawnText text={t('heroTitleLine2')} gradient />
+          </div>
+          <div style={{ maxWidth: '60ch' }}>
+            <SpawnText text={t('heroSubtitle')} mode="word" />
+          </div>
         </div>
       </section>
     </main>

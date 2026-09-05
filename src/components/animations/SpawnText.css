@@ -1,0 +1,102 @@
+/* ─── Split-text "spawn" reveal ────────────────────────────────────────────── */
+/*
+ * Default (and reduced-motion) state is the FINAL state: every unit is fully
+ * visible, sharp and un-transformed. The animation is additive and only exists
+ * inside the `no-preference` block below, so there is never a flash of hidden
+ * text and never a layout shift — units occupy their final box from the start.
+ *
+ * All timings come from the motion tokens in src/index.css / src/theme/tokens.ts.
+ */
+
+.spawn-text {
+  display: inline;
+}
+
+.spawn-text__unit {
+  display: inline-block;
+  white-space: pre;
+}
+
+/*
+ * Whitespace between units is rendered as a bare text node (see SpawnText.tsx),
+ * so it collapses at a line break like any normal space. Wrapping it in an
+ * element with `white-space: pre` would indent every wrapped line by one space
+ * width, knocking multi-line copy out of alignment with everything above it.
+ */
+
+/*
+ * Per-unit gradient. A shared `background-clip: text` gradient cannot survive
+ * per-unit opacity/filter (the child paints transparent text, so the parent's
+ * clipped background ignores the child's effects). Interpolating a solid colour
+ * along the same accent ramp gives the identical read and stays animatable.
+ */
+.spawn-text--gradient .spawn-text__unit {
+  color: color-mix(in oklab, var(--accent) calc(var(--spawn-t, 0) * 100%), var(--accent-container));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .spawn-text__unit {
+    animation-name: spawn-unit;
+    animation-duration: var(--spawn-duration, var(--dur-spawn-char));
+    animation-timing-function: var(--ease-spawn);
+    /* `backwards` (not `both`): holds the pre-state during the delay, then
+       reverts to the base rules — leaving no residual filter/compositing layer. */
+    animation-fill-mode: backwards;
+    animation-delay: calc(
+      var(--spawn-delay, 0s) + var(--spawn-index, 0) * var(--spawn-stagger, var(--stagger-char))
+    );
+  }
+
+  .spawn-text--word .spawn-text__unit {
+    animation-duration: var(--spawn-duration, var(--dur-spawn-element));
+    animation-delay: calc(
+      var(--spawn-delay, 0s) + var(--spawn-index, 0) * var(--spawn-stagger, var(--stagger-word))
+    );
+  }
+
+  /* Accent units bloom as they sharpen — a glow that settles, not a flash. */
+  .spawn-text--gradient .spawn-text__unit {
+    animation-name: spawn-unit-bloom;
+  }
+
+  @media (max-width: 1024px) {
+    .spawn-text__unit {
+      animation-delay: calc(
+        var(--spawn-delay, 0s) + var(--spawn-index, 0) * var(--spawn-stagger, var(--stagger-char-tight))
+      );
+    }
+  }
+}
+
+/* Composite-friendly only: opacity, transform, filter. */
+@keyframes spawn-unit {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.42em, 0) scale(1.08);
+    filter: blur(var(--spawn-blur, var(--blur-spawn)));
+  }
+  55% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes spawn-unit-bloom {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.42em, 0) scale(1.08);
+    filter: blur(var(--spawn-blur, var(--blur-spawn))) brightness(2.2);
+  }
+  55% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0) brightness(1);
+  }
+}

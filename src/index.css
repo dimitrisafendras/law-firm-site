@@ -86,3 +86,37 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* ─── Motion tokens ────────────────────────────────────────────────────────── */
+/* Mirrors the `motion` scale in src/theme/tokens.ts. Every entrance animation
+   in the app reads its easing / duration / stagger / blur from here — no
+   magic numbers in component stylesheets. */
+
+:root {
+  /* Easing — all decelerating, nothing overshoots. */
+  --ease-spawn: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-settle: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-wipe: cubic-bezier(0.7, 0, 0.2, 1);
+
+  /* Durations */
+  --dur-spawn-char: 0.7s;
+  --dur-spawn-element: 0.8s;
+  --dur-wipe: 1.2s;
+  --dur-materialize: 1.2s;
+
+  /* The single pacing dial: one step of an entrance sequence. Each element
+     starts at a whole/half multiple of this, so nothing arrives at once. */
+  --seq-beat: 0.4s;
+  --seq-beat-tight: 0.28s;
+
+  /* Stagger intervals *within* one sequence step */
+  --stagger-char: 0.03s;
+  --stagger-char-tight: 0.018s;
+  --stagger-word: 0.025s;
+  --stagger-element-tight: 0.09s;
+
+  /* Blur-to-sharp radii */
+  --blur-spawn: 12px;
+  --blur-spawn-soft: 6px;
+  --blur-spawn-tight: 8px;
+}

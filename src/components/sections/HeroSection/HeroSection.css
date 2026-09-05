@@ -6,10 +6,37 @@
   overflow: hidden;
   background: linear-gradient(135deg, var(--bg) 30%, #0f1a2e 70%, #112240 100%);
 
+  /* ── Entrance timeline ────────────────────────────────────────────────────
+   * Strictly sequential: one element at a time, each at a multiple of the
+   * single `--seq-beat` pacing token. Nothing arrives together, so the eye is
+   * led down the composition instead of being hit with the whole hero at once.
+   *
+   *   0.0 beats  the scene — statue rises with its ambient effects, and the
+   *              circuit grid traces in behind it
+   *   3.0        overline
+   *   5.0        title line 1   (its per-character stagger is this step's pace)
+   *   7.5        title line 2
+   *  10.0        subtitle       (per-word)
+   *  13.5        stat card
+   *  15.5        scroll hint
+   */
+  --hero-t-scene: 0s;
+  --hero-t-overline: calc(var(--seq-beat) * 3);
+  --hero-t-title-1: calc(var(--seq-beat) * 5);
+  --hero-t-title-2: calc(var(--seq-beat) * 7.5);
+  --hero-t-subtitle: calc(var(--seq-beat) * 10);
+  --hero-t-stat: calc(var(--seq-beat) * 13.5);
+  --hero-t-hint: calc(var(--seq-beat) * 15.5);
+
   @media (max-width: 1024px) {
     align-items: flex-start;
     min-height: 100svh;
     padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    /* Same order, tighter pacing on small screens. */
+    --seq-beat: var(--seq-beat-tight);
+    --stagger-char: var(--stagger-char-tight);
+    --blur-spawn: var(--blur-spawn-tight);
   }
 }
 
@@ -23,6 +50,9 @@
   width: auto;
   z-index: 1;
   pointer-events: none;
+
+  /* Consumed by DigitalStatue's own entrance animation. */
+  --statue-entrance-delay: var(--hero-t-scene);
 
   @media (max-width: 1024px) {
     height: 80%;
@@ -47,6 +77,13 @@
     width: 100%;
     opacity: 0.5;
   }
+}
+
+/* Junction nodes scale from their own centre. Opacity is left to the SVG
+   presentation attribute so each node keeps its individual weight. */
+.hero-section__lines-nodes circle {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 /* ─── Content ──────────────────────────────────────────────────────────────── */
@@ -106,6 +143,10 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--accent);
+  /* Shrink-to-fit as a direct flex child, and contain the entrance sweep. */
+  align-self: flex-start;
+  position: relative;
+  overflow: hidden;
 
   @media (max-width: 1024px) {
     display: none;
@@ -142,11 +183,16 @@
   }
 }
 
-.hero-section__title-gradient {
-  background: linear-gradient(135deg, var(--accent), var(--accent-container), var(--accent));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.hero-section__title-line {
+  display: block;
+}
+
+.hero-section__title-line--1 {
+  --spawn-delay: var(--hero-t-title-1);
+}
+
+.hero-section__title-line--2 {
+  --spawn-delay: var(--hero-t-title-2);
 }
 
 /* Subtitle */
@@ -157,6 +203,9 @@
   color: var(--text);
   opacity: 0.85;
   margin: 0;
+
+  --spawn-delay: var(--hero-t-subtitle);
+  --spawn-blur: var(--blur-spawn-soft);
 
   @media (max-width: 1024px) {
     font-size: 16px;
@@ -176,6 +225,7 @@
   border: 1px solid var(--glass-border);
   border-radius: 4px;
   width: fit-content;
+  align-self: flex-start;
 
   @media (max-width: 1024px) {
     display: none;
@@ -223,3 +273,119 @@
   50% { transform: translateY(8px); opacity: 1; }
 }
 
+
+/* ─── Entrance choreography ───────────────────────────────────────────────── */
+/*
+ * Everything above is the FINAL state, so the reduced-motion path (and the
+ * first paint) renders the hero fully assembled with zero layout shift.
+ * The block below is purely additive and only animates opacity / transform /
+ * filter / clip-path — nothing that triggers layout.
+ */
+
+@keyframes hero-trace {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes hero-node-bloom {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+@keyframes hero-badge-materialize {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+    filter: blur(var(--blur-spawn-soft));
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-badge-scan {
+  from { opacity: 0; transform: translate3d(-100%, 0, 0); }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  to { opacity: 0; transform: translate3d(100%, 0, 0); }
+}
+
+@keyframes hero-panel-unfurl {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translate3d(0, 12px, 0);
+    filter: blur(var(--blur-spawn-soft));
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-hint-arrive {
+  from { opacity: 0; transform: translateX(-50%) translate3d(0, -14px, 0); }
+  to { opacity: 1; transform: translateX(-50%) translate3d(0, 0, 0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Circuit grid traces itself in left→right. Opacity is deliberately absent
+     so the mobile `opacity: 0.5` on the layer is preserved. */
+  .hero-section__lines {
+    animation: hero-trace var(--dur-wipe) var(--ease-wipe) var(--hero-t-scene) backwards;
+  }
+
+  /* Junctions pop once the trace has swept past them. */
+  .hero-section__lines-nodes circle {
+    animation: hero-node-bloom var(--dur-spawn-element) var(--ease-spawn) backwards;
+    animation-delay: calc(
+      var(--hero-t-scene) + var(--dur-wipe) * 0.4 + var(--node-index, 0) * var(--stagger-element-tight)
+    );
+  }
+
+  .hero-section__lines-nodes circle:nth-of-type(1) { --node-index: 0; }
+  .hero-section__lines-nodes circle:nth-of-type(2) { --node-index: 1; }
+  .hero-section__lines-nodes circle:nth-of-type(3) { --node-index: 0.5; }
+  .hero-section__lines-nodes circle:nth-of-type(4) { --node-index: 2; }
+  .hero-section__lines-nodes circle:nth-of-type(5) { --node-index: 1.5; }
+  .hero-section__lines-nodes circle:nth-of-type(6) { --node-index: 2.5; }
+  .hero-section__lines-nodes circle:nth-of-type(7) { --node-index: 0.75; }
+  .hero-section__lines-nodes circle:nth-of-type(8) { --node-index: 1.75; }
+  .hero-section__lines-nodes circle:nth-of-type(9) { --node-index: 2.25; }
+
+  /* Overline is painted in under a travelling accent scan line. */
+  .hero-section__badge {
+    animation: hero-badge-materialize var(--dur-spawn-element) var(--ease-wipe) var(--hero-t-overline) backwards;
+  }
+
+  .hero-section__badge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 42%,
+      var(--accent) 50%,
+      transparent 58%,
+      transparent 100%
+    );
+    pointer-events: none;
+    opacity: 0;
+    animation: hero-badge-scan var(--dur-spawn-element) var(--ease-wipe) var(--hero-t-overline) backwards;
+  }
+
+  /* Stat card unfurls downward. */
+  .hero-section__stat-card {
+    animation: hero-panel-unfurl var(--dur-spawn-element) var(--ease-spawn) var(--hero-t-stat) backwards;
+  }
+
+  /* Scroll hint arrives last; the idle bounce on the inner svg is untouched. */
+  .hero-section__scroll-hint {
+    animation: hero-hint-arrive var(--dur-spawn-element) var(--ease-spawn) var(--hero-t-hint) backwards;
+  }
+}

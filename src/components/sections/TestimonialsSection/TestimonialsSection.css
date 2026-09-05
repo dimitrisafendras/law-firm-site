@@ -64,10 +64,11 @@
   transform: scale(1.03);
 }
 
-/* Focused card accent border override */
+/* Focused card: widen and brighten the rail. These feed the inset shadow in
+   TestimonialCard.css — setting `border-left-*` here would draw nothing. */
 .testimonials-carousel__slide--active .testimonial-card {
-  border-left-width: 4px;
-  border-left-color: var(--accent);
+  --rail-width: 4px;
+  --rail-color: var(--accent);
 }
 
 /* Hovered slide: expand to show full text */
@@ -78,8 +79,8 @@
 }
 
 .testimonials-carousel__slide:hover .testimonial-card {
-  border-left-width: 4px;
-  border-left-color: var(--accent);
+  --rail-width: 4px;
+  --rail-color: var(--accent);
 }
 
 .testimonials-carousel__slide:hover .testimonial-card__quote {

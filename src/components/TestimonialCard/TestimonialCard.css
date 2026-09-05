@@ -1,23 +1,34 @@
-/* The accent rail stays a real left border rather than folding into the
-   material's inset edge: TestimonialsSection animates its width and colour to
-   mark the focused slide, which only works on an actual border property.
-   A border drawn on one side only tapers to nothing through a corner arc, so
-   the rail cannot share the card's 22px radius on the left — at that radius it
-   reads as a wedge pinched at both ends instead of the straight bar it is. The
-   left corners therefore keep a small radius, which is short enough that the
-   taper is invisible (it is where the rail sat before the radius changed) and
-   keeps `.glass`'s inherited-radius light layers aligned despite their 3px
-   left offset. */
+/*
+ * The accent rail is an inset shadow, not a left border.
+ *
+ * A one-sided border tapers to nothing through a corner arc, so a rail drawn
+ * that way cannot share the card's 22px radius — which is why this card had
+ * been squaring off its left corners to hide the taper, leaving it round on one
+ * side and cut on the other. An inset shadow follows the radius exactly, so the
+ * rail curves with the corner and the card keeps one uniform shape.
+ *
+ * Width and colour come from custom properties because the carousel marks its
+ * focused slide by changing them; `box-shadow` itself carries the transition,
+ * since the computed shadow changes whenever a property does.
+ */
 .testimonial-card {
-  border-radius: var(--radius-sm) var(--radius-3xl) var(--radius-3xl) var(--radius-sm);
-  border-left: 3px solid var(--accent-border);
-  padding: var(--space-6) var(--space-6) var(--space-8);
+  --rail-width: 3px;
+  --rail-color: var(--accent-border);
+
+  border-radius: var(--radius-3xl);
+  padding: var(--space-8) var(--space-6) var(--space-6);
   margin: 0;
   text-align: left;
   flex: 1;
   display: flex;
   flex-direction: column;
-  transition: border-left-color 0.5s ease, border-left-width 0.5s ease;
+
+  /* Rail first so it paints above the material's own rim. */
+  box-shadow:
+    inset var(--rail-width) 0 0 var(--rail-color),
+    inset 0 0 0 1px var(--glass-edge),
+    var(--elev-floating);
+  transition: box-shadow 0.5s ease;
 
   /* The carousel slide that wraps this card carries a permanent `opacity` and
      `transform` (TestimonialsSection.css), and both make it a backdrop root —
@@ -39,13 +50,19 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-card {
+    transition: none;
+  }
+}
+
 .testimonial-card__quote {
   font-family: var(--heading);
   font-size: var(--type-body-lg-size);
   font-style: italic;
   line-height: var(--type-body-lg-leading);
   color: var(--text-h);
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-6);
   display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
@@ -64,13 +81,17 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  /* Pinned to the bottom so attributions line up across cards of unequal quote
+     length, with a hairline to separate them from the quote they credit. */
   margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--glass-edge);
 }
 
 .testimonial-card__author {
   font-family: var(--label);
   font-size: var(--type-small-size);
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
   line-height: var(--type-small-leading);
   font-style: normal;
   color: var(--text-h);

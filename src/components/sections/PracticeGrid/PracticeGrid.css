@@ -75,10 +75,12 @@
   padding: var(--space-12);
   border-radius: var(--radius-3xl);
   background-color: var(--glass-tint);
-  /* No backdrop-filter: this card only ever renders inside a FadeInSection,
-     whose opacity animation makes it a backdrop root — the blur would have
-     nothing to sample, while still costing a compositing layer. The tint above
-     resolves to the heavier `--glass-bg-strong` in that context. */
+  /* Blur and saturation come from the registered custom properties in
+     liquid-glass.css, which tween from flat to full as the card settles — the
+     wrapper's opacity animation makes it a backdrop root until then, so there
+     is nothing to lens during the entrance. */
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   box-shadow:
     var(--elev-floating),
     inset 0 0 0 1px var(--glass-edge);

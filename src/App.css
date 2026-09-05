@@ -68,13 +68,43 @@
  * the point.
  */
 .page-ramp {
-  background: linear-gradient(
-    180deg,
-    var(--bg) 0%,
-    var(--grad-1) 20%,
-    var(--grad-2) 40%,
-    var(--grad-3) 60%,
-    var(--grad-4) 80%,
-    var(--grad-5) 100%
-  );
+  /*
+   * Accent blooms sit on top of the ramp, and they are the reason the glass has
+   * anything to do. The material's whole premise is concentrating the colour of
+   * what is behind it — over a flat near-black page there is no colour to
+   * concentrate, and every surface measured 1.05:1 against its own backdrop.
+   * These are the design system's `ds-aurora-brand` idea in this site's palette:
+   * very low alpha, very large, so they read as depth in the page rather than as
+   * shapes on it. They are painted, not animated, so they cost no compositing.
+   */
+  background:
+    radial-gradient(
+      58% 34% at 18% 10%,
+      color-mix(in oklab, var(--accent) 12%, transparent) 0%,
+      transparent 64%
+    ),
+    radial-gradient(
+      52% 30% at 88% 30%,
+      color-mix(in oklab, var(--secondary) 10%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      64% 34% at 26% 56%,
+      color-mix(in oklab, var(--accent) 9%, transparent) 0%,
+      transparent 64%
+    ),
+    radial-gradient(
+      56% 30% at 82% 78%,
+      color-mix(in oklab, var(--tertiary) 6%, transparent) 0%,
+      transparent 62%
+    ),
+    linear-gradient(
+      180deg,
+      var(--bg) 0%,
+      var(--grad-1) 20%,
+      var(--grad-2) 40%,
+      var(--grad-3) 60%,
+      var(--grad-4) 80%,
+      var(--grad-5) 100%
+    );
 }

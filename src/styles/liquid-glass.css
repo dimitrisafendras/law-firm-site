@@ -262,49 +262,51 @@
 }
 
 /*
- * A surface that fades in is solid-tinted rather than blurred.
+ * Fading in, and the lensing that arrives with it.
  *
  * FadeInSection animates `opacity` on a wrapper, and an ancestor with
- * `opacity < 1` is a backdrop root — so for the whole entrance a card's
- * `backdrop-filter` has nothing to sample and paints tint only. The moment the
- * wrapper reaches 1 the blur switches on and the surface visibly changes
- * colour, which reads as a rendering fault rather than as an animation.
+ * `opacity < 1` is a backdrop root — so for the duration of the entrance a
+ * card's `backdrop-filter` has nothing to sample. Switching the blur on at the
+ * end is what made surfaces visibly change colour as they settled.
  *
- * The honest fix is to stop promising a lens these surfaces never had: they
- * carry the heavier tint throughout, so they look the same before and after.
- * Little is lost — the sections behind these cards paint a near-flat
- * background, so the blur was buying almost nothing. Surfaces that are NOT
- * faded in (the nav bar, the stats band, the auth card) sit over real content
- * and keep the full material.
- *
- * Expressed by neutralising the tokens rather than by naming `.glass`, because
- * a surface whose pseudo-elements are already spent on its own decoration
- * inlines the material instead of taking the class. Both forms build their
- * filter out of these same tokens — hardcoding one is a CLAUDE.md violation —
- * so overriding the tokens reaches every consumer, present and future.
+ * So the material is tweened in instead. The blur and saturation are registered
+ * custom properties (below), which makes them animatable — `backdrop-filter`
+ * itself cannot transition from `none`, but a filter built out of properties
+ * can. The tween is delayed by one entrance so it starts only once the wrapper
+ * has reached full opacity and the surface can actually lens something.
  */
-.fade-section,
-.fade-section.glass {
-  --glass-tint: var(--glass-bg-strong);
-  --glass-surface-tint: var(--glass-bg-strong);
+@property --glass-blur {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 20px;
 }
 
-/*
- * Removed outright, not zeroed. Neutralising `--glass-blur`/`--glass-saturate`
- * left `backdrop-filter: blur(0px) saturate(1)` standing, and a declared
- * backdrop-filter still promotes the element to its own compositing layer and
- * makes it a backdrop root even when the filter is a no-op — eleven of the
- * page's sixteen filtered layers were paying that cost for no visible effect.
- *
- * A surface that inlines the material rather than taking this class has to say
- * `backdrop-filter: none` for itself; there is no shared selector to hang it on.
- */
-/* Both forms: the surface nested inside the animated wrapper, and the wrapper
-   that is itself the surface (FadeInSection takes a className). */
+@property --glass-saturate {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 180%;
+}
+
+/* Only the lensing changes on entry. The tint is deliberately NOT swapped for a
+   heavier one here: that made the card visibly gain and lose opacity as it
+   settled, which reads as the glass turning milky rather than as it focusing. */
+.fade-section:not(.fade-section--visible) {
+  --glass-blur: 0px;
+  --glass-saturate: 100%;
+}
+
 .fade-section .glass,
 .fade-section.glass {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  transition:
+    --glass-blur var(--dur-spawn-element) var(--ease-settle) var(--dur-spawn-element),
+    --glass-saturate var(--dur-spawn-element) var(--ease-settle) var(--dur-spawn-element);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-section .glass,
+  .fade-section.glass {
+    transition: none;
+  }
 }
 
 @media (hover: hover) {

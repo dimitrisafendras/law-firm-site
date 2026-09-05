@@ -261,19 +261,28 @@ export const glass = {
     edge: 'rgba(255, 255, 255, 0.5)',
     glow: 'rgba(255, 255, 255, 0.45)',
   },
+  /*
+   * The dark tint is LIGHTER than the surface it sits on, deliberately.
+   *
+   * It used to be rgba(24, 26, 31, …) — darker than the page ramp behind it —
+   * which made every card recede into its own background and measure 1.05:1
+   * against it. Glass over a dark ground catches light; it reads lighter than
+   * its surroundings, not darker. The values below lift the card off the page
+   * and give the rim something to sit against.
+   */
   dark: {
-    bg: 'rgba(24, 26, 31, 0.5)',
-    bgStrong: 'rgba(24, 26, 31, 0.72)',
-    border: 'rgba(255, 255, 255, 0.14)',
+    bg: 'rgba(52, 62, 82, 0.28)',
+    bgStrong: 'rgba(52, 62, 82, 0.44)',
+    border: 'rgba(255, 255, 255, 0.18)',
     shadow: '0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3)',
     blur: '20px',
     blurStrong: '28px',
     saturate: '180%',
-    tint: 'rgba(24, 26, 31, 0.5)',
-    tintClear: 'rgba(24, 26, 31, 0.28)',
-    highlight: 'rgba(255, 255, 255, 0.28)',
-    edge: 'rgba(255, 255, 255, 0.14)',
-    glow: 'rgba(188, 232, 255, 0.14)',
+    tint: 'rgba(52, 62, 82, 0.28)',
+    tintClear: 'rgba(52, 62, 82, 0.16)',
+    highlight: 'rgba(255, 255, 255, 0.42)',
+    edge: 'rgba(255, 255, 255, 0.18)',
+    glow: 'rgba(188, 232, 255, 0.20)',
   },
 } as const;
 

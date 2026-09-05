@@ -56,7 +56,18 @@
   }
 }
 
+/*
+ * Each card is wrapped in a FadeInSection, so the WRAPPER is the grid item and
+ * it — not the card — receives the stretched row height. Left alone, the card
+ * stops at its content height and the column's bottom edge falls short of the
+ * map beside it. The map column gets this for free from `--map-col`'s flex.
+ */
+.network-map__cards > * {
+  display: flex;
+}
+
 .network-map__card {
+  width: 100%;
   position: relative;
   overflow: hidden;
   padding: 32px;

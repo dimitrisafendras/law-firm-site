@@ -52,7 +52,7 @@ const en = {
   partnerEthosLine2: 'Jurisprudence',
   partnerQuote: 'Law is not a reactive barrier; it is the blueprint upon which empires are constructed.',
   teamSubtitle:
-    'Two attorneys, two visions, one commitment to moving you forward.',
+    'Three attorneys, three disciplines, one commitment to moving you forward.',
 
   attorney1Name: 'Dimitris Afendras',
   attorney1Title: 'Founding Partner',

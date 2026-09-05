@@ -100,6 +100,15 @@ export const typeScale = {
   caption: { size: '0.75rem', px: 12, weight: 500, lineHeight: '1.4', tracking: '0.01em' },
 } as const;
 
+/**
+ * Tracking for uppercase micro-labels.
+ *
+ * The caption step's own 0.01em is tuned for mixed case; uppercase Jura at 12px
+ * closes up badly at that value, and every uppercase label on the site had
+ * independently invented its own wider tracking. This is that value, once.
+ */
+export const capsTracking = '0.05em';
+
 /** Bare sizes, derived from the scale above so the two can never drift. */
 export const fontSizes = {
   caption: typeScale.caption.size,
@@ -414,6 +423,18 @@ export const spacingVarNames: Record<string, string> = {
   24: '--space-24',
 };
 
+export const weightVarNames: Record<string, string> = {
+  regular: '--weight-regular',
+  medium: '--weight-medium',
+  semibold: '--weight-semibold',
+  display: '--weight-display',
+  bold: '--weight-bold',
+};
+
+export const layoutVarNames: Record<string, string> = {
+  maxWidth: '--layout-max-width',
+};
+
 export const elevationVarNames: Record<string, string> = {
   flat: '--elev-flat',
   raised: '--elev-raised',
@@ -448,6 +469,7 @@ export const theme = {
   elevations,
   typeScale,
   weights,
+  capsTracking,
   gradients,
   breakpoints,
   layout,

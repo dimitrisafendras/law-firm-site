@@ -91,18 +91,18 @@
 .hero-section__content {
   position: relative;
   z-index: 1;
-  max-width: 1440px;
+  max-width: var(--layout-max-width);
   width: 100%;
   margin: 0 auto;
-  padding: 120px 48px 48px;
+  padding: 120px var(--space-12) var(--space-12);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 48px;
+  gap: var(--space-12);
   @media (max-width: 1024px) {
     gap: 18px;
     z-index: 2;
-    padding: calc(80px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) 0 calc(16px + env(safe-area-inset-left, 0px));
+    padding: calc(var(--space-20) + env(safe-area-inset-top, 0px)) calc(var(--space-4) + env(safe-area-inset-right, 0px)) 0 calc(var(--space-4) + env(safe-area-inset-left, 0px));
   }
 }
 
@@ -132,13 +132,27 @@
 .hero-section__badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
-  border-radius: 999px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+
+  /* The regular glass material, written out rather than applied with `.glass`:
+     the entrance scan line below already owns ::after, and `.glass` claims both
+     pseudo-elements. Written-out material is material that can drift, so this
+     is kept to the documented recipe token-for-token — the same tint, optics
+     and elevation `.glass` itself sets — rather than a private mix. No scrim:
+     the pill sits in the left content column over the flat dark end of the hero
+     gradient (the statue is anchored right: 8% and the circuit grid runs at
+     ≤0.2 alpha), so accent-on-near-black clears AA several times over. */
+  background-color: var(--glass-tint);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow:
+    var(--elev-floating),
+    inset 0 0 0 1px var(--glass-edge);
+
   font-family: var(--label);
-  font-size: 12px;
+  font-size: var(--type-caption-size);
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -153,10 +167,21 @@
   }
 }
 
+/* The other half of the recipe. Because the material above is hand-written, it
+   does not inherit `.glass`'s fallback, and without this the pill would be the
+   one translucent, live-blurred element left on a page that has gone opaque. */
+@media (prefers-reduced-transparency: reduce) {
+  .hero-section__badge {
+    background-color: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
 .hero-section__badge-dot {
   width: 6px;
   height: 6px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: var(--accent);
   animation: pulse-dot 2s infinite;
 }
@@ -169,16 +194,24 @@
 /* Title */
 .hero-section__title {
   font-family: var(--heading);
-  font-size: 80px;
-  font-weight: 500;
-  line-height: 0.95;
-  letter-spacing: -2px;
+  font-size: var(--type-display-size);
+  font-weight: var(--type-display-weight);
+  line-height: var(--type-display-leading);
+  letter-spacing: var(--type-display-tracking);
   color: var(--text-h);
   margin: 0;
 
+  /* One step down the scale rather than an off-scale mobile size: display set
+     at full measure wraps mid-word in Greek on a narrow screen. The whole step
+     moves — h1 is set a little lighter and a little looser than display, and
+     taking its size while keeping display's weight and leading would render a
+     line that exists nowhere in the scale. Mirrors the global h1 in
+     src/index.css. */
   @media (max-width: 1024px) {
-    font-size: 48px;
-    letter-spacing: -1px;
+    font-size: var(--type-h1-size);
+    font-weight: var(--type-h1-weight);
+    line-height: var(--type-h1-leading);
+    letter-spacing: var(--type-h1-tracking);
     text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
   }
 }
@@ -197,9 +230,10 @@
 
 /* Subtitle */
 .hero-section__subtitle {
-  font-size: 20px;
-  font-weight: 300;
-  line-height: 1.6;
+  font-size: var(--type-body-lg-size);
+  font-weight: var(--type-body-lg-weight);
+  line-height: var(--type-body-lg-leading);
+  letter-spacing: var(--type-body-lg-tracking);
   color: var(--text);
   opacity: 0.85;
   margin: 0;
@@ -208,22 +242,21 @@
   --spawn-blur: var(--blur-spawn-soft);
 
   @media (max-width: 1024px) {
-    font-size: 16px;
+    font-size: var(--type-body-size);
     max-width: 40%;
     text-shadow: 0 1px 12px rgba(0, 0, 0, 0.7);
   }
 }
 
-/* Floating stat card */
+/* Floating stat card. The material itself comes from `.glass` in the markup —
+   only radius, padding and layout belong here. */
 .hero-section__stat-card {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 16px;
-  padding: 24px 32px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 4px;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-8);
+  border-radius: var(--radius-2xl);
   width: fit-content;
   align-self: flex-start;
 
@@ -234,7 +267,10 @@
 
 .hero-section__stat-value {
   font-family: var(--heading);
-  font-size: 40px;
+  font-size: var(--type-h1-size);
+  /* Deliberately off the h1 step's weight: this is a figure, not a heading, and
+     it reads as the same light numeral treatment as the stats band further down
+     the page. Size is the step's, so the two stay locked together. */
   font-weight: 500;
   color: var(--accent);
   line-height: 1;
@@ -254,7 +290,7 @@
 
 .hero-section__scroll-hint {
   position: absolute;
-  bottom: 32px;
+  bottom: var(--space-8);
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;

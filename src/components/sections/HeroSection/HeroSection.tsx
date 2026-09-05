@@ -70,7 +70,7 @@ export function HeroSection() {
           <EditableSpawnText tKey="heroSubtitle" mode="word" as="span" />
         </p>
 
-        <div className="hero-section__stat-card">
+        <div className="hero-section__stat-card glass">
           <EditableText tKey="statYearsValue" as="span" className="hero-section__stat-value" />
           <EditableText tKey="statYears" as="span" className="hero-section__stat-label" />
         </div>

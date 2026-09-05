@@ -4,17 +4,24 @@
   left: 0;
   right: 0;
   z-index: 100;
-  background: transparent;
-  box-shadow: none;
   transition: background 0.5s, box-shadow 0.5s;
 }
 
-/* Glass effect after scrolling */
+/* The material itself is carried by the `glass` class, added in the TSX once the
+   page has scrolled. This rule only draws the seam that separates the header
+   from the content sliding under it. */
 .navbar--scrolled {
-  background: rgba(17, 19, 23, 0.85);
-  backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--glass-border);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* `.glass` rings its whole box with a 1px inset edge. On a bar that bleeds to
+   the top and both sides of the viewport that ring is a hairline along three
+   screen edges, and along the fourth it stacks with the seam above into a
+   doubled ~2px line. Keep the elevation, drop the ring: the border-bottom is
+   the only edge this surface has. Held at (0,2,0) so it wins over `.glass`
+   whatever order the bundler emits the two stylesheets in. */
+.navbar--scrolled.glass {
+  box-shadow: var(--elev-floating);
 }
 
 .navbar__inner {
@@ -24,16 +31,24 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1440px;
+  /* No token for the page measure yet — see src/theme/tokens.ts → layout. */
+  max-width: var(--layout-max-width);
   margin: 0 auto;
-  padding: 20px 48px;
+  /* 20px is deliberately off the spacing scale, which jumps 16 → 24. It is the
+     header height this site shipped with; snapping up to --space-6 makes the
+     bar 8px taller on every page, which is a design change the glass re-skin
+     was not asked to make. Replace with a token if a 20px step is ever added. */
+  padding: 20px var(--space-12);
   transition: padding 0.3s;
 
   @media (max-width: 1024px) {
-    padding: 12px 16px;
+    padding: var(--space-3) var(--space-4);
   }
 }
 
+/* 14px, off-scale for the same reason as the 20px above: it is what fixes the
+   scroll-shrink at the 12px total the header was tuned for. --space-3 would
+   double that travel, making the shrink read as a jolt rather than a settle. */
 .navbar--scrolled .navbar__inner {
   padding-top: 14px;
   padding-bottom: 14px;
@@ -41,6 +56,8 @@
 
 .navbar__logo {
   font-family: var(--heading);
+  /* The wordmark sits between the h3 and h2 steps by design; it is a mark, not
+     a heading, so it stays off the type scale. */
   font-size: 24px;
   font-weight: 500;
   color: var(--text-h);
@@ -55,7 +72,7 @@
 .navbar__links {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: var(--space-8);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -67,9 +84,11 @@
 
 .navbar__link {
   font-family: var(--label);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.15em;
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  /* Wider than --type-caption-tracking: uppercase nav labels are tracked out
+     well past the reading step. */
+  letter-spacing: var(--type-caps-tracking);
   text-transform: uppercase;
   color: var(--text);
   text-decoration: none;
@@ -100,7 +119,8 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  margin: -8px -8px -8px 0;
+  margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1)
+    calc(var(--space-2) * -1) 0;
   padding: 0;
   border: none;
   background: transparent;
@@ -160,21 +180,50 @@
 
 @media (max-width: 1024px) {
   .navbar__mobile {
-    /* Full-viewport overlay under the fixed header row. */
+    /* Full-viewport overlay under the fixed header row. `inset: 0` is safe
+       again: Navbar.tsx drops `glass` from the header whenever this menu is
+       open, so no ancestor backdrop-filter is left to become the containing
+       block. It is also the better box — 100vw counts the classic scrollbar
+       and would overhang the viewport horizontally. */
     position: fixed;
     inset: 0;
     z-index: 1;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    overflow-y: auto;
-    background: var(--glass-bg-strong);
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    backdrop-filter: blur(var(--glass-blur));
     /* Hidden state: removed from tab order + a11y tree, but still animatable. */
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s, visibility 0s linear 0.3s;
+  }
+
+  /* The overlay wears the material itself, which means it is also a *child* of
+     a glass surface whenever the header is scrolled. `.glass > *` promotes
+     children to `position: relative; z-index: 2`, which would drop the overlay
+     into the header row and lift it over the header controls; it opts back out
+     here. */
+  .navbar > .navbar__mobile {
+    position: fixed;
+    z-index: 1;
+    /* Through the property, not `background-color`: a direct background wins
+       over the reduced-transparency fallback in `.glass` while that block's
+       `backdrop-filter: none` still lands, leaving a see-through overlay with
+       no blur behind it. The stronger tint is deliberate — a full-screen menu
+       has to stay legible over whatever section happens to be behind it. */
+    --glass-surface-tint: var(--glass-bg-strong);
+    /* The material's inset ring would frame all four viewport edges here. */
+    box-shadow: none;
+  }
+
+  /* This selector has to outrank `.glass > *` to keep the overlay fixed, which
+     also puts it out of reach of the reduced-transparency block in
+     liquid-glass.css — media queries carry no specificity. So the fallback is
+     restated at the winning weight; without it the overlay would go blurless
+     and still be 28% see-through, the worst of both. */
+  @media (prefers-reduced-transparency: reduce) {
+    .navbar > .navbar__mobile {
+      --glass-surface-tint: var(--surface);
+    }
   }
 
   .navbar__mobile--open {
@@ -183,14 +232,21 @@
     transition: opacity 0.3s, visibility 0s;
   }
 
+  /* The scroll lives here rather than on the overlay, which carries the
+     material: `.glass`'s illumination and rim are absolutely positioned to the
+     surface's padding box, so scrolling that box drags the light off the top
+     and leaves the rest of the panel on bare tint. min-height: 0 lets this flex
+     child shrink to the overlay's height instead of stretching past it. */
   .navbar__mobile-panel {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 100px 16px 32px;
+    min-height: 0;
+    overflow-y: auto;
+    gap: var(--space-2);
+    padding: var(--space-24) var(--space-4) var(--space-8);
     border-top: 1px solid var(--glass-border);
     /* Slide the content in from the top; collapses via reduced-motion switch. */
-    transform: translateY(-12px);
+    transform: translateY(calc(var(--space-3) * -1));
     transition: transform 0.3s;
   }
 
@@ -207,12 +263,13 @@
   .navbar__mobile-link {
     display: flex;
     align-items: center;
-    min-height: 48px;
-    padding: 0 8px;
+    min-height: var(--space-12);
+    padding: 0 var(--space-2);
     font-family: var(--label);
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.15em;
+    /* One step up from the desktop nav label: these are touch targets. */
+    font-size: var(--type-small-size);
+    font-weight: var(--type-caption-weight);
+    letter-spacing: var(--type-caps-tracking);
     text-transform: uppercase;
     color: var(--text);
     text-decoration: none;
@@ -225,6 +282,6 @@
   }
 
   .navbar__mobile-cta {
-    margin-top: 24px;
+    margin-top: var(--space-6);
   }
 }

@@ -86,7 +86,7 @@ export function AuthNavControl() {
       </button>
 
       {open && (
-        <div className="auth-nav__menu" role="menu">
+        <div className="auth-nav__menu glass" role="menu">
           <div className="auth-nav__identity">
             <span className="auth-nav__email">{email}</span>
             <span className="auth-nav__role">

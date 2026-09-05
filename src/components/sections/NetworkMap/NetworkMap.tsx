@@ -54,7 +54,7 @@ export function NetworkMap() {
               // own hover `transition`, which would override the fade's
               // opacity/transform transition if both classes shared one element.
               <FadeInSection key={key} variant="fade-up">
-                <div className="network-map__card">
+                <div className="network-map__card glass glass--interactive">
                   <span className="network-map__card-code" aria-hidden="true">{code}</span>
                   <EditableText tKey={labelKey} as="span" className="network-map__card-label" />
                   <EditableText tKey={cityKey} as="h3" className="network-map__card-city" />

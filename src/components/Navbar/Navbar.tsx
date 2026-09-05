@@ -94,8 +94,16 @@ export function Navbar({ logo, links, cta }: NavbarProps) {
     return () => mq.removeEventListener('change', onChange);
   }, [open]);
 
+  // The scrolled header wears the glass — but never while the mobile overlay is
+  // open. A backdrop-filter here would make the header the containing block for
+  // the overlay's fixed box, and would leave the overlay's own blur with nothing
+  // but the header's output to sample.
+  const headerGlass = scrolled && !open;
+
   return (
-    <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
+    <nav
+      className={`navbar ${scrolled ? 'navbar--scrolled' : ''} ${headerGlass ? 'glass' : ''}`}
+    >
       <div className="navbar__inner">
         <div className="navbar__logo">{logo}</div>
 
@@ -131,7 +139,7 @@ export function Navbar({ logo, links, cta }: NavbarProps) {
       <div
         id={MOBILE_MENU_ID}
         ref={panelRef}
-        className={`navbar__mobile ${open ? 'navbar__mobile--open' : ''}`}
+        className={`navbar__mobile glass ${open ? 'navbar__mobile--open' : ''}`}
         onClick={(event) => {
           // Backdrop click (outside the panel content) closes the menu.
           if (event.target === event.currentTarget) close();

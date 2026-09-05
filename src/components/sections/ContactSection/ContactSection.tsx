@@ -24,7 +24,7 @@ export function ContactSection() {
 
         <div className="contact-section__grid">
           <FadeInSection variant="fade-left" className="contact-section__info">
-            <div className="contact-section__details">
+            <div className="contact-section__details glass">
               <div className="contact-section__detail">
                 <span className="contact-section__detail-icon" aria-hidden="true">&#9906;</span>
                 <EditableText tKey="contactAddress" as="span" />

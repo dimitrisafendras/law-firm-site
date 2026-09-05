@@ -15,12 +15,12 @@
 }
 
 .network-map__inner {
-  max-width: 1440px;
+  max-width: var(--layout-max-width);
   margin: 0 auto;
-  padding: 0 48px;
+  padding: 0 var(--space-12);
 
   @media (max-width: 1024px) {
-    padding: 0 16px;
+    padding: 0 var(--space-4);
   }
 }
 
@@ -29,7 +29,7 @@
 .network-map__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: var(--space-6);
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
@@ -41,7 +41,7 @@
 .network-map__cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: var(--space-6);
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
@@ -66,23 +66,38 @@
   display: flex;
 }
 
+/* Surface, edge and elevation come from `.glass`; this rule owns only the
+   card's shape and box. */
 .network-map__card {
   width: 100%;
-  position: relative;
   overflow: hidden;
-  padding: 32px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 4px;
-  transition: border-color 0.5s;
+  padding: var(--space-8);
+  border-radius: var(--radius-3xl);
+  transition: box-shadow 0.5s var(--ease-settle);
 }
 
-.network-map__card:hover {
-  border-color: var(--accent-border);
+/* The old accent border on hover, restated as the material's inset edge: a real
+   border would stack a second box outside the glass rim.
+
+   Gated on a real hovering pointer, matching `.glass--interactive:hover::before`
+   in liquid-glass.css. Touch browsers leave :hover latched on the last-tapped
+   element, so ungated this card would keep the heavier elevation and the accent
+   rim for good while the gated illumination glow it is paired with would not
+   follow — a stuck half-hover. */
+@media (hover: hover) {
+  .network-map__card:hover {
+    box-shadow:
+      var(--elev-overlay),
+      inset 0 0 0 1px var(--accent-border);
+  }
 }
 
-.network-map__card-code {
+/* Selector deliberately more specific than `.glass > *`, which promotes every
+   direct child to position:relative — the oversized code glyph must stay out of
+   flow, and behind the copy. */
+.network-map__card > .network-map__card-code {
   position: absolute;
+  z-index: 1;
   top: -16px;
   right: -8px;
   font-family: var(--label);
@@ -106,7 +121,7 @@
   letter-spacing: 0.3em;
   color: var(--accent);
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }
 
 .network-map__card-city {
@@ -114,20 +129,20 @@
   font-size: 22px;
   font-weight: 500;
   color: var(--text-h);
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-4);
 }
 
 .network-map__card-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 24px;
+  margin: 0 0 var(--space-6);
 }
 
 .network-map__card-list li {
   font-size: 14px;
   color: var(--text);
   opacity: 0.7;
-  padding: 4px 0;
+  padding: var(--space-1) 0;
 }
 
 .network-map__card-list li::before {
@@ -140,7 +155,7 @@
 .network-map__card-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   font-family: var(--label);
   font-size: 12px;
   text-transform: uppercase;
@@ -151,7 +166,7 @@
 }
 
 .network-map__card-link:hover {
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 /* ─── Map ─────────────────────────────────────────────────────────────────── */
@@ -160,12 +175,18 @@
   display: flex;
 }
 
+/* The material is inlined rather than applied via `.glass`: the frame's own
+   children (glow, pin) are absolutely positioned, and an opaque map fills the
+   box — so `.glass`'s child promotion would break them and its blur and
+   illumination would never be seen. A real border, not the inset edge: an inset
+   shadow paints under child content, and the image would cover it. */
 .network-map__map {
   position: relative;
   width: 100%;
-  border-radius: 4px;
+  border-radius: var(--radius-3xl);
   overflow: hidden;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--elev-floating);
 }
 
 .network-map__map-img {

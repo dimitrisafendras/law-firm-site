@@ -196,9 +196,18 @@
    ============================================================================ */
 
 .glass {
+  /*
+   * The tint is read through an overridable property rather than set directly,
+   * so a surface that needs a heavier tint (a full-screen menu, a dropdown)
+   * sets `--glass-surface-tint` instead of `background-color`. A plain
+   * `background-color` override lands at the same specificity as this rule but
+   * later in the bundle, which silently defeats the reduced-transparency
+   * fallback below: the blur switches off while the surface stays translucent,
+   * which is worse than either state on its own.
+   */
   position: relative;
   isolation: isolate;
-  background-color: var(--glass-tint);
+  background-color: var(--glass-surface-tint, var(--glass-tint));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   box-shadow:
@@ -256,10 +265,22 @@
 }
 
 @media (prefers-reduced-transparency: reduce) {
+  /*
+   * Repeated selector, deliberately. This sheet is imported from main.tsx before
+   * any component stylesheet, so a surface that sets `--glass-surface-tint` at
+   * the same specificity would win on source order and quietly reinstate a
+   * translucent tint after the blur had been switched off — a worse result than
+   * either state alone. Media queries add no specificity of their own, so the
+   * weight has to come from the selector. (0,3,0) clears the component
+   * overrides on this site, including the descendant selectors.
+   */
+  .glass.glass.glass {
+    --glass-surface-tint: var(--surface);
+  }
+
   .glass {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    background-color: var(--surface);
   }
 
   .glass::before,

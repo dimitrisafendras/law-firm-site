@@ -41,7 +41,14 @@
 }
 
 :root {
-  /* Body step of the design system's type scale. */
+  /*
+   * Body step of the design system's type scale.
+   *
+   * There is deliberately no mobile root-size override. The scale's steps are
+   * `rem`, so shrinking the root would scale every one of them a second time —
+   * the caption step would land at 10.5px on a phone. Steps that genuinely need
+   * a smaller mobile value say so themselves (see h1 below).
+   */
   font: var(--type-body-weight) var(--type-body-size) / var(--type-body-leading) var(--sans);
   letter-spacing: var(--type-body-tracking);
   color-scheme: dark;
@@ -53,10 +60,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: var(--type-small-size);
-  }
 }
 
 /* ─── Auto-hiding overlay scrollbar ───────────────────────────────────────────

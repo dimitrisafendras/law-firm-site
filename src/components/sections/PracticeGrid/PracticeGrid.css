@@ -1,7 +1,7 @@
 .practice-section {
   position: relative;
   overflow: hidden;
-  padding: 100px 0;
+  padding: var(--space-24) 0;
   background: var(--grad-1);
 
   /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
@@ -10,17 +10,17 @@
   contain-intrinsic-size: auto 1225px;
 
   @media (max-width: 1024px) {
-    padding: 40px 0;
+    padding: var(--space-8) 0;
   }
 }
 
 .practice-section__inner {
-  max-width: 1440px;
+  max-width: var(--layout-max-width);
   margin: 0 auto;
-  padding: 0 48px;
+  padding: 0 var(--space-12);
 
   @media (max-width: 1024px) {
-    padding: 0 16px;
+    padding: 0 var(--space-4);
   }
 }
 
@@ -30,7 +30,7 @@
 .practice-bento {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: 24px;
+  gap: var(--space-6);
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
@@ -65,22 +65,26 @@
   transition: opacity 0.6s, transform 0.6s;
 }
 
-.practice-domain:hover .practice-domain__bg {
-  opacity: 0.4;
-  transform: scale(1.05);
-}
-
+/* The material is inlined rather than applied with `.glass`: ::before is
+   already spent on the top accent line, so the class's two light layers have
+   nowhere to live. ::after below carries the illumination; the specular rim is
+   folded into the inset edge. */
 .practice-domain {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
-  padding: 48px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 4px;
-  transition: border-color 0.5s;
+  padding: var(--space-12);
+  border-radius: var(--radius-3xl);
+  background-color: var(--glass-tint);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow:
+    var(--elev-floating),
+    inset 0 0 0 1px var(--glass-edge);
+  transition: box-shadow 0.5s var(--ease-settle);
 
   @media (max-width: 1024px) {
-    padding: 32px 24px;
+    padding: var(--space-8) var(--space-6);
   }
 }
 
@@ -97,25 +101,81 @@
   transition: opacity 0.5s;
 }
 
-.practice-domain:hover::before {
-  opacity: 0.8;
+/* Illumination — interior glow that lenses the backdrop. Negative z-index so
+   it sits over the tint but under every child, which keeps the card's own
+   absolutely-positioned decoration (`__bg`) stacked exactly as before. */
+.practice-domain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 15% 0%, var(--glass-glow) 0%, transparent 55%),
+    radial-gradient(100% 80% at 90% 110%, var(--glass-glow) 0%, transparent 60%);
+  opacity: 0.85;
+  transition:
+    transform 0.5s var(--ease-settle),
+    opacity 0.4s ease;
 }
 
-.practice-domain:hover {
-  border-color: var(--accent-border);
+/* Every hover response lives here, gated on a real hovering pointer: touch
+   browsers leave :hover latched on the last-tapped card, so an ungated rule
+   never releases — the card would sit lifted, brightened and scaled up until
+   some other card is tapped, and a half-gated card releases only part of the
+   state, which reads as a rendering fault. */
+@media (hover: hover) {
+  .practice-domain:hover {
+    box-shadow:
+      var(--elev-overlay),
+      inset 0 0 0 1px var(--accent-border);
+  }
+
+  .practice-domain:hover::before {
+    opacity: 0.8;
+  }
+
+  .practice-domain:hover::after {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+
+  .practice-domain:hover .practice-domain__bg {
+    opacity: 0.4;
+    transform: scale(1.05);
+  }
+
+  .practice-domain:hover .practice-domain__icon-bg {
+    opacity: 0.7;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .practice-domain {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: var(--surface);
+  }
+
+  .practice-domain::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .practice-domain::after {
+    transition: none;
+  }
 }
 
 .practice-domain__icon-bg {
   position: absolute;
   top: 0;
   right: 0;
-  padding: 32px;
+  padding: var(--space-8);
   opacity: 0.45;
   transition: opacity 0.5s;
-}
-
-.practice-domain:hover .practice-domain__icon-bg {
-  opacity: 0.7;
 }
 
 .practice-domain__icon-large {
@@ -126,42 +186,45 @@
 
 .practice-domain__num {
   font-family: var(--label);
-  font-size: 12px;
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--accent);
   display: block;
-  margin-bottom: 32px;
+  margin-bottom: var(--space-8);
 }
 
 .practice-domain__title {
   font-family: var(--heading);
-  font-size: 36px;
-  font-weight: 400;
+  font-size: var(--type-h3-size);
+  font-weight: var(--type-h3-weight);
+  line-height: var(--type-h3-leading);
+  letter-spacing: var(--type-h3-tracking);
   color: var(--text-h);
-  margin: 0 0 20px;
-  line-height: 1.2;
-
-  @media (max-width: 1024px) {
-    font-size: 28px;
-  }
+  margin: 0 0 var(--space-4);
 }
 
 .practice-domain__desc {
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: var(--type-body-size);
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-leading);
+  letter-spacing: var(--type-body-tracking);
   color: var(--text);
   opacity: 0.7;
-  margin: 0 0 32px;
+  margin: 0 0 var(--space-8);
   max-width: 420px;
 }
 
 .practice-domain__link {
   display: inline-flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-4);
   font-family: var(--label);
-  font-size: 12px;
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--accent);
@@ -170,5 +233,5 @@
 }
 
 .practice-domain__link:hover {
-  gap: 24px;
+  gap: var(--space-6);
 }

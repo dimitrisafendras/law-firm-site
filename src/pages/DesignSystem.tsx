@@ -1,5 +1,5 @@
 import { useTranslation } from '@/i18n';
-import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, breakpoints, layout, transitions, colorVarNames } from '../theme';
+import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, elevations, typeScale, breakpoints, layout, transitions, colorVarNames } from '../theme';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import { SpawnText } from '../components/animations/SpawnText';
 import { EditableSpawnText } from '../components/animations/EditableSpawnText';
@@ -11,6 +11,7 @@ import {
   Heading,
   Badge,
   Divider,
+  GlassSurface,
   Input,
   Textarea,
   Navbar,
@@ -563,6 +564,92 @@ export default function DesignSystem() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
           <TokenTable title={t('light')} tokens={glass.light} />
           <TokenTable title={t('dark')} tokens={glass.dark} />
+        </div>
+      </section>
+
+      {/* Liquid Glass material */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '12px' }}>{t('liquidGlass')}</h2>
+        <p style={{ maxWidth: '60ch', marginBottom: '32px', opacity: 0.8 }}>{t('liquidGlassIntro')}</p>
+
+        {/* The material only reads as glass over something worth lensing, so the
+            specimens sit on the busiest gradient in the theme. */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '24px',
+            padding: '32px',
+            borderRadius: 'var(--radius-3xl)',
+            background: 'var(--gradient-glass-b)',
+          }}
+        >
+          {([
+            { variant: 'regular', tone: 'neutral', interactive: false, title: t('materialRegular'), body: t('materialRegularUse') },
+            { variant: 'clear', tone: 'neutral', interactive: false, title: t('materialClear'), body: t('materialClearUse'), scrim: true },
+            { variant: 'regular', tone: 'accent', interactive: false, title: t('materialAccent'), body: t('materialAccentUse') },
+            { variant: 'regular', tone: 'neutral', interactive: true, title: t('materialInteractive'), body: t('materialInteractiveUse') },
+          ] as const).map((spec) => (
+            <GlassSurface
+              key={spec.title}
+              variant={spec.variant}
+              tone={spec.tone}
+              interactive={spec.interactive}
+              scrim={'scrim' in spec ? spec.scrim : false}
+              style={{ padding: '24px' }}
+            >
+              <span style={labelStyle}>{spec.title}</span>
+              <p style={{ marginTop: '12px', fontSize: 'var(--type-small-size)' }}>{spec.body}</p>
+            </GlassSurface>
+          ))}
+        </div>
+      </section>
+
+      {/* Elevation */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '32px' }}>{t('elevation')}</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px' }}>
+          {Object.entries(elevations).map(([key, value]) => (
+            <div key={key} style={{ textAlign: 'center' }}>
+              <div
+                style={{
+                  width: '140px',
+                  height: '90px',
+                  marginBottom: '12px',
+                  borderRadius: 'var(--radius-2xl)',
+                  background: 'var(--surface)',
+                  boxShadow: value,
+                }}
+              />
+              <span style={{ fontFamily: 'var(--mono)', fontSize: '13px' }}>{key}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Type scale */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '32px' }}>{t('typeScaleTitle')}</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {Object.entries(typeScale).map(([key, step]) => (
+            <div key={key}>
+              <span style={{ ...monoSmall, opacity: 0.75 }}>
+                {key} &mdash; {step.px}px / {step.weight} / {step.lineHeight} / {step.tracking}
+              </span>
+              <p
+                style={{
+                  margin: '4px 0 0',
+                  fontFamily: 'var(--heading)',
+                  fontSize: step.size,
+                  fontWeight: step.weight,
+                  lineHeight: step.lineHeight,
+                  letterSpacing: step.tracking,
+                }}
+              >
+                {t('pangram')}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 

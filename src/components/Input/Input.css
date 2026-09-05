@@ -1,32 +1,50 @@
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
   text-align: left;
 }
 
 .input-label {
   font-family: var(--label);
-  font-size: 13px;
+  font-size: var(--type-caption-size);
   font-weight: 600;
-  letter-spacing: 0.18px;
+  letter-spacing: var(--type-caption-tracking);
   text-transform: uppercase;
   color: var(--text);
 }
 
+/* Recessed rather than floating: a field is something you type into, so it
+   takes an inward shadow and a deeper tint instead of the elevation and the
+   light layers a floating control gets.
+
+   Deliberately no backdrop-filter. Every in-app field sits inside a <Card>,
+   and Card always carries `.glass`, whose own backdrop-filter makes it a
+   backdrop root: a nested blur samples only what the card paints, not the page
+   behind it, so it renders as a flat tint while still costing a compositing
+   layer per field — and the ContactForm fields, which are not nested, would
+   then be the only ones that looked different. The material is instead an
+   honest near-opaque tint, which composites identically in both places. */
 .input-field {
   font-family: var(--sans);
-  font-size: 18px;
-  line-height: 145%;
-  padding: 12px 16px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--surface);
+  font-size: var(--type-body-lg-size);
+  /* A field's line box is a control metric, not a body-copy step. The nearest
+     token, --type-body-lg-leading, is 1.6 and would add ~2.7px to every field
+     and reflow the .contact-form__row grid below it, so the control keeps its
+     own leading; there is no 1.45 step in the scale to reference. */
+  line-height: 1.45;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--glass-bg-strong);
+  box-shadow: inset var(--elev-raised);
   color: var(--text);
-  transition: border-color var(--transition, 0.3s);
+  transition:
+    border-color var(--transition, 0.3s),
+    background-color var(--transition, 0.3s);
 
   @media (max-width: 1024px) {
-    font-size: 16px;
+    font-size: var(--type-body-size);
   }
 }
 
@@ -35,10 +53,16 @@
   opacity: 0.55;
 }
 
+/* Focus deepens the well to fully opaque — the same hue at alpha 1, so the
+   field settles rather than changing colour. It also keeps the reduced-
+   transparency fallback below intact: this rule outranks a bare `.input-field`,
+   so if it named a translucent tint it would silently undo the fallback on
+   focus, which is exactly when the field needs to be legible. */
 .input-field:focus {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-color: var(--accent);
+  background-color: var(--surface);
 }
 
 .input-group--error .input-field {
@@ -46,6 +70,14 @@
 }
 
 .input-error {
-  font-size: 13px;
+  font-size: var(--type-caption-size);
   color: var(--error);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  /* The blur is already gone; only the tint's alpha is left to drop, matching
+     what `.glass` and `.btn--glass` do for their own surfaces. */
+  .input-field {
+    background-color: var(--surface);
+  }
 }

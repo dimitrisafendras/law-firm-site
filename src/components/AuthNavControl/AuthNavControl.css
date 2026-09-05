@@ -8,7 +8,7 @@
 
 .auth-nav__signin {
   font-family: var(--sans);
-  font-size: 13px;
+  font-size: var(--type-small-size);
   letter-spacing: 0.04em;
   color: var(--secondary);
   text-decoration: none;
@@ -23,16 +23,18 @@
 
 /* ─── Avatar ─────────────────────────────────────────────────────────────── */
 
+/* Deliberately not a `.glass` surface: the admin state and the focus ring both
+   spend the box-shadow, which is where the material's edge and elevation live. */
 .auth-nav__avatar {
   width: 34px;
   height: 34px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   font-family: var(--label);
-  font-size: 12px;
+  font-size: var(--type-caption-size);
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--text-h);
@@ -41,9 +43,14 @@
   transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
 }
 
-.auth-nav__avatar:hover {
-  border-color: var(--accent-border);
-  transform: translateY(-1px);
+/* Gated on a real hovering pointer, matching src/styles/liquid-glass.css: touch
+   browsers leave :hover latched on the last-tapped element, so an ungated lift
+   sticks after every tap on the avatar. */
+@media (hover: hover) {
+  .auth-nav__avatar:hover {
+    border-color: var(--accent-border);
+    transform: translateY(-1px);
+  }
 }
 
 .auth-nav__avatar:focus-visible {
@@ -61,24 +68,47 @@
 
 /* ─── Menu ───────────────────────────────────────────────────────────────── */
 
+/* The material comes from the `glass` class in the TSX. Geometry and tint here;
+   the overrides that collide with `.glass` itself are in the rule below. */
 .auth-nav__menu {
-  position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + var(--space-3));
   right: 0;
   z-index: 200;
   min-width: 232px;
-  padding: 6px;
-  border-radius: 12px;
-  background: var(--glass-bg-strong);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 18px 44px -12px rgba(0, 0, 0, 0.65);
+  padding: var(--space-2);
+  border-radius: var(--radius-xl);
+  /* Opaque rather than the material's translucent tint, because this menu can
+     never blur honestly: it hangs off .auth-nav inside .navbar, and the header
+     carries backdrop-filter whenever the page is scrolled. That makes the
+     header a backdrop root, so the menu's own blur would sample the header's
+     rendered output — empty everywhere below its border box, which is where the
+     entire menu sits. The blur would therefore work at scroll-top and collapse
+     to a flat tint once scrolled, changing the material under the reader. One
+     opaque surface reads the same in both states, and matches what the
+     reduced-transparency fallback already renders. Set through the property so
+     that fallback still governs the value it does not need to override. */
+  --glass-surface-tint: var(--surface);
+}
+
+/* Overrides that collide with `.glass` head-on: same specificity there, so they
+   are re-stated one step higher to hold regardless of which stylesheet the
+   bundler emits last. `position` because `.glass` sets `relative` and the menu
+   must stay anchored to .auth-nav; `backdrop-filter` because the blur above is
+   dead weight — leaving it in would cost a compositing layer to paint nothing;
+   `box-shadow` for the deeper elevation of a layer floating free of the bar. */
+.auth-nav > .auth-nav__menu {
+  position: absolute;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    var(--elev-overlay),
+    inset 0 0 0 1px var(--glass-edge);
   animation: auth-nav-menu-in 0.18s cubic-bezier(0.22, 1, 0.36, 1);
   transform-origin: top right;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .auth-nav__menu {
+  .auth-nav > .auth-nav__menu {
     animation: none;
   }
 }
@@ -97,13 +127,13 @@
 .auth-nav__identity {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 10px 12px 8px;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-3) var(--space-2);
 }
 
 .auth-nav__email {
   font-family: var(--sans);
-  font-size: 13px;
+  font-size: var(--type-small-size);
   color: var(--text-h);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -113,6 +143,7 @@
 
 .auth-nav__role {
   font-family: var(--mono);
+  /* Below the caption step: a whispered badge, not a readable label. */
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -121,7 +152,7 @@
 
 .auth-nav__divider {
   height: 1px;
-  margin: 4px 6px;
+  margin: var(--space-1) var(--space-2);
   background: var(--glass-border);
 }
 
@@ -129,17 +160,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
   width: 100%;
-  padding: 9px 12px;
+  padding: var(--space-2) var(--space-3);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: transparent;
   cursor: pointer;
   text-align: left;
   text-decoration: none;
   font-family: var(--sans);
-  font-size: 13px;
+  font-size: var(--type-small-size);
   color: var(--text);
   transition: background 0.2s, color 0.2s;
 }
@@ -168,7 +199,7 @@
   position: relative;
   width: 32px;
   height: 18px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--surface-variant);
   border: 1px solid var(--glass-border);
   transition: background 0.25s, border-color 0.25s;
@@ -180,7 +211,7 @@
   left: 2px;
   width: 12px;
   height: 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--secondary);
   transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), background 0.25s;
 }
@@ -205,7 +236,7 @@
 /* Signed-out: the language control keeps its place beside the sign-in link,
    since there is no menu to hold it. */
 .auth-nav--anon {
-  gap: 10px;
+  gap: var(--space-3);
 }
 
 .auth-nav__lang {
@@ -216,6 +247,6 @@
   letter-spacing: 0.12em;
   color: var(--accent);
   border: 1px solid var(--accent-border);
-  border-radius: 4px;
-  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
 }

@@ -15,19 +15,19 @@
 }
 
 .contact-section__inner {
-  max-width: 1440px;
+  max-width: var(--layout-max-width);
   margin: 0 auto;
-  padding: 0 48px;
+  padding: 0 var(--space-12);
 
   @media (max-width: 1024px) {
-    padding: 0 16px;
+    padding: 0 var(--space-4);
   }
 }
 
 .contact-section__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 64px;
+  gap: var(--space-16);
   align-items: start;
 
   @media (max-width: 1024px) {
@@ -36,16 +36,21 @@
   }
 }
 
+/* The only surface in this section: the column opposite is made of fields, so
+   the details panel carries the material for this half of the grid. Surface,
+   edge and elevation come from `.glass`. */
 .contact-section__details {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-6);
+  padding: var(--space-8);
+  border-radius: var(--radius-3xl);
 }
 
 .contact-section__detail {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: var(--space-4);
   font-size: 15px;
   color: var(--text);
 }

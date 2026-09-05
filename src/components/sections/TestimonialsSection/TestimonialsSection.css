@@ -15,12 +15,12 @@
 }
 
 .testimonials-section__inner {
-  max-width: 1440px;
+  max-width: var(--layout-max-width);
   margin: 0 auto;
-  padding: 0 48px;
+  padding: 0 var(--space-12);
 
   @media (max-width: 1024px) {
-    padding: 0 16px;
+    padding: 0 var(--space-4);
   }
 }
 
@@ -28,11 +28,13 @@
 
 .testimonials-carousel {
   overflow: hidden;
-  margin: 0 -48px;
-  padding: 16px 0;
+  /* Bleeds the track past the inner gutter so a slide can scale up without
+     being clipped. */
+  margin: 0 calc(var(--space-12) * -1);
+  padding: var(--space-4) 0;
 
   @media (max-width: 1024px) {
-    margin: 0 -16px;
+    margin: 0 calc(var(--space-4) * -1);
   }
 }
 
@@ -43,7 +45,7 @@
 }
 
 .testimonials-carousel__slide {
-  padding: 0 12px;
+  padding: 0 var(--space-3);
   box-sizing: border-box;
   flex-shrink: 0;
   display: flex;
@@ -53,7 +55,7 @@
   transform: scale(0.97);
 
   @media (max-width: 1024px) {
-    padding: 0 16px;
+    padding: 0 var(--space-4);
   }
 }
 
@@ -91,15 +93,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  margin-top: 32px;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
 }
 
 .testimonials-carousel__btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: var(--space-1);
   border: none;
   background: transparent;
   color: var(--accent);
@@ -115,13 +117,13 @@
 .testimonials-carousel__dots {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .testimonials-carousel__dot {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   border: none;
   background: var(--accent);
   opacity: 0.25;

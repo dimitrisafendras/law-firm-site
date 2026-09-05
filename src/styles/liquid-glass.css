@@ -261,6 +261,35 @@
   z-index: 2;
 }
 
+/*
+ * A surface that fades in is solid-tinted rather than blurred.
+ *
+ * FadeInSection animates `opacity` on a wrapper, and an ancestor with
+ * `opacity < 1` is a backdrop root — so for the whole entrance a card's
+ * `backdrop-filter` has nothing to sample and paints tint only. The moment the
+ * wrapper reaches 1 the blur switches on and the surface visibly changes
+ * colour, which reads as a rendering fault rather than as an animation.
+ *
+ * The honest fix is to stop promising a lens these surfaces never had: they
+ * carry the heavier tint throughout, so they look the same before and after.
+ * Little is lost — the sections behind these cards paint a near-flat
+ * background, so the blur was buying almost nothing. Surfaces that are NOT
+ * faded in (the nav bar, the stats band, the auth card) sit over real content
+ * and keep the full material.
+ *
+ * Expressed by neutralising the tokens rather than by naming `.glass`, because
+ * a surface whose pseudo-elements are already spent on its own decoration
+ * inlines the material instead of taking the class. Both forms build their
+ * filter out of these same tokens — hardcoding one is a CLAUDE.md violation —
+ * so overriding the tokens reaches every consumer, present and future.
+ */
+.fade-section {
+  --glass-blur: 0px;
+  --glass-saturate: 100%;
+  --glass-tint: var(--glass-bg-strong);
+  --glass-surface-tint: var(--glass-bg-strong);
+}
+
 @media (hover: hover) {
   .glass--interactive:hover::before {
     transform: scale(1.08);

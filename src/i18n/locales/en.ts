@@ -226,6 +226,9 @@ const en = {
   dsAuthFormSignup: 'AuthForm — signup',
   dsProviderButtons: 'ProviderButtons',
   dsEditableText: 'EditableText',
+  dsAuthNavControl: 'AuthNavControl',
+  dsAuthNavControlNote:
+    'The navbar auth affordance. Renders a sign-in link when signed out, the account link when signed in, and an admin badge for admins. Renders nothing while the session is still resolving.',
   dsSpawnText: 'SpawnText',
   dsSpawnTextNote:
     'Splits an already-translated string into per-character or per-word units for the hero entrance. Reduced motion renders it fully assembled.',

@@ -26,6 +26,7 @@ import {
   AuthForm,
   ProviderButtons,
   EditableText,
+  AuthNavControl,
 } from '../components';
 
 // ─── Theme Toggle ────────────────────────────────────────────────────────────
@@ -587,6 +588,12 @@ export default function DesignSystem() {
             <h3 style={{ fontFamily: 'var(--mono)', fontSize: '13px', opacity: 0.75, marginBottom: '16px' }}>{t('dsAuthFormSignup')}</h3>
             <AuthForm mode="signup" />
           </div>
+        </div>
+
+        <div style={{ marginBottom: '32px' }}>
+          <h3 style={{ fontFamily: 'var(--mono)', fontSize: '13px', opacity: 0.75, marginBottom: '16px' }}>{t('dsAuthNavControl')}</h3>
+          <p style={{ fontSize: '14px', opacity: 0.75, marginBottom: '16px', maxWidth: '60ch' }}>{t('dsAuthNavControlNote')}</p>
+          <AuthNavControl />
         </div>
 
         <div style={{ marginBottom: '32px' }}>

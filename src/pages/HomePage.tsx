@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Navbar, Footer, Button, EditableText } from '@/components';
+import { Navbar, Footer, Button, EditableText, AuthNavControl } from '@/components';
 import { ScaleOfJustice } from '@/assets/illustrations';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
 import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
@@ -33,6 +33,7 @@ export default function HomePage() {
         ]}
         cta={
           <div className="navbar__actions">
+            <AuthNavControl />
             <LanguageSwitcher />
             <Button
               size="sm"

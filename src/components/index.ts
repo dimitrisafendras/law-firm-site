@@ -26,3 +26,4 @@ export { ThemeToggle } from './ThemeToggle/ThemeToggle';
 export { AuthForm } from './AuthForm';
 export { ProviderButtons } from './ProviderButtons';
 export { EditableText } from './EditableText';
+export { AuthNavControl } from './AuthNavControl';

@@ -227,6 +227,9 @@ const el = {
   dsAuthFormSignup: 'AuthForm — εγγραφή',
   dsProviderButtons: 'ProviderButtons',
   dsEditableText: 'EditableText',
+  dsAuthNavControl: 'AuthNavControl',
+  dsAuthNavControlNote:
+    'Ο έλεγχος ταυτοποίησης στη γραμμή πλοήγησης. Εμφανίζει σύνδεσμο σύνδεσης όταν ο χρήστης δεν είναι συνδεδεμένος, τον λογαριασμό όταν είναι, και σήμανση διαχειριστή. Δεν εμφανίζει τίποτα όσο εκκρεμεί ο έλεγχος συνεδρίας.',
   dsSpawnText: 'SpawnText',
   dsSpawnTextNote:
     'Χωρίζει ένα ήδη μεταφρασμένο κείμενο σε χαρακτήρες ή λέξεις για την είσοδο του hero. Με μειωμένη κίνηση εμφανίζεται ολοκληρωμένο.',

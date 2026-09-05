@@ -23,3 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 .stitch/
+
+# Local env files (real values; .env.example is the committed template)
+.env.local
+.env.*.local
+.env.staging
+.env.production

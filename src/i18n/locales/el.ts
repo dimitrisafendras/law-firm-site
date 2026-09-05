@@ -177,6 +177,51 @@ const el = {
   designSystemDescriptionFull:
     'Όλα τα design tokens και τα στοιχεία για την ιστοσελίδα του δικηγορικού γραφείου. Οι τιμές ορίζονται μία φορά στο <code>src/theme/tokens.ts</code> και εισάγονται ως CSS custom properties κατά την εκτέλεση.',
   language: 'Γλώσσα',
+
+  // ─── Authentication ──────────────────────────────────────────────────────────
+  authLogin: 'Σύνδεση',
+  authSignup: 'Δημιουργία Λογαριασμού',
+  authLogout: 'Αποσύνδεση',
+  authEmail: 'Email',
+  authPassword: 'Κωδικός πρόσβασης',
+  authConfirmPassword: 'Επιβεβαίωση κωδικού',
+  authSubmitLogin: 'Σύνδεση',
+  authSubmitSignup: 'Δημιουργία Λογαριασμού',
+  authSwitchToSignup: 'Δεν έχετε λογαριασμό; Δημιουργήστε έναν',
+  authSwitchToLogin: 'Έχετε ήδη λογαριασμό; Συνδεθείτε',
+  authOrContinueWith: 'Ή συνεχίστε με',
+  authProviderGoogle: 'Google',
+  authProviderGithub: 'GitHub',
+  authProviderApple: 'Apple',
+  authProviderLinkedin: 'LinkedIn',
+  authErrorGeneric: 'Κάτι δεν πήγε καλά. Δοκιμάστε ξανά.',
+  authErrorInvalidCredentials: 'Το email ή ο κωδικός πρόσβασης δεν είναι σωστός.',
+  authErrorPasswordMismatch: 'Οι δύο κωδικοί δεν ταυτίζονται.',
+  authErrorPasswordShort: 'Ο κωδικός πρέπει να έχει τουλάχιστον 8 χαρακτήρες.',
+  authCheckEmail:
+    'Ελέγξτε τα εισερχόμενά σας \u2014 στείλαμε σύνδεσμο για την επιβεβαίωση της διεύθυνσής σας.',
+  authAccountTitle: 'Ο Λογαριασμός σας',
+  authAccountEmail: 'Email',
+  authAccountRole: 'Ρόλος',
+  authRoleAdmin: 'Διαχειριστής',
+  authRoleUser: 'Πελάτης',
+  authBackToSite: 'Επιστροφή στον ιστότοπο',
+  authAdminHint: 'Ως διαχειριστής μπορείτε να επεξεργαστείτε απευθείας κάθε κείμενο του ιστότοπου.',
+
+  // ─── Inline content editor ───────────────────────────────────────────────────
+  editSave: 'Αποθήκευση',
+  editCancel: 'Ακύρωση',
+  editSaving: 'Αποθήκευση\u2026',
+  editError: 'Η αλλαγή δεν αποθηκεύτηκε. Δοκιμάστε ξανά.',
+
+  // ─── Design System showcase labels ───────────────────────────────────────────
+  dsAuthComponents: 'Ταυτοποίηση & Επεξεργασία Κειμένου',
+  dsAuthFormLogin: 'AuthForm — σύνδεση',
+  dsAuthFormSignup: 'AuthForm — εγγραφή',
+  dsProviderButtons: 'ProviderButtons',
+  dsEditableText: 'EditableText',
+  dsEditableTextNote:
+    'Για τους επισκέπτες αποδίδει απλό μεταφρασμένο κείμενο. Σε σύνδεση ως διαχειριστής αποκτά δυνατότητα άμεσης επεξεργασίας και γράφει στον πίνακα site_content.',
 } as const;
 
 export default el;

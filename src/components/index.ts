@@ -21,3 +21,8 @@ export { TestimonialCard } from './TestimonialCard';
 export { ContactForm } from './ContactForm';
 export { IconToggle } from './IconToggle/IconToggle';
 export { ThemeToggle } from './ThemeToggle/ThemeToggle';
+
+// Auth & content editing
+export { AuthForm } from './AuthForm';
+export { ProviderButtons } from './ProviderButtons';
+export { EditableText } from './EditableText';

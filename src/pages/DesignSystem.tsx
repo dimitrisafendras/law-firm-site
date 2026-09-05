@@ -22,6 +22,9 @@ import {
   PracticeAreaCard,
   TestimonialCard,
   ContactForm,
+  AuthForm,
+  ProviderButtons,
+  EditableText,
 } from '../components';
 
 // ─── Theme Toggle ────────────────────────────────────────────────────────────
@@ -567,6 +570,33 @@ export default function DesignSystem() {
           <TokenTable title={t('breakpoints')} tokens={breakpoints} />
           <TokenTable title={t('layout')} tokens={layout} />
           <TokenTable title={t('transitions')} tokens={transitions} />
+        </div>
+      </section>
+
+      {/* Auth & Content Editing */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '32px' }}>{t('dsAuthComponents')}</h2>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '32px' }}>
+          <div>
+            <h3 style={{ fontFamily: 'var(--mono)', fontSize: '13px', opacity: 0.75, marginBottom: '16px' }}>{t('dsAuthFormLogin')}</h3>
+            <AuthForm mode="login" />
+          </div>
+          <div>
+            <h3 style={{ fontFamily: 'var(--mono)', fontSize: '13px', opacity: 0.75, marginBottom: '16px' }}>{t('dsAuthFormSignup')}</h3>
+            <AuthForm mode="signup" />
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '32px' }}>
+          <h3 style={{ fontFamily: 'var(--mono)', fontSize: '13px', opacity: 0.75, marginBottom: '16px' }}>{t('dsProviderButtons')}</h3>
+          <ProviderButtons />
+        </div>
+
+        <div>
+          <h3 style={{ fontFamily: 'var(--mono)', fontSize: '13px', opacity: 0.75, marginBottom: '16px' }}>{t('dsEditableText')}</h3>
+          <p style={{ fontSize: '14px', opacity: 0.75, marginBottom: '16px', maxWidth: '60ch' }}>{t('dsEditableTextNote')}</p>
+          <EditableText tKey="heroOverline" as="p" />
         </div>
       </section>
     </main>

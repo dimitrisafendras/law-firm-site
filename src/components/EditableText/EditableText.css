@@ -1,0 +1,68 @@
+/* Admin-only affordance. Visitors get the bare tag with no extra classes. */
+
+.editable-text {
+  cursor: text;
+  border-radius: 2px;
+  text-decoration: underline dotted var(--accent-border);
+  text-underline-offset: 4px;
+  transition:
+    background-color var(--transition, 0.3s),
+    box-shadow var(--transition, 0.3s);
+}
+
+.editable-text:hover,
+.editable-text:focus-visible {
+  background: var(--accent-bg);
+  box-shadow: 0 0 0 1px var(--accent-border);
+}
+
+.editable-text--editing {
+  cursor: auto;
+  text-decoration: none;
+  background: var(--accent-bg);
+  box-shadow: 0 0 0 1px var(--accent-border);
+}
+
+.editable-text__input {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  text-transform: inherit;
+  resize: none;
+  overflow: hidden;
+}
+
+.editable-text__input:focus {
+  outline: none;
+}
+
+.editable-text__input:disabled {
+  opacity: 0.6;
+}
+
+.editable-text__status,
+.editable-text__error {
+  margin-left: 8px;
+  font-family: var(--label);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18px;
+  text-transform: uppercase;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+.editable-text__status {
+  color: var(--accent-text);
+}
+
+.editable-text__error {
+  color: var(--error);
+}

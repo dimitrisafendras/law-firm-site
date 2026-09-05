@@ -1,0 +1,176 @@
+/* Shared layout for LoginPage, SignupPage and AccountPage.
+   All colours, fonts and radii come from the theme CSS custom properties. */
+
+.auth-page {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 88px 0 48px;
+
+  @media (max-width: 1024px) {
+    padding: 88px 0 32px;
+  }
+}
+
+.auth-page__inner {
+  display: flex;
+  justify-content: center;
+}
+
+.auth-page__card {
+  width: 100%;
+  max-width: 440px;
+}
+
+.auth-page__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ─── Card head ─────────────────────────────────────────────────────────── */
+
+.auth-page__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.auth-page__title {
+  text-align: center;
+}
+
+/* ─── Inline links ──────────────────────────────────────────────────────── */
+
+.auth-page__link {
+  font-family: var(--label);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent-text);
+  text-decoration: none;
+  border-radius: var(--radius-md, 4px);
+  transition: opacity var(--transition, 0.3s);
+}
+
+.auth-page__link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* ─── Loading state ─────────────────────────────────────────────────────── */
+
+.auth-page__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-page__skeleton-bar {
+  height: 20px;
+  border-radius: var(--radius-md, 4px);
+  background: var(--surface-variant);
+  animation: auth-page-pulse 1.4s ease-in-out infinite;
+}
+
+.auth-page__skeleton-bar:nth-child(2) {
+  width: 70%;
+  animation-delay: 0.15s;
+}
+
+.auth-page__skeleton-bar:nth-child(3) {
+  width: 45%;
+  animation-delay: 0.3s;
+}
+
+@keyframes auth-page-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-page__skeleton-bar {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/* ─── Account panel ─────────────────────────────────────────────────────── */
+
+.account-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.account-panel__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.account-panel__row:last-child {
+  border-bottom: none;
+}
+
+.account-panel__label {
+  font-family: var(--label);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18px;
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.account-panel__value {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 135%;
+  color: var(--text-h);
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.account-panel__role {
+  font-family: var(--label);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18px;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-md, 4px);
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+.account-panel__hint {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 135%;
+  color: var(--text);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-md, 4px);
+  padding: 12px 16px;
+}
+
+.account-panel__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}

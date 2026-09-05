@@ -1,0 +1,29 @@
+.provider-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Scoped by the parent so the surface fill wins over .btn--secondary
+   regardless of the order the two stylesheets end up in. */
+.provider-buttons .provider-buttons__button {
+  width: 100%;
+  background: var(--surface-variant);
+}
+
+.provider-buttons .provider-buttons__button:hover:not(:disabled) {
+  background: var(--accent-bg);
+}
+
+@media (min-width: 1025px) {
+  .provider-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .provider-buttons .provider-buttons__button {
+    flex: 1 1 40%;
+    width: auto;
+  }
+}

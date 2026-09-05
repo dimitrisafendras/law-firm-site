@@ -177,6 +177,50 @@ const en = {
   designSystemDescriptionFull:
     'All design tokens and components for the law firm website. Values are defined once in <code>src/theme/tokens.ts</code> and injected as CSS custom properties at runtime.',
   language: 'Language',
+
+  // ─── Authentication ──────────────────────────────────────────────────────────
+  authLogin: 'Sign In',
+  authSignup: 'Create Account',
+  authLogout: 'Sign Out',
+  authEmail: 'Email',
+  authPassword: 'Password',
+  authConfirmPassword: 'Confirm Password',
+  authSubmitLogin: 'Sign In',
+  authSubmitSignup: 'Create Account',
+  authSwitchToSignup: 'No account yet? Create one',
+  authSwitchToLogin: 'Already have an account? Sign in',
+  authOrContinueWith: 'Or continue with',
+  authProviderGoogle: 'Google',
+  authProviderGithub: 'GitHub',
+  authProviderApple: 'Apple',
+  authProviderLinkedin: 'LinkedIn',
+  authErrorGeneric: 'Something went wrong. Please try again.',
+  authErrorInvalidCredentials: 'That email and password do not match our records.',
+  authErrorPasswordMismatch: 'The two passwords do not match.',
+  authErrorPasswordShort: 'Your password must be at least 8 characters.',
+  authCheckEmail: 'Check your inbox \u2014 we have sent a link to confirm your address.',
+  authAccountTitle: 'Your Account',
+  authAccountEmail: 'Email',
+  authAccountRole: 'Role',
+  authRoleAdmin: 'Administrator',
+  authRoleUser: 'Client',
+  authBackToSite: 'Back to the site',
+  authAdminHint: 'As an administrator you can edit any text on this site in place.',
+
+  // ─── Inline content editor ───────────────────────────────────────────────────
+  editSave: 'Save',
+  editCancel: 'Cancel',
+  editSaving: 'Saving\u2026',
+  editError: 'That change could not be saved. Please try again.',
+
+  // ─── Design System showcase labels ───────────────────────────────────────────
+  dsAuthComponents: 'Auth & Content Editing',
+  dsAuthFormLogin: 'AuthForm — login',
+  dsAuthFormSignup: 'AuthForm — signup',
+  dsProviderButtons: 'ProviderButtons',
+  dsEditableText: 'EditableText',
+  dsEditableTextNote:
+    'Renders a plain translated string for visitors. Signed in as an admin, it gains an inline edit affordance and writes to site_content.',
 } as const;
 
 export default en;

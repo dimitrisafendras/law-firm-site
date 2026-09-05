@@ -30,13 +30,21 @@
     var(--elev-floating);
   transition: box-shadow 0.5s ease;
 
-  /* The carousel slide that wraps this card carries a permanent `opacity` and
-     `transform` (TestimonialsSection.css), and both make it a backdrop root —
-     the material's blur has nothing left to sample in any slide state, so it
-     buys a compositing layer per card and renders nothing. The surface opts
-     out of the blur and carries the heavier tint in its place, so it is an
-     honestly solid panel rather than a lens that never lenses. */
-  --glass-surface-tint: var(--glass-bg-strong);
+  /*
+   * No blur, and no compensating tint either.
+   *
+   * This card cannot lens: the carousel track is permanently translated and
+   * each slide is scaled and dimmed, so there is a backdrop root above the card
+   * in every state and `backdrop-filter` would buy a compositing layer to
+   * render nothing. That part is unavoidable while the carousel slides.
+   *
+   * What it must NOT do is look like a different material because of it. An
+   * earlier version paired the opt-out with the heavier `--glass-bg-strong`
+   * tint, which left these cards visibly more opaque than every other surface
+   * on the page. The tint is now the same one the rest of the site uses; only
+   * the lensing is missing, and over this section's near-flat backdrop that
+   * reads as the same glass rather than as a different one.
+   */
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }

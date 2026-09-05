@@ -75,12 +75,10 @@
   padding: var(--space-12);
   border-radius: var(--radius-3xl);
   background-color: var(--glass-tint);
-  /* Blur and saturation come from the registered custom properties in
-     liquid-glass.css, which tween from flat to full as the card settles — the
-     wrapper's opacity animation makes it a backdrop root until then, so there
-     is nothing to lens during the entrance. */
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  /* No backdrop-filter: this card only renders inside a FadeInSection, whose
+     opacity animation is a backdrop root, so the blur would never sample
+     anything during the entrance and switching it on afterwards would visibly
+     shift the card's colour. See the note in src/styles/liquid-glass.css. */
   box-shadow:
     var(--elev-floating),
     inset 0 0 0 1px var(--glass-edge);

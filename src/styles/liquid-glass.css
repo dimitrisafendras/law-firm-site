@@ -262,51 +262,29 @@
 }
 
 /*
- * Fading in, and the lensing that arrives with it.
+ * A surface that fades in does not lens, and that is a deliberate trade.
  *
  * FadeInSection animates `opacity` on a wrapper, and an ancestor with
- * `opacity < 1` is a backdrop root — so for the duration of the entrance a
- * card's `backdrop-filter` has nothing to sample. Switching the blur on at the
- * end is what made surfaces visibly change colour as they settled.
+ * `opacity < 1` is a backdrop root — so during the entrance a card's
+ * `backdrop-filter` has nothing to sample. Whatever switches it on afterwards
+ * changes the surface's colour at that moment, because `saturate()` is exactly
+ * a colour change. Tweening it in only makes the shift slower, not absent: you
+ * cannot have an ancestor-driven fade and live lensing on the same surface.
  *
- * So the material is tweened in instead. The blur and saturation are registered
- * custom properties (below), which makes them animatable — `backdrop-filter`
- * itself cannot transition from `none`, but a filter built out of properties
- * can. The tween is delayed by one entrance so it starts only once the wrapper
- * has reached full opacity and the surface can actually lens something.
+ * So these surfaces carry no backdrop-filter at all, and look identical from
+ * their first frame to their last. Very little is given up — with the accent
+ * blooms behind them and a tint that sits lighter than the page, they already
+ * read as lifted glass; the blur was contributing almost nothing over this
+ * backdrop while costing a compositing layer each.
+ *
+ * Surfaces that never fade in — the nav bar, the hero badge and stat card, the
+ * stats band — keep the full material. They sit over real content, they have no
+ * entrance to be caught mid-way through, and there the lensing earns its cost.
  */
-@property --glass-blur {
-  syntax: '<length>';
-  inherits: true;
-  initial-value: 20px;
-}
-
-@property --glass-saturate {
-  syntax: '<percentage>';
-  inherits: true;
-  initial-value: 180%;
-}
-
-/* Only the lensing changes on entry. The tint is deliberately NOT swapped for a
-   heavier one here: that made the card visibly gain and lose opacity as it
-   settled, which reads as the glass turning milky rather than as it focusing. */
-.fade-section:not(.fade-section--visible) {
-  --glass-blur: 0px;
-  --glass-saturate: 100%;
-}
-
 .fade-section .glass,
 .fade-section.glass {
-  transition:
-    --glass-blur var(--dur-spawn-element) var(--ease-settle) var(--dur-spawn-element),
-    --glass-saturate var(--dur-spawn-element) var(--ease-settle) var(--dur-spawn-element);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .fade-section .glass,
-  .fade-section.glass {
-    transition: none;
-  }
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 @media (hover: hover) {

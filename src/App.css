@@ -76,6 +76,11 @@
    * These are the design system's `ds-aurora-brand` idea in this site's palette:
    * very low alpha, very large, so they read as depth in the page rather than as
    * shapes on it. They are painted, not animated, so they cost no compositing.
+   *
+   * All four are drawn from the blue half of the palette. `--tertiary` is a warm
+   * orange, and at bloom scale even 6% of it reads as a distinct orange wash
+   * across a whole section rather than as depth — the one place on the page
+   * where the ramp stops looking like one material.
    */
   background:
     radial-gradient(
@@ -95,7 +100,7 @@
     ),
     radial-gradient(
       56% 30% at 82% 78%,
-      color-mix(in oklab, var(--tertiary) 6%, transparent) 0%,
+      color-mix(in oklab, var(--secondary) 8%, transparent) 0%,
       transparent 62%
     ),
     linear-gradient(

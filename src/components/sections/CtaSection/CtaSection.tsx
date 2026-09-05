@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/Button';
+import { EditableText } from '@/components';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { DigitalAcropolis } from '@/assets/illustrations';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
@@ -17,8 +18,8 @@ export function CtaSection() {
             <div className="cta-section__glow" />
             <DigitalAcropolis className="cta-section__illustration" />
             <div className="cta-section__content">
-              <h2 className="cta-section__title">{t('ctaTitle')}</h2>
-              <p className="cta-section__desc">{t('ctaSubtitle')}</p>
+              <EditableText tKey="ctaTitle" as="h2" className="cta-section__title" />
+              <EditableText tKey="ctaSubtitle" as="p" className="cta-section__desc" />
               <Button
                 size="lg"
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}

@@ -1,11 +1,26 @@
+import { EditableText } from '../EditableText';
 import './SectionHeader.css';
 
 interface SectionHeaderProps {
   overline?: string;
-  title: string;
+  title?: string;
   subtitle?: string;
   label?: string;
   align?: 'center' | 'left';
+  /**
+   * Translation-key variants. Pass these instead of the resolved strings to make
+   * the copy editable in place by an admin.
+   *
+   * EditableText renders exactly `<As className={...}>{t(key)}</As>` for a
+   * visitor, so each *Key prop produces byte-identical markup to its string
+   * counterpart — same element, same class, same position. The string props stay
+   * for callers that pass literals rather than translations (the design system
+   * showcase), so nothing has to change all at once.
+   */
+  overlineKey?: string;
+  titleKey?: string;
+  subtitleKey?: string;
+  labelKey?: string;
 }
 
 export function SectionHeader({
@@ -14,21 +29,42 @@ export function SectionHeader({
   subtitle,
   label,
   align = 'left',
+  overlineKey,
+  titleKey,
+  subtitleKey,
+  labelKey,
 }: SectionHeaderProps) {
   return (
     <div className={`section-header section-header--${align}`}>
-      {overline && <span className="section-header__overline">{overline}</span>}
+      {overlineKey ? (
+        <EditableText tKey={overlineKey} as="span" className="section-header__overline" />
+      ) : (
+        overline && <span className="section-header__overline">{overline}</span>
+      )}
 
       <div className="section-header__row">
         <div className="section-header__text">
-          <h2 className="section-header__title">{title}</h2>
-          {subtitle && <p className="section-header__subtitle">{subtitle}</p>}
+          {titleKey ? (
+            <EditableText tKey={titleKey} as="h2" className="section-header__title" />
+          ) : (
+            <h2 className="section-header__title">{title}</h2>
+          )}
+
+          {subtitleKey ? (
+            <EditableText tKey={subtitleKey} as="p" className="section-header__subtitle" />
+          ) : (
+            subtitle && <p className="section-header__subtitle">{subtitle}</p>
+          )}
         </div>
 
-        {label && (
+        {(labelKey || label) && (
           <div className="section-header__label-col">
             <span className="section-header__divider" />
-            <span className="section-header__label">{label}</span>
+            {labelKey ? (
+              <EditableText tKey={labelKey} as="span" className="section-header__label" />
+            ) : (
+              <span className="section-header__label">{label}</span>
+            )}
           </div>
         )}
       </div>

@@ -10,13 +10,15 @@ import './TestimonialsSection.css';
 export function TestimonialsSection() {
   const { t } = useTranslation();
 
+  /* Keys, not resolved strings: TestimonialCard routes them through
+     EditableText so an admin can edit the copy in place. */
   const testimonials = [
-    { quote: t('testimonial1Quote'), author: t('testimonial1Author'), role: t('testimonial1Role') },
-    { quote: t('testimonial2Quote'), author: t('testimonial2Author'), role: t('testimonial2Role') },
-    { quote: t('testimonial3Quote'), author: t('testimonial3Author'), role: t('testimonial3Role') },
-    { quote: t('testimonial4Quote'), author: t('testimonial4Author'), role: t('testimonial4Role') },
-    { quote: t('testimonial5Quote'), author: t('testimonial5Author'), role: t('testimonial5Role') },
-    { quote: t('testimonial6Quote'), author: t('testimonial6Author'), role: t('testimonial6Role') },
+    { quoteKey: 'testimonial1Quote', authorKey: 'testimonial1Author', roleKey: 'testimonial1Role' },
+    { quoteKey: 'testimonial2Quote', authorKey: 'testimonial2Author', roleKey: 'testimonial2Role' },
+    { quoteKey: 'testimonial3Quote', authorKey: 'testimonial3Author', roleKey: 'testimonial3Role' },
+    { quoteKey: 'testimonial4Quote', authorKey: 'testimonial4Author', roleKey: 'testimonial4Role' },
+    { quoteKey: 'testimonial5Quote', authorKey: 'testimonial5Author', roleKey: 'testimonial5Role' },
+    { quoteKey: 'testimonial6Quote', authorKey: 'testimonial6Author', roleKey: 'testimonial6Role' },
   ];
 
   /* Responsive visible count: 3 on desktop, 1 on mobile */
@@ -60,10 +62,10 @@ export function TestimonialsSection() {
       <div className="testimonials-section__inner">
         <FadeInSection>
           <SectionHeader
-            overline={t('testimonialsOverline')}
-            title={t('testimonialsTitle')}
-            subtitle={t('testimonialsSubtitle')}
-            label="Chapter 04 / Testimonials"
+            overlineKey="testimonialsOverline"
+            titleKey="testimonialsTitle"
+            subtitleKey="testimonialsSubtitle"
+            labelKey="chapterTestimonials"
           />
         </FadeInSection>
 
@@ -96,9 +98,9 @@ export function TestimonialsSection() {
                     style={{ width: `calc(100% / ${visibleCount})` }}
                   >
                     <TestimonialCard
-                      quote={item.quote}
-                      author={item.author}
-                      role={item.role}
+                      quoteKey={item.quoteKey}
+                      authorKey={item.authorKey}
+                      roleKey={item.roleKey}
                     />
                   </div>
                 );

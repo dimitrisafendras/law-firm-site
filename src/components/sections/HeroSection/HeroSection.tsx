@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { SpawnText } from '@/components/animations/SpawnText';
+import { EditableText } from '@/components';
 import { DigitalStatue } from '@/components/DigitalStatue/DigitalStatue';
 import './HeroSection.css';
 
@@ -71,7 +72,7 @@ export function HeroSection() {
 
         <div className="hero-section__stat-card">
           <span className="hero-section__stat-value">30+</span>
-          <span className="hero-section__stat-label">{t('statYears')}</span>
+          <EditableText tKey="statYears" as="span" className="hero-section__stat-label" />
         </div>
       </div>
 

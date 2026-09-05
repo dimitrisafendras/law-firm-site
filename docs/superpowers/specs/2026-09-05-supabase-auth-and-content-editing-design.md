@@ -25,43 +25,34 @@ Supabase project first, then promote the identical schema to production.
 
 ## Environments
 
-The Supabase dashboard session and the automation token belong to two different
-accounts, which constrains how this is operated:
+One Supabase project, used for everything. There is no staging and no dev
+database.
 
-- `dimitris.afendras@gmail.com` owns the org `dimitrisafendras's Org`
-  (`trmfffzkmabmanjwhcmh`) and the project below. This is the account the browser
-  is signed into, and the only one that can see these projects in the dashboard.
-- `d.afendras@kiefer.gr` holds the MCP automation token. It cannot see that org.
+| Project | Ref | Region |
+|---|---|---|
+| law firm | nyqfzoxdplvogflzkmpq | eu-west-1 |
 
-Decision: operate everything through the browser on the gmail account. The
-automation token is not used for this project, so migrations are applied through
-the dashboard SQL editor rather than programmatically.
+Two constraints shaped this:
 
-| Env | Project | Ref | Region |
-|---|---|---|---|
-| primary | law firm | nyqfzoxdplvogflzkmpq | eu-west-1 |
-| dev | Supabase database branch off the above | — | — |
+- The dashboard session (`dimitris.afendras@gmail.com`) and the MCP automation
+  token (`d.afendras@kiefer.gr`) are different accounts. The project above
+  belongs to the dashboard account, so the automation token cannot reach it and
+  everything is done through the browser.
+- Supabase branching is Pro-only, and branch compute is billed at $0.01344/hour
+  for as long as the branch exists (~$9.68/month) on top of the Pro upgrade.
+  Not taken.
 
-An earlier `law-firm-stg` project (ref `lxjnhmizkdpdodpldwjr`) was created on the
+An earlier `law-firm-stg` project (`lxjnhmizkdpdodpldwjr`) was created on the
 kiefer.gr account before the account split was understood. It has the full schema
-applied but is unreachable from the dashboard session and nothing points at it.
-It is orphaned and should be deleted or deliberately parked.
+applied. It is now paused and unused; deleting it is a manual step in the
+kiefer.gr dashboard.
 
-Config via Vite env vars:
+Config via Vite env vars, `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`,
+from a gitignored `.env.local` locally and repository secrets in CI. Publishable
+keys are public by design; RLS is the security boundary, not the key.
 
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_PUBLISHABLE_KEY`
-
-Files `.env.local` and `.env.production`, both gitignored. `.env.example` is
-committed. Production values are also stored as GitHub Actions secrets, because
-the Pages build inlines them at build time.
-
-Publishable keys are public by design. RLS is the security boundary, not the key.
-
-Note on free-tier limits: the account is capped at two active free projects
-across all orgs, which is why `legal assist` was paused to free a slot. Supabase
-database branching is a paid feature, so the dev branch requires a plan upgrade;
-the cost must be confirmed before it is created.
+Both `main` and `dev` build against this single project. Only `main` publishes to
+Pages, since Pages serves one site.
 
 ## Auth
 

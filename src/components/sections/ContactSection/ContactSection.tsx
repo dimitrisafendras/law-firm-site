@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { ContactForm } from '@/components/ContactForm';
+import { EditableText } from '@/components';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
@@ -14,10 +15,10 @@ export function ContactSection() {
       <div className="contact-section__inner">
         <FadeInSection>
           <SectionHeader
-            overline={t('contactOverline')}
-            title={t('contactTitle')}
-            subtitle={t('contactSubtitle')}
-            label="Chapter 05 / Contact"
+            overlineKey="contactOverline"
+            titleKey="contactTitle"
+            subtitleKey="contactSubtitle"
+            labelKey="chapterContact"
           />
         </FadeInSection>
 
@@ -26,7 +27,7 @@ export function ContactSection() {
             <div className="contact-section__details">
               <div className="contact-section__detail">
                 <span className="contact-section__detail-icon" aria-hidden="true">&#9906;</span>
-                <span>{t('contactAddress')}</span>
+                <EditableText tKey="contactAddress" as="span" />
               </div>
               <div className="contact-section__detail">
                 <span className="contact-section__detail-icon" aria-hidden="true">&#9993;</span>

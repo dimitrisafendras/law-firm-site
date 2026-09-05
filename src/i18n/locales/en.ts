@@ -213,6 +213,13 @@ const en = {
   editSaving: 'Saving\u2026',
   editError: 'That change could not be saved. Please try again.',
 
+  // ─── Section chapter labels ──────────────────────────────────────────────────
+  chapterExpertise: 'Chapter 01 / Expertise',
+  chapterTeam: 'Chapter 02 / Team',
+  chapterNetwork: 'Chapter 03 / Network',
+  chapterTestimonials: 'Chapter 04 / Testimonials',
+  chapterContact: 'Chapter 05 / Contact',
+
   // ─── Design System showcase labels ───────────────────────────────────────────
   dsAuthComponents: 'Auth & Content Editing',
   dsAuthFormLogin: 'AuthForm — login',

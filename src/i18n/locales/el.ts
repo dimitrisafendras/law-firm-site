@@ -214,6 +214,13 @@ const el = {
   editSaving: 'Αποθήκευση\u2026',
   editError: 'Η αλλαγή δεν αποθηκεύτηκε. Δοκιμάστε ξανά.',
 
+  // ─── Section chapter labels ──────────────────────────────────────────────────
+  chapterExpertise: 'Κεφάλαιο 01 / Εξειδίκευση',
+  chapterTeam: 'Κεφάλαιο 02 / Ομάδα',
+  chapterNetwork: 'Κεφάλαιο 03 / Δίκτυο',
+  chapterTestimonials: 'Κεφάλαιο 04 / Μαρτυρίες',
+  chapterContact: 'Κεφάλαιο 05 / Επικοινωνία',
+
   // ─── Design System showcase labels ───────────────────────────────────────────
   dsAuthComponents: 'Ταυτοποίηση & Επεξεργασία Κειμένου',
   dsAuthFormLogin: 'AuthForm — σύνδεση',

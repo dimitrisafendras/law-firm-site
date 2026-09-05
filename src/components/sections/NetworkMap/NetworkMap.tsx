@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { EditableText } from '@/components';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
 import worldMapImg from '@/assets/images/world-map.jpg';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
@@ -38,10 +39,10 @@ export function NetworkMap() {
       <div className="network-map__inner">
         <FadeInSection>
           <SectionHeader
-            overline={t('networkOverline')}
-            title={t('networkTitle')}
-            subtitle={t('networkSubtitle')}
-            label="Chapter 03 / Network"
+            overlineKey="networkOverline"
+            titleKey="networkTitle"
+            subtitleKey="networkSubtitle"
+            labelKey="chapterNetwork"
           />
         </FadeInSection>
 
@@ -50,11 +51,11 @@ export function NetworkMap() {
             {nodes.map(({ key, code, labelKey, cityKey, items }) => (
               <FadeInSection key={key} variant="fade-up" className="network-map__card">
                 <span className="network-map__card-code" aria-hidden="true">{code}</span>
-                <span className="network-map__card-label">{t(labelKey)}</span>
-                <h3 className="network-map__card-city">{t(cityKey)}</h3>
+                <EditableText tKey={labelKey} as="span" className="network-map__card-label" />
+                <EditableText tKey={cityKey} as="h3" className="network-map__card-city" />
                 <ul className="network-map__card-list">
                   {items.map((itemKey) => (
-                    <li key={itemKey}>{t(itemKey)}</li>
+                    <EditableText key={itemKey} tKey={itemKey} as="li" />
                   ))}
                 </ul>
                 <a className="network-map__card-link" href="#contact">

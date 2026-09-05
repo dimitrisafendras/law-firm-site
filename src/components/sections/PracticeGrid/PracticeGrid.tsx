@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
 import {
   RealEstateIcon,
@@ -14,6 +13,7 @@ import {
 } from '@/assets/domainBackgrounds';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
+import { EditableText } from '@/components';
 import './PracticeGrid.css';
 
 import type { ComponentType } from 'react';
@@ -31,7 +31,6 @@ const domains: {
 ];
 
 export function PracticeGrid() {
-  const { t } = useTranslation();
 
   return (
     <section id="practice" className="practice-section">
@@ -39,10 +38,10 @@ export function PracticeGrid() {
       <div className="practice-section__inner">
         <FadeInSection>
           <SectionHeader
-            overline={t('practiceOverline')}
-            title={t('practiceTitle')}
-            subtitle={t('practiceSubtitle')}
-            label="Chapter 01 / Expertise"
+            overlineKey="practiceOverline"
+            titleKey="practiceTitle"
+            subtitleKey="practiceSubtitle"
+            labelKey="chapterExpertise"
           />
         </FadeInSection>
 
@@ -51,8 +50,8 @@ export function PracticeGrid() {
             <FadeInSection key={key} variant="fade-up" className="practice-domain">
               <Bg className="practice-domain__bg" />
               <span className="practice-domain__num">Domain {num}</span>
-              <h3 className="practice-domain__title">{t(`practice${key}Title`)}</h3>
-              <p className="practice-domain__desc">{t(`practice${key}Desc`)}</p>
+              <EditableText tKey={`practice${key}Title`} as="h3" className="practice-domain__title" />
+              <EditableText tKey={`practice${key}Desc`} as="p" className="practice-domain__desc" />
               <a className="practice-domain__link" href={`#practice-${key.toLowerCase()}`}>
                 Explore Domain <span aria-hidden="true">&rarr;</span>
               </a>

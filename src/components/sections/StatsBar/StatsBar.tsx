@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { FadeInSection } from '@/components/animations/FadeInSection';
+import { EditableText } from '@/components';
 import './StatsBar.css';
 
 function useCountUp(target: number, duration = 2000, trigger: boolean) {
@@ -27,12 +27,12 @@ function useCountUp(target: number, duration = 2000, trigger: boolean) {
 interface StatItemProps {
   value: number;
   suffix: string;
-  label: string;
+  labelKey: string;
   trigger: boolean;
   delay: number;
 }
 
-function StatItem({ value, suffix, label, trigger, delay }: StatItemProps) {
+function StatItem({ value, suffix, labelKey, trigger, delay }: StatItemProps) {
   const count = useCountUp(value, 2000, trigger);
 
   return (
@@ -40,13 +40,12 @@ function StatItem({ value, suffix, label, trigger, delay }: StatItemProps) {
       <span className="stats-bar__value">
         {count}{suffix}
       </span>
-      <span className="stats-bar__label">{label}</span>
+      <EditableText tKey={labelKey} as="span" className="stats-bar__label" />
     </FadeInSection>
   );
 }
 
 export function StatsBar() {
-  const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -62,17 +61,17 @@ export function StatsBar() {
   }, []);
 
   const stats = [
-    { value: 500, suffix: '+', label: t('statClients') },
-    { value: 2, suffix: 'B+', label: t('statTransactions') },
-    { value: 30, suffix: '+', label: t('statYears') },
-    { value: 12, suffix: '', label: t('statJurisdictions') },
+    { value: 500, suffix: '+', labelKey: 'statClients' },
+    { value: 2, suffix: 'B+', labelKey: 'statTransactions' },
+    { value: 30, suffix: '+', labelKey: 'statYears' },
+    { value: 12, suffix: '', labelKey: 'statJurisdictions' },
   ];
 
   return (
     <div className="stats-bar" ref={ref}>
       <div className="stats-bar__inner">
         {stats.map((s, i) => (
-          <StatItem key={s.label} value={s.value} suffix={s.suffix} label={s.label} trigger={visible} delay={i * 0.1} />
+          <StatItem key={s.labelKey} value={s.value} suffix={s.suffix} labelKey={s.labelKey} trigger={visible} delay={i * 0.1} />
         ))}
       </div>
     </div>

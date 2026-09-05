@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Navbar, Footer, Button } from '@/components';
+import { Navbar, Footer, Button, EditableText } from '@/components';
 import { ScaleOfJustice } from '@/assets/illustrations';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
 import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
@@ -21,7 +21,7 @@ export default function HomePage() {
             <ScaleOfJustice className="firm-logo__icon" />
             <span className="firm-logo__text">
               {t('firmName')}
-              <span className="firm-logo__tagline">{t('firmTagline')}</span>
+              <EditableText tKey="firmTagline" as="span" className="firm-logo__tagline" />
             </span>
           </a>
         }
@@ -56,7 +56,7 @@ export default function HomePage() {
         logo={
           <div className="footer-brand">
             <ScaleOfJustice className="footer-brand__icon" />
-            <span>{t('firmName')}</span>
+            <EditableText tKey="firmName" as="span" />
           </div>
         }
         columns={[
@@ -87,7 +87,7 @@ export default function HomePage() {
             ],
           },
         ]}
-        bottom={<p>{t('footerCopyright')}</p>}
+        bottom={<EditableText tKey="footerCopyright" as="p" />}
       />
     </>
   );

@@ -4,6 +4,7 @@ import partnerMaleImg from '@/assets/images/partner-male.jpg';
 import partnerFemaleImg from '@/assets/images/partner-female.jpg';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
+import { EditableText } from '@/components';
 import './PartnerEthos.css';
 
 export function PartnerEthos() {
@@ -15,10 +16,10 @@ export function PartnerEthos() {
       <div className="partner-ethos__inner">
         <FadeInSection variant="fade-up">
           <SectionHeader
-            overline={t('teamOverline')}
-            title={t('teamTitle')}
-            subtitle={t('teamSubtitle')}
-            label="Chapter 02 / Team"
+            overlineKey="teamOverline"
+            titleKey="teamTitle"
+            subtitleKey="teamSubtitle"
+            labelKey="chapterTeam"
           />
         </FadeInSection>
 
@@ -33,28 +34,30 @@ export function PartnerEthos() {
                   className="partner-ethos__image"
                 />
                 <div className="partner-ethos__image-overlay" />
-                <span className="partner-ethos__badge partner-ethos__badge--left">
-                  {t('attorney1Title')}
-                </span>
+                <EditableText
+                  tKey="attorney1Title"
+                  as="span"
+                  className="partner-ethos__badge partner-ethos__badge--left"
+                />
               </div>
             </FadeInSection>
 
             <FadeInSection variant="fade-right" delay={0.15} className="partner-ethos__text-col">
-              <h3 className="partner-ethos__name">{t('attorney1Name')}</h3>
+              <EditableText tKey="attorney1Name" as="h3" className="partner-ethos__name" />
               <p className="partner-ethos__role">
                 {t('attorney1Spec1')} &amp; {t('attorney1Spec2')}
               </p>
               <div className="partner-ethos__bio">
-                <p>{t('attorney1Bio')}</p>
+                <EditableText tKey="attorney1Bio" as="p" />
               </div>
               <div className="partner-ethos__meta">
                 <div className="partner-ethos__meta-item">
-                  <span className="partner-ethos__meta-label">{t('teamFocusLabel')}</span>
-                  <span className="partner-ethos__meta-value">{t('attorney1Focus')}</span>
+                  <EditableText tKey="teamFocusLabel" as="span" className="partner-ethos__meta-label" />
+                  <EditableText tKey="attorney1Focus" as="span" className="partner-ethos__meta-value" />
                 </div>
                 <div className="partner-ethos__meta-item">
-                  <span className="partner-ethos__meta-label">{t('teamOriginLabel')}</span>
-                  <span className="partner-ethos__meta-value">{t('attorney1Origin')}</span>
+                  <EditableText tKey="teamOriginLabel" as="span" className="partner-ethos__meta-label" />
+                  <EditableText tKey="attorney1Origin" as="span" className="partner-ethos__meta-value" />
                 </div>
               </div>
             </FadeInSection>
@@ -63,21 +66,21 @@ export function PartnerEthos() {
           {/* Partner 2 — text left (right-aligned), image right */}
           <div className="partner-ethos__row partner-ethos__row--reversed">
             <FadeInSection variant="fade-left" delay={0.15} className="partner-ethos__text-col partner-ethos__text-col--right">
-              <h3 className="partner-ethos__name">{t('attorney2Name')}</h3>
+              <EditableText tKey="attorney2Name" as="h3" className="partner-ethos__name" />
               <p className="partner-ethos__role">
                 {t('attorney2Spec1')} &amp; {t('attorney2Spec2')}
               </p>
               <div className="partner-ethos__bio">
-                <p>{t('attorney2Bio')}</p>
+                <EditableText tKey="attorney2Bio" as="p" />
               </div>
               <div className="partner-ethos__meta partner-ethos__meta--right">
                 <div className="partner-ethos__meta-item">
-                  <span className="partner-ethos__meta-label">{t('teamFocusLabel')}</span>
-                  <span className="partner-ethos__meta-value">{t('attorney2Focus')}</span>
+                  <EditableText tKey="teamFocusLabel" as="span" className="partner-ethos__meta-label" />
+                  <EditableText tKey="attorney2Focus" as="span" className="partner-ethos__meta-value" />
                 </div>
                 <div className="partner-ethos__meta-item">
-                  <span className="partner-ethos__meta-label">{t('teamOriginLabel')}</span>
-                  <span className="partner-ethos__meta-value">{t('attorney2Origin')}</span>
+                  <EditableText tKey="teamOriginLabel" as="span" className="partner-ethos__meta-label" />
+                  <EditableText tKey="attorney2Origin" as="span" className="partner-ethos__meta-value" />
                 </div>
               </div>
             </FadeInSection>
@@ -90,9 +93,11 @@ export function PartnerEthos() {
                   className="partner-ethos__image"
                 />
                 <div className="partner-ethos__image-overlay" />
-                <span className="partner-ethos__badge partner-ethos__badge--right">
-                  {t('attorney2Title')}
-                </span>
+                <EditableText
+                  tKey="attorney2Title"
+                  as="span"
+                  className="partner-ethos__badge partner-ethos__badge--right"
+                />
               </div>
             </FadeInSection>
           </div>

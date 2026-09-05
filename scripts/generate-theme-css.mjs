@@ -23,10 +23,17 @@ import {
   fonts,
   glass,
   gradients,
+  radii,
+  spacing,
+  elevations,
+  typeScale,
   colorVarNames,
   fontVarNames,
   glassVarNames,
   gradientVarNames,
+  radiusVarNames,
+  spacingVarNames,
+  elevationVarNames,
 } from '../src/theme/tokens.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -42,12 +49,33 @@ function mapVars(tokens, varNames) {
   return lines;
 }
 
+/**
+ * The type scale is emitted per step as a size/weight/line-height/tracking
+ * quartet, so a stylesheet takes a whole specimen rather than picking a size
+ * and inventing the rest.
+ */
+function typeVars() {
+  const lines = [];
+  for (const [name, step] of Object.entries(typeScale)) {
+    const k = name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+    lines.push(`  --type-${k}-size: ${step.size};`);
+    lines.push(`  --type-${k}-weight: ${step.weight};`);
+    lines.push(`  --type-${k}-leading: ${step.lineHeight};`);
+    lines.push(`  --type-${k}-tracking: ${step.tracking};`);
+  }
+  return lines;
+}
+
 function buildVarBlock(colorTokens, fontTokens, glassTokens, gradientTokens) {
   return [
     ...mapVars(colorTokens, colorVarNames),
     ...mapVars(fontTokens, fontVarNames),
     ...mapVars(glassTokens, glassVarNames),
     ...mapVars(gradientTokens, gradientVarNames),
+    ...mapVars(radii, radiusVarNames),
+    ...mapVars(spacing, spacingVarNames),
+    ...mapVars(elevations, elevationVarNames),
+    ...typeVars(),
   ].join('\n');
 }
 

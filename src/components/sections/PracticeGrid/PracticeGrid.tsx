@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
 import {
   RealEstateIcon,
@@ -31,6 +32,7 @@ const domains: {
 ];
 
 export function PracticeGrid() {
+  const { t } = useTranslation();
 
   return (
     <section id="practice" className="practice-section">
@@ -49,11 +51,11 @@ export function PracticeGrid() {
           {domains.map(({ key, bg: Bg, num }) => (
             <FadeInSection key={key} variant="fade-up" className="practice-domain">
               <Bg className="practice-domain__bg" />
-              <span className="practice-domain__num">Domain {num}</span>
+              <span className="practice-domain__num">{t('practiceDomainNum', { num })}</span>
               <EditableText tKey={`practice${key}Title`} as="h3" className="practice-domain__title" />
               <EditableText tKey={`practice${key}Desc`} as="p" className="practice-domain__desc" />
               <a className="practice-domain__link" href={`#practice-${key.toLowerCase()}`}>
-                Explore Domain <span aria-hidden="true">&rarr;</span>
+                {t('practiceExploreDomain')} <span aria-hidden="true">&rarr;</span>
               </a>
             </FadeInSection>
           ))}

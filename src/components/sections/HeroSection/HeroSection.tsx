@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { SpawnText } from '@/components/animations/SpawnText';
+import { EditableSpawnText } from '@/components/animations/EditableSpawnText';
 import { EditableText } from '@/components';
 import { DigitalStatue } from '@/components/DigitalStatue/DigitalStatue';
 import './HeroSection.css';
@@ -52,26 +52,26 @@ export function HeroSection() {
       <div className="hero-section__content">
         <span className="hero-section__badge">
           <span className="hero-section__badge-dot" aria-hidden="true" />
-          {t('heroOverline')}
+          <EditableText tKey="heroOverline" as="span" />
         </span>
 
         <h1 className="hero-section__title" aria-label={`${titleLine1} ${titleLine2}`}>
           <span className="hero-section__title-line hero-section__title-line--1" aria-hidden="true">
-            <SpawnText text={titleLine1} />
+            <EditableSpawnText tKey="heroTitleLine1" />
           </span>
           <span className="hero-section__title-line hero-section__title-line--2" aria-hidden="true">
-            <SpawnText text={titleLine2} gradient />
+            <EditableSpawnText tKey="heroTitleLine2" gradient />
           </span>
         </h1>
 
         {/* Word-level split stays readable to assistive tech as-is (unlike the
             per-character title, which is labelled on the <h1> instead). */}
         <p className="hero-section__subtitle">
-          <SpawnText text={t('heroSubtitle')} mode="word" />
+          <EditableSpawnText tKey="heroSubtitle" mode="word" as="span" />
         </p>
 
         <div className="hero-section__stat-card">
-          <span className="hero-section__stat-value">30+</span>
+          <EditableText tKey="statYearsValue" as="span" className="hero-section__stat-value" />
           <EditableText tKey="statYears" as="span" className="hero-section__stat-label" />
         </div>
       </div>

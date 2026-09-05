@@ -1,0 +1,177 @@
+/* Admin user-management page (#admin-users).
+   Colours and fonts come from the theme custom properties; geometry is raw px,
+   matching every other stylesheet in the app. */
+
+.admin-users {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: var(--bg);
+  padding: 88px 0 48px;
+
+  @media (max-width: 1024px) {
+    padding: 88px 0 32px;
+  }
+}
+
+.admin-users__inner {
+  display: flex;
+  justify-content: center;
+}
+
+.admin-users__card {
+  width: 100%;
+  max-width: 880px;
+  /* The table scrolls inside .admin-users__scroll; clipping here stops a wide
+     row from bleeding past the card's rounded corners. */
+  overflow: hidden;
+}
+
+/* ─── Head ──────────────────────────────────────────────────────────────── */
+
+.admin-users__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+/* ─── Notices (loading / forbidden / empty / load error) ─────────────────── */
+
+.admin-users__notice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 24px 0;
+}
+
+.admin-users__link {
+  font-family: var(--label);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent-text);
+  text-decoration: none;
+}
+
+.admin-users__link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.admin-users__error {
+  font-family: var(--label);
+  font-size: 15px;
+  color: var(--error);
+  margin-bottom: 16px;
+}
+
+/* ─── Table ─────────────────────────────────────────────────────────────── */
+
+/* The table is the only thing allowed to scroll sideways — the page never
+   does, no matter how long an email address is. */
+.admin-users__scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-users__table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-users__table th {
+  font-family: var(--label);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0.7;
+  padding: 0 16px 12px 0;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.admin-users__table td {
+  font-size: 15px;
+  color: var(--text);
+  padding: 14px 16px 14px 0;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.admin-users__table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-users__table th:last-child,
+.admin-users__table td:last-child {
+  padding-right: 0;
+}
+
+.admin-users__email {
+  overflow-wrap: anywhere;
+}
+
+.admin-users__self {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: var(--label);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  white-space: nowrap;
+}
+
+.admin-users__role {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-family: var(--label);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid var(--outline);
+  color: var(--text);
+  background: var(--surface-variant);
+}
+
+.admin-users__role--admin {
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.admin-users__date {
+  white-space: nowrap;
+  opacity: 0.8;
+}
+
+.admin-users__hint {
+  display: block;
+  margin-top: 6px;
+  max-width: 220px;
+  font-family: var(--label);
+  font-size: 12px;
+  line-height: 130%;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+@media (max-width: 640px) {
+  .admin-users__table {
+    min-width: 520px;
+  }
+
+  .admin-users__table td {
+    font-size: 14px;
+  }
+}

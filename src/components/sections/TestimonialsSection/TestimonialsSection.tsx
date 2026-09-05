@@ -75,7 +75,7 @@ export function TestimonialsSection() {
             onMouseEnter={pause}
             onMouseLeave={resume}
             role="region"
-            aria-roledescription="carousel"
+            aria-roledescription={t('testimonialsCarouselRole')}
             aria-label={t('testimonialsTitle')}
           >
             <div
@@ -93,8 +93,8 @@ export function TestimonialsSection() {
                     key={item.slideIndex}
                     className={`testimonials-carousel__slide${isActive ? ' testimonials-carousel__slide--active' : ''}`}
                     role="group"
-                    aria-roledescription="slide"
-                    aria-label={`${realIndex + 1} of ${itemCount}`}
+                    aria-roledescription={t('testimonialsSlideRole')}
+                    aria-label={t('testimonialsSlidePosition', { current: realIndex + 1, total: itemCount })}
                     style={{ width: `calc(100% / ${visibleCount})` }}
                   >
                     <TestimonialCard
@@ -109,7 +109,7 @@ export function TestimonialsSection() {
           </div>
 
           <div className="testimonials-carousel__controls">
-            <button className="testimonials-carousel__btn" onClick={prev} aria-label="Previous testimonial">
+            <button className="testimonials-carousel__btn" onClick={prev} aria-label={t('testimonialsPrevLabel')}>
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
             <div className="testimonials-carousel__dots">
@@ -118,11 +118,11 @@ export function TestimonialsSection() {
                   key={i}
                   className={`testimonials-carousel__dot${i === realIndex ? ' testimonials-carousel__dot--active' : ''}`}
                   onClick={() => goToReal(i)}
-                  aria-label={`Go to testimonial ${i + 1}`}
+                  aria-label={t('testimonialsGoToLabel', { index: i + 1 })}
                 />
               ))}
             </div>
-            <button className="testimonials-carousel__btn" onClick={next} aria-label="Next testimonial">
+            <button className="testimonials-carousel__btn" onClick={next} aria-label={t('testimonialsNextLabel')}>
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </div>

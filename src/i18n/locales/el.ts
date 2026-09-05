@@ -25,6 +25,10 @@ const el = {
   practiceSubtitle:
     'Τέσσερις πυλώνες εξειδίκευσης για πελάτες που χρειάζονται ακρίβεια και βάθος.',
 
+  // `num` is the roman numeral of the card (I..IV), supplied by PracticeGrid.
+  practiceDomainNum: 'Τομέας {{num}}',
+  practiceExploreDomain: 'Δείτε τον Τομέα',
+
   practiceRealEstateTitle: 'Ακίνητα',
   practiceRealEstateDesc:
     'Ολοκληρωμένη νομική κάλυψη ακινήτων \u2014 αγορές, άδειες ανάπτυξης, έλεγχοι τίτλων, δομή μισθώσεων και διασυνοριακές συναλλαγές σε Ελλάδα και ΕΕ.',
@@ -97,12 +101,21 @@ const el = {
   networkDigitalItem3: 'Δομές Διακυβέρνησης DAO',
 
   networkConnectNode: 'Σύνδεση Κόμβου',
+  // Caption on the map pin.
+  networkPinLabel: 'Αθήνα',
 
   // ─── Stats ───────────────────────────────────────────────────────────────────
   statClients: 'Πελάτες',
   statTransactions: 'Σε Συναλλαγές',
   statYears: 'Χρόνια Συνολικής Εμπειρίας',
   statJurisdictions: 'Δικαιοδοσίες',
+
+  // Stat figures. StatsBar counts up to the leading digits and prints whatever
+  // trails them verbatim, so '2δισ.+' animates 0 -> 2 and then reads '2δισ.+'.
+  statClientsValue: '500+',
+  statTransactionsValue: '2δισ.+',
+  statYearsValue: '30+',
+  statJurisdictionsValue: '12',
 
   // ─── Testimonials ────────────────────────────────────────────────────────────
   testimonialsOverline: 'Τι Λένε οι Πελάτες',
@@ -124,6 +137,30 @@ const el = {
   testimonial3Author: 'Ελένη Κωνσταντίνου',
   testimonial3Role: 'Ιδρύτρια, PropChain',
 
+  testimonial4Quote:
+    'Ολοκληρώσαμε την αγορά έξι ακινήτων σε Αθήνα και Κυκλάδες σε λιγότερο από τέσσερις μήνες. Ο έλεγχος τίτλων ήταν άψογος και κάθε ζήτημα αδειοδότησης τέθηκε προτού προλάβει να γίνει πρόβλημα.',
+  testimonial4Author: 'Μαρίνα Βλάχου',
+  testimonial4Role: 'Διευθύνουσα Σύμβουλος, Astrea Estates',
+
+  testimonial5Quote:
+    'Η αδειοδότηση του ανταλλακτηρίου μας υπό το MiCA ήταν αχαρτογράφητο έδαφος για όλους. Χάραξαν τον οδικό χάρτη, κράτησαν τη γραμμή απέναντι στον επόπτη και τήρησαν το χρονοδιάγραμμα που δεσμεύτηκαν.',
+  testimonial5Author: 'Θάνος Βεργής',
+  testimonial5Role: 'Συνιδρυτής, Meridian Digital Assets',
+
+  testimonial6Quote:
+    'Ανασχεδίασαν τον κεφαλαιακό μας πίνακα πριν τον γύρο seed και μας γλίτωσαν από μια δομή που θα μας στοίχιζε τον έλεγχο της εταιρείας δύο χρόνια αργότερα. Συμβουλευτική που σκέφτεται τρεις κινήσεις μπροστά.',
+  testimonial6Author: 'Σοφία Ανδρέου',
+  testimonial6Role: 'Ιδρύτρια, Kyma Robotics',
+
+  // Carousel accessibility strings. These reach the user through ARIA
+  // attributes, so they are read by assistive technology rather than rendered.
+  testimonialsCarouselRole: 'καρουζέλ',
+  testimonialsSlideRole: 'διαφάνεια',
+  testimonialsSlidePosition: '{{current}} από {{total}}',
+  testimonialsPrevLabel: 'Προηγούμενη μαρτυρία',
+  testimonialsNextLabel: 'Επόμενη μαρτυρία',
+  testimonialsGoToLabel: 'Μετάβαση στη μαρτυρία {{index}}',
+
   // ─── CTA ──────────────────────────────────────────────────────────────────────
   ctaTitle: 'Έτοιμοι να Εξασφαλίσετε\nτο Μέλλον σας;',
   ctaSubtitle: 'Η πρωτοπορία είναι αμείλικτη για τους απροετοίμαστους. Συνεργαστείτε με τους αρχιτέκτονες κυρίαρχης ανάπτυξης σήμερα.',
@@ -137,6 +174,18 @@ const el = {
   contactAddress: 'Λεωφ. Βασιλίσσης Σοφίας 12, Αθήνα 10674, Ελλάδα',
   contactEmail: 'info@nomos.legal',
   contactPhone: '+30 210 123 4567',
+
+  // Contact form. Labels and placeholders reach the DOM as element text and
+  // attributes on Input / Textarea, so they stay plain t() lookups.
+  contactFormName: 'Ονοματεπώνυμο',
+  contactFormNamePlaceholder: 'Γιώργος Παπαδόπουλος',
+  contactFormEmail: 'Email',
+  contactFormEmailPlaceholder: 'giorgos@example.com',
+  contactFormPhone: 'Τηλέφωνο',
+  contactFormPhonePlaceholder: '+30 694 123 4567',
+  contactFormMessage: 'Πώς μπορούμε να βοηθήσουμε;',
+  contactFormMessagePlaceholder: 'Περιγράψτε συνοπτικά την υπόθεσή σας…',
+  contactFormSubmit: 'Αίτημα Συνάντησης',
 
   // ─── Footer ──────────────────────────────────────────────────────────────────
   footerPractice: 'Τομείς',
@@ -213,6 +262,39 @@ const el = {
   editCancel: 'Ακύρωση',
   editSaving: 'Αποθήκευση\u2026',
   editError: 'Η αλλαγή δεν αποθηκεύτηκε. Δοκιμάστε ξανά.',
+
+  // ─── Attorney 3 (crypto) ─────────────────────────────────────────────────────
+  // PLACEHOLDER NAME — replace with the real partner's details.
+  attorney3Name: 'Σταύρος Λεβέντης',
+  attorney3Title: 'Εταίρος',
+  attorney3Bio:
+    'Ο Σταύρος συμβουλεύει ιδρυτές και επενδυτικά σχήματα που δραστηριοποιούνται στο ρυθμιστικό μέτωπο των ψηφιακών περιουσιακών στοιχείων. Δομεί εκδόσεις tokens, καθοδηγεί πρωτόκολλα στην αδειοδότηση MiCA και χειρίζεται διαφορές όπου ο κώδικας συναντά το δίκαιο των συμβάσεων.',
+  attorney3Spec1: 'Ψηφιακά Περιουσιακά Στοιχεία',
+  attorney3Spec2: 'DeFi & Web3',
+  attorney3Spec3: 'Συμμόρφωση MiCA',
+  attorney3Focus: 'Ρυθμιστική Αρχιτεκτονική',
+  attorney3Origin: 'Αθήνα',
+
+  // ─── Admin: user management ──────────────────────────────────────────────────
+  adminUsersTitle: 'Εγγεγραμμένοι Χρήστες',
+  adminUsersSubtitle: 'Όλοι όσοι έχουν λογαριασμό και τα δικαιώματά τους.',
+  adminUsersEmail: 'Email',
+  adminUsersRole: 'Ρόλος',
+  adminUsersCreated: 'Εγγραφή',
+  adminUsersActions: 'Ενέργειες',
+  adminUsersPromote: 'Ορισμός ως διαχειριστή',
+  adminUsersDemote: 'Αφαίρεση διαχειριστή',
+  adminUsersEmpty: 'Δεν υπάρχουν λογαριασμοί ακόμη.',
+  adminUsersLoading: 'Φόρτωση λογαριασμών\u2026',
+  adminUsersError: 'Η φόρτωση των λογαριασμών απέτυχε. Δοκιμάστε ξανά.',
+  adminUsersUpdateError: 'Η αλλαγή δεν αποθηκεύτηκε. Δοκιμάστε ξανά.',
+  adminUsersForbidden: 'Η σελίδα αυτή είναι μόνο για διαχειριστές.',
+  adminUsersSelf: 'Εσείς',
+  adminUsersLastAdmin: 'Δεν μπορείτε να αφαιρέσετε τον τελευταίο διαχειριστή.',
+  navAdminUsers: 'Χρήστες',
+  menuOpen: 'Μενού λογαριασμού',
+  menuEditMode: 'Λειτουργία επεξεργασίας',
+  menuLanguage: 'Γλώσσα',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────
   chapterExpertise: 'Κεφάλαιο 01 / Εξειδίκευση',

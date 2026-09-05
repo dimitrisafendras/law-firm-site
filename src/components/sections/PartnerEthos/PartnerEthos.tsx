@@ -2,6 +2,9 @@ import { useTranslation } from 'react-i18next';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import partnerMaleImg from '@/assets/images/partner-male.jpg';
 import partnerFemaleImg from '@/assets/images/partner-female.jpg';
+// PLACEHOLDER: no third headshot exists yet. Reuses partner 1's portrait so
+// the row renders; swap in a real photo of the crypto partner.
+import partnerCryptoImg from '@/assets/images/partner-male.jpg';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import { EditableText } from '@/components';
@@ -45,7 +48,8 @@ export function PartnerEthos() {
             <FadeInSection variant="fade-right" delay={0.15} className="partner-ethos__text-col">
               <EditableText tKey="attorney1Name" as="h3" className="partner-ethos__name" />
               <p className="partner-ethos__role">
-                {t('attorney1Spec1')} &amp; {t('attorney1Spec2')}
+                <EditableText tKey="attorney1Spec1" as="span" /> &amp;{' '}
+                <EditableText tKey="attorney1Spec2" as="span" />
               </p>
               <div className="partner-ethos__bio">
                 <EditableText tKey="attorney1Bio" as="p" />
@@ -68,7 +72,8 @@ export function PartnerEthos() {
             <FadeInSection variant="fade-left" delay={0.15} className="partner-ethos__text-col partner-ethos__text-col--right">
               <EditableText tKey="attorney2Name" as="h3" className="partner-ethos__name" />
               <p className="partner-ethos__role">
-                {t('attorney2Spec1')} &amp; {t('attorney2Spec2')}
+                <EditableText tKey="attorney2Spec1" as="span" /> &amp;{' '}
+                <EditableText tKey="attorney2Spec2" as="span" />
               </p>
               <div className="partner-ethos__bio">
                 <EditableText tKey="attorney2Bio" as="p" />
@@ -98,6 +103,46 @@ export function PartnerEthos() {
                   as="span"
                   className="partner-ethos__badge partner-ethos__badge--right"
                 />
+              </div>
+            </FadeInSection>
+          </div>
+
+          {/* Partner 3 — image left, text right */}
+          <div className="partner-ethos__row">
+            <FadeInSection variant="fade-left" className="partner-ethos__image-col">
+              <div className="partner-ethos__image-wrapper">
+                <img
+                  src={partnerCryptoImg}
+                  alt={t('attorney3Name')}
+                  className="partner-ethos__image"
+                />
+                <div className="partner-ethos__image-overlay" />
+                <EditableText
+                  tKey="attorney3Title"
+                  as="span"
+                  className="partner-ethos__badge partner-ethos__badge--left"
+                />
+              </div>
+            </FadeInSection>
+
+            <FadeInSection variant="fade-right" delay={0.15} className="partner-ethos__text-col">
+              <EditableText tKey="attorney3Name" as="h3" className="partner-ethos__name" />
+              <p className="partner-ethos__role">
+                <EditableText tKey="attorney3Spec1" as="span" /> &amp;{' '}
+                <EditableText tKey="attorney3Spec2" as="span" />
+              </p>
+              <div className="partner-ethos__bio">
+                <EditableText tKey="attorney3Bio" as="p" />
+              </div>
+              <div className="partner-ethos__meta">
+                <div className="partner-ethos__meta-item">
+                  <EditableText tKey="teamFocusLabel" as="span" className="partner-ethos__meta-label" />
+                  <EditableText tKey="attorney3Focus" as="span" className="partner-ethos__meta-value" />
+                </div>
+                <div className="partner-ethos__meta-item">
+                  <EditableText tKey="teamOriginLabel" as="span" className="partner-ethos__meta-label" />
+                  <EditableText tKey="attorney3Origin" as="span" className="partner-ethos__meta-value" />
+                </div>
               </div>
             </FadeInSection>
           </div>

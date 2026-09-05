@@ -25,6 +25,10 @@ const en = {
   practiceSubtitle:
     'Four pillars of specialization for clients who need precision and depth.',
 
+  // `num` is the roman numeral of the card (I..IV), supplied by PracticeGrid.
+  practiceDomainNum: 'Domain {{num}}',
+  practiceExploreDomain: 'Explore Domain',
+
   practiceRealEstateTitle: 'Real Estate',
   practiceRealEstateDesc:
     'Full-spectrum property counsel \u2014 acquisitions, development permits, title due diligence, lease structuring, and cross-border transactions across Greece and the EU.',
@@ -97,12 +101,21 @@ const en = {
   networkDigitalItem3: 'DAO Governance Structures',
 
   networkConnectNode: 'Connect Node',
+  // Caption on the map pin.
+  networkPinLabel: 'Athens',
 
   // ─── Stats ───────────────────────────────────────────────────────────────────
   statClients: 'Clients Served',
   statTransactions: 'In Transactions',
   statYears: 'Years Combined Experience',
   statJurisdictions: 'Jurisdictions',
+
+  // Stat figures. StatsBar counts up to the leading digits and prints whatever
+  // trails them verbatim, so '2B+' animates 0 -> 2 and then reads '2B+'.
+  statClientsValue: '500+',
+  statTransactionsValue: '2B+',
+  statYearsValue: '30+',
+  statJurisdictionsValue: '12',
 
   // ─── Testimonials ────────────────────────────────────────────────────────────
   testimonialsOverline: 'What Clients Say',
@@ -124,6 +137,30 @@ const en = {
   testimonial3Author: 'Elena Konstantinou',
   testimonial3Role: 'Founder, PropChain',
 
+  testimonial4Quote:
+    'We closed on six properties across Athens and the Cyclades in under four months. Title diligence was faultless, and every permit question was raised before it could become a problem.',
+  testimonial4Author: 'Marina Vlachou',
+  testimonial4Role: 'Managing Director, Astrea Estates',
+
+  testimonial5Quote:
+    'Licensing our exchange under MiCA was uncharted ground for everyone involved. They drew the roadmap, held the line with the regulator, and delivered on the timetable they promised.',
+  testimonial5Author: 'Thanos Vergis',
+  testimonial5Role: 'Co-Founder, Meridian Digital Assets',
+
+  testimonial6Quote:
+    'They rebuilt our cap table before the seed round and spared us a structure that would have cost us control two years later. Counsel that thinks three moves ahead.',
+  testimonial6Author: 'Sofia Andreou',
+  testimonial6Role: 'Founder, Kyma Robotics',
+
+  // Carousel accessibility strings. These reach the user through ARIA
+  // attributes, so they are read by assistive technology rather than rendered.
+  testimonialsCarouselRole: 'carousel',
+  testimonialsSlideRole: 'slide',
+  testimonialsSlidePosition: '{{current}} of {{total}}',
+  testimonialsPrevLabel: 'Previous testimonial',
+  testimonialsNextLabel: 'Next testimonial',
+  testimonialsGoToLabel: 'Go to testimonial {{index}}',
+
   // ─── CTA ──────────────────────────────────────────────────────────────────────
   ctaTitle: 'Ready to Secure\nYour Future?',
   ctaSubtitle: 'The frontier is unforgiving to the unprepared. Partner with the architects of sovereign growth today.',
@@ -137,6 +174,18 @@ const en = {
   contactAddress: '12 Vasilissis Sofias Avenue, Athens 10674, Greece',
   contactEmail: 'info@nomos.legal',
   contactPhone: '+30 210 123 4567',
+
+  // Contact form. Labels and placeholders reach the DOM as element text and
+  // attributes on Input / Textarea, so they stay plain t() lookups.
+  contactFormName: 'Full Name',
+  contactFormNamePlaceholder: 'John Smith',
+  contactFormEmail: 'Email',
+  contactFormEmailPlaceholder: 'john@example.com',
+  contactFormPhone: 'Phone',
+  contactFormPhonePlaceholder: '(555) 123-4567',
+  contactFormMessage: 'How can we help?',
+  contactFormMessagePlaceholder: 'Briefly describe your legal matter...',
+  contactFormSubmit: 'Schedule Consultation',
 
   // ─── Footer ──────────────────────────────────────────────────────────────────
   footerPractice: 'Practice',
@@ -212,6 +261,39 @@ const en = {
   editCancel: 'Cancel',
   editSaving: 'Saving\u2026',
   editError: 'That change could not be saved. Please try again.',
+
+  // ─── Attorney 3 (crypto) ─────────────────────────────────────────────────────
+  // PLACEHOLDER NAME — replace with the real partner's details.
+  attorney3Name: 'Stavros Leventis',
+  attorney3Title: 'Partner',
+  attorney3Bio:
+    'Stavros advises founders and funds operating at the regulatory frontier of digital assets. He structures token offerings, guides protocols through MiCA authorisation, and resolves disputes where code and contract law meet.',
+  attorney3Spec1: 'Digital Assets',
+  attorney3Spec2: 'DeFi & Web3',
+  attorney3Spec3: 'MiCA Compliance',
+  attorney3Focus: 'Regulatory Architecture',
+  attorney3Origin: 'Athens',
+
+  // ─── Admin: user management ──────────────────────────────────────────────────
+  adminUsersTitle: 'Registered Users',
+  adminUsersSubtitle: 'Everyone with an account, and what they are allowed to do.',
+  adminUsersEmail: 'Email',
+  adminUsersRole: 'Role',
+  adminUsersCreated: 'Joined',
+  adminUsersActions: 'Actions',
+  adminUsersPromote: 'Make admin',
+  adminUsersDemote: 'Remove admin',
+  adminUsersEmpty: 'No accounts yet.',
+  adminUsersLoading: 'Loading accounts\u2026',
+  adminUsersError: 'Could not load accounts. Try again.',
+  adminUsersUpdateError: 'That change was not saved. Try again.',
+  adminUsersForbidden: 'This page is for administrators only.',
+  adminUsersSelf: 'You',
+  adminUsersLastAdmin: 'You cannot remove the last administrator.',
+  navAdminUsers: 'Users',
+  menuOpen: 'Account menu',
+  menuEditMode: 'Edit mode',
+  menuLanguage: 'Language',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────
   chapterExpertise: 'Chapter 01 / Expertise',

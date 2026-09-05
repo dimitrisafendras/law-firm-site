@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Navbar, Footer, Button, EditableText, AuthNavControl } from '@/components';
 import { ScaleOfJustice } from '@/assets/illustrations';
-import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
 import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
 import { StatsBar } from '@/components/sections/StatsBar/StatsBar';
 import { PracticeGrid } from '@/components/sections/PracticeGrid/PracticeGrid';
@@ -20,7 +19,7 @@ export default function HomePage() {
           <a href="#" className="firm-logo">
             <ScaleOfJustice className="firm-logo__icon" />
             <span className="firm-logo__text">
-              {t('firmName')}
+              <EditableText tKey="firmName" as="span" />
               <EditableText tKey="firmTagline" as="span" className="firm-logo__tagline" />
             </span>
           </a>
@@ -33,14 +32,13 @@ export default function HomePage() {
         ]}
         cta={
           <div className="navbar__actions">
-            <AuthNavControl />
-            <LanguageSwitcher />
             <Button
               size="sm"
               onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
             >
               {t('navCta')}
             </Button>
+            <AuthNavControl />
           </div>
         }
       />

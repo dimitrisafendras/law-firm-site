@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ElementType, KeyboardEvent as ReactKeyboardEvent } from 'react';
+import type {
+  ElementType,
+  KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '@/lib/auth/useAuth';
+import { useEditMode } from '@/lib/edit-mode';
 import { useContentEditor } from '@/lib/content/useContentEditor';
 import './EditableText.css';
 
@@ -9,6 +13,23 @@ interface EditableTextProps {
   tKey: string;
   as?: ElementType;
   className?: string;
+  /**
+   * Extra attributes for the rendered element — notably `href`, so a contact
+   * link can be `<a href="mailto:…">` and still be editable.
+   *
+   * Without this, wiring the visible text of a link meant nesting a span inside
+   * the anchor, which changes the visitor DOM. With it the anchor itself is the
+   * rendered element and the markup is unchanged. Derive the href from the same
+   * translation key as the text so editing the address updates both, rather
+   * than leaving a link pointing at the old one.
+   */
+  elementProps?: Record<string, string | undefined>;
+}
+
+/** Interactive tags cannot legally contain a textarea, and an anchor would
+ *  navigate on click instead of opening the editor. */
+function isInteractive(tag: ElementType): boolean {
+  return tag === 'a' || tag === 'button';
 }
 
 function autosize(el: HTMLTextAreaElement): void {
@@ -16,9 +37,9 @@ function autosize(el: HTMLTextAreaElement): void {
   el.style.height = `${el.scrollHeight}px`;
 }
 
-export function EditableText({ tKey, as = 'span', className }: EditableTextProps) {
+export function EditableText({ tKey, as = 'span', className, elementProps }: EditableTextProps) {
   const { t, i18n } = useTranslation();
-  const { isAdmin } = useAuth();
+  const { canEdit } = useEditMode();
   const { saveOverride, saving } = useContentEditor();
 
   const [editing, setEditing] = useState(false);
@@ -79,8 +100,12 @@ export function EditableText({ tKey, as = 'span', className }: EditableTextProps
     if (failed) textareaRef.current?.focus();
   }, [failed]);
 
-  if (!isAdmin) {
-    return <Tag className={className}>{value}</Tag>;
+  if (!canEdit) {
+    return (
+      <Tag className={className} {...elementProps}>
+        {value}
+      </Tag>
+    );
   }
 
   const multiline = value.includes('\n');
@@ -111,9 +136,11 @@ export function EditableText({ tKey, as = 'span', className }: EditableTextProps
     </span>
   ) : null;
 
+  const EditTag = isInteractive(Tag) ? 'span' : Tag;
+
   if (editing) {
     return (
-      <Tag className={`editable-text editable-text--editing ${className ?? ''}`.trim()}>
+      <EditTag className={`editable-text editable-text--editing ${className ?? ''}`.trim()}>
         <textarea
           ref={textareaRef}
           className="editable-text__input"
@@ -131,16 +158,20 @@ export function EditableText({ tKey, as = 'span', className }: EditableTextProps
           }}
         />
         {status}
-      </Tag>
+      </EditTag>
     );
   }
 
   return (
     <Tag
       className={`editable-text ${className ?? ''}`.trim()}
+      {...elementProps}
       role="button"
       tabIndex={0}
-      onClick={startEditing}
+      onClick={(event: ReactMouseEvent<HTMLElement>) => {
+        event.preventDefault();
+        startEditing();
+      }}
       onKeyDown={handleDisplayKeyDown}
     >
       {value}

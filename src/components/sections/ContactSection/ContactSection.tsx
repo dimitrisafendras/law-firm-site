@@ -31,11 +31,19 @@ export function ContactSection() {
               </div>
               <div className="contact-section__detail">
                 <span className="contact-section__detail-icon" aria-hidden="true">&#9993;</span>
-                <a href={`mailto:${t('contactEmail')}`}>{t('contactEmail')}</a>
+                <EditableText
+                  tKey="contactEmail"
+                  as="a"
+                  elementProps={{ href: `mailto:${t('contactEmail')}` }}
+                />
               </div>
               <div className="contact-section__detail">
                 <span className="contact-section__detail-icon" aria-hidden="true">&#9742;</span>
-                <a href={`tel:${t('contactPhone')}`}>{t('contactPhone')}</a>
+                <EditableText
+                  tKey="contactPhone"
+                  as="a"
+                  elementProps={{ href: `tel:${t('contactPhone')}` }}
+                />
               </div>
             </div>
           </FadeInSection>

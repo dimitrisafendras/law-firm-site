@@ -1,7 +1,12 @@
 .auth-nav {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+}
+
+/* ─── Signed out ─────────────────────────────────────────────────────────── */
+
+.auth-nav__signin {
   font-family: var(--sans);
   font-size: 13px;
   letter-spacing: 0.04em;
@@ -11,32 +16,206 @@
   transition: color 0.3s;
 }
 
-.auth-nav:hover,
-.auth-nav:focus-visible {
+.auth-nav__signin:hover,
+.auth-nav__signin:focus-visible {
   color: var(--text);
 }
 
-.auth-nav__name {
-  max-width: 12ch;
-  overflow: hidden;
-  text-overflow: ellipsis;
+/* ─── Avatar ─────────────────────────────────────────────────────────────── */
+
+.auth-nav__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: var(--label);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-h);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
 }
 
-.auth-nav__badge {
+.auth-nav__avatar:hover {
+  border-color: var(--accent-border);
+  transform: translateY(-1px);
+}
+
+.auth-nav__avatar:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+}
+
+/* An admin reads as privileged at a glance, without a text badge crowding
+   the navbar. */
+.auth-nav__avatar--admin {
+  color: var(--accent);
+  border-color: var(--accent-border);
+  box-shadow: 0 0 14px -4px var(--accent);
+}
+
+/* ─── Menu ───────────────────────────────────────────────────────────────── */
+
+.auth-nav__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 200;
+  min-width: 232px;
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 18px 44px -12px rgba(0, 0, 0, 0.65);
+  animation: auth-nav-menu-in 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: top right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-nav__menu {
+    animation: none;
+  }
+}
+
+@keyframes auth-nav-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.auth-nav__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px 8px;
+}
+
+.auth-nav__email {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-h);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+.auth-nav__role {
   font-family: var(--mono);
   font-size: 10px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  color: var(--accent);
+}
+
+.auth-nav__divider {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--glass-border);
+}
+
+.auth-nav__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text);
+  transition: background 0.2s, color 0.2s;
+}
+
+.auth-nav__item:hover,
+.auth-nav__item:focus-visible {
+  outline: none;
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.auth-nav__item--danger:hover,
+.auth-nav__item--danger:focus-visible {
+  background: transparent;
+  color: var(--error);
+}
+
+/* ─── Edit-mode switch ───────────────────────────────────────────────────── */
+
+.auth-nav__item--switch {
+  cursor: pointer;
+}
+
+.auth-nav__switch {
+  flex-shrink: 0;
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--surface-variant);
+  border: 1px solid var(--glass-border);
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.auth-nav__switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--secondary);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), background 0.25s;
+}
+
+.auth-nav__switch.is-on {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+
+.auth-nav__switch.is-on .auth-nav__switch-thumb {
+  background: var(--accent);
+  transform: translateX(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-nav__switch,
+  .auth-nav__switch-thumb {
+    transition: none;
+  }
+}
+
+/* Signed-out: the language control keeps its place beside the sign-in link,
+   since there is no menu to hold it. */
+.auth-nav--anon {
+  gap: 10px;
+}
+
+.auth-nav__lang {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   color: var(--accent);
   border: 1px solid var(--accent-border);
   border-radius: 4px;
-  padding: 1px 6px;
-}
-
-/* The navbar tightens its padding at this width; the auth control keeps its
-   place but sheds the address so the language switcher and CTA still fit. */
-@media (max-width: 640px) {
-  .auth-nav__name {
-    display: none;
-  }
+  padding: 2px 7px;
 }

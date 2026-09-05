@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/Input';
 import { Textarea } from '@/components/Textarea';
 import { Button } from '@/components/Button';
@@ -9,6 +10,7 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ onSubmit }: ContactFormProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -23,38 +25,38 @@ export function ContactForm({ onSubmit }: ContactFormProps) {
     <form className="contact-form" onSubmit={handleSubmit}>
       <div className="contact-form__row">
         <Input
-          label="Full Name"
-          placeholder="John Smith"
+          label={t('contactFormName')}
+          placeholder={t('contactFormNamePlaceholder')}
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <Input
-          label="Email"
+          label={t('contactFormEmail')}
           type="email"
-          placeholder="john@example.com"
+          placeholder={t('contactFormEmailPlaceholder')}
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
       <Input
-        label="Phone"
+        label={t('contactFormPhone')}
         type="tel"
-        placeholder="(555) 123-4567"
+        placeholder={t('contactFormPhonePlaceholder')}
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
       />
       <Textarea
-        label="How can we help?"
-        placeholder="Briefly describe your legal matter..."
+        label={t('contactFormMessage')}
+        placeholder={t('contactFormMessagePlaceholder')}
         required
         rows={5}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
       <Button type="submit" size="lg">
-        Schedule Consultation
+        {t('contactFormSubmit')}
       </Button>
     </form>
   );

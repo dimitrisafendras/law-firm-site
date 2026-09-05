@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import AccountPage from './pages/AccountPage';
+import AdminUsersPage from './pages/AdminUsersPage';
 import './App.css';
 
 // The hash carries anchors (#practice) as well as routes, and an OAuth redirect
@@ -19,6 +20,7 @@ const ROUTES: Record<string, () => ReactElement> = {
   login: LoginPage,
   signup: SignupPage,
   account: AccountPage,
+  'admin-users': AdminUsersPage,
 };
 
 function App() {

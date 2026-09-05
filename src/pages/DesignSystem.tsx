@@ -2,6 +2,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, breakpoints, layout, transitions, colorVarNames } from '../theme';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import { SpawnText } from '../components/animations/SpawnText';
+import { EditableSpawnText } from '../components/animations/EditableSpawnText';
 import {
   Button,
   Container,
@@ -607,7 +608,7 @@ export default function DesignSystem() {
           <EditableText tKey="heroOverline" as="p" />
         </div>
 
-        <div>
+        <div style={{ marginBottom: '32px' }}>
           <h3 style={{ fontFamily: 'var(--mono)', fontSize: '13px', opacity: 0.75, marginBottom: '16px' }}>{t('dsSpawnText')}</h3>
           <p style={{ fontSize: '14px', opacity: 0.75, marginBottom: '16px', maxWidth: '60ch' }}>{t('dsSpawnTextNote')}</p>
           <div style={{ fontFamily: 'var(--heading)', fontSize: '40px', marginBottom: '16px' }}>
@@ -618,6 +619,19 @@ export default function DesignSystem() {
           </div>
           <div style={{ maxWidth: '60ch' }}>
             <SpawnText text={t('heroSubtitle')} mode="word" />
+          </div>
+        </div>
+
+        <div>
+          <h3 style={{ fontFamily: 'var(--mono)', fontSize: '13px', opacity: 0.75, marginBottom: '16px' }}>EditableSpawnText</h3>
+          <p style={{ fontSize: '14px', opacity: 0.75, marginBottom: '16px', maxWidth: '60ch' }}>
+            {t('dsSpawnTextNote')} {t('authAdminHint')}
+          </p>
+          <div style={{ fontFamily: 'var(--heading)', fontSize: '40px', marginBottom: '16px' }}>
+            <EditableSpawnText tKey="heroTitleLine2" gradient as="span" />
+          </div>
+          <div style={{ maxWidth: '60ch' }}>
+            <EditableSpawnText tKey="heroSubtitle" mode="word" as="p" />
           </div>
         </div>
       </section>

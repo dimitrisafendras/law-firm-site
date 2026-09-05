@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dimitrisafendras.github.io/law-firm-site/sitemap.xml

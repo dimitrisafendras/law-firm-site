@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from '@/i18n';
 import { TestimonialCard } from '@/components/TestimonialCard';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
@@ -50,6 +50,29 @@ export function TestimonialsSection() {
     interval: 4000,
   });
 
+  /* Autoplay should run only when the section is on-screen AND not hovered.
+     Both signals feed a single derived pause state so they don't fight the
+     hook's shared pause()/resume(). */
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isOnScreen, setIsOnScreen] = useState(true);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setIsOnScreen(entry.isIntersecting),
+      { threshold: 0 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (isOnScreen && !isHovered) resume();
+    else pause();
+  }, [isOnScreen, isHovered, pause, resume]);
+
   /* Build the tripled slide array: [clone] [real] [clone] */
   const slides = Array.from({ length: totalSlides }, (_, i) => {
     const realIndex = ((i % itemCount) + itemCount) % itemCount;
@@ -57,7 +80,7 @@ export function TestimonialsSection() {
   });
 
   return (
-    <section id="testimonials" className="testimonials-section">
+    <section id="testimonials" className="testimonials-section" ref={sectionRef}>
       <CircuitLines variant="c" />
       <div className="testimonials-section__inner">
         <FadeInSection>
@@ -72,8 +95,8 @@ export function TestimonialsSection() {
         <FadeInSection variant="fade-up">
           <div
             className="testimonials-carousel"
-            onMouseEnter={pause}
-            onMouseLeave={resume}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             role="region"
             aria-roledescription={t('testimonialsCarouselRole')}
             aria-label={t('testimonialsTitle')}

@@ -1,3 +1,7 @@
+import type en from './en';
+
+// Typed against the English locale (source of truth): a missing or extra key,
+// or a non-string value, is a compile error. Keeps the two locales in lockstep.
 const el = {
   // ─── Navbar ──────────────────────────────────────────────────────────────────
   firmName: 'NOMOS',
@@ -317,6 +321,6 @@ const el = {
     'Χωρίζει ένα ήδη μεταφρασμένο κείμενο σε χαρακτήρες ή λέξεις για την είσοδο του hero. Με μειωμένη κίνηση εμφανίζεται ολοκληρωμένο.',
   dsEditableTextNote:
     'Για τους επισκέπτες αποδίδει απλό μεταφρασμένο κείμενο. Σε σύνδεση ως διαχειριστής αποκτά δυνατότητα άμεσης επεξεργασίας και γράφει στον πίνακα site_content.',
-} as const;
+} as const satisfies Record<keyof typeof en, string>;
 
 export default el;

@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
 import {
   RealEstateIcon,
@@ -49,14 +49,19 @@ export function PracticeGrid() {
 
         <StaggerGroup className="practice-bento" interval={0.15}>
           {domains.map(({ key, bg: Bg, num }) => (
-            <FadeInSection key={key} variant="fade-up" className="practice-domain">
-              <Bg className="practice-domain__bg" />
-              <span className="practice-domain__num">{t('practiceDomainNum', { num })}</span>
-              <EditableText tKey={`practice${key}Title`} as="h3" className="practice-domain__title" />
-              <EditableText tKey={`practice${key}Desc`} as="p" className="practice-domain__desc" />
-              <a className="practice-domain__link" href={`#practice-${key.toLowerCase()}`}>
-                {t('practiceExploreDomain')} <span aria-hidden="true">&rarr;</span>
-              </a>
+            // Card lives inside the fade wrapper: .practice-domain declares its
+            // own hover `transition`, which would override .fade-section's
+            // opacity/transform transition if both classes shared one element.
+            <FadeInSection key={key} variant="fade-up">
+              <div className="practice-domain">
+                <Bg className="practice-domain__bg" />
+                <span className="practice-domain__num">{t('practiceDomainNum', { num })}</span>
+                <EditableText tKey={`practice${key}Title`} as="h3" className="practice-domain__title" />
+                <EditableText tKey={`practice${key}Desc`} as="p" className="practice-domain__desc" />
+                <a className="practice-domain__link" href={`#practice-${key.toLowerCase()}`}>
+                  {t('practiceExploreDomain')} <span aria-hidden="true">&rarr;</span>
+                </a>
+              </div>
             </FadeInSection>
           ))}
         </StaggerGroup>

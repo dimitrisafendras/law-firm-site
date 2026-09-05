@@ -45,10 +45,10 @@ function createMediaQueryList(query: string): MediaQueryList {
     removeListener: (listener) => {
       if (listener) listeners.delete(listener as EventListener);
     },
-    addEventListener: (_type, listener) => {
+    addEventListener: (_type: string, listener: EventListenerOrEventListenerObject | null) => {
       if (listener) listeners.add(listener);
     },
-    removeEventListener: (_type, listener) => {
+    removeEventListener: (_type: string, listener: EventListenerOrEventListenerObject | null) => {
       if (listener) listeners.delete(listener);
     },
     dispatchEvent: (event: Event) => {

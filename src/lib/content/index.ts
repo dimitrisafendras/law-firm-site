@@ -1,3 +1,3 @@
 export { ContentProvider } from './ContentProvider';
-export { useContentEditor, applyContentRows, applyContentValue } from './useContentEditor';
-export type { ContentEditorApi, SiteContentRow } from './useContentEditor';
+export { useContentEditor } from './useContentEditor';
+export type { ContentEditorApi } from './useContentEditor';

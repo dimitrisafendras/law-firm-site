@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { JSX } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { Navbar, Footer, Container, Card, CardBody, Button, Heading, Text } from '@/components';
 import { ScaleOfJustice } from '@/assets/illustrations';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
@@ -31,7 +31,7 @@ function toProfileRow(raw: unknown): ProfileRow | null {
 }
 
 export default function AdminUsersPage(): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t, lang } = useTranslation();
   const { user, isAdmin, loading } = useAuth();
 
   const [rows, setRows] = useState<ProfileRow[]>([]);
@@ -103,7 +103,7 @@ export default function AdminUsersPage(): JSX.Element {
 
   const adminCount = rows.filter((row) => row.role === 'admin').length;
 
-  const dateFormatter = new Intl.DateTimeFormat(i18n.language, {
+  const dateFormatter = new Intl.DateTimeFormat(lang, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { useAuth } from '@/lib/auth';
 import { useEditMode } from '@/lib/edit-mode';
 import {

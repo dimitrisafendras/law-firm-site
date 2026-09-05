@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { EditableText } from '@/components';
 import './StatsBar.css';

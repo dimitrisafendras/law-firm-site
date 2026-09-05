@@ -9,7 +9,10 @@
   background: transparent;
   color: var(--text);
   cursor: pointer;
-  transition: all var(--transition, 0.3s);
+  transition:
+    background var(--transition, 0.3s),
+    border-color var(--transition, 0.3s),
+    color var(--transition, 0.3s);
   font-size: 15px;
   line-height: 1;
   padding: 0;

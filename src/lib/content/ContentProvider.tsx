@@ -1,19 +1,18 @@
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
-import { applyContentRows } from './useContentEditor';
-import type { SiteContentRow } from './useContentEditor';
+import { applyOverrideRows, type OverrideRow } from '@/i18n/overrides';
 
 interface ContentProviderProps {
   children: ReactNode;
 }
 
 /**
- * Loads admin-authored overrides from `site_content` and merges them into
- * i18next on top of the static locale files.
+ * Loads admin-authored overrides from `site_content` and layers them over the
+ * static locale files.
  *
  * The fetch is strictly additive: children render immediately and the static
- * locale files stay the fallback, so a slow or failing request only means the
+ * bundles stay the fallback, so a slow or failing request only means the
  * visitor sees the shipped copy — never an error, never a blank screen.
  */
 export function ContentProvider({ children }: ContentProviderProps) {
@@ -25,7 +24,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
         const { data, error } = await supabase
           .from('site_content')
           .select('key, locale, value')
-          .returns<SiteContentRow[]>();
+          .returns<OverrideRow[]>();
 
         if (cancelled) return;
 
@@ -33,7 +32,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
           console.warn('[content] could not load site_content overrides', error);
           return;
         }
-        if (data && data.length > 0) applyContentRows(data);
+        if (data && data.length > 0) applyOverrideRows(data);
       } catch (cause) {
         if (!cancelled) console.warn('[content] could not load site_content overrides', cause);
       }

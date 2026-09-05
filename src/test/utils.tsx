@@ -1,14 +1,16 @@
+/* eslint-disable react-refresh/only-export-components -- test helpers, not a Fast Refresh boundary */
 import { render } from '@testing-library/react';
 import type { RenderOptions, RenderResult } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { UserEvent } from '@testing-library/user-event';
-import { I18nextProvider } from 'react-i18next';
 import { vi } from 'vitest';
 import type { Mock } from 'vitest';
 import type { JSX, ReactElement, ReactNode } from 'react';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 
-import i18n from '@/i18n';
+import { I18nProvider } from '@/i18n/I18nProvider';
+import { STORAGE_KEY as LANG_STORAGE_KEY } from '@/i18n';
+import { resetOverrides } from '@/i18n/overrides';
 import { AuthContext } from '@/lib/auth/useAuth';
 import type { AuthState, Profile } from '@/lib/auth';
 import { EditModeProvider } from '@/lib/edit-mode';
@@ -111,7 +113,7 @@ export function makeAuthState(
   const user = profile === null ? null : makeUser({ id: profile.id, email: profile.email });
   const session = user === null ? null : makeSession({ user });
 
-  return {
+  const base: MockAuthState = {
     session,
     user,
     profile,
@@ -120,8 +122,11 @@ export function makeAuthState(
     // output, not a loading placeholder, unless the test asks for one.
     loading: false,
     ...spies,
-    ...overrides,
   };
+
+  // Object.assign rather than a spread: a spread of Partial<AuthState> widens
+  // the spy properties back to plain functions and loses the Mock types.
+  return Object.assign(base, overrides);
 }
 
 /* ------------------------------------------------------------------ *
@@ -177,17 +182,20 @@ export function renderWithProviders(
   // initialiser, so seeding it afterwards would be a render too late.
   window.localStorage.setItem(EDIT_MODE_STORAGE_KEY, editMode ? 'on' : 'off');
 
-  if (i18n.language !== language) {
-    void i18n.changeLanguage(language);
-  }
+  // I18nProvider reads the language from localStorage via useSyncExternalStore,
+  // so seed it before render rather than switching afterwards.
+  window.localStorage.setItem(LANG_STORAGE_KEY, language);
+  // Copy overrides are module-level state; clear them so one test's saved edit
+  // cannot leak into the next.
+  resetOverrides();
 
   function Providers({ children }: { children: ReactNode }): JSX.Element {
     return (
-      <I18nextProvider i18n={i18n}>
+      <I18nProvider>
         <AuthContext.Provider value={auth}>
           <EditModeProvider>{children}</EditModeProvider>
         </AuthContext.Provider>
-      </I18nextProvider>
+      </I18nProvider>
     );
   }
 
@@ -424,4 +432,3 @@ export { setMatchMedia, triggerIntersection, getIntersectionObservers } from './
 export type { MockIntersectionObserver } from './setup';
 export * from '@testing-library/react';
 export { userEvent };
-export { i18n };

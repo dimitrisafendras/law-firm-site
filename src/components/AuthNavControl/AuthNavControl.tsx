@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { useAuth } from '@/lib/auth';
 import { useEditMode } from '@/lib/edit-mode';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
@@ -21,7 +21,7 @@ function initialsOf(email: string): string {
  * sees a flash of "Sign In".
  */
 export function AuthNavControl() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, setLang } = useTranslation();
   const { loading, user, profile, isAdmin, signOut } = useAuth();
   const { enabled, toggle } = useEditMode();
 
@@ -65,16 +65,9 @@ export function AuthNavControl() {
     );
   }
 
-  const otherLanguage = i18n.language === 'en' ? 'EL' : 'EN';
-  const switchLanguage = () => {
-    const next = i18n.language === 'en' ? 'el' : 'en';
-    void i18n.changeLanguage(next);
-    try {
-      window.localStorage.setItem('lang', next);
-    } catch {
-      // Preference simply does not persist.
-    }
-  };
+  const otherLanguage = lang === 'en' ? 'EL' : 'EN';
+  // setLang persists and syncs <html lang> itself.
+  const switchLanguage = () => setLang(lang === 'en' ? 'el' : 'en');
 
   const email = profile?.email ?? user.email ?? '';
 

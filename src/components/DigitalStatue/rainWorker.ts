@@ -1,4 +1,5 @@
 /// <reference lib="webworker" />
+import { registerEffectWorker } from './effectWorkerHarness';
 
 const CHARS = '01';
 
@@ -16,12 +17,8 @@ function computeAlphas() {
 }
 computeAlphas();
 
-let ctx: OffscreenCanvasRenderingContext2D | null = null;
-let canvas: OffscreenCanvas;
-let cw = 0, ch = 0;
 let endCol = 0, maxRow = 0;
 let drops: { y: number; speed: number; chars: string[] }[] = [];
-let visible = true;
 let spriteSheet: ImageBitmap | null = null;
 
 function initDrops() {
@@ -32,99 +29,83 @@ function initDrops() {
   }));
 }
 
-function draw() {
-  if (!ctx || !visible || cw === 0) return;
-
-  ctx.clearRect(0, 0, cw, ch);
-
-  if (spriteSheet) {
-    // Use sprite sheet (drawImage) — much faster than fillText
-    for (let i = 0; i < endCol; i++) {
-      const drop = drops[i];
-      const x = i * FONT_SIZE;
-
-      for (let j = 0; j < TRAIL; j++) {
-        const yPx = (drop.y - j) * FONT_SIZE;
-        if (yPx < -CELL || yPx > ch) continue;
-
-        const charIdx = drop.chars[j] === '1' ? 1 : 0;
-        ctx.globalAlpha = ALPHAS[j];
-        ctx.drawImage(spriteSheet, charIdx * CELL, j * CELL, CELL, CELL, x, yPx, CELL, CELL);
-      }
-
-      drop.y += drop.speed;
-
-      if (Math.random() > 0.92) {
-        drop.chars[(Math.random() * TRAIL) | 0] = CHARS[(Math.random() * 2) | 0];
-      }
-      if (drop.y - TRAIL > maxRow && Math.random() > 0.97) {
-        drop.y = 0;
-        drop.speed = 0.02 + Math.random() * 0.03;
-      }
-    }
-    ctx.globalAlpha = 1;
-  } else {
-    // Fallback: fillText (slower but works without sprite)
-    ctx.font = `${FONT_SIZE}px monospace`;
-    for (let i = 0; i < endCol; i++) {
-      const drop = drops[i];
-      const x = i * FONT_SIZE;
-
-      for (let j = 0; j < TRAIL; j++) {
-        const yPx = (drop.y - j) * FONT_SIZE;
-        if (yPx < -CELL || yPx > ch) continue;
-
-        const fade = 1 - j / TRAIL;
-        ctx.fillStyle = j === 0
-          ? `rgba(188,232,255,${(0.9 * fade).toFixed(3)})`
-          : `rgba(137,207,240,${(0.7 * fade).toFixed(3)})`;
-        ctx.fillText(drop.chars[j], x, yPx);
-      }
-
-      drop.y += drop.speed;
-
-      if (Math.random() > 0.92) {
-        drop.chars[(Math.random() * TRAIL) | 0] = CHARS[(Math.random() * 2) | 0];
-      }
-      if (drop.y - TRAIL > maxRow && Math.random() > 0.97) {
-        drop.y = 0;
-        drop.speed = 0.02 + Math.random() * 0.03;
-      }
-    }
-  }
-
-  requestAnimationFrame(draw);
+interface RainInit {
+  sprite?: ImageBitmap;
+  fontSize?: number;
+  trail?: number;
 }
 
-self.onmessage = (e: MessageEvent) => {
-  const { type } = e.data;
-
-  if (type === 'init') {
-    canvas = e.data.canvas as OffscreenCanvas;
-    ctx = canvas.getContext('2d');
-    if (e.data.sprite) spriteSheet = e.data.sprite as ImageBitmap;
-    if (e.data.fontSize) { FONT_SIZE = e.data.fontSize; CELL = FONT_SIZE + 2; }
-    if (e.data.trail) { TRAIL = e.data.trail; computeAlphas(); }
-    cw = e.data.width;
-    ch = e.data.height;
-    endCol = Math.floor(cw / FONT_SIZE);
-    maxRow = Math.floor(ch / FONT_SIZE);
+registerEffectWorker<RainInit>({
+  init(data, env) {
+    if (data.sprite) spriteSheet = data.sprite;
+    if (data.fontSize) { FONT_SIZE = data.fontSize; CELL = FONT_SIZE + 2; }
+    if (data.trail) { TRAIL = data.trail; computeAlphas(); }
+    endCol = Math.floor(env.width / FONT_SIZE);
+    maxRow = Math.floor(env.height / FONT_SIZE);
     initDrops();
-    requestAnimationFrame(draw);
-  }
+  },
 
-  if (type === 'resize') {
-    cw = e.data.width;
-    ch = e.data.height;
-    canvas.width = cw;
-    canvas.height = ch;
-    endCol = Math.floor(cw / FONT_SIZE);
-    maxRow = Math.floor(ch / FONT_SIZE);
+  resize(env) {
+    endCol = Math.floor(env.width / FONT_SIZE);
+    maxRow = Math.floor(env.height / FONT_SIZE);
     initDrops();
-  }
+  },
 
-  if (type === 'visibility') {
-    visible = e.data.visible;
-    if (visible) requestAnimationFrame(draw);
-  }
-};
+  draw({ ctx, height: ch }) {
+    if (spriteSheet) {
+      // Use sprite sheet (drawImage) — much faster than fillText
+      for (let i = 0; i < endCol; i++) {
+        const drop = drops[i];
+        const x = i * FONT_SIZE;
+
+        for (let j = 0; j < TRAIL; j++) {
+          const yPx = (drop.y - j) * FONT_SIZE;
+          if (yPx < -CELL || yPx > ch) continue;
+
+          const charIdx = drop.chars[j] === '1' ? 1 : 0;
+          ctx.globalAlpha = ALPHAS[j];
+          ctx.drawImage(spriteSheet, charIdx * CELL, j * CELL, CELL, CELL, x, yPx, CELL, CELL);
+        }
+
+        drop.y += drop.speed;
+
+        if (Math.random() > 0.92) {
+          drop.chars[(Math.random() * TRAIL) | 0] = CHARS[(Math.random() * 2) | 0];
+        }
+        if (drop.y - TRAIL > maxRow && Math.random() > 0.97) {
+          drop.y = 0;
+          drop.speed = 0.02 + Math.random() * 0.03;
+        }
+      }
+      ctx.globalAlpha = 1;
+    } else {
+      // Fallback: fillText (slower but works without sprite)
+      ctx.font = `${FONT_SIZE}px monospace`;
+      for (let i = 0; i < endCol; i++) {
+        const drop = drops[i];
+        const x = i * FONT_SIZE;
+
+        for (let j = 0; j < TRAIL; j++) {
+          const yPx = (drop.y - j) * FONT_SIZE;
+          if (yPx < -CELL || yPx > ch) continue;
+
+          const fade = 1 - j / TRAIL;
+          ctx.fillStyle = j === 0
+            ? `rgba(188,232,255,${(0.9 * fade).toFixed(3)})`
+            : `rgba(137,207,240,${(0.7 * fade).toFixed(3)})`;
+          ctx.fillText(drop.chars[j], x, yPx);
+        }
+
+        drop.y += drop.speed;
+
+        if (Math.random() > 0.92) {
+          drop.chars[(Math.random() * TRAIL) | 0] = CHARS[(Math.random() * 2) | 0];
+        }
+        if (drop.y - TRAIL > maxRow && Math.random() > 0.97) {
+          drop.y = 0;
+          drop.speed = 0.02 + Math.random() * 0.03;
+        }
+      }
+    }
+  },
+});

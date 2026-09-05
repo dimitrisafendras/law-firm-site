@@ -1,5 +1,5 @@
 import type { ElementType } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { useEditMode } from '@/lib/edit-mode';
 import { EditableText } from '@/components/EditableText';
 import { SpawnText, type SpawnMode } from './SpawnText';

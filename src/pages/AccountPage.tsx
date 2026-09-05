@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { JSX } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { Navbar, Footer, Container, Card, CardBody, Button, Heading, Text } from '@/components';
 import { ScaleOfJustice } from '@/assets/illustrations';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';

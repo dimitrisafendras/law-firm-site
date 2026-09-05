@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { Button } from '@/components/Button';
 import { EditableText } from '@/components';
 import { FadeInSection } from '@/components/animations/FadeInSection';

@@ -1,10 +1,13 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import partnerMaleImg from '@/assets/images/partner-male.jpg';
 import partnerFemaleImg from '@/assets/images/partner-female.jpg';
-// PLACEHOLDER: no third headshot exists yet. Reuses partner 1's portrait so
-// the row renders; swap in a real photo of the crypto partner.
-import partnerCryptoImg from '@/assets/images/partner-male.jpg';
+import partnerMaleAvif from '@/assets/images/partner-male.avif';
+import partnerFemaleAvif from '@/assets/images/partner-female.avif';
+// PLACEHOLDER: no third headshot exists yet, and partners.jpg is a two-person
+// group shot. Reuses partner 1's portrait so the row renders; swap in a real
+// photo of the crypto partner.
+const partnerCryptoAvif = partnerMaleAvif;
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import { EditableText } from '@/components';
@@ -31,11 +34,18 @@ export function PartnerEthos() {
           <div className="partner-ethos__row">
             <FadeInSection variant="fade-left" className="partner-ethos__image-col">
               <div className="partner-ethos__image-wrapper">
-                <img
-                  src={partnerMaleImg}
-                  alt={t('attorney1Name')}
-                  className="partner-ethos__image"
-                />
+                <picture>
+                  <source type="image/avif" srcSet={partnerMaleAvif} />
+                  <img
+                    src={partnerMaleImg}
+                    alt={t('attorney1Name')}
+                    className="partner-ethos__image"
+                    width={512}
+                    height={512}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div className="partner-ethos__image-overlay" />
                 <EditableText
                   tKey="attorney1Title"
@@ -92,11 +102,18 @@ export function PartnerEthos() {
 
             <FadeInSection variant="fade-right" className="partner-ethos__image-col">
               <div className="partner-ethos__image-wrapper">
-                <img
-                  src={partnerFemaleImg}
-                  alt={t('attorney2Name')}
-                  className="partner-ethos__image"
-                />
+                <picture>
+                  <source type="image/avif" srcSet={partnerFemaleAvif} />
+                  <img
+                    src={partnerFemaleImg}
+                    alt={t('attorney2Name')}
+                    className="partner-ethos__image"
+                    width={512}
+                    height={512}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div className="partner-ethos__image-overlay" />
                 <EditableText
                   tKey="attorney2Title"
@@ -112,7 +129,7 @@ export function PartnerEthos() {
             <FadeInSection variant="fade-left" className="partner-ethos__image-col">
               <div className="partner-ethos__image-wrapper">
                 <img
-                  src={partnerCryptoImg}
+                  src={partnerCryptoAvif}
                   alt={t('attorney3Name')}
                   className="partner-ethos__image"
                 />

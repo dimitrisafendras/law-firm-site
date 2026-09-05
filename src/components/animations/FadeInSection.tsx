@@ -46,8 +46,10 @@ export function FadeInSection({
   }, [threshold]);
 
   const style: CSSProperties = {
-    '--fade-delay': `${delay + stagger}s`,
     '--fade-duration': `${duration}s`,
+    // Only set the delay inline when explicitly requested — an inline '0s'
+    // would override the .stagger-group nth-child delay rules.
+    ...(delay + stagger > 0 ? { '--fade-delay': `${delay + stagger}s` } : {}),
   } as CSSProperties;
 
   return (

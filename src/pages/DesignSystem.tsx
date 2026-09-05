@@ -1,4 +1,4 @@
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, breakpoints, layout, transitions, colorVarNames } from '../theme';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import { SpawnText } from '../components/animations/SpawnText';
@@ -209,11 +209,11 @@ export default function DesignSystem() {
           <h1 style={{ fontSize: '48px', fontFamily: 'var(--heading)', letterSpacing: '-1.5px', margin: '8px 0 16px' }}>
             {t('designSystemTitle')}
           </h1>
-          <p style={{ fontSize: '18px', maxWidth: '640px', lineHeight: '1.6' }}>
-            <Trans i18nKey="designSystemDescriptionFull">
-              All design tokens and components for the law firm website. Values are defined once in <code>src/theme/tokens.ts</code> and injected as CSS custom properties at runtime.
-            </Trans>
-          </p>
+          {/* Locale value contains trusted inline markup (<code>…</code>). */}
+          <p
+            style={{ fontSize: '18px', maxWidth: '640px', lineHeight: '1.6' }}
+            dangerouslySetInnerHTML={{ __html: t('designSystemDescriptionFull') }}
+          />
         </div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
           <LanguageSwitcher />

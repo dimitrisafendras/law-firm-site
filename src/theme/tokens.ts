@@ -73,9 +73,9 @@ export const colors = {
 // ─── Typography ───────────────────────────────────────────────────────────────
 
 export const fonts = {
-  sans: "'Manrope', sans-serif",
-  heading: "'Newsreader', serif",
-  label: "'Space Grotesk', sans-serif",
+  sans: "'Jura', sans-serif",
+  heading: "'Jura', sans-serif",
+  label: "'Jura', sans-serif",
   mono: 'ui-monospace, Consolas, monospace',
 } as const;
 
@@ -125,6 +125,11 @@ export const radii = {
 } as const;
 
 // ─── Breakpoints ──────────────────────────────────────────────────────────────
+// This is the single source of truth for the mobile breakpoint. JS reads it via
+// this token (e.g. ANIMATION_CONFIG.mobileBreakpoint in DigitalStatue.tsx).
+// CSS `@media (max-width: 1024px)` rules across the stylesheets necessarily
+// hard-code the same 1024px value — CSS media queries can't reference JS/TS
+// tokens — so keep them in sync with this value if it ever changes.
 
 export const breakpoints = {
   mobile: '1024px',

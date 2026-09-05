@@ -1,21 +1,19 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { IconToggle } from '@/components/IconToggle/IconToggle';
 
 export default function LanguageSwitcher() {
-  const { i18n } = useTranslation();
+  const { lang, setLang } = useTranslation();
 
   const toggle = () => {
-    const next = i18n.language === 'en' ? 'el' : 'en';
-    i18n.changeLanguage(next);
-    localStorage.setItem('lang', next);
+    setLang(lang === 'en' ? 'el' : 'en');
   };
 
   return (
     <IconToggle
       onClick={toggle}
-      aria-label={i18n.language === 'en' ? 'EL — Switch to Greek' : 'EN — Switch to English'}
+      aria-label={lang === 'en' ? 'EL — Switch to Greek' : 'EN — Switch to English'}
     >
-      {i18n.language === 'en' ? 'EL' : 'EN'}
+      {lang === 'en' ? 'EL' : 'EN'}
     </IconToggle>
   );
 }

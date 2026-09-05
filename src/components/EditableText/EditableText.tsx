@@ -4,7 +4,7 @@ import type {
   KeyboardEvent as ReactKeyboardEvent,
   MouseEvent as ReactMouseEvent,
 } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { useEditMode } from '@/lib/edit-mode';
 import { useContentEditor } from '@/lib/content/useContentEditor';
 import './EditableText.css';
@@ -38,7 +38,7 @@ function autosize(el: HTMLTextAreaElement): void {
 }
 
 export function EditableText({ tKey, as = 'span', className, elementProps }: EditableTextProps) {
-  const { t, i18n } = useTranslation();
+  const { t, lang } = useTranslation();
   const { canEdit } = useEditMode();
   const { saveOverride, saving } = useContentEditor();
 
@@ -66,7 +66,7 @@ export function EditableText({ tKey, as = 'span', className, elementProps }: Edi
         setEditing(false);
         return;
       }
-      const { error } = await saveOverride(tKey, i18n.language, next);
+      const { error } = await saveOverride(tKey, lang, next);
       if (error) {
         // Keep edit mode open so the typed text is not lost.
         setFailed(true);
@@ -75,7 +75,7 @@ export function EditableText({ tKey, as = 'span', className, elementProps }: Edi
       setFailed(false);
       setEditing(false);
     },
-    [i18n.language, saveOverride, tKey, value],
+    [lang, saveOverride, tKey, value],
   );
 
   const cancel = useCallback(() => {

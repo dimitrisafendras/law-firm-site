@@ -5,6 +5,14 @@
   border-bottom: 1px solid var(--glass-border);
   padding: 48px 48px;
 
+  /* Below-the-fold: let the browser skip layout/paint of this section until it
+     scrolls near the viewport. `contain-intrinsic-size: auto <h>` reserves a
+     realistic height up front (so the scrollbar doesn't jump) and then the
+     `auto` keyword remembers the real measured size after first render — keeping
+     CLS at 0. Height measured from the built page. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;
+
   @media (max-width: 1024px) {
     padding: 48px 24px;
   }

@@ -7,10 +7,14 @@ import type { EditModeState } from './context';
 const STORAGE_KEY = 'law-firm-site:edit-mode';
 
 function readStored(): boolean {
+  // No window during the prerender pass, and blocked site data throws on
+  // access in private windows. Locked is the correct answer in both cases:
+  // prerendered HTML must match the client's first (locked) render, or
+  // hydration would mismatch.
+  if (typeof window === 'undefined') return false;
   try {
     return window.localStorage.getItem(STORAGE_KEY) === 'on';
   } catch {
-    // Private windows and blocked site data throw on access.
     return false;
   }
 }

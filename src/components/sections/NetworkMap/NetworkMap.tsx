@@ -1,7 +1,8 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { EditableText } from '@/components';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
 import worldMapImg from '@/assets/images/world-map.jpg';
+import worldMapAvif from '@/assets/images/world-map.avif';
 import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import './NetworkMap.css';
@@ -49,29 +50,41 @@ export function NetworkMap() {
         <div className="network-map__grid">
           <StaggerGroup className="network-map__cards" interval={0.15}>
             {nodes.map(({ key, code, labelKey, cityKey, items }) => (
-              <FadeInSection key={key} variant="fade-up" className="network-map__card">
-                <span className="network-map__card-code" aria-hidden="true">{code}</span>
-                <EditableText tKey={labelKey} as="span" className="network-map__card-label" />
-                <EditableText tKey={cityKey} as="h3" className="network-map__card-city" />
-                <ul className="network-map__card-list">
-                  {items.map((itemKey) => (
-                    <EditableText key={itemKey} tKey={itemKey} as="li" />
-                  ))}
-                </ul>
-                <a className="network-map__card-link" href="#contact">
-                  {t('networkConnectNode')} <span aria-hidden="true">&rarr;</span>
-                </a>
+              // Card nested inside the fade wrapper: .network-map__card has its
+              // own hover `transition`, which would override the fade's
+              // opacity/transform transition if both classes shared one element.
+              <FadeInSection key={key} variant="fade-up">
+                <div className="network-map__card">
+                  <span className="network-map__card-code" aria-hidden="true">{code}</span>
+                  <EditableText tKey={labelKey} as="span" className="network-map__card-label" />
+                  <EditableText tKey={cityKey} as="h3" className="network-map__card-city" />
+                  <ul className="network-map__card-list">
+                    {items.map((itemKey) => (
+                      <EditableText key={itemKey} tKey={itemKey} as="li" />
+                    ))}
+                  </ul>
+                  <a className="network-map__card-link" href="#contact">
+                    {t('networkConnectNode')} <span aria-hidden="true">&rarr;</span>
+                  </a>
+                </div>
               </FadeInSection>
             ))}
           </StaggerGroup>
 
           <FadeInSection variant="fade-right" delay={0.2} className="network-map__map-col">
             <div className="network-map__map">
-              <img
-                src={worldMapImg}
-                alt=""
-                className="network-map__map-img"
-              />
+              <picture>
+                <source type="image/avif" srcSet={worldMapAvif} />
+                <img
+                  src={worldMapImg}
+                  alt=""
+                  className="network-map__map-img"
+                  width={512}
+                  height={512}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
               <div className="network-map__map-glow" />
               <div className="network-map__pin">
                 <EditableText tKey="networkPinLabel" as="span" className="network-map__pin-label" />

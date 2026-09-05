@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/i18n';
 import { EditableSpawnText } from '@/components/animations/EditableSpawnText';
 import { EditableText } from '@/components';
 import { DigitalStatue } from '@/components/DigitalStatue/DigitalStatue';

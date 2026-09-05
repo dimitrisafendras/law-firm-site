@@ -43,7 +43,7 @@ export default function HomePage() {
         }
       />
 
-      <main>
+      <main className="page-ramp">
         <HeroSection />
         <StatsBar />
         <PracticeGrid />

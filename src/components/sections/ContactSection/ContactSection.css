@@ -6,7 +6,7 @@
    *
    * The section used to carry `padding: var(--space-24) 0 0` — 96px whose only
    * job was to separate the band from the section above it. The viewport does
-   * that job now: the page is a deck, every section is exactly one screen, and
+   * that job now: every section on this page is exactly one screen, and
    * a fixed strip of air at the top of a screen is not separation, it is 96px
    * the composition has to fit around. So the padding goes and the height
    * arrives instead.
@@ -786,7 +786,7 @@
   /*
    * And it closes up a step, --space-6 → --space-4. Scoped here rather than
    * changed in ContactForm.css because the in-app copy of this form is not on a
-   * one-screen deck and has no reason to tighten. A group is a label 4px above
+   * one-screen layout and has no reason to tighten. A group is a label 4px above
    * its field, so 16px between groups still separates them at four times their
    * internal gap.
    */

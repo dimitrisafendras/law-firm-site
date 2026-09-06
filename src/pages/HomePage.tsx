@@ -96,12 +96,11 @@ export default function HomePage() {
         cta={<AuthNavControl />}
       />
 
-      {/* `--deck` is what turns snapping on. It is a class rather than a
-          blanket rule because the snap container has to be the document, and a
-          bare `html { scroll-snap-type }` applies on every page — the detail
-          and auth pages escape today only because their ramp's children are
-          divs rather than sections, which is luck, not design. */}
-      <main className="page-ramp page-ramp--deck">
+      {/* `--screens` gives each section a viewport of its own (App.css). It is
+          a class rather than a rule on `.page-ramp` because every route shares
+          that element, and the detail and auth pages are not built to be read a
+          screen at a time. */}
+      <main className="page-ramp page-ramp--screens">
         <CircuitField />
         <HeroSection />
         <PracticeGrid />

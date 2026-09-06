@@ -82,7 +82,8 @@
  *
  * It used to be a ~250px card centred in a 963px screen with the header far
  * away in the top-left corner and two-thirds of the section empty — a
- * composition that read as unfinished the moment the page became a deck. It now
+ * composition that read as unfinished the moment each section became a screen.
+ * It now
  * fills the height the header leaves, with the quote centred in that space and
  * the transport rail along the bottom edge, so the panel is the section rather
  * than an island in it.
@@ -247,8 +248,8 @@
   /*
    * Sized against the screen, not fixed.
    *
-   * This is a deck: the quote's job is to hold one whole screen, and one screen
-   * is 700px on the smallest display the deck runs on and 1,300px+ on a good
+   * The quote's job is to hold one whole screen, and one screen is 700px on
+   * the smallest display the full-height layout runs on and 1,300px+ on a good
    * monitor. A fixed size cannot serve both — measured at 907px tall, 48px was
    * the largest that fitted and 52px clipped the longest quote by 74px, and at
    * the 700px floor even today's 40px overruns.

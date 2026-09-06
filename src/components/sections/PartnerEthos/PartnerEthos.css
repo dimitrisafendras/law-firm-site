@@ -5,7 +5,7 @@
  * viewport — and the portraits were why: `aspect-ratio: 4 / 5` on a third of a
  * 1,344px column is a 533px photograph before a word of biography is set. An
  * aspect ratio asks the layout for height, which is the one thing a screen in a
- * snap deck has none spare of.
+ * one-screen section has none spare of.
  *
  * So the direction of the sizing is reversed all the way down. The section
  * fills the viewport, the header takes what it needs, the row takes the rest,
@@ -148,8 +148,9 @@
  * The portrait is the card's shock absorber.
  *
  * `aspect-ratio` is kept only where the section is free to be as tall as it
- * likes — below 1024px, where the deck is off and the cards stack. Inside the
- * deck the ratio is dropped and the portrait becomes the one flexible box in
+ * likes — below 1024px, where the section is not held to a screen and the
+ * cards stack. On a screen the ratio is dropped and the portrait becomes the
+ * one flexible box in
  * the card: the name, role and biography take what they need, and the
  * photograph takes everything left over. `object-fit: cover` on the image
  * (below) means that reads as a crop, never as a distortion.

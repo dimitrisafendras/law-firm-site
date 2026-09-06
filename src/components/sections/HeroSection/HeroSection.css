@@ -88,8 +88,17 @@
    * it isn't. The mask covers the ambient canvases (rain, sparkles, flame)
    * too, which is the point — they'd otherwise keep painting past the stone
    * the eye has just watched dissolve.
+   *
+   * The window is narrow and it is measured, not chosen. Scanning per-row
+   * alpha coverage down the decoded bitmap: the figure holds a steady ~0.33 of
+   * the width through the robe, then steps to 0.44 at 89.8% and 0.51 by 91.5%
+   * — that step is the plinth's top edge, and the rows just above it are the
+   * feet and hem. So the fade may not begin before ~91%: an earlier start
+   * dissolves the feet, which reads as the statue being cut off rather than as
+   * ground haze. It has to finish before the last row for the same reason it
+   * exists, so the crop never lands at any visible opacity.
    */
-  mask-image: linear-gradient(180deg, #000 82%, transparent 95%);
+  mask-image: linear-gradient(180deg, #000 92%, transparent 99%);
 
   @media (max-width: 1024px) {
     /* Pushed off the right edge and shortened, so the statue reads as a

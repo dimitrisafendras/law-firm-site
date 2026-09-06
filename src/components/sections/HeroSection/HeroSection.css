@@ -75,31 +75,6 @@
   /* Consumed by DigitalStatue's own entrance animation. */
   --statue-entrance-delay: var(--hero-t-scene);
 
-  /*
-   * The statue artwork is cropped flat at its own last row — measured on the
-   * decoded bitmap, row 1040 of 1041 is still 54% opaque — and this element
-   * puts that row on the hero's bottom edge, which is also where the hero
-   * clips. So the plinth ended in a dead-straight horizontal cut the full
-   * width of the statue, on the same line as the scrim's cut below. The stats
-   * band used to sit on that line and hide both.
-   *
-   * Masking here rather than in DigitalStatue: the component doesn't know it
-   * is standing on a seam, and the same drawing is fine ending square anywhere
-   * it isn't. The mask covers the ambient canvases (rain, sparkles, flame)
-   * too, which is the point — they'd otherwise keep painting past the stone
-   * the eye has just watched dissolve.
-   *
-   * The window is narrow and it is measured, not chosen. Scanning per-row
-   * alpha coverage down the decoded bitmap: the figure holds a steady ~0.33 of
-   * the width through the robe, then steps to 0.44 at 89.8% and 0.51 by 91.5%
-   * — that step is the plinth's top edge, and the rows just above it are the
-   * feet and hem. So the fade may not begin before ~91%: an earlier start
-   * dissolves the feet, which reads as the statue being cut off rather than as
-   * ground haze. It has to finish before the last row for the same reason it
-   * exists, so the crop never lands at any visible opacity.
-   */
-  mask-image: linear-gradient(180deg, #000 92%, transparent 99%);
-
   @media (max-width: 1024px) {
     /* Pushed off the right edge and shortened, so the statue reads as a
        backdrop the copy sits over rather than as a column competing with it
@@ -159,12 +134,19 @@
  * The scrim that holds the headline against the statue — and, since the stats
  * band went, the only hard edge left on the page.
  *
- * It paints `--bg` across the left two thirds for the full height of the hero,
- * and the hero clips at exactly one viewport. That put an opaque near-black
- * band against the page ramp's much lighter value along a dead-straight line at
- * the hero's bottom edge, across two thirds of the width. It was invisible
- * before only because the stats band sat on that line and covered it; with the
- * band gone the seam is the first thing the eye lands on when the hero leaves.
+ * It paints across the left two thirds for the full height of the hero, and the
+ * hero clips at exactly one viewport. That put an opaque band against the page
+ * ramp's much lighter value along a dead-straight line at the hero's bottom
+ * edge, across two thirds of the width. It was invisible before only because
+ * the stats band sat on that line and covered it; with the band gone the seam
+ * is the first thing the eye lands on when the hero leaves.
+ *
+ * The colour is `--hero-deep`, not `--bg`. `--bg` is #111317 — four points of
+ * chroma, dark neutral in practice — so the scrim read as a grey-black wash
+ * over a page that is navy everywhere else, and the phone branch was already
+ * hand-mixing a navy to compensate. `--hero-deep` (#0F1A2E) is the value the
+ * hero's own deep stops are built from and the ramp's darkest end, so the
+ * scrim now deepens the blue instead of desaturating it.
  *
  * The fix is a second axis. The gradient still runs left-to-right for
  * legibility; the mask fades the whole layer out over the bottom quarter, so
@@ -181,13 +163,13 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: linear-gradient(to right, var(--bg) 30%, transparent 65%);
+  background: linear-gradient(to right, var(--hero-deep) 30%, transparent 65%);
   mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
   pointer-events: none;
 
   @media (max-width: 1024px) {
     z-index: 1;
-    background: linear-gradient(to right, var(--bg) 20%, rgba(10, 18, 32, 0.85) 40%, rgba(10, 18, 32, 0.4) 60%, transparent 85%);
+    background: linear-gradient(to right, var(--hero-deep) 20%, color-mix(in srgb, var(--hero-deep) 85%, transparent) 40%, color-mix(in srgb, var(--hero-deep) 40%, transparent) 60%, transparent 85%);
     /* The phone layout stacks the copy down the screen rather than into the
        left third, so the scrim has to hold much further down and the fade is
        correspondingly shorter. */

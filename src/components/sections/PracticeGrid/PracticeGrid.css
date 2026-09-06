@@ -119,7 +119,7 @@
 
 /* The heading goes back to static, so the stretched `::after` on the link
    inside it resolves against the card rather than against two words of title.
-   Same fix, same reason as `.network-map__card > .network-map__card-link`. */
+   Same fix, same reason the contact panel needs for its pin chip. */
 .practice-domain > .practice-domain__title {
   position: static;
 }

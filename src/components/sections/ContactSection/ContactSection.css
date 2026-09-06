@@ -1,15 +1,20 @@
 .contact-section {
   position: relative;
   overflow: hidden;
-  padding: var(--space-24) 0;
+  /* Bottom padding is zero: the band is full-bleed and runs to the footer's
+     edge, the way the network band used to run to the section below it. */
+  padding: var(--space-24) 0 0;
 
-  /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
-     height (self-corrects after first render via the `auto` keyword). */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
+  /*
+   * No `content-visibility: auto`. It was here while this section was type on
+   * the page ramp; the band below now owns an opaque background, and paint
+   * containment on a section that paints its own ground leaves a hole in the
+   * page whenever the section is skipped. Same reason as StatsBar and the
+   * marble plinth.
+   */
 
   @media (max-width: 1024px) {
-    padding: var(--space-16) 0;
+    padding: var(--space-16) 0 0;
   }
 }
 
@@ -23,30 +28,377 @@
   }
 }
 
-.contact-section__grid {
+/* ─── The band ─────────────────────────────────────────────────────────────
+ *
+ * Full-bleed, and it owns an opaque ground — so, like the marble section and
+ * the stats band, neither it nor its section may carry `content-visibility`.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.contact-section__band {
+  /*
+   * The four numbers the map, the pin and the panel are solved against. They
+   * are measurements, not spacing steps, which is why they are raw px rather
+   * than tokens — and they are custom properties rather than literals so the
+   * solves below can be written as arithmetic instead of as pre-multiplied
+   * constants that drift apart the moment one of them changes.
+   *
+   * --pin-y   Where Athens lands, measured from the top of the band.
+   *           Unchanged from the network band this replaces.
+   * --panel-clear
+   *           The strip at the top of the band the panel may not enter. The
+   *           pin's marker and chip occupy down to y = 220, so this is that
+   *           plus 32px of air.
+   * --band-h  The band's *nominal* height: what it is when the panel fits. At
+   *           1440 the panel measures 680px (its taller column is the details
+   *           side, at 584px, plus 2 x var(--space-12) of padding), so
+   *           252 + 680 + 48 = 980.
+   * --map-box-h
+   *           The SVG box's height. See the solve above `.contact-section__map`.
+   *
+   * The band is a `min-height`, not a `height`: between 1025 and 1280 the
+   * details column wraps far enough to push the panel past its 680px, and it
+   * was measured swallowing the pin whole at 1025 (panel top 130, pin bottom
+   * 220) back when the band was pinned to 980 and the panel merely bottom-
+   * aligned inside it. The band grows there instead — which is safe only
+   * because nothing in the map's placement below is expressed against the
+   * band's *actual* height any more.
+   */
+  --pin-y: 145px;
+  --panel-clear: 252px;
+  --band-h: 980px;
+  --map-box-h: 2310px;
+
+  position: relative;
+  margin-top: var(--space-16);
+  overflow: hidden;
+  background-color: var(--grad-4);
+  min-height: var(--band-h);
+
+  @media (max-width: 1024px) {
+    /* Below 1024px the panel goes single-column and is far taller than any
+       clear strip worth reserving, so the map becomes a fixed strip along the
+       top and the panel starts under it — see the overrides further down. */
+    --map-strip: 320px;
+    min-height: 0;
+  }
+}
+
+/* ─── The map ──────────────────────────────────────────────────────────────── */
+
+/*
+ * The crop sits high in the band — and stays there at every viewport width.
+ *
+ * `slice` fills the box and clips the overflow, so anchoring the crop to an
+ * edge makes the framing swing with the viewport: `xMidYMax` held Athens 174px
+ * down the band at 1440 and 0.7px down at 2000, i.e. jammed against the top
+ * edge on a wide screen. The viewBox is therefore centred on Athens and the
+ * crop is `xMidYMid` (see easternMediterranean.ts): the centre of a viewBox is
+ * the one point a symmetric slice leaves alone, so Athens sits at the exact
+ * centre of this box whatever the width. All that is left is to place the box.
+ *
+ * Placing it is then one equation: the box's centre must be --pin-y, so
+ * `top = --pin-y - --map-box-h / 2`. At the values above, top = -910px.
+ *
+ * Note what is *not* in that expression: the band's height. An earlier version
+ * solved the box against `100%` so its bottom edge always met the band's, and
+ * that was the bug — the moment the band grew (which it does between 1025 and
+ * 1280, where the details column wraps) the box grew with it and the centre,
+ * i.e. Athens, slid down away from the pin. A fixed box has a fixed centre. It
+ * costs the map's bottom edge in an overgrown band, and that costs nothing:
+ * `--map-box-h` reaches y = 1300, the band's own `--grad-4` is under it, and
+ * everything below --panel-clear is behind the panel and the scrim anyway.
+ *
+ * The box's height and the viewBox's height move together, and must: the
+ * on-screen scale is `max(boxW / 1140, --map-box-h / vbH)`, so enlarging the
+ * box alone zooms the map in. Enlarging both leaves the scale at 1.342 — the
+ * exact scale the original 620px band rendered at — which is why the visible
+ * framing is unchanged from it. See easternMediterranean.ts.
+ */
+.contact-section__map {
+  position: absolute;
+  top: calc(var(--pin-y) - var(--map-box-h) / 2);
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: var(--map-box-h);
+  pointer-events: none;
+
+  @media (max-width: 1024px) {
+    top: 0;
+    height: var(--map-strip);
+    /* The strip has a bottom edge, and on a phone the panel is narrower than
+       the band, so that edge is visible either side of it — a coastline that
+       stops mid-sea in a straight line. Dissolved rather than drawn. */
+    mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
+  }
+}
+
+/*
+ * Land drawn as a filled shape with a brighter coast, so the sea reads as the
+ * subject rather than as background. The maritime practice is the reason this
+ * map exists; the water should be the thing you see.
+ */
+.contact-section__land {
+  fill: color-mix(in oklab, var(--accent) 12%, transparent);
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-opacity: 0.55;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Holds the panel's copy against the coastline behind it. Sits over the map,
+   under the panel — heaviest at the bottom, where the panel is. */
+.contact-section__band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 15%) 45%, rgb(0 0 0 / 66%) 100%);
+  pointer-events: none;
+}
+
+/* ─── The pin ──────────────────────────────────────────────────────────────
+ *
+ * A real <button>, positioned over the SVG rather than drawn inside it. The
+ * marker's centre — not the button's box — is what has to land on Athens, so
+ * the wrapper is anchored at the point and pulled up by half the marker.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.contact-section__pin {
+  --pin-marker: 28px;
+
+  position: absolute;
+  /*
+   * Above `.contact-section__band-inner`, not merely above the scrim. The
+   * band-inner is a full-height transparent box that reserves the panel's
+   * position, so at equal z-index it wins the hit test on DOM order and the pin
+   * becomes a picture of a button again — measured: `elementFromPoint` at the
+   * marker's own centre returned the band-inner.
+   */
+  z-index: 3;
+  left: 50%;
+  top: var(--pin-y);
+  transform: translate(-50%, calc(var(--pin-marker) / -2));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: max-content;
+  max-width: min(90vw, 34ch);
+
+  @media (max-width: 1024px) {
+    top: calc(var(--map-strip) / 2);
+  }
+}
+
+.contact-section__pin-button {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-3xl);
+}
+
+.contact-section__pin-marker {
+  position: relative;
+  width: var(--pin-marker);
+  height: var(--pin-marker);
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  place-items: center;
+}
+
+.contact-section__pin-halo,
+.contact-section__pin-dot {
+  grid-area: 1 / 1;
+  border-radius: var(--radius-full);
+}
+
+.contact-section__pin-halo {
+  width: var(--pin-marker);
+  height: var(--pin-marker);
+  background: color-mix(in oklab, var(--accent) 18%, transparent);
+  /* One slow pulse on one pin — the only looping animation on the page, and it
+     is doing a job: at this scale the marker is a 9px dot on a 1440px map. */
+  animation: contact-pin-breathe 4s var(--ease-settle) infinite;
+}
+
+.contact-section__pin-dot {
+  width: 9px;
+  height: 9px;
+  background: var(--accent);
+}
+
+@keyframes contact-pin-breathe {
+  0%, 100% { transform: scale(0.72); opacity: 0.55; }
+  50% { transform: scale(1); opacity: 1; }
+}
+
+/* The chip is the control's visible label: the city, then what the click does.
+   `.glass` gives it the same material as the panel below, so the pin reads as
+   part of the same object rather than as a tooltip. */
+.contact-section__pin-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-3xl);
+  text-align: center;
+  transition: box-shadow 0.4s var(--ease-settle);
+}
+
+.contact-section__pin-city {
+  font-family: var(--label);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--text-h);
+}
+
+.contact-section__pin-action {
+  font-family: var(--label);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent);
+  transition: color 0.3s ease;
+}
+
+/* Present for the accessible name and the announcement only.
+   `.contact-section__pin-sr` is a direct child of the chip, which is `.glass`,
+   and `.glass > *` promotes direct children to `position: relative` at the same
+   specificity as this rule — it loses on source order, because liquid-glass.css
+   is imported from main.tsx ahead of every component stylesheet. Verified
+   `position: absolute` in the browser; it would still be hidden either way. */
+.contact-section__pin-sr,
+.contact-section__pin-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (hover: hover) {
+  .contact-section__pin-button:hover .contact-section__pin-chip {
+    box-shadow:
+      var(--elev-overlay),
+      inset 0 0 0 1px var(--accent-border);
+  }
+}
+
+.contact-section__pin-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* The failure state is not decoration: it is the address, selectable, for a
+   visitor whose browser would not take it from us. */
+.contact-section__pin-fallback {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-3xl);
+  font-size: var(--type-caption-size);
+  line-height: var(--type-body-leading);
+  color: var(--text-h);
+  text-align: center;
+  user-select: text;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-section__pin-halo {
+    animation: none;
+  }
+
+  .contact-section__pin-chip,
+  .contact-section__pin-action {
+    transition: none;
+  }
+}
+
+/* ─── The panel ────────────────────────────────────────────────────────────
+ *
+ * Low in the band, so the upper third of the map stays visible and the pin has
+ * somewhere to be.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.contact-section__band-inner {
+  position: relative;
+  z-index: 2;
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  /* Top padding is --panel-clear, not a spacing step: it is what stops the
+     panel rising into the pin when the details column wraps. */
+  padding: var(--panel-clear) var(--space-12) var(--space-12);
+  min-height: var(--band-h);
+  display: flex;
+  align-items: flex-end;
+
+  @media (max-width: 1024px) {
+    min-height: 0;
+    display: block;
+    /* Clear of the map strip, less a small overlap so the panel reads as
+       sitting *on* the map rather than under a picture of one. */
+    padding: calc(var(--map-strip) - var(--space-8)) var(--space-4) var(--space-16);
+  }
+}
+
+.contact-section__band-inner > .fade-section {
+  width: 100%;
+}
+
+.contact-section__panel {
+  width: 100%;
+  padding: var(--space-12);
+  border-radius: var(--radius-3xl);
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   gap: var(--space-16);
   align-items: start;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: var(--space-12);
+    padding: var(--space-8);
   }
 }
 
-/* The only surface in this section: the column opposite is made of fields, so
-   the details panel carries the material for this half of the grid. Surface,
-   edge and elevation come from `.glass`. */
+.contact-section__col-label {
+  display: block;
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent);
+  margin-bottom: var(--space-6);
+}
+
+/* ─── Details ──────────────────────────────────────────────────────────────── */
+
 /*
- * The details are the section's left column, not an object in it. Sized up to
- * h2 so three lines can hold a column that used to be 500px of nothing under a
- * small card.
+ * Set as an address block on a letterhead rather than as a widget. They were a
+ * size larger while they had a 700px column to hold on their own; inside the
+ * panel, opposite a form, that job is gone and the size came back down.
  */
 .contact-section__details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-4);
 }
 
 .contact-section__detail {
@@ -54,15 +406,10 @@
   align-items: baseline;
   gap: var(--space-4);
   font-family: var(--heading);
-  font-size: var(--type-h4-size);
+  font-size: var(--type-body-lg-size);
   font-weight: var(--weight-light);
   line-height: var(--type-h2-leading);
-  letter-spacing: var(--type-h4-tracking);
   color: var(--text-h);
-
-  @media (max-width: 1024px) {
-    font-size: var(--type-body-lg-size);
-  }
 }
 
 .contact-section__detail a {
@@ -81,13 +428,22 @@
   flex-shrink: 0;
 }
 
+.contact-section__office-note {
+  margin: var(--space-6) 0 0;
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-leading);
+  color: var(--text);
+  opacity: var(--text-emphasis-secondary);
+  max-width: 46ch;
+}
+
 /* ─── What to expect ───────────────────────────────────────────────────────── */
 
 .contact-section__promises {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  margin: var(--space-16) 0 0;
+  margin: var(--space-8) 0 0;
   padding-top: var(--space-8);
   border-top: 1px solid var(--glass-edge);
   max-width: 46ch;
@@ -115,4 +471,10 @@
   color: var(--text);
   opacity: var(--text-emphasis-secondary);
   margin: 0;
+}
+
+/* The form fills its half of the panel; its own 640px cap is for the page-ramp
+   layout it also appears in. */
+.contact-section__form .contact-form {
+  max-width: none;
 }

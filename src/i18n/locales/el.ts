@@ -124,33 +124,6 @@ const el = {
   partnerSpecialtiesLabel: 'Εξειδικεύσεις',
   partnerContactCta: 'Ζητήστε συνάντηση',
 
-  // ─── Network / Map ──────────────────────────────────────────────────────────
-  networkOverline: 'Η Εμβέλειά μας',
-  networkTitle: 'Παγκόσμιο Δίκτυο',
-  networkSubtitle: 'Στρατηγική παρουσία σε κρίσιμες δικαιοδοσίες για διασυνοριακή συμβουλευτική.',
-
-  networkAthensLabel: 'Ευρωπαϊκά Κεντρικά',
-  networkAthensCity: 'Αθήνα, GR',
-  networkAthensItem1: 'Ακίνητα & Δίκαιο Startups',
-  networkAthensItem2: 'Κανονιστική Συμμόρφωση ΕΕ',
-  networkAthensItem3: 'Δόμηση Επιχειρηματικών Κεφαλαίων',
-
-  networkPiraeusLabel: 'Ναυτιλιακός Κόμβος',
-  networkPiraeusCity: 'Πειραιάς, GR',
-  networkPiraeusItem1: 'Ναυτικές Διαφορές & Χρηματοδότηση',
-  networkPiraeusItem2: 'Συμμόρφωση Σημαίας',
-  networkPiraeusItem3: 'Συμβουλευτική Ναυτιλιακού Διαδρόμου',
-
-  networkDigitalLabel: 'Ψηφιακή Δικαιοδοσία',
-  networkDigitalCity: 'Αποκεντρωμένο',
-  networkDigitalItem1: 'Ρύθμιση Κρυπτονομισμάτων',
-  networkDigitalItem2: 'Συμμόρφωση Πρωτοκόλλων DeFi',
-  networkDigitalItem3: 'Δομές Διακυβέρνησης DAO',
-
-  networkConnectNode: 'Σύνδεση Κόμβου',
-  // Caption on the map pin.
-  networkPinLabel: 'Αθήνα',
-
   // ─── Stats ───────────────────────────────────────────────────────────────────
   statClients: 'Πελάτες',
   statTransactions: 'Σε Συναλλαγές',
@@ -217,11 +190,32 @@ const el = {
 
   // ─── Contact ─────────────────────────────────────────────────────────────────
   contactOverline: 'Επικοινωνία',
-  contactTitle: 'Επικοινωνήστε',
+  // Kept short on purpose: SectionHeader splits its <h2> per character for the
+  // spawn animation, so a title wider than the heading column breaks mid-word.
+  // 'Θα μας Βρείτε στην Αθήνα' did exactly that — "Αθή / να".
+  contactTitle: 'Βρείτε μας στην Αθήνα',
   contactSubtitle:
-    'Συμφωνία, εγχείρημα ή κανονιστική πλοήγηση \u2014 είμαστε έτοιμοι.',
+    'Ένα γραφείο στη Βασιλίσσης Σοφίας, με τη ναυτιλιακή πλευρά λίγο πιο κάτω, στον Πειραιά \u2014 αρκετά κοντά ώστε να είναι η ίδια πινέζα σε αυτόν τον χάρτη. Πείτε μας ποια είναι η υπόθεση· θα σας πούμε αν είναι δική μας.',
   contactAddress: 'Λεωφ. Βασιλίσσης Σοφίας 12, Αθήνα 10674, Ελλάδα',
   contactEmail: 'info@vkm.legal',
+
+  // Column headings inside the glass panel over the map.
+  contactDetailsLabel: 'Απευθείας επικοινωνία',
+  contactFormLabel: 'Στείλτε μήνυμα',
+
+  // The one fact worth keeping from the three node cards the map used to carry.
+  contactOfficeNote:
+    'Οι υποθέσεις ακινήτων και επιχειρηματικών κεφαλαίων τρέχουν από το γραφείο της Αθήνας· οι ναυτιλιακές και οι ψηφιακές από τον Πειραιά, δέκα χιλιόμετρα πιο κάτω στην ίδια ακτή.',
+
+  // The map pin, which is a copy-to-clipboard button.
+  contactPinLabel: 'Αθήνα',
+  contactPinCopy: 'Αντιγραφή διεύθυνσης',
+  contactPinCopied: 'Η διεύθυνση αντιγράφηκε',
+  contactPinFailed: 'Η αντιγραφή απέτυχε',
+  contactPinCopiedAnnounce: 'Η διεύθυνση του γραφείου αντιγράφηκε στο πρόχειρο.',
+  contactPinFailedAnnounce:
+    'Δεν ήταν δυνατή η αντιγραφή στο πρόχειρο. Η διεύθυνση είναι {{address}} και εμφανίζεται τώρα κάτω από την πινέζα.',
+
   contactPromise1Label: 'Χρόνος απόκρισης',
   contactPromise1Value: 'Απαντάμε σε κάθε αίτημα εντός μίας εργάσιμης ημέρας.',
   contactPromise2Label: 'Η πρώτη συζήτηση',
@@ -376,9 +370,8 @@ const el = {
   // ─── Section chapter labels ──────────────────────────────────────────────────
   chapterExpertise: 'Κεφάλαιο 01 / Εξειδίκευση',
   chapterTeam: 'Κεφάλαιο 02 / Ομάδα',
-  chapterNetwork: 'Κεφάλαιο 03 / Δίκτυο',
-  chapterTestimonials: 'Κεφάλαιο 04 / Μαρτυρίες',
-  chapterContact: 'Κεφάλαιο 05 / Επικοινωνία',
+  chapterTestimonials: 'Κεφάλαιο 03 / Μαρτυρίες',
+  chapterContact: 'Κεφάλαιο 04 / Επικοινωνία',
 
   // ─── Design System showcase labels ───────────────────────────────────────────
   dsAuthComponents: 'Ταυτοποίηση & Επεξεργασία Κειμένου',

@@ -43,7 +43,7 @@ export interface CardProps extends HTMLAttributes<HTMLElement> {
  *     material's two light layers stay underneath the copy. Cards whose whole
  *     surface is one stretched link work around that promotion in their own CSS
  *     (PartnerCard moves its content into a single positioned `__body`;
- *     NetworkMap and PracticeGrid put the promoted child back to
+ *     PracticeGrid puts the promoted child back to
  *     `position: static`). Insert a wrapper here and every one of those click
  *     targets silently shrinks to the heading it stretches from.
  *  2. `.glass` spends both `::before` and `::after` on the material, so call

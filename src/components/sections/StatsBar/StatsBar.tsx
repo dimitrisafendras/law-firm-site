@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '@/i18n';
 import { FadeInSection } from '@/components/animations/FadeInSection';
-import { EditableText } from '@/components';
+import { Card, EditableText } from '@/components';
 import './StatsBar.css';
 
 function useCountUp(target: number, duration = 2000, trigger: boolean) {
@@ -64,7 +64,7 @@ function StatItem({ valueKey, labelKey, trigger, step }: StatItemProps) {
 }
 
 export function StatsBar() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -91,12 +91,12 @@ export function StatsBar() {
   ];
 
   return (
-    <div className="stats-bar glass" ref={ref}>
+    <Card className="stats-bar" ref={ref}>
       <div className="stats-bar__inner">
         {stats.map((s, i) => (
           <StatItem key={s.labelKey} valueKey={s.valueKey} labelKey={s.labelKey} trigger={visible} step={i} />
         ))}
       </div>
-    </div>
+    </Card>
   );
 }

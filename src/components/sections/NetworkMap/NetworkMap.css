@@ -305,6 +305,8 @@
  *
  * `.glass` in the selector only to out-specify `.glass::before` (0,1,0) without
  * depending on stylesheet order — see the note at the top of liquid-glass.css.
+ * `<Card>` renders this `<div>` itself rather than wrapping it, so both rules
+ * below still address the card's own direct children.
  */
 .network-map__card.glass::before {
   z-index: -1;

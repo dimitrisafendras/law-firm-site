@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { JSX } from 'react';
 import { useTranslation } from '@/i18n';
-import { Navbar, Footer, Container, EditableText, AuthNavControl } from '@/components';
+import { Navbar, Footer, Container, Card, EditableText, AuthNavControl } from '@/components';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '@/components/CircuitField/CircuitField';
 import type { PracticeArea } from '@/components/sections/PracticeGrid/practiceAreas';
@@ -74,10 +74,10 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
             {/* The card's own illustration, at the size it was drawn for. On the
                 card it is a masked corner engraving behind body copy; here it
                 has a panel to itself, so it reads as the domain's mark. */}
-            <figure className="practice-page__art glass" aria-hidden="true">
+            <Card as="figure" className="practice-page__art" aria-hidden="true">
               <Bg className="practice-page__art-drawing" />
               <Icon className="practice-page__art-mark" />
-            </figure>
+            </Card>
 
             <div className="practice-page__intro">
               <span className="practice-page__overline">
@@ -94,7 +94,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
           </div>
 
           <div className="practice-page__panels">
-            <section className="practice-page__panel glass" aria-labelledby={`practice-overview-${slug}`}>
+            <Card as="section" className="practice-page__panel" aria-labelledby={`practice-overview-${slug}`}>
               <h2 className="practice-page__panel-title" id={`practice-overview-${slug}`}>
                 {t('practiceOverviewLabel')}
               </h2>
@@ -103,9 +103,9 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
                 as="p"
                 className="practice-page__detail"
               />
-            </section>
+            </Card>
 
-            <section className="practice-page__panel glass" aria-labelledby={`practice-services-${slug}`}>
+            <Card as="section" className="practice-page__panel" aria-labelledby={`practice-services-${slug}`}>
               <h2 className="practice-page__panel-title" id={`practice-services-${slug}`}>
                 {t('practiceServicesLabel')}
               </h2>
@@ -116,7 +116,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
                   </li>
                 ))}
               </ul>
-            </section>
+            </Card>
           </div>
         </Container>
       </main>

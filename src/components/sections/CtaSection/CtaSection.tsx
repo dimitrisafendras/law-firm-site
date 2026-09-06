@@ -1,6 +1,6 @@
 import { useTranslation } from '@/i18n';
 import { Button } from '@/components/Button';
-import { EditableText } from '@/components';
+import { Card, EditableText } from '@/components';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { DigitalAcropolis } from '@/assets/illustrations';
 import './CtaSection.css';
@@ -12,7 +12,7 @@ export function CtaSection() {
     <section className="cta-section">
       <div className="cta-section__inner">
         <FadeInSection>
-          <div className="cta-section__card glass">
+          <Card className="cta-section__card">
             <div className="cta-section__glow" />
             <DigitalAcropolis className="cta-section__illustration" />
             <div className="cta-section__content">
@@ -25,7 +25,7 @@ export function CtaSection() {
                 {t('ctaButton')}
               </Button>
             </div>
-          </div>
+          </Card>
         </FadeInSection>
       </div>
     </section>

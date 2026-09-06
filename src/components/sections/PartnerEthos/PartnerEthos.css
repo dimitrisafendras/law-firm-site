@@ -60,11 +60,16 @@
  * The card's single child, and the reason the whole surface can be one link.
  *
  * A stretched `::after` needs a containing block that covers the card. `.glass`
- * sets `position: relative` on every *direct* child (so the material's own
+ * — which `<Card>` puts on the `<article>` itself, without a wrapper of its own
+ * — sets `position: relative` on every *direct* child (so the material's own
  * light layers stay underneath them), which would have made the `<h3>` the
  * anchor's containing block and shrunk the click target to the name. One
  * positioned wrapper takes that treatment instead, fills the card, and leaves
  * everything inside it static — so `inset: 0` on the link resolves to the card.
+ *
+ * This is why `Card` renders the element you ask for and nothing else: a
+ * content wrapper inside the component would become the containing block and
+ * this target would shrink back to the name with no other visible symptom.
  */
 .partner-ethos__body {
   display: flex;

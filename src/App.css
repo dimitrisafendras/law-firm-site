@@ -9,10 +9,8 @@
   color: inherit;
 }
 
-/* Height-driven: the wordmark's viewBox is cropped to the drawing, so width
-   follows from the aspect ratio and the mark fills the box it is given. */
 .firm-logo__mark {
-  height: 26px;
+  height: 34px;
   width: auto;
   display: block;
 }
@@ -43,9 +41,9 @@
   gap: 10px;
 }
 
-/* The footer has more room than the bar, so the same monogram sits larger. */
+/* The footer has more room than the bar. */
 .footer-brand__mark {
-  height: 34px;
+  height: 42px;
   width: auto;
   display: block;
 }

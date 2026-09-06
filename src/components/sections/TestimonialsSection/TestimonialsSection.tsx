@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '@/i18n';
-import { EditableText } from '@/components';
+import { Card, EditableText } from '@/components';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import { useCarousel } from './useCarousel';
@@ -113,8 +113,8 @@ export function TestimonialsSection() {
         </FadeInSection>
 
         <FadeInSection>
-          <div
-            className="testimonials-stage glass"
+          <Card
+            className="testimonials-stage"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             role="region"
@@ -240,7 +240,7 @@ export function TestimonialsSection() {
                 ))}
               </div>
             </div>
-          </div>
+          </Card>
         </FadeInSection>
       </div>
     </section>

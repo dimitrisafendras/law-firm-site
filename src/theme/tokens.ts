@@ -526,40 +526,50 @@ export const decor = {
 /*
  * Brand — VKM Legal.
  *
- * Taken from the supplied wordmark (vkm-23-keyline-interlock.svg), which is
- * built for print: navy and sky letters carrying a white keyline, on white.
+ * These are the supplied artwork's own values (see src/assets/brand/), and the
+ * mark renders with them unchanged: navy and sky letters carrying a white
+ * keyline. Nothing here is a dark-ground reinterpretation — an earlier revision
+ * lifted the navy and inverted the keyline to a dark rule, which quietly made
+ * the site's logo a different logo from the client's.
  *
- * `navy` is therefore unusable as a letter fill here — #002B49 on this site's
- * #0F1A2E ground measures about 1.3:1, which is not a colour, it is a hole.
- * What survives the move to a dark ground is the *construction*: two weights of
- * blue with the middle letter picked out, and a keyline holding the glyphs
- * apart. So `navyOnDark` is the same hue lifted to carry on the ramp, `sky` is
- * kept exactly as drawn because it already works, and the keyline inverts from
- * white to a dark rule that reads as the interlock rather than as an outline.
- *
- * The print values are kept under their own names so the original artwork can
- * still be reproduced (a light-background export, a letterhead) without
- * re-deriving them from the SVG.
+ * The artwork is built for white, so `plate` is what reconciles it with a
+ * #0F1A2E page: the mark carries its own light ground rather than being
+ * repainted for a dark one. #002B49 on #0F1A2E measures about 1.3:1 — a hole
+ * where two thirds of the word should be — and on `plate` it measures 15.5:1.
+ * `plate` is the same white as `keyline` on purpose: on paper the keyline is
+ * the paper showing between interlocking glyphs, and it can only read that way
+ * if the two match.
  */
 export const brand = {
-  /** As drawn, for light grounds. */
+  /** Letter fill for V and M, as drawn. */
   navy: '#002B49',
-  /** As drawn — already legible on the dark ramp, so it moves across unchanged. */
+  /** Letter fill for K — the middle letter picked out, as drawn. */
   sky: '#89CFF0',
   /** The wordmark's LEGAL rule. */
   teal: '#1A6B8A',
-  /** The letter fill actually used on this site's dark ground. */
+  /**
+   * The navy carried up until it reads on this site's dark ramp.
+   *
+   * `navy` as drawn measures about 1.3:1 against #0F1A2E, so with the artwork's
+   * white keyline removed the V and M disappeared entirely. Same hue, lifted
+   * until it holds. `navy` above is still the drawn value, for white grounds.
+   */
   navyOnDark: '#7FA8CC',
-  /** The keyline, inverted for a dark ground. */
-  keyline: '#0B1524',
+  /** The keyline behind each glyph, as drawn. Kept as a record of the artwork;
+      the on-screen mark does not use it — three white outlines at this size ran
+      together and read as a smudge. */
+  keyline: '#FFFFFF',
+  /** The light ground the mark carries with it onto a dark page. */
+  plate: '#FFFFFF',
 } as const;
 
 export const brandVarNames: Record<string, string> = {
   navy: '--brand-navy',
   sky: '--brand-sky',
-  teal: '--brand-teal',
   navyOnDark: '--brand-navy-on-dark',
+  teal: '--brand-teal',
   keyline: '--brand-keyline',
+  plate: '--brand-plate',
 };
 
 export const decorVarNames: Record<string, string> = {

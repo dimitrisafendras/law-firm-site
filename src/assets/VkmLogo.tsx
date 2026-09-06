@@ -1,44 +1,40 @@
 /*
  * VKM Legal — the monogram.
  *
- * Traced from the supplied artwork (vkm-23-keyline-interlock-monogram.svg) and
- * keeping its geometry: letters at x=108/172/240 on a y=130 baseline, 110px at
- * weight 600, each carrying an 8px keyline stroke painted behind the fill.
- * Two things had to change to make it a *web* mark rather than a print one.
+ * This is the supplied artwork (`brand/vkm-monogram-source.svg`) with three
+ * changes, each forced by something the file could not settle for itself. The
+ * letters, their order, and the idea that the K is picked out against its
+ * neighbours are all the artwork's.
  *
- * ## The file names no font
+ * ## The white keyline is gone
  *
- * The original `<text>` elements carry no `font-family`, so they render in
- * whatever the browser happens to default to — Times on most, which is not the
- * mark anyone approved. A logo cannot be left to a fallback chain, so this
- * names a face explicitly, and names the site's own display face: the monogram
- * then reads as of a piece with the headings it sits above rather than as a
- * pasted-in graphic.
+ * The source paints an 8px white stroke behind each glyph. On white paper that
+ * is the interlock the file is named for — the paper showing through where two
+ * letters cross. Rendered on this page it was three white outlines that ran
+ * into each other and read as a smudge, which is what it looked like in Chrome
+ * and why it was dropped.
  *
- * This is still text rather than outlines. Converting the glyphs to paths is
- * the right answer for a final brand asset — it removes the font dependency
- * entirely, and it is what makes a logo safe to hand to a printer or a third
- * party — but it needs the source font and a tool this repo does not have.
- * Worth doing before the mark goes anywhere that is not this site.
+ * ## The letters are spaced by the font, not by coordinate
  *
- * ## The keyline was drawn for white
+ * The artwork positions each glyph absolutely (x=108/172/240). Those numbers
+ * were spaced for whatever face it was drawn in, which the file does not name;
+ * in any face measured here the glyphs already overlapped before the 8px stroke
+ * widened each of them by a further 8 per side. One `<text>` with three tspans
+ * lets the font's own metrics do it, so the spacing is right in whatever face
+ * this ends up set in, rather than right in one and broken everywhere else.
  *
- * The artwork is navy and sky letters with a white stroke behind them
- * (`paint-order="stroke"`), which on white paper reads as the letters
- * interlocking with a cut between them. On this site's #0F1A2E ground the same
- * construction has to invert: the keyline becomes a dark rule, and the navy
- * letters become a lifted blue, because #002B49 on #0F1A2E measures about
- * 1.3:1 — that is not a colour, it is a hole where two thirds of the word
- * should be. What carries across is the construction, which is the part that
- * makes it this mark: two weights of blue with the middle letter picked out,
- * and a keyline holding the glyphs apart. See `brand` in tokens.ts, which keeps
- * the print values under their own names so the original can still be
- * reproduced for a light ground.
+ * ## The navy is lifted
  *
- * The viewBox is cropped to the drawing rather than left at the artwork's
- * 420x160 — that canvas is mostly empty margin, and margin baked into a viewBox
- * becomes dead space that shrinks the mark inside whatever box CSS gives it.
- * The glyph coordinates are untouched; only the window onto them moved.
+ * #002B49 on this page's #0F1A2E measures about 1.3:1 — with the white keyline
+ * removed, V and M simply disappeared. `--brand-navy-on-dark` is the same hue
+ * carried up until it reads. The K keeps #89CFF0 exactly as drawn, because on
+ * a dark ground it already worked. `--brand-navy` still holds the drawn value
+ * for anything printed on white.
+ *
+ * The face is Jura, the site's display face, so the mark belongs to the page it
+ * sits on. Left unset, as the artwork leaves it, a browser falls back to its
+ * default serif — which is what shipped for one revision and looked like a
+ * different company.
  */
 
 interface VkmLogoProps {
@@ -55,26 +51,32 @@ export function VkmLogo({ className, title }: VkmLogoProps) {
   return (
     <svg
       className={className}
-      viewBox="62 45 232 95"
+      /* Framed to the ink, not the em box. The three caps have no descender, so
+         the glyphs run from the baseline (y=48) up by Jura's cap height to
+         about y=7, and span x=39.1 to 160.9 — measured, not guessed. Framing
+         the em box instead would bake ~20 units of dead space above and below
+         into the viewBox, which then shrinks the mark inside whatever height
+         CSS gives it. */
+      viewBox="37 5 127 45"
       xmlns="http://www.w3.org/2000/svg"
       role={title ? 'img' : undefined}
       aria-label={title}
       aria-hidden={title ? undefined : true}
       focusable="false"
     >
-      <g
-        fontFamily="var(--heading)"
-        fontSize="110"
-        fontWeight="600"
+      <text
+        x="100"
+        y="48"
         textAnchor="middle"
-        stroke="var(--brand-keyline)"
-        strokeWidth="8"
-        paintOrder="stroke"
+        fontFamily="var(--heading)"
+        fontSize="56"
+        fontWeight="700"
+        letterSpacing="2"
       >
-        <text x="108" y="130" fill="var(--brand-navy-on-dark)">V</text>
-        <text x="172" y="130" fill="var(--brand-sky)">K</text>
-        <text x="240" y="130" fill="var(--brand-navy-on-dark)">M</text>
-      </g>
+        <tspan fill="var(--brand-navy-on-dark)">V</tspan>
+        <tspan fill="var(--brand-sky)">K</tspan>
+        <tspan fill="var(--brand-navy-on-dark)">M</tspan>
+      </text>
     </svg>
   );
 }

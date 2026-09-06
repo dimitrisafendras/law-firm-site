@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { JSX } from 'react';
 import { useTranslation } from '@/i18n';
-import { Navbar, Footer, Container, EditableText, AuthNavControl } from '@/components';
+import { Navbar, Footer, Container, Card, EditableText, AuthNavControl } from '@/components';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '@/components/CircuitField/CircuitField';
 import type { Partner } from '@/components/sections/PartnerEthos/partners';
@@ -72,7 +72,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
           </a>
 
           <div className="partner-page__masthead">
-            <figure className="partner-page__portrait glass">
+            <Card as="figure" className="partner-page__portrait">
               <picture>
                 <source type="image/avif" srcSet={avif} />
                 <img
@@ -84,7 +84,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
                   decoding="async"
                 />
               </picture>
-            </figure>
+            </Card>
 
             <div className="partner-page__intro">
               <EditableText
@@ -133,15 +133,16 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
           </div>
 
           <div className="partner-page__panels">
-            <section className="partner-page__panel glass" aria-labelledby={`partner-about-${n}`}>
+            <Card as="section" className="partner-page__panel" aria-labelledby={`partner-about-${n}`}>
               <h2 className="partner-page__panel-title" id={`partner-about-${n}`}>
                 {t('partnerAboutLabel')}
               </h2>
               <EditableText tKey={`attorney${n}Bio`} as="p" className="partner-page__bio" />
-            </section>
+            </Card>
 
-            <section
-              className="partner-page__panel glass"
+            <Card
+              as="section"
+              className="partner-page__panel"
               aria-labelledby={`partner-specialties-${n}`}
             >
               <h2 className="partner-page__panel-title" id={`partner-specialties-${n}`}>
@@ -154,7 +155,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
                   </li>
                 ))}
               </ul>
-            </section>
+            </Card>
           </div>
         </Container>
       </main>

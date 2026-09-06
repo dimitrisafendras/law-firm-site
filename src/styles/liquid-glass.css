@@ -253,6 +253,29 @@
   opacity: 0.9;
 }
 
+/* Clear — the pseudo-element form of `.ds-glass[data-variant='clear']` above,
+   selected by the same attribute so markup can carry either implementation
+   without changing. Every value is an override of the property the `.glass`
+   rule already reads, so the variant needs no second material declaration: the
+   blur and saturation feed the existing `backdrop-filter`, the tint feeds
+   `--glass-surface-tint`, and the highlight, edge and glow feed `::after`,
+   the inset rim and `::before` respectively.
+
+   The literals are the same four alphas the component form uses twenty lines
+   up. They stay in this file — the material sheet is where the two forms of one
+   material are kept in step, and none of them is a value the theme tokenises.
+
+   The reduced-transparency fallback still wins: `.glass.glass.glass` is (0,3,0)
+   against this rule's (0,1,1), so a clear surface goes opaque with the rest. */
+.glass[data-variant='clear'] {
+  --glass-surface-tint: var(--glass-tint-clear);
+  --glass-blur: 14px;
+  --glass-saturate: 150%;
+  --glass-highlight: rgba(255, 255, 255, 0.18);
+  --glass-edge: rgba(255, 255, 255, 0.1);
+  --glass-glow: rgba(188, 232, 255, 0.1);
+}
+
 /* The surface's own children must ride above both layers. Scoped to direct
    children so a card's inner absolutely-positioned decorations keep their own
    stacking. */

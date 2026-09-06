@@ -24,9 +24,14 @@
   }
 }
 
-/* Surface, edge and elevation come from `.glass`; this rule owns only the
-   card's shape and box. */
-.cta-section__card {
+/* Surface, edge and elevation come from `<Card>`; this rule owns only the
+   card's shape and box.
+
+   `.card` in the selector, giving (0,2,0), for `text-align` alone: `.card`
+   itself sets `text-align: left`, and at equal specificity the winner would be
+   whichever stylesheet the bundler emits last. This card is the one centred
+   glass surface on the site, so it has to say so louder than the default. */
+.cta-section__card.card {
   overflow: hidden;
   padding: var(--space-20);
   text-align: center;

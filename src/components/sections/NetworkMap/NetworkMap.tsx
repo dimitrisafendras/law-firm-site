@@ -1,6 +1,6 @@
 import { useTranslation } from '@/i18n';
 import { useEditMode } from '@/lib/edit-mode';
-import { EditableText } from '@/components';
+import { Card, EditableText } from '@/components';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import { EAST_MED_LAND, EAST_MED_VIEWBOX, ATHENS_PIRAEUS } from '@/assets/easternMediterranean';
@@ -96,10 +96,21 @@ export function NetworkMap() {
               // Card nested inside the fade wrapper: .network-map__card has its
               // own hover `transition`, which would override the wrapper's
               // entrance animation if both lived on one element.
+              //
+              // Deliberately NOT `variant="clear"`, despite this markup having
+              // carried `data-variant="clear"` since the material was vendored.
+              // `.glass` had no clear rule to answer it, so these cards have
+              // always rendered as the regular material; a rule exists now, and
+              // turning it on here measured worse. The clear tint composites to
+              // 1.17:1 against the map band behind it versus 1.39:1 for the
+              // default — and 1.39 is not an accident, it is where the tint was
+              // deliberately raised to when these cards were reported as hard
+              // to tell apart from their background. Thinner glass over a map
+              // is the right instinct and the wrong trade here.
               <FadeInSection key={key}>
-                <div
-                  className="network-map__card glass glass--interactive"
-                  data-variant="clear"
+                <Card
+                  interactive
+                  className="network-map__card"
                   data-editing={canEdit ? '' : undefined}
                 >
                   <span className="network-map__card-code" aria-hidden="true">{code}</span>
@@ -124,7 +135,7 @@ export function NetworkMap() {
                   >
                     {t('networkConnectNode')} <span aria-hidden="true">&rarr;</span>
                   </a>
-                </div>
+                </Card>
               </FadeInSection>
             ))}
           </StaggerGroup>

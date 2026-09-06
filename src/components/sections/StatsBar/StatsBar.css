@@ -30,6 +30,11 @@
  * Square the material's own corners and drop its floating shadow: both belong
  * to a panel that sits above the page, and this band sits *in* it. The inset
  * rim survives as the hairline that draws the seam.
+ *
+ * Two classes deliberately, giving (0,2,0): `<Card>` supplies both `.card`
+ * (which defaults the radius to `--radius-3xl`) and `.glass` (which supplies
+ * the elevation), and a single-class rule would tie the outcome to which
+ * stylesheet the bundler happens to emit last.
  */
 .stats-bar.glass {
   border-radius: 0;

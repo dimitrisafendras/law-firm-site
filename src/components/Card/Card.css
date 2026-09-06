@@ -1,6 +1,12 @@
 /* The material (background, blur, edge, elevation, light layers) comes from
    `.glass` in src/styles/liquid-glass.css — Card.tsx puts that class on the
-   surface. What is left here is the card's own shape, padding and states. */
+   surface. What is left here is the card's own shape, padding and states.
+
+   `variant="clear"` is not here either: it is a variant of the *material*, so
+   it lives beside its component-form twin as `.glass[data-variant='clear']` in
+   liquid-glass.css and Card.tsx selects it with the attribute. `strong` and
+   `glow` are chrome this card adds on top of the regular material, which is why
+   those two are modifier classes and stay below. */
 
 .card {
   border-radius: var(--radius-3xl);
@@ -47,7 +53,12 @@
   }
 }
 
-/* Only cards with links/actions lens on hover. */
+/* The built-in card hover, opted into with `clickable`. A card that brings its
+   own hover choreography (the partner and domain cards each lift 6px, take an
+   accent rim and move their artwork) asks for `interactive` instead, which adds
+   only the material's `.glass--interactive` lensing — otherwise this rule's
+   2px lift and its box-shadow would land at the same specificity as theirs and
+   the winner would be decided by stylesheet order. */
 .card--clickable {
   cursor: pointer;
   transition:

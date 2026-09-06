@@ -1,23 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
   <!--
-    VKM monogram (mirrors VkmMark in src/assets/VkmLogo.tsx).
+    VKM monogram, matching src/assets/VkmLogo.tsx.
 
-    Literal values, not var(--brand-*): a favicon is fetched as a standalone
-    document, so it never sees the app's stylesheet and any custom property
-    would resolve to nothing. These are the same values tokens.ts holds — if the
-    brand colours move there, they have to be copied here by hand.
+    Literal hex, not var(--brand-*): a favicon is fetched as a standalone
+    document and never sees the app's stylesheet, so a custom property here
+    resolves to nothing. Same values as the `brand` block in tokens.ts — move
+    them there and they have to be copied here by hand.
 
-    LEGAL is dropped: at 16px its 9px tracking closes into a smudge.
+    No keyline: the artwork's 8px white stroke ran the three glyphs together
+    into a smudge at small sizes, which is worse here than anywhere.
 
-    The font is a generic stack for the same reason — the site's webfonts are
-    not loaded in this context, so this asks for whatever sans the platform has
-    rather than pretending otherwise.
+    A generic stack rather than Jura, for the same standalone reason — the
+    site's webfonts are not loaded in this context, so this asks for whatever
+    sans the platform has instead of pretending otherwise.
   -->
-  <rect width="48" height="48" rx="10" fill="#0B1524"/>
-  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
-     font-size="19" font-weight="600" text-anchor="middle" dominant-baseline="central">
-    <text x="11" y="25" fill="#7FA8CC">V</text>
-    <text x="24" y="25" fill="#89CFF0">K</text>
-    <text x="38" y="25" fill="#7FA8CC">M</text>
-  </g>
+  <rect width="48" height="48" rx="10" fill="#0F1A2E"/>
+  <text x="24" y="31" text-anchor="middle"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="19" font-weight="700" letter-spacing="0.5">
+    <tspan fill="#7FA8CC">V</tspan><tspan fill="#89CFF0">K</tspan><tspan fill="#7FA8CC">M</tspan>
+  </text>
 </svg>

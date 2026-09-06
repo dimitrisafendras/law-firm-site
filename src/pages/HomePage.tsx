@@ -8,6 +8,7 @@ import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
 import { NetworkMap } from '@/components/sections/NetworkMap/NetworkMap';
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection/TestimonialsSection';
 import { ContactSection } from '@/components/sections/ContactSection/ContactSection';
+import { CircuitField } from '@/components/CircuitField';
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ export default function HomePage() {
   return (
     <>
       <Navbar
+        deferCta
         logo={
           <a href="#" className="firm-logo">
             <ScaleOfJustice className="firm-logo__icon" />
@@ -30,20 +32,19 @@ export default function HomePage() {
           { label: t('navTestimonials'), href: '#testimonials' },
           { label: t('navContact'), href: '#contact' },
         ]}
-        cta={
-          <div className="navbar__actions">
-            <Button
-              size="sm"
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              {t('navCta')}
-            </Button>
-            <AuthNavControl />
-          </div>
+        primaryCta={
+          <Button
+            size="sm"
+            onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            {t('navCta')}
+          </Button>
         }
+        cta={<AuthNavControl />}
       />
 
       <main className="page-ramp">
+        <CircuitField />
         <HeroSection />
         <StatsBar />
         <PracticeGrid />
@@ -88,6 +89,13 @@ export default function HomePage() {
             ],
           },
         ]}
+        meta={
+          <>
+            <EditableText tKey="contactAddress" as="span" />
+            <EditableText tKey="footerBarRegistration" as="span" />
+            <EditableText tKey="footerVat" as="span" />
+          </>
+        }
         bottom={<EditableText tKey="footerCopyright" as="p" />}
       />
     </>

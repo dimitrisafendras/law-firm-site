@@ -21,7 +21,7 @@ const el = {
   heroSubtitle:
     'Ένα δικηγορικό γραφείο νέας γενιάς που συνδυάζει βαθιά εξειδίκευση σε ακίνητα, χρηματοδότηση startups, ναυτικό δίκαιο και κρυπτονομίσματα. Σχεδιασμένο για φιλόδοξους επαγγελματίες.',
   heroCta: 'Εκκίνηση Πρωτοκόλλου',
-  heroSecondaryCta: 'Ανάλυση Πληροφοριών',
+  heroSecondaryCta: 'Γνωρίστε τους εταίρους',
 
   // ─── Practice Areas ──────────────────────────────────────────────────────────
   practiceOverline: 'Τομείς Δικαίου',
@@ -177,6 +177,12 @@ const el = {
     'Συμφωνία, εγχείρημα ή κανονιστική πλοήγηση \u2014 είμαστε έτοιμοι.',
   contactAddress: 'Λεωφ. Βασιλίσσης Σοφίας 12, Αθήνα 10674, Ελλάδα',
   contactEmail: 'info@nomos.legal',
+  contactPromise1Label: 'Χρόνος απόκρισης',
+  contactPromise1Value: 'Απαντάμε σε κάθε αίτημα εντός μίας εργάσιμης ημέρας.',
+  contactPromise2Label: 'Η πρώτη συζήτηση',
+  contactPromise2Value: 'Τριάντα λεπτά, χωρίς χρέωση — περιγράφετε την υπόθεση και σας λέμε αν είμαστε το κατάλληλο γραφείο και τι πιθανόν να απαιτηθεί.',
+  contactPromise3Label: 'Εμπιστευτικότητα',
+  contactPromise3Value: 'Ό,τι μας στέλνετε καλύπτεται από το δικηγορικό απόρρητο από το πρώτο μήνυμα, ανεξάρτητα από το αν αναλάβουμε την υπόθεση.',
   contactPhone: '+30 210 123 4567',
 
   // Contact form. Labels and placeholders reach the DOM as element text and
@@ -200,6 +206,10 @@ const el = {
   footerPrivacy: 'Πολιτική Απορρήτου',
   footerLinkedIn: 'LinkedIn',
   footerEmail: 'Email',
+  // PLACEHOLDER: the firm is not yet registered. Replace both with the real
+  // Athens Bar Association number and VAT number before launch.
+  footerBarRegistration: 'Δικηγορικός Σύλλογος Αθηνών — εκκρεμεί εγγραφή',
+  footerVat: 'ΑΦΜ σε εκκρεμότητα',
   footerCopyright: '\u00A9 2026 NOMOS Νομικές Υπηρεσίες. Με επιφύλαξη παντός δικαιώματος. Αθήνα, Ελλάδα.',
 
   // ─── Design System page ──────────────────────────────────────────────────────
@@ -211,6 +221,11 @@ const el = {
   dark: 'Σκοτεινό',
   colors: 'Χρώματα',
   typography: 'Τυπογραφία',
+  dsCapsTracking: 'Απόσταση κεφαλαίων',
+  dsItalicTitle: 'Πραγματικά πλάγια',
+  dsItalicBody: 'Η Jura δεν διαθέτει πλάγια γραφή, οπότε κάθε πλάγιο στον ιστότοπο ήταν συνθετικό — μια κεκλιμένη γεωμετρική grotesque. Η EB Garamond italic φορτώνεται για τα δύο σημεία όπου χρησιμοποιείται πραγματικά: τα αποσπάσματα πελατών και τους ρόλους των εταίρων.',
+  dsFieldTitle: 'Πεδίο διάλυσης',
+  dsFieldBody: 'Ένα σταθερό στρώμα πίσω από όλη τη σελίδα, που αντικαθιστά έξι SVG κυκλωμάτων ανά ενότητα. Η πυκνότητα είναι μεγαλύτερη πάνω δεξιά, όπου στέκεται το άγαλμα, και μειώνεται προς τα κάτω αριστερά. Η τοποθέτηση είναι ντετερμινιστική ώστε να ταιριάζει με το prerender.',
   pangram: 'Ξεσκεπάζω τη βαθιά ψυχοφθόρα σας αντίληψη',
   fontSizes: 'Μεγέθη Γραμματοσειράς',
   lineHeights: 'Ύψη Γραμμής',

@@ -26,6 +26,8 @@ import {
   radii,
   spacing,
   elevations,
+  decor,
+  motion,
   typeScale,
   weights,
   layout,
@@ -41,6 +43,7 @@ import {
   weightVarNames,
   layoutVarNames,
   textEmphasisVarNames,
+  decorVarNames,
 } from '../src/theme/tokens.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -85,7 +88,11 @@ function buildVarBlock(colorTokens, fontTokens, glassTokens, gradientTokens) {
     ...mapVars(weights, weightVarNames),
     ...mapVars(layout, layoutVarNames),
     ...mapVars(textEmphasis, textEmphasisVarNames),
-    `  --type-caps-tracking: ${capsTracking};`,
+    `  --type-caps-tracking-tight: ${capsTracking.tight};`,
+    `  --type-caps-tracking-wide: ${capsTracking.wide};`,
+    `  --motion-enter-travel: ${motion.enter.travel};`,
+    `  --motion-enter-range: ${motion.enter.range};`,
+    ...mapVars(decor, decorVarNames),
     ...typeVars(),
   ].join('\n');
 }

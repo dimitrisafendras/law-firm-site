@@ -10,8 +10,16 @@
 /* The material itself is carried by the `glass` class, added in the TSX once the
    page has scrolled. This rule only draws the seam that separates the header
    from the content sliding under it. */
+/*
+ * A heavier tint than the shared surface value, and it is a legibility fix
+ * rather than a style choice: the bar floats over whatever the page puts under
+ * it, and at the shared 0.28 a card title passing beneath it read straight
+ * through the nav's own wordmark. Every other glass surface on the site has
+ * content of its own behind it that it can afford to show.
+ */
 .navbar--scrolled {
   border-bottom: 1px solid var(--glass-border);
+  --glass-surface-tint: var(--glass-bg-strong);
 }
 
 /* `.glass` rings its whole box with a 1px inset edge. On a bar that bleeds to
@@ -88,7 +96,7 @@
   font-weight: var(--type-caption-weight);
   /* Wider than --type-caption-tracking: uppercase nav labels are tracked out
      well past the reading step. */
-  letter-spacing: var(--type-caps-tracking);
+  letter-spacing: var(--type-caps-tracking-tight);
   text-transform: uppercase;
   color: var(--text);
   text-decoration: none;
@@ -99,7 +107,14 @@
   color: var(--accent);
 }
 
+/* Lays out the primary button and the persistent controls as one row. It used
+   to hold a single node whose own wrapper handled this; the two are separate
+   props now, because only one of them may be deferred. */
 .navbar__cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+
   @media (max-width: 1024px) {
     display: none;
   }
@@ -269,7 +284,7 @@
     /* One step up from the desktop nav label: these are touch targets. */
     font-size: var(--type-small-size);
     font-weight: var(--type-caption-weight);
-    letter-spacing: var(--type-caps-tracking);
+    letter-spacing: var(--type-caps-tracking-tight);
     text-transform: uppercase;
     color: var(--text);
     text-decoration: none;
@@ -283,5 +298,33 @@
 
   .navbar__mobile-cta {
     margin-top: var(--space-6);
+  }
+}
+
+/*
+ * The deferred call to action.
+ *
+ * `visibility` rather than `display`, so the bar's layout does not reflow as
+ * it appears and the language switcher and sign-in control beside it do not
+ * jump sideways at 62% of the first screen. Pointer events go with it, and
+ * `visibility: hidden` also takes the button out of the tab order, so a button
+ * nobody can see is not one a keyboard can reach.
+ */
+.navbar__cta-primary[data-deferred='true'] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-4px);
+}
+
+.navbar__cta-primary {
+  display: inline-flex;
+  transition: opacity 0.35s var(--ease-settle), transform 0.35s var(--ease-settle),
+    visibility 0.35s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar__cta-primary {
+    transition: none;
   }
 }

@@ -1,15 +1,12 @@
 .partner-ethos {
   position: relative;
-  overflow: hidden;
   padding: var(--space-24) 0;
 
-  /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
-     height (self-corrects after first render via the `auto` keyword). */
   content-visibility: auto;
-  contain-intrinsic-size: auto 1900px;
+  contain-intrinsic-size: auto 1100px;
 
   @media (max-width: 1024px) {
-    padding: var(--space-8) 0;
+    padding: var(--space-16) 0;
   }
 }
 
@@ -23,22 +20,12 @@
   }
 }
 
-/* ─── Profile Rows ────────────────────────────────────────────────────────── */
-
-.partner-ethos__profiles {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-24);
-
-  @media (max-width: 1024px) {
-    gap: var(--space-16);
-  }
-}
-
-.partner-ethos__row {
+/* Three across on one row. `align-items: start` so a longer biography grows its
+   own column downward instead of stretching all three to match. */
+.partner-ethos__plinth {
   display: grid;
-  grid-template-columns: 5fr 7fr;
-  gap: var(--space-12);
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-8);
   align-items: start;
 
   @media (max-width: 1024px) {
@@ -47,192 +34,149 @@
   }
 }
 
-.partner-ethos__row--reversed {
-  grid-template-columns: 7fr 5fr;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-  }
+/*
+ * One card per partner, portrait included — rather than a portrait beside a
+ * card, which is what left ~330px of dead page next to every photograph in the
+ * old alternating layout.
+ *
+ * No horizontal padding at the top: the portrait bleeds to the card's own
+ * edges (see the negative margins below), so the photograph is part of the
+ * surface instead of an inset tile sitting on it.
+ */
+.partner-ethos__bust {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-3xl);
+  padding: 0 var(--space-8) var(--space-8);
 }
 
-/* ─── Image Column ────────────────────────────────────────────────────────── */
+/* ─── Portrait ─────────────────────────────────────────────────────────────── */
 
-/* Not a glass surface. The portrait covers the wrapper edge to edge (plus an
-   absolutely-positioned overlay on top of it), so a tint and a blurred backdrop
-   would only ever read at the photo's 20% transparency — per-frame compositing
-   cost for no visible result. The rim is an *outer* ring for the same reason:
-   an inset shadow paints beneath in-flow content, i.e. behind the photo. */
-.partner-ethos__image-wrapper {
+.partner-ethos__portrait {
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  border-radius: var(--radius-3xl);
-  box-shadow:
-    var(--elev-floating),
-    0 0 0 1px var(--glass-edge);
+  /* Bleeds past the card's side padding to its clipped edge. */
+  margin: 0 calc(var(--space-8) * -1) var(--space-6);
 }
 
+/*
+ * In colour, deliberately.
+ *
+ * These three are the only photographs below the hero, which makes them the
+ * page's only chromatic content — everything else down here is type, glass and
+ * the ramp. `grayscale(1)` was spending that for a cohesion the one-row layout
+ * already provides.
+ */
 .partner-ethos__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(100%);
-  opacity: 0.8;
+  object-position: center 20%;
+  display: block;
 }
 
-.partner-ethos__image-overlay {
+/* Keeps the badge legible over whatever the photograph does at its lower edge,
+   and settles the portrait into the card instead of ending on a hard cut. */
+.partner-ethos__portrait::after {
+  content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, var(--bg), transparent, transparent);
-  opacity: 0.6;
+  inset: auto 0 0;
+  height: 40%;
+  background: linear-gradient(180deg, transparent, rgb(0 0 0 / 55%));
   pointer-events: none;
 }
 
-/* ─── Badge ───────────────────────────────────────────────────────────────── */
-
 .partner-ethos__badge {
   position: absolute;
-  bottom: var(--space-6);
+  left: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 1;
   font-family: var(--label);
   font-size: var(--type-caption-size);
   font-weight: var(--type-caption-weight);
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
-  letter-spacing: 0.3em;
-  color: var(--accent);
-  background: var(--accent-bg);
-  padding: var(--space-2) var(--space-4);
+  letter-spacing: var(--type-caps-tracking-tight);
+  color: var(--on-accent);
+  background: var(--accent);
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
 }
 
-.partner-ethos__badge--left {
-  left: var(--space-6);
-}
+/* ─── Text ─────────────────────────────────────────────────────────────────── */
 
-.partner-ethos__badge--right {
-  right: var(--space-6);
-}
-
-/* ─── Text Column ─────────────────────────────────────────────────────────── */
-
-/* Background, edge and elevation come from `.glass` in the TSX. */
-.partner-ethos__text-col {
-  padding: var(--space-8);
-  border-radius: var(--radius-3xl);
-
-  @media (max-width: 1024px) {
-    padding: var(--space-6);
-  }
-}
-
-.partner-ethos__text-col--right {
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-
-  @media (max-width: 1024px) {
-    text-align: left;
-    align-items: flex-start;
-    order: 2;
-  }
-}
-
-/* On mobile, ensure reversed row image comes first */
-.partner-ethos__row--reversed .partner-ethos__image-col {
-  @media (max-width: 1024px) {
-    order: 1;
-  }
-}
-
-/* One rung under .section-header__title (h1 / h2 at 1024px) and one above the
-   role beneath it: this is an <h3> in the outline, and it used to outsize the
-   section heading that contains it. */
 .partner-ethos__name {
   font-family: var(--heading);
-  font-size: var(--type-h2-size);
-  font-weight: var(--type-h2-weight);
-  line-height: var(--type-h2-leading);
-  letter-spacing: var(--type-h2-tracking);
-  color: var(--accent);
-  margin: 0 0 var(--space-2);
-
-  @media (max-width: 1024px) {
-    font-size: var(--type-h3-size);
-    font-weight: var(--type-h3-weight);
-    line-height: var(--type-h3-leading);
-    letter-spacing: var(--type-h3-tracking);
-  }
+  font-size: var(--type-h4-size);
+  font-weight: var(--type-h4-weight);
+  line-height: var(--type-h4-leading);
+  letter-spacing: var(--type-h4-tracking);
+  color: var(--text-h);
+  margin: 0 0 var(--space-1);
 }
 
+/*
+ * A real italic. Jura has none, so this was a browser-synthesised oblique — a
+ * slanted geometric sans, which at this size looks exactly as cheap as that
+ * description suggests.
+ */
 .partner-ethos__role {
-  font-family: var(--heading);
-  font-size: var(--type-h3-size);
-  line-height: var(--type-h3-leading);
+  font-family: var(--serif);
   font-style: italic;
-  color: var(--text);
-  opacity: 0.6;
-  margin: 0 0 var(--space-8);
-
-  /* Steps down with the name above it — the h3 rung is where the name lands at
-     this width, and the role must not tie the heading it qualifies. */
-  @media (max-width: 1024px) {
-    font-size: var(--type-body-lg-size);
-    line-height: var(--type-body-lg-leading);
-    letter-spacing: var(--type-body-lg-tracking);
-  }
+  font-size: var(--type-body-lg-size);
+  line-height: var(--type-body-lg-leading);
+  color: var(--accent);
+  margin: 0 0 var(--space-4);
 }
 
 .partner-ethos__bio {
-  max-width: 520px;
+  margin-bottom: var(--space-6);
 }
 
 .partner-ethos__bio p {
-  font-size: var(--type-body-lg-size);
-  font-weight: var(--type-body-lg-weight);
-  line-height: var(--type-body-lg-leading);
-  letter-spacing: var(--type-body-lg-tracking);
+  font-size: var(--type-body-size);
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-leading);
+  letter-spacing: var(--type-body-tracking);
   color: var(--text);
-  opacity: 0.7;
-  margin: 0 0 var(--space-6);
+  opacity: var(--text-emphasis-secondary);
+  margin: 0;
 }
 
-.partner-ethos__bio p:last-child {
-  margin-bottom: 0;
-}
+/* ─── Meta ─────────────────────────────────────────────────────────────────── */
 
-/* ─── Meta (Focus / Origin) ───────────────────────────────────────────────── */
-
+/* `margin-top: auto` pins the meta row to the bottom of its card, so the three
+   cards' rules line up even when the biographies differ in length. */
 .partner-ethos__meta {
   display: flex;
-  gap: var(--space-12);
-  margin-top: var(--space-8);
+  gap: var(--space-8);
+  margin: auto 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--glass-edge);
 }
 
-.partner-ethos__meta--right {
-  justify-content: flex-end;
-
-  @media (max-width: 1024px) {
-    justify-content: flex-start;
-  }
+.partner-ethos__meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .partner-ethos__meta-label {
-  display: block;
   font-family: var(--label);
   font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
-  letter-spacing: 0.3em;
+  letter-spacing: var(--type-caps-tracking-wide);
   color: var(--text);
   opacity: var(--text-emphasis-muted);
-  margin-bottom: var(--space-1);
 }
 
 .partner-ethos__meta-value {
-  font-family: var(--label);
   font-size: var(--type-small-size);
-  font-weight: var(--type-small-weight);
   line-height: var(--type-small-leading);
   color: var(--text-h);
+  margin: 0;
 }

@@ -1,8 +1,12 @@
+/* The gap shrinks because the title grew. At 40px the header needed 80px
+   beneath it to separate itself from the content; at 80px the type carries
+   that separation on its own, and the old margin left ~300px of mostly air
+   before the first card in every section. */
 .section-header {
-  margin-bottom: var(--space-20);
+  margin-bottom: var(--space-16);
 
   @media (max-width: 1024px) {
-    margin-bottom: var(--space-16);
+    margin-bottom: var(--space-12);
   }
 }
 
@@ -16,7 +20,7 @@
   text-transform: uppercase;
   /* Wider than --type-caption-tracking on purpose: this is an engraved rule
      over the title, not running caption text. */
-  letter-spacing: 0.35em;
+  letter-spacing: var(--type-caps-tracking-wide);
   color: var(--accent);
   display: block;
   margin-bottom: var(--space-6);
@@ -45,26 +49,29 @@
 
 /* ─── Title ──────────────────────────────────────────────────────────────── */
 
-/* Sized a full rung above anything a section can contain — partner names, card
-   titles — so the section title is always the largest type in its own section.
-   Deliberately does NOT mirror the h2 → h3 step in index.css: that step lands
-   the title on the same specimen as the h3s beneath it, and the two levels
-   become indistinguishable on every viewport at or below 1024px. */
+/* Inscription size, and the weight comes *down* with it.
+   40px semibold on a 1344px measure read as a subhead on a page whose hero is
+   a 95vh statue — the one hierarchy jump the page was missing. At 80px, weight
+   300 reads as something cut into stone; 600 at this size reads as a banner.
+   Still a full rung above anything a section can contain. */
 .section-header__title {
   font-family: var(--heading);
-  font-size: var(--type-h1-size);
-  font-weight: var(--type-h1-weight);
-  line-height: var(--type-h1-leading);
-  letter-spacing: var(--type-h1-tracking);
+  font-size: var(--type-display-xl-size);
+  font-weight: var(--type-display-xl-weight);
+  line-height: var(--type-display-xl-leading);
+  letter-spacing: var(--type-display-xl-tracking);
   color: var(--text-h);
   margin: 0;
   white-space: normal;
 
   @media (max-width: 1024px) {
-    font-size: var(--type-h2-size);
-    font-weight: var(--type-h2-weight);
-    line-height: var(--type-h2-leading);
-    letter-spacing: var(--type-h2-tracking);
+    /* 80px does not fit a 390px screen, but the *weight* relationship is the
+       point, not the size — so this steps down a rung and keeps the light
+       weight rather than reverting to the h2 specimen's 600. */
+    font-size: var(--type-h1-size);
+    font-weight: var(--weight-light);
+    line-height: var(--type-h1-leading);
+    letter-spacing: var(--type-h1-tracking);
   }
 }
 
@@ -95,12 +102,14 @@
   }
 }
 
+/* Runs into the label rather than sitting apart from it: the rule and the
+   words are one mark. Accent, so the pair reads as a deliberate device rather
+   than as a caption that lost its contrast. */
 .section-header__divider {
   display: block;
   width: 40px;
   height: 1px;
-  background: var(--text);
-  opacity: 0.4;
+  background: linear-gradient(90deg, transparent, var(--accent));
 
   @media (max-width: 768px) {
     width: 24px;
@@ -113,9 +122,17 @@
   font-weight: var(--type-caption-weight);
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--text);
-  opacity: 0.6;
+  letter-spacing: var(--type-caps-tracking-wide);
+  /*
+   * Accent at full strength, not body text at 0.6.
+   *
+   * This was legible enough as one of three stacked labels above a title. It
+   * is now the *only* micro-label a section carries — the overlines are gone —
+   * and at 12px, 0.6 opacity over the ramp it measured as the faintest text on
+   * the page. A marker nobody can read is not a quiet marker, it is an absent
+   * one.
+   */
+  color: var(--accent);
   white-space: nowrap;
 }
 

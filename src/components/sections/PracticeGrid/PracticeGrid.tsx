@@ -12,7 +12,6 @@ import {
   MaritimeBg,
   CryptoBg,
 } from '@/assets/domainBackgrounds';
-import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import { EditableText } from '@/components';
 import './PracticeGrid.css';
@@ -36,23 +35,21 @@ export function PracticeGrid() {
 
   return (
     <section id="practice" className="practice-section">
-      <CircuitLines variant="a" />
       <div className="practice-section__inner">
         <FadeInSection>
           <SectionHeader
-            overlineKey="practiceOverline"
             titleKey="practiceTitle"
             subtitleKey="practiceSubtitle"
             labelKey="chapterExpertise"
           />
         </FadeInSection>
 
-        <StaggerGroup className="practice-bento" interval={0.15}>
+        <StaggerGroup className="practice-bento">
           {domains.map(({ key, bg: Bg, num }) => (
-            // Card lives inside the fade wrapper: .practice-domain declares its
-            // own hover `transition`, which would override .fade-section's
-            // opacity/transform transition if both classes shared one element.
-            <FadeInSection key={key} variant="fade-up">
+            // Card lives inside the fade wrapper rather than on it: the wrapper
+            // owns the entrance animation and the card owns its hover
+            // transition, and a single element cannot hold both cleanly.
+            <FadeInSection key={key}>
               <div className="practice-domain">
                 <Bg className="practice-domain__bg" />
                 <span className="practice-domain__num">{t('practiceDomainNum', { num })}</span>

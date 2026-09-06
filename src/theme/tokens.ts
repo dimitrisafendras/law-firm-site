@@ -31,6 +31,8 @@ export const colors = {
     gradStop4: '#F6F6F9',
     gradStop5: '#F4F5F8',
     gradStop6: '#F2F4F7',
+    heroDeep: '#E8EDF5',
+    heroDeepest: '#DCE5F2',
     border: 'rgba(0, 43, 73, 0.15)',
     codeBg: '#F0F0F0',
     accent: '#89CFF0',
@@ -53,12 +55,28 @@ export const colors = {
     textHeading: '#E2E2E8',
     background: '#111317',
     surface: '#181A1F',
-    gradStop1: '#202835',
-    gradStop2: '#1D2430',
-    gradStop3: '#1A202C',
-    gradStop4: '#171D28',
-    gradStop5: '#151A24',
-    gradStop6: '#131720',
+    /*
+     * The ramp carries the hero's blue down the whole page.
+     *
+     * It used to run #202835 → #131720: a 13-per-channel luminance drop across
+     * 8,600px, at roughly 25% saturation and 10–17% lightness — dark neutral in
+     * practice. The body had no chroma source of its own (the only images below
+     * the fold are greyscale), so every surface on it read as slate.
+     *
+     * These sit on the same navy the hero opens with, so the page is one
+     * continuous blue that deepens rather than a blue hero on a grey document.
+     * Luminance still descends monotonically stop to stop, which is what
+     * carries the eye downward instead of pulling it back out at the bottom.
+     */
+    gradStop1: '#1B2A44',
+    gradStop2: '#182540',
+    gradStop3: '#152039',
+    gradStop4: '#121B31',
+    gradStop5: '#101729',
+    gradStop6: '#0D1220',
+    /* The hero's own deep stops — the two values it used to hardcode. */
+    heroDeep: '#0F1A2E',
+    heroDeepest: '#112240',
     border: 'rgba(64, 72, 77, 0.15)',
     codeBg: '#1A1C20',
     accent: '#BCE8FF',
@@ -85,6 +103,20 @@ export const fonts = {
   sans: "'Jura', sans-serif",
   heading: "'Jura', sans-serif",
   label: "'Jura', sans-serif",
+  /**
+   * The one place a second family earns its keep.
+   *
+   * Jura has no italic. Every italic on this site — partner roles, every
+   * testimonial quote — was a browser-synthesised oblique, which is a slanted
+   * geometric sans and looks exactly as cheap as that sounds at 20px. EB
+   * Garamond ships a true italic *and* Greek, which almost nothing else in
+   * this register does.
+   *
+   * It also earns it structurally: Garamond against Jura is the same collision
+   * the hero is built on — classical stone against digital light — so the
+   * typography stops merely claiming "legacy and innovation" and enacts it.
+   */
+  serif: "'EB Garamond', Georgia, 'Times New Roman', serif",
   mono: 'ui-monospace, Consolas, monospace',
 } as const;
 
@@ -99,9 +131,20 @@ export const fonts = {
  * size but keeps a stray weight or tracking is the usual way a scale rots.
  */
 export const typeScale = {
-  display: { size: '3.5rem', px: 56, weight: 620, lineHeight: '1.02', tracking: '-0.03em' },
+  /**
+   * Inscription size. Section titles live here.
+   *
+   * 40px semibold on a 1440px measure is timid — it reads as a subhead on a
+   * page whose hero is a 95vh statue. At 80px the weight has to come *down*,
+   * not up: Jura's 300 at this size reads as something cut into stone, where
+   * 600 reads as a banner. This is the page's one big hierarchy jump.
+   */
+  displayXl: { size: '5rem', px: 80, weight: 300, lineHeight: '1.0', tracking: '-0.03em' },
+  display: { size: '4.5rem', px: 72, weight: 300, lineHeight: '1.02', tracking: '-0.03em' },
   h1: { size: '2.5rem', px: 40, weight: 600, lineHeight: '1.08', tracking: '-0.025em' },
   h2: { size: '1.75rem', px: 28, weight: 600, lineHeight: '1.15', tracking: '-0.02em' },
+  /** Card titles and the wordmark, which were both sitting here ad hoc. */
+  h4: { size: '1.5rem', px: 24, weight: 500, lineHeight: '1.3', tracking: '-0.01em' },
   h3: { size: '1.25rem', px: 20, weight: 600, lineHeight: '1.25', tracking: '-0.01em' },
   bodyLg: { size: '1.125rem', px: 18, weight: 400, lineHeight: '1.6', tracking: '0' },
   body: { size: '1rem', px: 16, weight: 400, lineHeight: '1.6', tracking: '0' },
@@ -110,13 +153,21 @@ export const typeScale = {
 } as const;
 
 /**
- * Tracking for uppercase micro-labels.
+ * Tracking for uppercase micro-labels — two steps, and only two.
  *
- * The caption step's own 0.01em is tuned for mixed case; uppercase Jura at 12px
- * closes up badly at that value, and every uppercase label on the site had
- * independently invented its own wider tracking. This is that value, once.
+ * The site had independently invented five (0.05, 0.15, 0.2, 0.3 and 0.35em),
+ * which is how a scale rots: each label picked a value that looked right in
+ * isolation. At 11-12px anything past 0.2em reads as gappy rather than as
+ * spaced — "P A R T N E R  E T H O S" stops being a word.
+ *
+ * `tight` is for functional labels that must read fast (nav, form labels, stat
+ * captions). `wide` is for the engraved register — overlines and chapter
+ * markers, where the label is an ornament and slow reading is the point.
  */
-export const capsTracking = '0.05em';
+export const capsTracking = {
+  tight: '0.08em',
+  wide: '0.2em',
+} as const;
 
 /**
  * Text emphasis levels, as opacities applied to `--text`.
@@ -141,12 +192,16 @@ export const fontSizes = {
   body: typeScale.body.size,
   bodyLg: typeScale.bodyLg.size,
   h3: typeScale.h3.size,
+  h4: typeScale.h4.size,
   h2: typeScale.h2.size,
   h1: typeScale.h1.size,
   display: typeScale.display.size,
+  displayXl: typeScale.displayXl.size,
 } as const;
 
 export const weights = {
+  /** Jura's lower half, unused until the inscription sizes needed it. */
+  light: 300,
   regular: 400,
   medium: 500,
   semibold: 600,
@@ -262,27 +317,39 @@ export const glass = {
     glow: 'rgba(255, 255, 255, 0.45)',
   },
   /*
-   * The dark tint is LIGHTER than the surface it sits on, deliberately.
+   * The dark tint is LIGHTER than the surface it sits on, deliberately — and
+   * it has been raised twice, for two different reasons.
    *
-   * It used to be rgba(24, 26, 31, …) — darker than the page ramp behind it —
-   * which made every card recede into its own background and measure 1.05:1
-   * against it. Glass over a dark ground catches light; it reads lighter than
-   * its surroundings, not darker. The values below lift the card off the page
-   * and give the rim something to sit against.
+   * It began at rgba(24, 26, 31, …), darker than the page ramp behind it, so
+   * every card receded into its own background and measured 1.05:1 against it.
+   * Glass over a dark ground catches light: it reads lighter than what
+   * surrounds it, not darker.
+   *
+   * rgba(52, 62, 82, 0.28) fixed that against a neutral slate ramp. It stopped
+   * working when the ramp moved onto the hero's navy — 52/62/82 is close
+   * enough in both hue and value to #152039 that a card composited to about
+   * rgb(30, 40, 64) against a ground of rgb(21, 32, 57), which is a difference
+   * you cannot see.
+   *
+   * The fix is a lighter tint rather than a heavier one: raising alpha on a
+   * dark tint buys contrast by turning the glass opaque, which is the one
+   * thing the material must not do. 78/94/122 at 0.38 separates the card
+   * clearly while leaving it 62% transparent, and with lensing restored the
+   * blur and saturate are doing real work behind it.
    */
   dark: {
-    bg: 'rgba(52, 62, 82, 0.28)',
-    bgStrong: 'rgba(52, 62, 82, 0.44)',
-    border: 'rgba(255, 255, 255, 0.18)',
+    bg: 'rgba(78, 94, 122, 0.38)',
+    bgStrong: 'rgba(78, 94, 122, 0.54)',
+    border: 'rgba(255, 255, 255, 0.24)',
     shadow: '0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3)',
     blur: '20px',
     blurStrong: '28px',
     saturate: '180%',
-    tint: 'rgba(52, 62, 82, 0.28)',
-    tintClear: 'rgba(52, 62, 82, 0.16)',
-    highlight: 'rgba(255, 255, 255, 0.42)',
-    edge: 'rgba(255, 255, 255, 0.18)',
-    glow: 'rgba(188, 232, 255, 0.20)',
+    tint: 'rgba(78, 94, 122, 0.38)',
+    tintClear: 'rgba(78, 94, 122, 0.2)',
+    highlight: 'rgba(255, 255, 255, 0.5)',
+    edge: 'rgba(255, 255, 255, 0.24)',
+    glow: 'rgba(188, 232, 255, 0.24)',
   },
 } as const;
 
@@ -377,6 +444,23 @@ export const motion = {
     elementTight: '0.09s',
   },
 
+  /**
+   * Section entrances, driven by `animation-timeline: view()` rather than by
+   * an IntersectionObserver.
+   *
+   * `travel` is 24px, not the 40px this site used to run. 40px reads as a
+   * slide — the element arrives from somewhere; 24px reads as a settle, which
+   * is what an entrance should be when it happens twenty times down a page.
+   *
+   * `range` is how far into the element's entry the animation completes: 45%
+   * means it is fully settled well before it reaches the middle of the
+   * viewport, so nothing is still moving while it is being read.
+   */
+  enter: {
+    travel: '24px',
+    range: '45%',
+  },
+
   /** Blur radii for blur-to-sharp materialisation. */
   blur: {
     spawn: '12px',
@@ -384,6 +468,56 @@ export const motion = {
     spawnTight: '8px',
   },
 } as const;
+
+// ─── Decoration ───────────────────────────────────────────────────────────────
+
+/**
+ * The dissolution field — the page's one decorative layer.
+ *
+ * These alphas are deliberately a *range*, not a value: the field's whole idea
+ * is that the cubes have drifted off the statue, so density and opacity fall
+ * away from the top-right. A single alpha would read as evenly-scattered
+ * particles, which is the stock effect this replaces.
+ */
+export const decor = {
+  fieldAlphaStrong: '0.14',
+  fieldAlphaMid: '0.1',
+  fieldAlphaFaint: '0.06',
+  /*
+   * Accent bloom strengths for the page ramp.
+   *
+   * The previous values (12 / 10 / 9 / 8 percent, fading out by ~62% radius)
+   * put the brightest achievable pixel in the entire page body at about
+   * #2D3845 — which is grey. At bloom scale a low alpha does not read as
+   * subtle, it reads as absent.
+   */
+  bloomStrong: '20%',
+  bloomMid: '16%',
+  bloomSoft: '13%',
+  /*
+   * The practice cards' domain line-art.
+   *
+   * Higher than it looks like it should be, because this value is not the
+   * opacity anything actually renders at — it multiplies. Every element inside
+   * those SVGs carries its own opacity between 0.08 and 0.5, and the container
+   * is masked on top of that, so at 0.25 the faintest strokes were landing
+   * around 0.02 effective and the strongest around 0.125. The drawings were
+   * present in the DOM and invisible on screen.
+   */
+  domainArt: '0.55',
+  domainArtHover: '0.85',
+} as const;
+
+export const decorVarNames: Record<string, string> = {
+  fieldAlphaStrong: '--field-alpha-strong',
+  fieldAlphaMid: '--field-alpha-mid',
+  fieldAlphaFaint: '--field-alpha-faint',
+  bloomStrong: '--bloom-strong',
+  bloomMid: '--bloom-mid',
+  bloomSoft: '--bloom-soft',
+  domainArt: '--domain-art',
+  domainArtHover: '--domain-art-hover',
+};
 
 // ─── Token → CSS variable name mapping ───────────────────────────────────────
 // Single place that defines the CSS custom property name for each token key.
@@ -416,6 +550,8 @@ export const colorVarNames: Record<string, string> = {
   gradStop4: '--grad-4',
   gradStop5: '--grad-5',
   gradStop6: '--grad-6',
+  heroDeep: '--hero-deep',
+  heroDeepest: '--hero-deepest',
 };
 
 export const glassVarNames: Record<string, string> = {
@@ -458,6 +594,7 @@ export const spacingVarNames: Record<string, string> = {
 };
 
 export const weightVarNames: Record<string, string> = {
+  light: '--weight-light',
   regular: '--weight-regular',
   medium: '--weight-medium',
   semibold: '--weight-semibold',
@@ -488,6 +625,7 @@ export const gradientVarNames: Record<string, string> = {
 
 export const fontVarNames: Record<string, string> = {
   sans: '--sans',
+  serif: '--serif',
   heading: '--heading',
   label: '--label',
   mono: '--mono',
@@ -515,6 +653,7 @@ export const theme = {
   layout,
   transitions,
   motion,
+  decor,
 } as const;
 
 export type Theme = typeof theme;

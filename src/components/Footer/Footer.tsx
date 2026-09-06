@@ -25,13 +25,23 @@ interface FooterProps {
   logo: ReactNode;
   columns: FooterColumn[];
   bottom?: ReactNode;
+  /**
+   * Registration details under the wordmark — address, bar association number,
+   * VAT. For a law firm these are a credibility signal, and they are also what
+   * fills the brand column: without them the footer sets a logo hard left and
+   * link columns hard right with a very visible gap between.
+   */
+  meta?: ReactNode;
 }
 
-export function Footer({ logo, columns, bottom }: FooterProps) {
+export function Footer({ logo, columns, bottom, meta }: FooterProps) {
   return (
     <footer className="footer">
       <div className="footer__inner">
-        <div className="footer__brand">{logo}</div>
+        <div className="footer__brand-col">
+          <div className="footer__brand">{logo}</div>
+          {meta && <div className="footer__meta">{meta}</div>}
+        </div>
         <div className="footer__columns">
           {columns.map((col) => (
             <div key={col.title} className="footer__column">

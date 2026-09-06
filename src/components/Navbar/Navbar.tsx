@@ -9,25 +9,55 @@ interface NavLinkItem {
 interface NavbarProps {
   logo: ReactNode;
   links: NavLinkItem[];
+  /**
+   * Persistent header controls — language, sign-in, avatar. Always visible.
+   */
   cta?: ReactNode;
+  /**
+   * The bar's primary call to action, kept separate from `cta` because it is
+   * the only part that may be deferred.
+   *
+   * On a page whose hero carries its own call to action, showing the same
+   * button in the bar at the same time puts two identical primary controls in
+   * one viewport — which reads as a mistake rather than as emphasis, and
+   * halves the weight of both. This one waits until the hero's has scrolled
+   * away; the controls beside it never do, because hiding sign-in and the
+   * language switch on the first screen removes navigation rather than
+   * removing a duplicate.
+   */
+  primaryCta?: ReactNode;
+  /** Defer `primaryCta` until the page has scrolled past its first screen. */
+  deferCta?: boolean;
 }
 
 const MOBILE_MENU_ID = 'navbar-mobile-menu';
 const FOCUSABLE =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export function Navbar({ logo, links, cta }: NavbarProps) {
+export function Navbar({ logo, links, cta, primaryCta, deferCta = false }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  const [pastHero, setPastHero] = useState(false);
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+      // 62% of the viewport: past the hero's own call to action but well
+      // before the next section's, so the bar is never the only one on screen
+      // for long and never the second one.
+      setPastHero(window.scrollY > window.innerHeight * 0.62);
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
   const close = useCallback(() => {
@@ -117,7 +147,19 @@ export function Navbar({ logo, links, cta }: NavbarProps) {
           ))}
         </ul>
 
-        {cta && <div className="navbar__cta">{cta}</div>}
+        {(primaryCta || cta) && (
+          <div className="navbar__cta">
+            {primaryCta && (
+              <span
+                className="navbar__cta-primary"
+                data-deferred={deferCta && !pastHero ? 'true' : undefined}
+              >
+                {primaryCta}
+              </span>
+            )}
+            {cta}
+          </div>
+        )}
 
         <button
           ref={toggleRef}
@@ -160,8 +202,9 @@ export function Navbar({ logo, links, cta }: NavbarProps) {
             ))}
           </ul>
 
-          {cta && (
+          {(primaryCta || cta) && (
             <div className="navbar__mobile-cta" onClick={close}>
+              {primaryCta}
               {cta}
             </div>
           )}

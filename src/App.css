@@ -68,14 +68,23 @@
  * the point.
  */
 .page-ramp {
+  position: relative;
+
   /*
    * Accent blooms sit on top of the ramp, and they are the reason the glass has
    * anything to do. The material's whole premise is concentrating the colour of
    * what is behind it — over a flat near-black page there is no colour to
    * concentrate, and every surface measured 1.05:1 against its own backdrop.
    * These are the design system's `ds-aurora-brand` idea in this site's palette:
-   * very low alpha, very large, so they read as depth in the page rather than as
-   * shapes on it. They are painted, not animated, so they cost no compositing.
+   * Large and soft, so they read as depth in the page rather than as shapes on
+   * it. They are painted, not animated, so they cost no compositing.
+   *
+   * The strengths are tokens now, and they went up: at the old 8–12% the
+   * brightest pixel the page body could produce was about #2D3845, which is
+   * grey. Below the fold this site has no chromatic content of its own to
+   * concentrate — the only images down there are greyscale — so the blooms and
+   * the ramp are the entire colour budget, and a bloom too faint to see is not
+   * subtlety, it is an absent bloom.
    *
    * All four are drawn from the blue half of the palette. `--tertiary` is a warm
    * orange, and at bloom scale even 6% of it reads as a distinct orange wash
@@ -85,22 +94,22 @@
   background:
     radial-gradient(
       58% 34% at 18% 10%,
-      color-mix(in oklab, var(--accent) 12%, transparent) 0%,
+      color-mix(in oklab, var(--accent) var(--bloom-strong), transparent) 0%,
       transparent 64%
     ),
     radial-gradient(
       52% 30% at 88% 30%,
-      color-mix(in oklab, var(--secondary) 10%, transparent) 0%,
+      color-mix(in oklab, var(--secondary) var(--bloom-mid), transparent) 0%,
       transparent 62%
     ),
     radial-gradient(
       64% 34% at 26% 56%,
-      color-mix(in oklab, var(--accent) 9%, transparent) 0%,
+      color-mix(in oklab, var(--accent) var(--bloom-soft), transparent) 0%,
       transparent 64%
     ),
     radial-gradient(
       56% 30% at 82% 78%,
-      color-mix(in oklab, var(--secondary) 8%, transparent) 0%,
+      color-mix(in oklab, var(--secondary) var(--bloom-mid), transparent) 0%,
       transparent 62%
     ),
     linear-gradient(
@@ -112,4 +121,18 @@
       var(--grad-4) 80%,
       var(--grad-5) 100%
     );
+}
+
+/*
+ * Every section sits above the circuit field, which is the ramp's first
+ * child at z-index 0. They are all `position: relative` already for their own
+ * reasons; this only gives them a stacking level, so the field shows through
+ * the gaps between them and behind any translucent surface, rather than being
+ * painted over.
+ */
+.page-ramp > header,
+.page-ramp > section,
+.page-ramp > div:not(.circuit-field) {
+  position: relative;
+  z-index: 1;
 }

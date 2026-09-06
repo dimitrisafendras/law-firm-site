@@ -6,7 +6,9 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: var(--radius-sm);
+  /* Round, matching the pill the consultation button sets beside it — a 6px
+     corner next to a fully rounded button reads as two different systems. */
+  border-radius: var(--radius-full);
   border: 1px solid var(--glass-border);
   background: transparent;
   color: var(--text);
@@ -20,7 +22,7 @@
   padding: 0;
   font-family: var(--label);
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: var(--type-caps-tracking-tight);
 }
 
 .icon-toggle:hover {

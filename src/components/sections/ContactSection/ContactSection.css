@@ -1,7 +1,7 @@
 .contact-section {
   position: relative;
   overflow: hidden;
-  padding: 100px 0;
+  padding: var(--space-24) 0;
 
   /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
      height (self-corrects after first render via the `auto` keyword). */
@@ -9,7 +9,7 @@
   contain-intrinsic-size: auto 900px;
 
   @media (max-width: 1024px) {
-    padding: 40px 0;
+    padding: var(--space-16) 0;
   }
 }
 
@@ -38,34 +38,81 @@
 /* The only surface in this section: the column opposite is made of fields, so
    the details panel carries the material for this half of the grid. Surface,
    edge and elevation come from `.glass`. */
+/*
+ * The details are the section's left column, not an object in it. Sized up to
+ * h2 so three lines can hold a column that used to be 500px of nothing under a
+ * small card.
+ */
 .contact-section__details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
-  padding: var(--space-8);
-  border-radius: var(--radius-3xl);
+  gap: var(--space-8);
 }
 
 .contact-section__detail {
   display: flex;
-  align-items: flex-start;
+  align-items: baseline;
   gap: var(--space-4);
-  font-size: 15px;
-  color: var(--text);
+  font-family: var(--heading);
+  font-size: var(--type-h4-size);
+  font-weight: var(--weight-light);
+  line-height: var(--type-h2-leading);
+  letter-spacing: var(--type-h4-tracking);
+  color: var(--text-h);
+
+  @media (max-width: 1024px) {
+    font-size: var(--type-body-lg-size);
+  }
 }
 
 .contact-section__detail a {
-  color: var(--accent-text);
+  color: var(--accent);
   text-decoration: none;
-  transition: color var(--transition, 0.3s);
+  transition: opacity 0.3s;
 }
 
 .contact-section__detail a:hover {
-  color: var(--accent);
+  opacity: var(--text-emphasis-secondary);
 }
 
 .contact-section__detail-icon {
   font-size: 20px;
   color: var(--accent);
   flex-shrink: 0;
+}
+
+/* ─── What to expect ───────────────────────────────────────────────────────── */
+
+.contact-section__promises {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin: var(--space-16) 0 0;
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--glass-edge);
+  max-width: 46ch;
+}
+
+.contact-section__promise {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.contact-section__promise dt {
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent);
+}
+
+.contact-section__promise dd {
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-leading);
+  color: var(--text);
+  opacity: var(--text-emphasis-secondary);
+  margin: 0;
 }

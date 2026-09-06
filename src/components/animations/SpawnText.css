@@ -100,3 +100,47 @@
     filter: blur(0) brightness(1);
   }
 }
+
+/* ─── Scroll-linked variant ────────────────────────────────────────────────
+ *
+ * The hero's spawn fires once on page load, which is right for a hero and
+ * useless for a title 4,000px down the page — by the time it is read the
+ * animation has long since finished playing to nobody.
+ *
+ * Same reveal, driven by `animation-timeline: view()` instead. Because a view
+ * timeline ignores `animation-delay`, the per-unit stagger becomes a shift in
+ * `animation-range` — each unit completes a little later in the title's own
+ * entry, which reads the same and, unlike a delay, stays tied to scroll
+ * position rather than to the clock.
+ *
+ * Outside `@supports` these units keep the base rules, which are already the
+ * final state: visible, sharp, un-transformed.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .spawn-text--scroll .spawn-text__unit {
+      animation-name: spawn-unit;
+      animation-duration: auto;
+      animation-delay: 0s;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      /*
+       * Deliberately fast. An earlier pass ran this over 38% of the element's
+       * entry with a 1.5% offset per character, and a title caught part-way
+       * showed a single letter floating in an empty section — the exact
+       * "looks broken, not animated" failure this whole rework is about.
+       *
+       * The reveal now completes within the first fifth of the entry, and the
+       * per-character offset is small enough that a long title still finishes
+       * well before it is read. The stagger is a texture, not a wait.
+       */
+      animation-range: entry calc(var(--spawn-index, 0) * 0.45%) entry
+        calc(14% + var(--spawn-index, 0) * 0.45%);
+    }
+
+    .spawn-text--scroll.spawn-text--gradient .spawn-text__unit {
+      animation-name: spawn-unit-bloom;
+    }
+  }
+}

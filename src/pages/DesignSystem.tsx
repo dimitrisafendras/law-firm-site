@@ -1,5 +1,6 @@
 import { useTranslation } from '@/i18n';
-import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, elevations, typeScale, breakpoints, layout, transitions, colorVarNames } from '../theme';
+import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, elevations, typeScale, capsTracking, breakpoints, layout, transitions, colorVarNames } from '../theme';
+import { CircuitField } from '../components/CircuitField';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import { SpawnText } from '../components/animations/SpawnText';
 import { EditableSpawnText } from '../components/animations/EditableSpawnText';
@@ -624,6 +625,30 @@ export default function DesignSystem() {
               <span style={{ fontFamily: 'var(--mono)', fontSize: '13px' }}>{key}</span>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Real italic */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '12px' }}>{t('dsItalicTitle')}</h2>
+        <p style={{ maxWidth: '70ch', marginBottom: '24px', opacity: 0.75 }}>{t('dsItalicBody')}</p>
+        <p style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: typeScale.h2.size, lineHeight: 1.35, color: 'var(--text-h)', margin: 0 }}>
+          {t('pangram')}
+        </p>
+        <div style={{ marginTop: '32px', maxWidth: '360px' }}>
+          <TokenTable title={t('dsCapsTracking')} tokens={capsTracking} />
+        </div>
+      </section>
+
+      {/* Dissolution field */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '12px' }}>{t('dsFieldTitle')}</h2>
+        <p style={{ maxWidth: '70ch', marginBottom: '24px', opacity: 0.75 }}>{t('dsFieldBody')}</p>
+        {/* Scoped preview: the real layer is `position: fixed` behind the whole
+            page, so it is shown here inside a clipped, relatively-positioned
+            box rather than escaping to cover the showcase. */}
+        <div style={{ position: 'relative', height: '260px', overflow: 'hidden', borderRadius: radii['2xl'], background: 'var(--grad-3)' }}>
+          <CircuitField />
         </div>
       </section>
 

@@ -1,15 +1,19 @@
 .network-map {
   position: relative;
   overflow: hidden;
-  padding: 100px 0;
+  /* Was a raw 100px, while Practice and Team used the 96px token for the same
+     rhythm. One value, from the scale. */
+  padding: var(--space-24) 0 0;
 
-  /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
-     height (self-corrects after first render via the `auto` keyword). */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 1100px;
+  /*
+   * No `content-visibility: auto`: the band below owns an opaque background,
+   * and paint containment on a section that paints its own ground leaves a
+   * hole in the page when the section is skipped. Same reason as StatsBar and
+   * the marble plinth.
+   */
 
   @media (max-width: 1024px) {
-    padding: 40px 0;
+    padding: var(--space-16) 0 0;
   }
 }
 
@@ -25,48 +29,141 @@
 
 /* ─── Two-Column Grid: Cards Left, Map Right ─────────────────────────────── */
 
-.network-map__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
+/* ─── The band ─────────────────────────────────────────────────────────────
+ *
+ * Full-bleed, and it owns an opaque ground — so, like the marble section and
+ * the stats band, it must not carry `content-visibility: auto`. Paint
+ * containment on a section that paints its own background leaves a hole in the
+ * page when the section is skipped.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.network-map__band {
+  position: relative;
+  margin-top: var(--space-16);
+
+  overflow: hidden;
+  background-color: var(--grad-4);
+
+  /* Tall enough that the map is a picture rather than a strip behind the
+     cards. The cards sit at the bottom edge (align-items: end below), so this
+     height is what keeps Athens — at the map's vertical midpoint — clear of
+     them. */
+  min-height: 620px;
 
   @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
+    min-height: 0;
   }
 }
 
-/* ─── Node Cards: 2 top + 1 bottom spanning full width ───────────────────── */
+/* ─── The map ──────────────────────────────────────────────────────────────── */
 
-.network-map__cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.network-map__cards > :nth-child(3) {
-  grid-column: 1 / -1;
-
-  @media (max-width: 1024px) {
-    grid-column: auto;
-  }
+/*
+ * The crop sits high in the band.
+ *
+ * `slice` fills the box and clips the overflow, and with the box wider than
+ * the map's 1000x620 it is the vertical that gets cut. Anchoring to the bottom
+ * (xMidYMax) pushes the Aegean up out of the lower third, which is where the
+ * cards sit — centring it put Greece directly behind them.
+ */
+.network-map__map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 /*
- * Each card is wrapped in a FadeInSection, so the WRAPPER is the grid item and
- * it — not the card — receives the stretched row height. Left alone, the card
- * stops at its content height and the column's bottom edge falls short of the
- * map beside it. The map column gets this for free from `--map-col`'s flex.
+ * Land drawn as a filled shape with a brighter coast, so the sea reads as the
+ * subject rather than as background. The maritime practice is the reason this
+ * map exists; the water should be the thing you see.
  */
-.network-map__cards > * {
-  display: flex;
+.network-map__land {
+  fill: color-mix(in oklab, var(--accent) 12%, transparent);
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-opacity: 0.55;
+  vector-effect: non-scaling-stroke;
 }
 
-/* Surface, edge and elevation come from `.glass`; this rule owns only the
-   card's shape and box. */
+.network-map__pin-dot {
+  fill: var(--accent);
+}
+
+.network-map__pin-halo {
+  fill: color-mix(in oklab, var(--accent) 18%, transparent);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: network-pin-breathe 4s var(--ease-settle) infinite;
+}
+
+/* One slow pulse on one pin — the only looping animation on the page, and it
+   is doing a job: at this scale the pin is a 9px dot on a 1440px map. */
+@keyframes network-pin-breathe {
+  0%, 100% { transform: scale(0.72); opacity: 0.55; }
+  50% { transform: scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .network-map__pin-halo {
+    animation: none;
+  }
+}
+
+/* Holds the cards' body copy against the coastline behind them. Sits over the
+   map, under the cards — heaviest at the bottom, where the cards are. */
+.network-map__band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 15%) 45%, rgb(0 0 0 / 66%) 100%);
+  pointer-events: none;
+}
+
+/* Cards low in the band, so the upper two thirds of the map stay visible. */
+.network-map__band-inner {
+  position: relative;
+  z-index: 2;
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--space-24) var(--space-12) var(--space-12);
+  min-height: 620px;
+  display: flex;
+  align-items: flex-end;
+
+  @media (max-width: 1024px) {
+    min-height: 0;
+    display: block;
+  }
+
+  @media (max-width: 1024px) {
+    padding: var(--space-16) var(--space-4);
+  }
+}
+
+.network-map__band-inner > .network-map__cards {
+  width: 100%;
+}
+
+/*
+ * Cards sized by their content and aligned to the bottom of the band, so the
+ * band's own height comes from the photograph rather than the cards stretching
+ * to fill something. `align-items: end` is what stops the ~40% of empty card
+ * the stretched layout used to produce.
+ */
+.network-map__cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-8);
+  align-items: end;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+}
+
 .network-map__card {
   width: 100%;
   overflow: hidden;
@@ -117,7 +214,7 @@
   font-family: var(--label);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.3em;
+  letter-spacing: var(--type-caps-tracking-wide);
   color: var(--accent);
   display: block;
   margin-bottom: var(--space-3);
@@ -158,7 +255,7 @@
   font-family: var(--label);
   font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: var(--type-caps-tracking-wide);
   color: var(--accent);
   text-decoration: none;
   transition: gap 0.3s;
@@ -170,74 +267,21 @@
 
 /* ─── Map ─────────────────────────────────────────────────────────────────── */
 
-.network-map__map-col {
-  display: flex;
-}
 
 /* The material is inlined rather than applied via `.glass`: the frame's own
    children (glow, pin) are absolutely positioned, and an opaque map fills the
    box — so `.glass`'s child promotion would break them and its blur and
    illumination would never be seen. A real border, not the inset edge: an inset
    shadow paints under child content, and the image would cover it. */
-.network-map__map {
-  position: relative;
-  width: 100%;
-  border-radius: var(--radius-3xl);
-  overflow: hidden;
-  border: 1px solid var(--glass-edge);
-  box-shadow: var(--elev-floating);
-}
 
-.network-map__map-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.8;
-}
 
 /* ─── Pin ──────────────────────────────────────────────────────────────────── */
 
-.network-map__pin {
-  position: absolute;
-  top: 50%;
-  left: 53%;
-  transform: translate(-50%, -100%);
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  animation: pin-bob 2.5s ease-in-out infinite;
-}
 
 @keyframes pin-bob {
   0%, 100% { transform: translate(-50%, -100%); }
   50% { transform: translate(-50%, calc(-100% - 6px)); }
 }
 
-.network-map__pin-label {
-  display: block;
-  text-align: center;
-  font-family: var(--label);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--accent);
-  text-shadow: 0 0 8px var(--accent), 0 0 16px var(--accent);
-  margin-bottom: 0;
-  white-space: nowrap;
-}
 
-.network-map__pin-icon {
-  width: 28px;
-  height: 42px;
-  filter: drop-shadow(0 0 8px var(--accent));
-}
 
-.network-map__map-glow {
-  position: absolute;
-  inset: 0;
-  background: var(--grad-3);
-  opacity: 0.35;
-  pointer-events: none;
-}

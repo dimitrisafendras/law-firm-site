@@ -226,10 +226,14 @@ export const letterSpacings = {
 /**
  * Spacing — the design system's 4px grid.
  *
- * Steps 1-16 are the system's own. 20 and 24 are a documented extension: the
- * scale stops at 64px, which is a control-layer measure, and this site's
+ * Steps 1-16 are the system's own. 20, 24 and 32 are a documented extension:
+ * the scale stops at 64px, which is a control-layer measure, and this site's
  * sections breathe at roughly 100px. Extending the same grid keeps section
  * rhythm on it rather than sending every section back to a magic number.
+ *
+ * 32 is the terminal step, for the bottom of a page that ends without a footer:
+ * the detail pages close on a card, and a page whose last surface is followed
+ * by one section's worth of ground reads as cut off rather than finished.
  */
 export const spacing = {
   0: '0px',
@@ -243,6 +247,7 @@ export const spacing = {
   16: '64px',
   20: '80px',
   24: '96px',
+  32: '128px',
 } as const;
 
 // ─── Radii ────────────────────────────────────────────────────────────────────
@@ -279,6 +284,28 @@ export const breakpoints = {
 
 export const layout = {
   maxWidth: '1440px',
+  /*
+   * How tall the page ramp's wash is, for pages too short to set it themselves.
+   *
+   * `.page-ramp` in App.css sizes its gradient and its four blooms as
+   * percentages of the element, which is the whole scrolling page — about
+   * 6,860px on the home page. Every other page is a fraction of that, so the
+   * identical five stops and four blooms get squeezed into a fraction of the
+   * height: the ramp runs several times faster and every bloom shrinks with it.
+   *
+   * `.page-ramp--short` pins the layers to this absolute span instead, so a
+   * short page shows the *top* of the same wash at the same scale rather than
+   * the whole wash in miniature. It is a measurement of the home page, not a
+   * step of a scale — which is exactly why it belongs here rather than being
+   * retyped into a stylesheet.
+   */
+  /*
+   * How slowly the page's background wash unfolds, for pages too short to
+   * unfold it themselves (`.page-ramp--short` in App.css). A design constant,
+   * not a measurement: it began as the home page's height and the home page has
+   * since moved, which changed nothing about the right rate for a short page.
+   */
+  rampSpan: '6860px',
 } as const;
 
 // ─── Glass ───────────────────────────────────────────────────────────────────
@@ -523,6 +550,55 @@ export const decor = {
   domainArtHover: '0.85',
 } as const;
 
+/*
+ * Brand — VKM Legal.
+ *
+ * These are the supplied artwork's own values (see src/assets/brand/), and the
+ * mark renders with them unchanged: navy and sky letters carrying a white
+ * keyline. Nothing here is a dark-ground reinterpretation — an earlier revision
+ * lifted the navy and inverted the keyline to a dark rule, which quietly made
+ * the site's logo a different logo from the client's.
+ *
+ * The artwork is built for white, so `plate` is what reconciles it with a
+ * #0F1A2E page: the mark carries its own light ground rather than being
+ * repainted for a dark one. #002B49 on #0F1A2E measures about 1.3:1 — a hole
+ * where two thirds of the word should be — and on `plate` it measures 15.5:1.
+ * `plate` is the same white as `keyline` on purpose: on paper the keyline is
+ * the paper showing between interlocking glyphs, and it can only read that way
+ * if the two match.
+ */
+export const brand = {
+  /** Letter fill for V and M, as drawn. */
+  navy: '#002B49',
+  /** Letter fill for K — the middle letter picked out, as drawn. */
+  sky: '#89CFF0',
+  /** The wordmark's LEGAL rule. */
+  teal: '#1A6B8A',
+  /**
+   * The navy carried up until it reads on this site's dark ramp.
+   *
+   * `navy` as drawn measures about 1.3:1 against #0F1A2E, so with the artwork's
+   * white keyline removed the V and M disappeared entirely. Same hue, lifted
+   * until it holds. `navy` above is still the drawn value, for white grounds.
+   */
+  navyOnDark: '#7FA8CC',
+  /** The keyline behind each glyph, as drawn. Kept as a record of the artwork;
+      the on-screen mark does not use it — three white outlines at this size ran
+      together and read as a smudge. */
+  keyline: '#FFFFFF',
+  /** The light ground the mark carries with it onto a dark page. */
+  plate: '#FFFFFF',
+} as const;
+
+export const brandVarNames: Record<string, string> = {
+  navy: '--brand-navy',
+  sky: '--brand-sky',
+  navyOnDark: '--brand-navy-on-dark',
+  teal: '--brand-teal',
+  keyline: '--brand-keyline',
+  plate: '--brand-plate',
+};
+
 export const decorVarNames: Record<string, string> = {
   fieldAlphaStrong: '--field-alpha-strong',
   fieldAlphaMid: '--field-alpha-mid',
@@ -607,6 +683,7 @@ export const spacingVarNames: Record<string, string> = {
   16: '--space-16',
   20: '--space-20',
   24: '--space-24',
+  32: '--space-32',
 };
 
 export const weightVarNames: Record<string, string> = {
@@ -625,6 +702,7 @@ export const textEmphasisVarNames: Record<string, string> = {
 
 export const layoutVarNames: Record<string, string> = {
   maxWidth: '--layout-max-width',
+  rampSpan: '--layout-ramp-span',
 };
 
 export const elevationVarNames: Record<string, string> = {

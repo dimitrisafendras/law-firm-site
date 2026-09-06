@@ -36,3 +36,6 @@ src/theme/theme.generated.css
 # Playwright MCP scratch output — screenshots and page snapshots written by
 # browser automation. Tool artifacts, not project content.
 .playwright-mcp/
+
+# Agent worktrees — transient, and each is its own git repo.
+.claude/worktrees/

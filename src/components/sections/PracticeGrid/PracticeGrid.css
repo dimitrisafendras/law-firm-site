@@ -75,29 +75,27 @@
   transition: opacity 0.6s, transform 0.6s;
 }
 
-/* The material is inlined rather than applied with `.glass`, for one reason:
-   `.glass > *` sets `position: relative` on every direct child, which would
-   knock this card's absolutely-positioned illustration out of place. Same
-   three layers, same values — just declared here. */
+/* The material comes from `<Card>` now — this card used to inline it, because
+   `.glass > *` sets `position: relative` on every direct child and that would
+   have knocked the illustration out of place and shrunk the stretched link to
+   the width of its heading. Both are handled by putting the two children that
+   care back where they were, in the two rules below, which is the same fix the
+   network node cards use. What is left here is the card's own box and hover.
+
+   Taking the material whole also gives the card the highlight rim (`.glass`'s
+   `::after`) that the hand-rolled copy never had — one hairline of specular
+   light along the top edge, which is what the partner cards have always had and
+   what this section's hover was written to match.
+
+   Lensing works here for the same reason it works on every other surface:
+   FadeInSection animates the surface itself on a view() timeline rather than
+   fading an ancestor, so nothing above this card is a backdrop root and the
+   blur samples the page from the first frame. See src/styles/liquid-glass.css. */
 .practice-domain {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
   /* Tighter vertically than horizontally: the 5-column cards were noticeably
      taller than their text needed, which is what left the row looking airy in
      the middle and cramped at the edges. */
   padding: var(--space-8) var(--space-12);
-  border-radius: var(--radius-3xl);
-  background-color: var(--glass-tint);
-  /* Lensing is back. FadeInSection animates the surface itself on a view()
-     timeline rather than fading an ancestor, so nothing above this card is a
-     backdrop root and the blur samples the page from the first frame. See
-     src/styles/liquid-glass.css. */
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  box-shadow:
-    var(--elev-floating),
-    inset 0 0 0 1px var(--glass-edge);
   transition:
     box-shadow 0.4s var(--ease-settle),
     transform 0.4s var(--ease-settle),
@@ -108,29 +106,22 @@
   }
 }
 
-/* Illumination — interior glow. Negative z-index so it sits over the tint but
-   under every child, which keeps the card's own absolutely-positioned
-   decoration (`__bg`) stacked exactly as before.
-
-   The 2px accent line that used to sit on ::before is gone: a bright rule
-   across the top edge of a rounded card is the most generic device in this
-   whole genre, and with four cards side by side it read as a toolbar. The
-   card's edge is now drawn by the material's own rim, like every other
-   surface on the site. */
-.practice-domain::before {
-  content: '';
+/* The illustration stays out of flow, against `.glass > *`'s promotion.
+   Deliberately (0,2,0) so it does not depend on which stylesheet the bundler
+   emits last. `z-index: 0` puts it above the material's illumination (which is
+   `.glass::before`, also at 0 but painted first) and below the copy, which the
+   promotion lifts to 2 — exactly the stack it had when the material was
+   inlined and the glow sat at -1. */
+.practice-domain > .practice-domain__bg {
   position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  pointer-events: none;
-  background:
-    radial-gradient(120% 90% at 15% 0%, var(--glass-glow) 0%, transparent 55%),
-    radial-gradient(100% 80% at 90% 110%, var(--glass-glow) 0%, transparent 60%);
-  opacity: 0.85;
-  transition:
-    transform 0.5s var(--ease-settle),
-    opacity 0.4s ease;
+  z-index: 0;
+}
+
+/* The heading goes back to static, so the stretched `::after` on the link
+   inside it resolves against the card rather than against two words of title.
+   Same fix, same reason the contact panel needs for its pin chip. */
+.practice-domain > .practice-domain__title {
+  position: static;
 }
 
 /* Every hover response lives here, gated on a real hovering pointer: touch
@@ -154,23 +145,26 @@
    * forward — and both finish with the title underlining from the left and the
    * cue coming up to full and stepping right. Same language, same intensity,
    * same curve and duration, so the two sections read as one system.
+   *
+   * The illumination's own hover shift — scale 1.08, opacity to full — is not
+   * repeated here: it is `.glass--interactive:hover::before` in
+   * liquid-glass.css, and `<Card interactive>` is what asks for it.
    */
   .practice-domain--linked:hover {
-    /* Read back by this card's inlined backdrop-filter, exactly as `.glass`
-       reads it on the partner card. */
+    /* Read back by `.glass`'s backdrop-filter, so the lift comes with a
+       saturation bump rather than a second filter declaration. The heavier tint
+       goes through `--glass-surface-tint` for the same reason: a plain
+       `background-color` here would land at the same specificity as `.glass`
+       but later in the bundle, and would keep the surface translucent after
+       the reduced-transparency fallback had switched the blur off. */
     --glass-saturate: 200%;
+    --glass-surface-tint: var(--glass-bg-strong);
 
     transform: translateY(-6px);
-    background-color: var(--glass-bg-strong);
     box-shadow:
       var(--elev-overlay),
       inset 0 0 0 1px var(--accent-border),
       0 0 48px var(--glass-glow);
-  }
-
-  .practice-domain--linked:hover::before {
-    transform: scale(1.08);
-    opacity: 1;
   }
 
   /* The illustration is the card's best asset, so hover is where it steps
@@ -202,18 +196,6 @@
   transform: translateY(-1px);
 }
 
-@media (prefers-reduced-transparency: reduce) {
-  .practice-domain {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    background-color: var(--surface);
-  }
-
-  .practice-domain::before {
-    display: none;
-  }
-}
-
 /*
  * The hover keeps everything that is a change of state — the elevation, the
  * accent edge and halo, the brighter material, the fuller illustration, the cue
@@ -223,7 +205,6 @@
  */
 @media (prefers-reduced-motion: reduce) {
   .practice-domain,
-  .practice-domain::before,
   .practice-domain__bg,
   .practice-domain__link,
   .practice-domain__cue,
@@ -315,12 +296,13 @@
  * surface clickable without a second control and without a click handler on the
  * `<article>` — the accessible name stays the domain's name, in the heading.
  *
- * `inset: 0` resolves against `.practice-domain` because nothing between the
- * two is positioned: this card inlines the glass material rather than wearing
- * `.glass`, so there is no `.glass > *` rule making the `<h3>` a containing
- * block. If it is ever converted to `.glass`, the card's content has to move
- * into a single positioned wrapper first — see `.partner-ethos__body` — or this
- * shrinks back to the width of the title.
+ * `inset: 0` resolves against `.practice-domain`, which `.glass` makes
+ * `position: relative`. Nothing between the two is positioned, and that is not
+ * free: `.glass > *` promotes the `<h3>` this link sits in, so the rule above
+ * (`.practice-domain > .practice-domain__title { position: static }`) puts it
+ * back. Remove that rule and this target silently shrinks to the width of the
+ * title. `z-index: 3` clears the promoted children's 2, so the overlay covers
+ * the copy as well as the gaps.
  *
  * The known cost of the pattern is that text inside the card can no longer be
  * selected with the mouse. That is the trade for a card-sized target; the

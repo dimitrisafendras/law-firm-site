@@ -1,12 +1,11 @@
 import { useEffect } from 'react';
 import { useTranslation } from '@/i18n';
 import { Navbar, Footer, Button, EditableText, AuthNavControl } from '@/components';
-import { ScaleOfJustice } from '@/assets/illustrations';
+import { VkmLogo } from '@/assets/VkmLogo';
 import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
 import { StatsBar } from '@/components/sections/StatsBar/StatsBar';
 import { PracticeGrid } from '@/components/sections/PracticeGrid/PracticeGrid';
 import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
-import { NetworkMap } from '@/components/sections/NetworkMap/NetworkMap';
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection/TestimonialsSection';
 import { ContactSection } from '@/components/sections/ContactSection/ContactSection';
 import { CircuitField } from '@/components/CircuitField';
@@ -77,12 +76,8 @@ export default function HomePage() {
       <Navbar
         deferCta
         logo={
-          <a href="#" className="firm-logo">
-            <ScaleOfJustice className="firm-logo__icon" />
-            <span className="firm-logo__text">
-              <EditableText tKey="firmName" as="span" />
-              <EditableText tKey="firmTagline" as="span" className="firm-logo__tagline" />
-            </span>
+          <a href="#" className="firm-logo" aria-label={t('firmName')}>
+            <VkmLogo className="firm-logo__mark" />
           </a>
         }
         links={[
@@ -108,16 +103,16 @@ export default function HomePage() {
         <StatsBar />
         <PracticeGrid />
         <PartnerEthos />
-        <NetworkMap />
         <TestimonialsSection />
+        {/* The map band that used to be its own "Global Network" section lives
+            inside ContactSection now — one office, one pin, one section. */}
         <ContactSection />
       </main>
 
       <Footer
         logo={
           <div className="footer-brand">
-            <ScaleOfJustice className="footer-brand__icon" />
-            <EditableText tKey="firmName" as="span" />
+            <VkmLogo className="footer-brand__mark" title={t('firmName')} />
           </div>
         }
         columns={[

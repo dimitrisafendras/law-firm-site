@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '@/i18n';
-import { EditableText } from '@/components';
+import { Card, EditableText } from '@/components';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import { useCarousel } from './useCarousel';
@@ -113,8 +113,8 @@ export function TestimonialsSection() {
         </FadeInSection>
 
         <FadeInSection>
-          <div
-            className="testimonials-stage glass"
+          <Card
+            className="testimonials-stage"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             role="region"
@@ -148,7 +148,39 @@ export function TestimonialsSection() {
               attribution is not the content.
             */}
             <div className="testimonials-stage__live" aria-live="polite" aria-atomic="true">
-              <figure key={index} className="testimonials-stage__quote">
+              {/*
+                The sizer, and the reason the stage never changes height.
+
+                A `min-height` used to do this job, and a minimum is only ever
+                right for the quotes that are shorter than it — the two that ran
+                past it still shoved the rail down the page as they came round,
+                and the number itself had to be re-guessed every time the copy or
+                the language changed. This renders every quote at once, stacked
+                in the same grid cell as the visible one, so the cell measures
+                the tallest and the layout is settled before the first frame.
+
+                `t()` rather than EditableText on purpose: this is a measuring
+                stick, not content. Six more editable regions holding the same
+                strings would give an admin five wrong places to click, and the
+                whole block is `aria-hidden` and `visibility: hidden` — out of
+                the accessibility tree, out of the live region's announcements,
+                and untabbable, but still measured.
+              */}
+              <div className="testimonials-stage__sizer" aria-hidden="true">
+                {testimonials.map((item) => (
+                  <figure key={item.quoteKey} className="testimonials-stage__quote">
+                    <blockquote className="testimonials-stage__text">{t(item.quoteKey)}</blockquote>
+                    <figcaption className="testimonials-stage__attribution">
+                      <span className="testimonials-stage__author">{t(item.authorKey)}</span>
+                      <span className="testimonials-stage__role">{t(item.roleKey)}</span>
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+
+              {/* `--live` is not styling — it is the hook that tells the one
+                  visible figure apart from the six the sizer holds. */}
+              <figure key={index} className="testimonials-stage__quote testimonials-stage__quote--live">
                 <blockquote className="testimonials-stage__text">
                   <EditableText tKey={active.quoteKey} as="span" />
                 </blockquote>
@@ -240,7 +272,7 @@ export function TestimonialsSection() {
                 ))}
               </div>
             </div>
-          </div>
+          </Card>
         </FadeInSection>
       </div>
     </section>

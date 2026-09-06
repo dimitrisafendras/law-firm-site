@@ -1,6 +1,6 @@
 import { useTranslation } from '@/i18n';
 import { useEditMode } from '@/lib/edit-mode';
-import { EditableText } from '@/components';
+import { Card, EditableText } from '@/components';
 import { partnerHref } from './partners';
 import type { Partner } from './partners';
 import './PartnerEthos.css';
@@ -21,10 +21,20 @@ interface PartnerCardProps {
  * The "view profile" row underneath is `aria-hidden`: it is the visible
  * affordance for the link the heading already carries, not a second one.
  *
- * `.glass` spends both of the card's own pseudo-elements on the material's
- * illumination and highlight layers, which is why everything sits inside
- * `__body` — a single positioned child that fills the card and becomes the
- * containing block the stretched `::after` needs.
+ * The surface is `<Card>`, which renders the `<article>` itself rather than
+ * wrapping it — that matters here twice over. `.glass` promotes every *direct*
+ * child to `position: relative`, which is why everything sits inside `__body`:
+ * a single positioned child that fills the card and becomes the containing
+ * block the stretched `::after` needs. And `.glass` spends both of the card's
+ * own pseudo-elements on the material's illumination and highlight layers, so
+ * the hover's accent rule borrows the portrait's `::before` instead. A card
+ * component that added a wrapper of its own would break the first and move the
+ * second.
+ *
+ * `interactive` rather than `clickable`: this card's hover is its own (a 6px
+ * lift, an accent rim and halo, the portrait pushing in), so it takes only the
+ * material's lensing from the component and leaves the built-in 2px card hover
+ * alone.
  *
  * Admin edit mode is the one case with no link. `EditableText` turns its
  * element into a `role="button"` editor, and an editor inside an anchor is both
@@ -39,16 +49,12 @@ export function PartnerCard({ partner, headingLevel: Heading = 'h3' }: PartnerCa
 
   const linked = !canEdit;
 
-  const classes = [
-    'partner-ethos__bust',
-    'glass',
-    linked ? 'partner-ethos__bust--linked glass--interactive' : '',
-  ]
+  const classes = ['partner-ethos__bust', linked ? 'partner-ethos__bust--linked' : '']
     .filter(Boolean)
     .join(' ');
 
   return (
-    <article className={classes}>
+    <Card as="article" interactive={linked} className={classes}>
       <div className="partner-ethos__body">
         <div className="partner-ethos__portrait">
           <picture>
@@ -106,6 +112,6 @@ export function PartnerCard({ partner, headingLevel: Heading = 'h3' }: PartnerCa
           </span>
         )}
       </div>
-    </article>
+    </Card>
   );
 }

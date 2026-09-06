@@ -1,6 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <!-- NOMOS brand mark: scale of justice (matches ScaleOfJustice in src/assets/illustrations.tsx) -->
-  <rect width="48" height="48" rx="10" fill="#111317"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="VKM Legal">
+  <!--
+    Scale of justice, baby blue on the site's navy ground.
+
+    Literal hex, not a CSS custom property: a favicon is fetched as a standalone
+    document and never sees the app's stylesheet, so var() resolves to nothing
+    here. #BCE8FF is the accent from tokens.ts and #0F1A2E the page ground;
+    change either there and it has to be changed here by hand.
+
+    Geometry, not type, which is what makes it work at 16px — the wordmark
+    depends on a font this document does not get, and its three glyphs close
+    into a single dot at tab size.
+
+    Mirrors ScaleOfJustice in src/assets/illustrations.tsx, scaled 0.73 and
+    inset so the drawing sits inside the rounded plate rather than touching it.
+  -->
+  <rect width="48" height="48" rx="10" fill="#0F1A2E"/>
   <g transform="translate(6.5,5.5) scale(0.73)" stroke="#BCE8FF" fill="none">
     <line x1="24" y1="6" x2="24" y2="42" stroke-width="2.5" stroke-linecap="round"/>
     <circle cx="24" cy="6" r="3" stroke-width="2"/>

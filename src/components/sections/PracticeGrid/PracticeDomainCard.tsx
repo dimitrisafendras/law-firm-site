@@ -1,6 +1,6 @@
 import { useTranslation } from '@/i18n';
 import { useEditMode } from '@/lib/edit-mode';
-import { EditableText } from '@/components';
+import { Card, EditableText } from '@/components';
 import { practiceHref } from './practiceAreas';
 import type { PracticeArea } from './practiceAreas';
 import './PracticeGrid.css';
@@ -21,13 +21,14 @@ interface PracticeDomainCardProps {
  * explore row underneath is now an `aria-hidden` span: it is the visible
  * affordance for the link the heading already carries, not a second one.
  *
- * Unlike `PartnerCard` this card needs no `__body` wrapper. `.glass` sets
- * `position: relative` on its direct children, which would have made the
- * `<h3>` the anchor's containing block and shrunk the target to the title —
- * but this card does not use `.glass`. It inlines the same material precisely
- * so its illustration can stay absolutely positioned (see PracticeGrid.css), so
- * its children are static and `inset: 0` on the stretched link resolves to the
- * card itself.
+ * This card used to inline the glass material by hand rather than take it from
+ * `<Card>`, because `.glass` sets `position: relative` on its direct children:
+ * that would have knocked the absolutely-positioned illustration out of place
+ * and made the `<h3>` the anchor's containing block, shrinking the target to
+ * the title. It needs no `__body` wrapper to escape that — unlike `PartnerCard`
+ * only two children care, so PracticeGrid.css puts those two back
+ * (`__bg` to absolute, `__title` to static) and everything else keeps the
+ * promotion. `inset: 0` on the stretched link then resolves to the card.
  *
  * Admin edit mode is the one case with no link. `EditableText` turns its
  * element into a `role="button"` editor, and an editor inside an anchor is both
@@ -50,7 +51,7 @@ export function PracticeDomainCard({
     .join(' ');
 
   return (
-    <article className={classes}>
+    <Card as="article" interactive={linked} className={classes}>
       <Bg className="practice-domain__bg" />
       <span className="practice-domain__num">{t('practiceDomainNum', { num })}</span>
 
@@ -72,6 +73,6 @@ export function PracticeDomainCard({
           <span className="practice-domain__cue-arrow">&rarr;</span>
         </span>
       )}
-    </article>
+    </Card>
   );
 }

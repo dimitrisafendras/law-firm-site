@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import type { JSX } from 'react';
 import { useTranslation } from '@/i18n';
-import { Navbar, Footer, Container, EditableText, AuthNavControl } from '@/components';
-import { ScaleOfJustice } from '@/assets/illustrations';
+import { Navbar, Container, Card, EditableText, AuthNavControl } from '@/components';
+import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '@/components/CircuitField/CircuitField';
 import type { Partner } from '@/components/sections/PartnerEthos/partners';
 import './PartnerDetailPage.css';
@@ -18,10 +18,13 @@ interface PartnerDetailPageProps {
  * card and this page can never disagree about a name or a biography, and an
  * admin editing either one edits both.
  *
- * Same skeleton as the auth pages — Navbar, a `.page-ramp` main with the
- * circuit field, Footer — so it stands on the site's ground rather than beside
- * it. `App` resolves the id before rendering; an id with no partner behind it
- * never reaches this component.
+ * Same ground as the auth pages — Navbar over a `.page-ramp` main with the
+ * circuit field — so it stands on the site's ground rather than beside it. No
+ * footer: this page is one profile with a way back to the team section at the
+ * top of it, and a full sitemap under a single biography is a second navigation
+ * for a page that has exactly one destination. The main's own bottom padding
+ * closes the composition instead. `App` resolves the id before rendering; an id
+ * with no partner behind it never reaches this component.
  */
 export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): JSX.Element {
   const { n, avif, fallback } = partner;
@@ -48,12 +51,8 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
     <>
       <Navbar
         logo={
-          <a href="#" className="firm-logo">
-            <ScaleOfJustice className="firm-logo__icon" />
-            <span className="firm-logo__text">
-              <EditableText tKey="firmName" as="span" />
-              <EditableText tKey="firmTagline" as="span" className="firm-logo__tagline" />
-            </span>
+          <a href="#" className="firm-logo" aria-label={t('firmName')}>
+            <VkmLogo className="firm-logo__mark" />
           </a>
         }
         links={[
@@ -65,7 +64,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
         cta={<AuthNavControl />}
       />
 
-      <main className="partner-page page-ramp">
+      <main className="partner-page page-ramp page-ramp--short">
         <CircuitField />
 
         <Container className="partner-page__inner">
@@ -75,7 +74,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
           </a>
 
           <div className="partner-page__masthead">
-            <figure className="partner-page__portrait glass">
+            <Card as="figure" lensing={false} className="partner-page__portrait">
               <picture>
                 <source type="image/avif" srcSet={avif} />
                 <img
@@ -87,7 +86,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
                   decoding="async"
                 />
               </picture>
-            </figure>
+            </Card>
 
             <div className="partner-page__intro">
               <EditableText
@@ -136,15 +135,22 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
           </div>
 
           <div className="partner-page__panels">
-            <section className="partner-page__panel glass" aria-labelledby={`partner-about-${n}`}>
+            <Card
+              as="section"
+              lensing={false}
+              className="partner-page__panel"
+              aria-labelledby={`partner-about-${n}`}
+            >
               <h2 className="partner-page__panel-title" id={`partner-about-${n}`}>
                 {t('partnerAboutLabel')}
               </h2>
               <EditableText tKey={`attorney${n}Bio`} as="p" className="partner-page__bio" />
-            </section>
+            </Card>
 
-            <section
-              className="partner-page__panel glass"
+            <Card
+              as="section"
+              lensing={false}
+              className="partner-page__panel"
               aria-labelledby={`partner-specialties-${n}`}
             >
               <h2 className="partner-page__panel-title" id={`partner-specialties-${n}`}>
@@ -157,21 +163,10 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
                   </li>
                 ))}
               </ul>
-            </section>
+            </Card>
           </div>
         </Container>
       </main>
-
-      <Footer
-        logo={
-          <div className="footer-brand">
-            <ScaleOfJustice className="footer-brand__icon" />
-            <EditableText tKey="firmName" as="span" />
-          </div>
-        }
-        columns={[]}
-        bottom={<EditableText tKey="footerCopyright" as="p" />}
-      />
     </>
   );
 }

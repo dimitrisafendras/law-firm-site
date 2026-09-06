@@ -16,6 +16,7 @@ export { Navbar } from './Navbar';
 export { Footer } from './Footer';
 export { Hero } from './Hero';
 export { Card, CardHeader, CardBody, CardFooter } from './Card';
+export type { CardProps, CardVariant } from './Card';
 export { AttorneyCard } from './AttorneyCard';
 export { PracticeAreaCard } from './PracticeAreaCard';
 export { TestimonialCard } from './TestimonialCard';

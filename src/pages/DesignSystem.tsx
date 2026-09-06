@@ -1,5 +1,8 @@
 import { useTranslation } from '@/i18n';
 import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, elevations, typeScale, capsTracking, breakpoints, layout, transitions, colorVarNames } from '../theme';
+// Brand is not re-exported from '../theme' — it is consumed only by the mark.
+import { brand, brandVarNames } from '../theme/tokens';
+import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '../components/CircuitField';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import { SpawnText } from '../components/animations/SpawnText';
@@ -100,6 +103,17 @@ const monoSmall: React.CSSProperties = {
   fontSize: '12px',
   lineHeight: '1.4',
   wordBreak: 'break-all',
+};
+
+/* The page ground the marks actually sit on, so the plate is judged against it. */
+const markPlateStyle: React.CSSProperties = {
+  background: 'var(--bg)',
+  border: '1px solid var(--border)',
+  borderRadius: '4px',
+  padding: '20px',
+  display: 'flex',
+  alignItems: 'center',
+  minHeight: '56px',
 };
 
 const labelStyle: React.CSSProperties = {
@@ -360,6 +374,13 @@ export default function DesignSystem() {
               <CardBody><Text variant="small" className="glass-demo-text">Stronger glass for higher contrast on busy backgrounds.</Text></CardBody>
               <CardFooter><Button size="sm">Contact Us</Button></CardFooter>
             </Card>
+            {/* Side by side with the default above, which is the point: the
+                difference is only visible against a ground with colour in it. */}
+            <Card lensing={false}>
+              <CardHeader><Heading level={3} className="glass-demo-heading">Unlensed Card</Heading></CardHeader>
+              <CardBody><Text variant="small" className="glass-demo-text">Same tint, rim and glow, no backdrop blur or saturate. For a card that has to match one whose backdrop root is empty — anything inside a section with <code>content-visibility: auto</code> cannot lens, so a card elsewhere that is the same object declares it.</Text></CardBody>
+              <CardFooter><Button variant="ghost" size="sm">Details</Button></CardFooter>
+            </Card>
           </div>
         </div>
 
@@ -537,6 +558,97 @@ export default function DesignSystem() {
             ]}
             bottom={<span>&copy; 2026 Mitchell & Associates LLP. All rights reserved.</span>}
           />
+        </div>
+      </section>
+
+      {/* ═══════════════════════ BRAND MARK ═══════════════════════ */}
+
+      {/*
+        Both lockups at the sizes they are actually used at, on the ground they
+        actually sit on. The small ones are the point: the monogram spends its
+        life at 26px, so a showcase that only shows it big proves nothing. Only
+        `height` is set on each — the viewBoxes are cropped to the plate, so
+        width follows.
+
+        The wordmark ramp exists to make one decision visible rather than
+        argued: LEGAL's cap height is an eighth of the glyphs', so it does not
+        resolve until the whole mark is around 96px tall. Read down the row and
+        the sub-label closes into a rule long before the footer's 34px.
+      */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '12px' }}>Brand mark</h2>
+        <p style={{ maxWidth: '640px', lineHeight: '1.6', marginBottom: '32px', opacity: 0.8 }}>
+          The supplied artwork as drawn — navy V and M, the K picked out in sky, an 8px
+          white keyline behind each glyph — set in Jura and carrying its own white plate,
+          which is what lets marks built for paper sit on a #0F1A2E page without being
+          repainted.
+        </p>
+
+        <style>{
+          '.ds-mark-26 { height: 26px; }' +
+          '.ds-mark-34 { height: 34px; }' +
+          '.ds-mark-96 { height: 96px; }' +
+          '.ds-wm-34 { height: 34px; }' +
+          '.ds-wm-64 { height: 64px; }' +
+          '.ds-wm-96 { height: 96px; }' +
+          '.ds-wm-130 { height: 130px; }' +
+          '[class^="ds-mark-"], [class^="ds-wm-"] { width: auto; display: block; }'
+        }</style>
+
+        <h3 style={{ fontFamily: 'var(--label)', fontSize: '14px', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '16px' }}>
+          Monogram — in use
+        </h3>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '32px', marginBottom: '40px' }}>
+          {[
+            { label: '26px — navbar', cls: 'ds-mark-26' },
+            { label: '34px — footer', cls: 'ds-mark-34' },
+            { label: '96px', cls: 'ds-mark-96' },
+          ].map(({ label, cls }) => (
+            <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <span style={monoSmall}>{label}</span>
+              <div style={markPlateStyle}>
+                <VkmLogo className={cls} title="VKM Legal" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <h3 style={{ fontFamily: 'var(--label)', fontSize: '14px', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '8px' }}>
+          The monogram at size
+        </h3>
+        <p style={{ maxWidth: '640px', lineHeight: '1.6', marginBottom: '16px', opacity: 0.8, fontSize: '15px' }}>
+          The supplied <code>vkm-monogram-source.svg</code>, rendered as-is via
+          an <code>&lt;img&gt;</code> so no page CSS can reach inside it. Note the
+          artwork places the glyphs in contact — measured −2.3 and −8.7 units of
+          gap before the keyline, and each glyph's 8px stroke then widens it by 8
+          per side — so the white keylines overlap heavily. That is the
+          &ldquo;interlock&rdquo; the file is named for; below about 64px it stops
+          reading as three letters.
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '32px', marginBottom: '40px' }}>
+          {[
+            { label: '34px — navbar', cls: 'ds-wm-34' },
+            { label: '64px', cls: 'ds-wm-64' },
+            { label: '96px', cls: 'ds-wm-96' },
+            { label: '130px', cls: 'ds-wm-130' },
+          ].map(({ label, cls }) => (
+            <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <span style={monoSmall}>{label}</span>
+              <div style={markPlateStyle}>
+                <VkmLogo className={cls} title="VKM Legal" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={gridStyle}>
+          {(Object.entries(brand) as [string, string][]).map(([key, value]) => (
+            <div key={key} style={swatchStyle(value)}>
+              <span style={{ ...monoSmall, color: contrastColor(value), fontWeight: 600 }}>{key}</span>
+              <span style={{ ...monoSmall, color: contrastColor(value), opacity: 0.85 }}>{brandVarNames[key]}</span>
+              <span style={{ ...monoSmall, color: contrastColor(value), opacity: 0.75 }}>{value}</span>
+            </div>
+          ))}
         </div>
       </section>
 

@@ -1,68 +1,514 @@
 .contact-section {
   position: relative;
   overflow: hidden;
-  padding: var(--space-24) 0;
+  /* Top padding separates the band from the section above; bottom is zero
+     because the band is full-bleed and runs to the footer's edge. There is
+     nothing outside the band any more — the header moved into it. */
+  padding: var(--space-24) 0 0;
 
-  /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
-     height (self-corrects after first render via the `auto` keyword). */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
+  /*
+   * `content-visibility: auto` is still off, and now for a different reason
+   * than it was: the band no longer paints a ground, so the old hazard (paint
+   * containment on a section that owns its own background leaves a hole in the
+   * page while it is skipped) is gone — but the map frame is a 2310px box
+   * clipped to a band whose height its own content sets, and a skipped section
+   * reports `contain-intrinsic-size` instead. Re-enabling it means giving this
+   * section a measured intrinsic size first.
+   */
 
   @media (max-width: 1024px) {
-    padding: var(--space-16) 0;
+    padding: var(--space-16) 0 0;
   }
 }
 
-.contact-section__inner {
+/* ─── The band ─────────────────────────────────────────────────────────────
+ *
+ * Full-bleed, and no ground of its own. It used to paint `--grad-4`, which made
+ * it a slab the page ran into rather than a part of the page — the ramp in
+ * App.css already arrives at very nearly this colour here, so the band was
+ * paying for a seam to reproduce a shade the page was going to be anyway.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.contact-section__band {
+  /*
+   * The numbers the map, the pin and the panel are solved against. They are
+   * measurements, not spacing steps, which is why they are raw px rather than
+   * tokens — and custom properties rather than literals so the solves below can
+   * be written as arithmetic instead of pre-multiplied constants that drift
+   * apart the moment one of them changes.
+   *
+   * --panel-clear
+   *           The strip the coastline and the pin appear in: how far the form
+   *           itself is pushed down inside its column. It is the *form's* offset
+   *           and not the panel's, which is what keeps the two columns' tops
+   *           level — pushing the whole panel down instead left the details card
+   *           starting 180px below where the right-hand side visibly began.
+   * --pin-offset
+   *           Where Athens lands, measured down from the frame's top edge — so,
+   *           since the frame starts --panel-clear above the form, this is also
+   *           where she lands in the strip above the form. 88 leaves the marker
+   *           and its chip inside it with room at both ends.
+   * --map-box-h
+   *           The SVG box's height. Governs the zoom, and only the zoom: see
+   *           the solve above `.contact-section__map`.
+   *
+   * The band has no height of its own. It used to carry a min-height solved
+   * against the panel's measured 680px, which was a constant that had to be
+   * re-derived every time the panel changed; the content sets it now, and
+   * nothing in the map's placement is expressed against it.
+   */
+  --panel-clear: 180px;
+  --pin-offset: 88px;
+  --map-box-h: 2310px;
+
+  position: relative;
+  overflow: hidden;
+
+  @media (max-width: 1024px) {
+    /* Below 1024 the panel goes single-column, so the form column — and the map
+       frame with it — drops below the details card. The frame keeps its shape,
+       just shorter, and the box shrinks with it so the crop does not zoom in.
+       See the overrides further down. */
+    --pin-offset: 84px;
+    --map-box-h: 620px;
+  }
+}
+
+/* ─── The map ──────────────────────────────────────────────────────────────
+ *
+ * The map is the form's ground, not the section's backdrop. It used to span the
+ * whole band; it now lives inside the form column, which is what confines it to
+ * the right-hand side of the panel.
+ *
+ * Two boxes, because they answer two different questions:
+ *
+ *   `.contact-section__map-frame`  WHERE the map is allowed to show. It is the
+ *      form column, edge to edge and top to bottom — so it is behind the form
+ *      for the whole of it, and the --panel-clear strip the form is pushed down
+ *      by is the part of it that shows, and where the pin sits. It clips and
+ *      masks; it has no say in the crop.
+ *
+ *   `.contact-section__map` (the svg)  WHAT part of the coast shows, and at what
+ *      zoom. `slice` fills its own box and clips the rest, so the box's height
+ *      sets the scale — `max(frameW / 1140, --map-box-h / vbH)` — and 2310
+ *      against a 1722 viewBox holds it at 1.342, the scale the original band
+ *      rendered at. The frame's width no longer binds, so the crop is the same
+ *      whatever the column measures.
+ *
+ * Splitting them is what makes the pin placeable. The viewBox is centred on
+ * Athens and the crop is `xMidYMid`, and the centre of a viewBox is the one
+ * point a symmetric slice leaves alone (see easternMediterranean.ts) — so Athens
+ * is at the centre of the *svg box*, and offsetting that box by half its height
+ * puts her at --pin-offset from the frame's top. Fixed, whatever the form's
+ * height does. An earlier version made the svg the frame, and then Athens
+ * tracked the form's height: adding a field moved the city.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.contact-section__map-frame {
+  position: absolute;
+  z-index: 0;
+  /* Bled past the form's own edges: a map that stopped exactly on the text
+     column would read as an image sitting in the layout rather than as ground
+     under it. The mask below dissolves the bleed. */
+  left: calc(-1 * var(--space-8));
+  right: calc(-1 * var(--space-8));
+  top: calc(-1 * var(--space-8));
+  bottom: calc(-1 * var(--space-8));
+  overflow: hidden;
+  /* The frame does not take the pointer — the pin inside it takes its own back.
+     Without this the frame's bleed would sit over the details card's right edge
+     and swallow clicks on the links there. */
+  pointer-events: none;
+  /* Four edges, none of them drawn. Vertical first, then horizontal, composited
+     together so a corner is faded by both. `intersect` is the standard property;
+     `source-in` is the -webkit- prefixed equivalent for the same effect. */
+  mask-image:
+    linear-gradient(180deg, transparent 0%, #000 7%, #000 88%, transparent 100%),
+    linear-gradient(90deg, transparent 0%, #000 9%, #000 91%, transparent 100%);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+
+.contact-section__map {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: var(--map-box-h);
+  top: calc(var(--pin-offset) - var(--map-box-h) / 2);
+}
+
+/*
+ * Land drawn as a filled shape with a brighter coast, so the sea reads as the
+ * subject rather than as background. The maritime practice is the reason this
+ * map exists; the water should be the thing you see.
+ *
+ * Dimmer than it was. It used to sit under a full-band scrim with a glass panel
+ * over it; it is now directly behind form labels and fields with nothing in
+ * between, so the coastline has to stay under the type rather than compete with
+ * it. The scrim itself is gone — it existed to hold copy against the coast
+ * across the whole band, and there is no coast across the whole band any more.
+ */
+.contact-section__land {
+  fill: color-mix(in oklab, var(--accent) 8%, transparent);
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-opacity: 0.4;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ─── The pin ──────────────────────────────────────────────────────────────
+ *
+ * A real <button>, positioned over the SVG rather than drawn inside it. The
+ * marker's centre — not the button's box — is what has to land on Athens, so
+ * the wrapper is anchored at the point and pulled up by half the marker.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.contact-section__pin {
+  --pin-marker: 28px;
+
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  /* The svg box's centre, which is Athens: the box is offset by half its height
+     so that its centre lands on this line, measured from the frame's top. */
+  top: var(--pin-offset);
+  transform: translate(-50%, calc(var(--pin-marker) / -2));
+  /* The frame around it declines the pointer so its bleed does not swallow the
+     details card's links; the control takes its own back. */
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: max-content;
+  max-width: min(90vw, 34ch);
+}
+
+.contact-section__pin-button {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-3xl);
+}
+
+.contact-section__pin-marker {
+  position: relative;
+  width: var(--pin-marker);
+  height: var(--pin-marker);
+  display: grid;
+  place-items: center;
+}
+
+.contact-section__pin-halo,
+.contact-section__pin-dot {
+  grid-area: 1 / 1;
+  border-radius: var(--radius-full);
+}
+
+.contact-section__pin-halo {
+  width: var(--pin-marker);
+  height: var(--pin-marker);
+  background: color-mix(in oklab, var(--accent) 18%, transparent);
+  /* One slow pulse on one pin — the only looping animation on the page, and it
+     is doing a job: at this scale the marker is a 9px dot on a 1440px map. */
+  animation: contact-pin-breathe 4s var(--ease-settle) infinite;
+}
+
+.contact-section__pin-dot {
+  width: 9px;
+  height: 9px;
+  background: var(--accent);
+}
+
+@keyframes contact-pin-breathe {
+  0%, 100% { transform: scale(0.72); opacity: 0.55; }
+  50% { transform: scale(1); opacity: 1; }
+}
+
+/*
+ * The chip is the control's visible label: the city, then what the click does.
+ *
+ * It wore `.glass` while it sat over the old full-bleed map with a scrim under
+ * it. Glass is a lens, and a lens takes the contrast of whatever is behind it —
+ * over a lit coastline that put 11px caps somewhere around 2:1, which is a
+ * control nobody can read. It is an opaque plate now. That is not a downgrade:
+ * a chip this small has no area to lens *with*, so the material was costing a
+ * blur and a compositing layer to produce a tint it could have declared.
+ */
+.contact-section__pin-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-3xl);
+  text-align: center;
+  background: var(--grad-6);
+  border: 1px solid var(--glass-control-edge);
+  box-shadow: var(--elev-floating);
+  transition: box-shadow 0.4s var(--ease-settle);
+}
+
+.contact-section__pin-city {
+  font-family: var(--label);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--text-h);
+}
+
+.contact-section__pin-action {
+  font-family: var(--label);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent);
+  transition: color 0.3s ease;
+}
+
+/* Present for the accessible name and the announcement only. The chip used to
+   carry `.glass`, whose `.glass > *` rule promotes direct children to
+   `position: relative` at this rule's own specificity — a collision this
+   comment used to have to explain. The chip is an opaque plate now, so the
+   promotion is gone with it. */
+.contact-section__pin-sr,
+.contact-section__pin-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (hover: hover) {
+  .contact-section__pin-button:hover .contact-section__pin-chip {
+    box-shadow:
+      var(--elev-overlay),
+      inset 0 0 0 1px var(--accent-border);
+  }
+}
+
+.contact-section__pin-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* The failure state is not decoration: it is the address, selectable, for a
+   visitor whose browser would not take it from us. */
+.contact-section__pin-fallback {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-3xl);
+  /* Opaque for the same reason as the chip — and more so: this one is the
+     address itself, shown because the copy failed. */
+  background: var(--grad-6);
+  border: 1px solid var(--glass-control-edge);
+  font-size: var(--type-caption-size);
+  line-height: var(--type-body-leading);
+  color: var(--text-h);
+  text-align: center;
+  user-select: text;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-section__pin-halo {
+    animation: none;
+  }
+
+  .contact-section__pin-chip,
+  .contact-section__pin-action {
+    transition: none;
+  }
+}
+
+/* ─── The panel ────────────────────────────────────────────────────────────
+ *
+ * Low in the band, so the upper third of the map stays visible and the pin has
+ * somewhere to be.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+/*
+ * Header, then panel, in the band's own container.
+ *
+ * An ordinary spacing step between them: the clear strip the map and the pin
+ * need belongs to the form column alone, so it is applied there rather than
+ * here. Putting it here pushed the details card down with the form and left the
+ * two columns starting at visibly different heights.
+ *
+ * `gap` rather than the header's own margin, because the two blocks are wrapped
+ * in separate FadeInSections and a margin between them would be at the mercy of
+ * collapsing through those wrappers.
+ */
+.contact-section__band-inner {
+  position: relative;
+  z-index: 2;
   max-width: var(--layout-max-width);
   margin: 0 auto;
-  padding: 0 var(--space-12);
+  padding: var(--space-16) var(--space-12) var(--space-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
 
   @media (max-width: 1024px) {
-    padding: 0 var(--space-4);
+    padding: var(--space-12) var(--space-4) var(--space-16);
+    gap: var(--space-12);
   }
 }
 
-.contact-section__grid {
+.contact-section__band-inner > .fade-section {
+  width: 100%;
+}
+
+/* The header's own bottom margin would double the gap above. */
+.contact-section__band-inner .section-header {
+  margin-bottom: 0;
+}
+
+/*
+ * The panel is a grid, not a surface.
+ *
+ * It used to be one `.glass` box spanning both columns. Now each column carries
+ * its own material, because they are doing different jobs: the left is copy to
+ * be read over the map, the right is a form to be filled in. One material
+ * cannot be both the thing that lenses the coastline and the thing that gets
+ * out of the way of eight inputs.
+ */
+.contact-section__panel {
+  width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-16);
+  /* 6/7 rather than 5/7. The details column holds the address, three promises
+     and the office note, all of which want a measure; the form's fields are
+     happy narrower than they were. */
+  grid-template-columns: minmax(0, 6fr) minmax(0, 7fr);
+  gap: var(--space-8);
   align-items: start;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: var(--space-8);
   }
 }
 
-/* The only surface in this section: the column opposite is made of fields, so
-   the details panel carries the material for this half of the grid. Surface,
-   edge and elevation come from `.glass`. */
+/* Left: glass, and the only glass in the section. */
+.contact-section__info {
+  padding: var(--space-12);
+  border-radius: var(--radius-3xl);
+
+  @media (max-width: 1024px) {
+    padding: var(--space-8);
+  }
+}
+
 /*
- * The details are the section's left column, not an object in it. Sized up to
- * h2 so three lines can hold a column that used to be 500px of nothing under a
- * small card.
+ * Right: the form column, and the frame the map is clipped to.
+ *
+ * `position: relative` is the whole job — it is what the map frame and the pin
+ * are absolute against, and therefore what confines the map to this side of the
+ * panel.
+ */
+.contact-section__form-col {
+  position: relative;
+}
+
+/*
+ * The form carries no surface at all — no glass, no card.
+ *
+ * It had one for a revision, a dark plate to sit the fields on. That plate was
+ * the thing standing between the form and the map: with it there the map was
+ * behind a card that happened to be over the map, which is not the same as the
+ * form sitting on the coastline. The fields below take the darkening instead,
+ * which is where it does work — a field is what you have to read and type into.
+ */
+.contact-section__form {
+  position: relative;
+  z-index: 1;
+  /* The clear strip, and the only thing that reserves it. Above this line the
+     frame is showing nothing but coastline, which is where the pin is. */
+  margin-top: var(--panel-clear);
+}
+
+/*
+ * The fields, darker than they are anywhere else on the site.
+ *
+ * Everywhere else a field sits inside a `.glass` Card, and its tint is
+ * calibrated against that card's material. Here there is no card and the ground
+ * is a lit coastline, so the shared tint reads as a smear over the map. Scoped
+ * to this section rather than changed in Input.css for exactly that reason: the
+ * in-app forms have not lost their card.
+ *
+ * Opaque, not translucent — the map is meant to be *around* the fields, not
+ * inside them. `:focus` in Input.css already lands on `--surface`, which is
+ * lighter than this, so a focused field now brightens rather than deepens; that
+ * still reads as the field waking up, and it keeps that rule's reduced-
+ * transparency guarantee intact.
+ */
+.contact-section__form .input-field,
+.contact-section__form .textarea-field {
+  background-color: var(--grad-6);
+  border-color: var(--glass-edge);
+}
+
+/* The labels sit on the map with nothing behind them, so they take the heading
+   colour rather than body text at full weight. */
+.contact-section__form .input-label,
+.contact-section__form .textarea-label {
+  color: var(--text-h);
+}
+
+.contact-section__col-label {
+  display: block;
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent);
+  margin-bottom: var(--space-6);
+}
+
+/* ─── Details ──────────────────────────────────────────────────────────────── */
+
+/*
+ * Set as an address block on a letterhead rather than as a widget. They were a
+ * size larger while they had a 700px column to hold on their own; inside the
+ * panel, opposite a form, that job is gone and the size came back down.
  */
 .contact-section__details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-4);
 }
 
 .contact-section__detail {
   display: flex;
   align-items: baseline;
   gap: var(--space-4);
+  /* The copy control is the third item and has no business stretching the row,
+     so the value takes the slack. Wrapping is allowed because the Greek address
+     is the longest string in this column and this column is the narrower half
+     of the panel. */
+  flex-wrap: wrap;
   font-family: var(--heading);
-  font-size: var(--type-h4-size);
+  font-size: var(--type-body-lg-size);
   font-weight: var(--weight-light);
   line-height: var(--type-h2-leading);
-  letter-spacing: var(--type-h4-tracking);
   color: var(--text-h);
-
-  @media (max-width: 1024px) {
-    font-size: var(--type-body-lg-size);
-  }
 }
 
 .contact-section__detail a {
@@ -81,13 +527,89 @@
   flex-shrink: 0;
 }
 
+/* ─── The copy controls ─────────────────────────────────────────────────────
+ *
+ * One per direct-line row. Quiet at rest and accent on hover: three of these
+ * down the left column, each drawn at the weight of the text beside it, would
+ * read as a list of buttons with some addresses attached.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.contact-section__copy {
+  appearance: none;
+  flex: none;
+  /* `align-self` because the row is baseline-aligned for its text, and a square
+     icon has no baseline worth aligning — left to itself it hangs below the
+     line it belongs to. */
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--text);
+  opacity: var(--text-emphasis-muted);
+  cursor: pointer;
+  transition:
+    opacity var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    background var(--transition);
+}
+
+@media (hover: hover) {
+  .contact-section__copy:hover {
+    opacity: 1;
+    color: var(--accent);
+    border-color: var(--accent-border);
+    background: var(--accent-bg);
+  }
+}
+
+.contact-section__copy:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  opacity: 1;
+}
+
+/* Confirmed state holds the accent without a hover, so the tick is not a grey
+   mark the eye has to go looking for. */
+.contact-section__copy[data-state='copied'] {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.contact-section__copy-icon {
+  width: var(--space-4);
+  height: var(--space-4);
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-section__copy {
+    transition: none;
+  }
+}
+
+.contact-section__office-note {
+  margin: var(--space-6) 0 0;
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-leading);
+  color: var(--text);
+  opacity: var(--text-emphasis-secondary);
+  max-width: 46ch;
+}
+
 /* ─── What to expect ───────────────────────────────────────────────────────── */
 
 .contact-section__promises {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  margin: var(--space-16) 0 0;
+  margin: var(--space-8) 0 0;
   padding-top: var(--space-8);
   border-top: 1px solid var(--glass-edge);
   max-width: 46ch;
@@ -115,4 +637,10 @@
   color: var(--text);
   opacity: var(--text-emphasis-secondary);
   margin: 0;
+}
+
+/* The form fills its half of the panel; its own 640px cap is for the page-ramp
+   layout it also appears in. */
+.contact-section__form .contact-form {
+  max-width: none;
 }

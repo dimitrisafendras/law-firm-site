@@ -1,4 +1,5 @@
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { VkmLogoVariantProvider } from '@/assets/VkmLogo';
 import './Navbar.css';
 
 interface NavLinkItem {
@@ -135,7 +136,25 @@ export function Navbar({ logo, links, cta, primaryCta, deferCta = false }: Navba
       className={`navbar ${scrolled ? 'navbar--scrolled' : ''} ${headerGlass ? 'glass' : ''}`}
     >
       <div className="navbar__inner">
-        <div className="navbar__logo">{logo}</div>
+        {/*
+          Scrolled, the bar drops the wordmark's LEGAL row and carries the
+          monogram alone, smaller — the sub-label renders at 5.6px in this bar,
+          which is a smear rather than a word, and the tightened row has no
+          space to spend on it.
+
+          Keyed off `scrolled`, not `headerGlass`. The two only differ while the
+          mobile overlay is open, and there `headerGlass` would flip the drawing
+          back to the wordmark while `navbar--scrolled` — still applied — keeps
+          the slot at the monogram's smaller height, rendering the wordmark at a
+          size it was sized down from. The mark also has no reason to change
+          because a menu opened. `scrolled` is the state the CSS reads, so the
+          drawing and its measurements stay in step.
+        */}
+        <div className="navbar__logo">
+          <VkmLogoVariantProvider variant={scrolled ? 'monogram' : 'wordmark'}>
+            {logo}
+          </VkmLogoVariantProvider>
+        </div>
 
         <ul className="navbar__links">
           {links.map((link) => (

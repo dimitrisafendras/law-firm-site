@@ -2,22 +2,46 @@
 
 .firm-logo {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   text-decoration: none;
   color: inherit;
 }
 
-.firm-logo__icon {
-  width: 28px;
-  height: 28px;
-  color: var(--accent);
+/*
+ * The bar's mark height, published on the header rather than set on the <img>
+ * so `.navbar__logo` in Navbar.css can pin the row slot to the same number and
+ * ease between the two. `.firm-logo__mark` only ever appears inside a `.navbar`
+ * — the design-system showcase has its own `ds-*` sizes — so there is nothing
+ * this leaves unsized.
+ */
+.navbar {
+  --firm-mark-height: 56px;
 }
 
-.firm-logo__text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
+/*
+ * Scrolled, the bar carries the monogram instead of the wordmark (Navbar.tsx),
+ * and the two drawings do not share a scale. The wordmark's viewBox is 140
+ * units tall for 110 units of glyph; the monogram is cropped to the glyphs
+ * alone, 100 units tall for the same 110. So:
+ *
+ *   wordmark at 56px  ->  glyphs 110 x 56/140 = 44px
+ *   monogram at 56px  ->  glyphs 110 x 56/100 = 61.6px   (bigger, not smaller)
+ *   monogram at 40px  ->  glyphs 110 x 40/100 = 44px     (the break-even)
+ *   monogram at 36px  ->  glyphs 110 x 36/100 = 39.6px   (0.9x — "a bit smaller")
+ *
+ * 36px it is. Reading the raw heights as if they were comparable is the trap
+ * here: 36 next to 56 looks like a third off, and it is a tenth.
+ */
+.navbar--scrolled {
+  --firm-mark-height: 36px;
+}
+
+.firm-logo__mark {
+  height: var(--firm-mark-height, 56px);
+  width: auto;
+  display: block;
 }
 
 .firm-logo__tagline {
@@ -46,10 +70,11 @@
   gap: 10px;
 }
 
-.footer-brand__icon {
-  width: 24px;
-  height: 24px;
-  color: var(--accent);
+/* The footer has more room than the bar. */
+.footer-brand__mark {
+  height: 72px;
+  width: auto;
+  display: block;
 }
 
 /*
@@ -121,6 +146,62 @@
       var(--grad-4) 80%,
       var(--grad-5) 100%
     );
+}
+
+/*
+ * Short pages get the ramp at the same *rate*, not the same span.
+ *
+ * The ramp and its blooms are sized as percentages of `.page-ramp`, which is
+ * the whole scrolling page. That is right on the home page, where the element
+ * is ~6,860px tall and the wash unfolds slowly under a reader who is scrolling.
+ * On a detail or auth page the same element is ~995px, so the identical five
+ * stops and four blooms are squeezed into a seventh of the height: the gradient
+ * runs seven times faster and every bloom is a seventh of the size.
+ *
+ * Pinning the layers to `--layout-ramp-span` gives a short page the wash at
+ * full scale: the same stops in the same places, the same ~2,300px blooms, just
+ * fewer of them in view. That span is a design constant — how slowly the wash
+ * unfolds — and not a measurement of the home page. It started life as one, and
+ * the home page has since drifted to ~6,020px; nothing about this rule wants
+ * chasing that number, so it is not described as it any more.
+ *
+ * ─── Where the wash starts ───────────────────────────────────────────────────
+ *
+ * The size is only half of it. The home page's hero is `min-height: 100vh` and
+ * paints its own dark ground, so the first screen of the ramp is never seen
+ * there — the page's visible ground *begins* one viewport down. A short page
+ * has no hero, so pinning the size alone handed it exactly the part the home
+ * page hides: the top of the linear ramp plus the whole of the strongest bloom,
+ * which is why a detail page opened noticeably lighter than the page it was
+ * clicked from.
+ *
+ * Offsetting by the hero's own height is what makes them match. A reader
+ * arriving on a detail page now lands on the same ground they were looking at
+ * a moment earlier. `100vh` rather than a token: this is the hero's height (see
+ * HeroSection.css), and it duplicates no design value.
+ *
+ * `100vh` as the *size* was tried once and is worse than it sounds — a viewport
+ * is usually shorter than the ~995px element it replaced, so the blooms came out
+ * smaller rather than larger, and `repeat-y` put a hard tile edge every screen
+ * where the ramp snapped from `--grad-5` back to `--bg` and all four blooms
+ * restarted mid-fade. `repeat-y` stays only so a page that somehow outgrew the
+ * span still has ground under it; nothing on the site reaches the seam, and the
+ * offset below is what the negative position wraps against.
+ */
+.page-ramp--short {
+  background-size:
+    100% var(--layout-ramp-span),
+    100% var(--layout-ramp-span),
+    100% var(--layout-ramp-span),
+    100% var(--layout-ramp-span),
+    100% var(--layout-ramp-span);
+  background-position:
+    0 -100vh,
+    0 -100vh,
+    0 -100vh,
+    0 -100vh,
+    0 -100vh;
+  background-repeat: repeat-y;
 }
 
 /*

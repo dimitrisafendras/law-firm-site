@@ -1,17 +1,29 @@
 /* The practice-area detail page at `#practice/<slug>`.
    Same ground as the partner and auth pages: `.page-ramp` (App.css) carries the
-   site's gradient and accent blooms, so the glass here has real colour to
-   concentrate and the footer's first stop meets the page's last without a
-   seam. */
+   site's gradient and accent blooms, and `--short` pins them to the home page's
+   own span so a page a fraction of its length gets the top of the same wash at
+   the same scale rather than the whole wash in miniature.
+
+   The panels take `lensing={false}` from `<Card>`. Their twins on the home page
+   — the domain cards this page is reached from — sit inside a section with
+   `content-visibility: auto`, whose paint containment is a backdrop root with
+   nothing in it, so those cards cannot lens. Left to lens here, the same card
+   read as a different, bluer material one click later. See
+   src/styles/liquid-glass.css. */
 
 .practice-page {
   flex: 1;
   /* 88px clears the fixed navbar — a measurement of another element, not a
-     spacing step. */
-  padding: 88px 0 var(--space-24);
+     spacing step.
+
+     The bottom is the scale's terminal step rather than a section step: this
+     page has no footer, so nothing follows the last panel and the padding is
+     the only thing between it and the end of the document. At one section's
+     worth the page reads as cut off at the last card. */
+  padding: 88px 0 var(--space-32);
 
   @media (max-width: 1024px) {
-    padding: 88px 0 var(--space-16);
+    padding: 88px 0 var(--space-20);
   }
 }
 

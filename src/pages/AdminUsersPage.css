@@ -6,7 +6,9 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  background: var(--bg);
+  /* No `background` here: the ground is `.page-ramp` on the same element, which
+     is the site's wash rather than the flat #111317 this used to paint. A local
+     background would sit on top of it and put the old grey back. */
   /* 88px clears the fixed navbar — a measurement of another element, not a
      spacing step. */
   padding: 88px 0 var(--space-12);

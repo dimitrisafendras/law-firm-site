@@ -299,6 +299,12 @@ export const layout = {
    * step of a scale — which is exactly why it belongs here rather than being
    * retyped into a stylesheet.
    */
+  /*
+   * How slowly the page's background wash unfolds, for pages too short to
+   * unfold it themselves (`.page-ramp--short` in App.css). A design constant,
+   * not a measurement: it began as the home page's height and the home page has
+   * since moved, which changed nothing about the right rate for a short page.
+   */
   rampSpan: '6860px',
 } as const;
 

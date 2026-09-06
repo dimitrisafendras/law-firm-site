@@ -158,18 +158,35 @@
  * stops and four blooms are squeezed into a seventh of the height: the gradient
  * runs seven times faster and every bloom is a seventh of the size.
  *
- * Pinning the layers to `--layout-ramp-span` — the home page's own height —
- * gives a short page the *top* of that wash at full scale: the same stops in
- * the same places, the same 2,300px-tall blooms, just fewer of them in view.
+ * Pinning the layers to `--layout-ramp-span` gives a short page the wash at
+ * full scale: the same stops in the same places, the same ~2,300px blooms, just
+ * fewer of them in view. That span is a design constant — how slowly the wash
+ * unfolds — and not a measurement of the home page. It started life as one, and
+ * the home page has since drifted to ~6,020px; nothing about this rule wants
+ * chasing that number, so it is not described as it any more.
  *
- * `100vh` was tried here first and is worse than it sounds. A viewport is
- * usually *shorter* than the ~995px element it replaced, so the blooms came out
+ * ─── Where the wash starts ───────────────────────────────────────────────────
+ *
+ * The size is only half of it. The home page's hero is `min-height: 100vh` and
+ * paints its own dark ground, so the first screen of the ramp is never seen
+ * there — the page's visible ground *begins* one viewport down. A short page
+ * has no hero, so pinning the size alone handed it exactly the part the home
+ * page hides: the top of the linear ramp plus the whole of the strongest bloom,
+ * which is why a detail page opened noticeably lighter than the page it was
+ * clicked from.
+ *
+ * Offsetting by the hero's own height is what makes them match. A reader
+ * arriving on a detail page now lands on the same ground they were looking at
+ * a moment earlier. `100vh` rather than a token: this is the hero's height (see
+ * HeroSection.css), and it duplicates no design value.
+ *
+ * `100vh` as the *size* was tried once and is worse than it sounds — a viewport
+ * is usually shorter than the ~995px element it replaced, so the blooms came out
  * smaller rather than larger, and `repeat-y` put a hard tile edge every screen
  * where the ramp snapped from `--grad-5` back to `--bg` and all four blooms
- * restarted mid-fade — a horizontal band across the middle of the content, on
- * exactly the pages this rule exists to rescue. `repeat-y` stays only so a page
- * that somehow outgrew the home page still has ground under it; at this span
- * nothing on the site reaches the seam.
+ * restarted mid-fade. `repeat-y` stays only so a page that somehow outgrew the
+ * span still has ground under it; nothing on the site reaches the seam, and the
+ * offset below is what the negative position wraps against.
  */
 .page-ramp--short {
   background-size:
@@ -178,6 +195,12 @@
     100% var(--layout-ramp-span),
     100% var(--layout-ramp-span),
     100% var(--layout-ramp-span);
+  background-position:
+    0 -100vh,
+    0 -100vh,
+    0 -100vh,
+    0 -100vh,
+    0 -100vh;
   background-repeat: repeat-y;
 }
 

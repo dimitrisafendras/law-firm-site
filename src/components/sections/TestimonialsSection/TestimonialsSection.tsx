@@ -46,7 +46,7 @@ const testimonials = [
  */
 export function TestimonialsSection() {
   const { t } = useTranslation();
-  const { index, next, prev, goTo, pause, resume, paused } = useCarousel({
+  const { index, next, prev, goTo, pause, resume, paused, cycle } = useCarousel({
     count: testimonials.length,
     dwell: DWELL_MS,
   });
@@ -148,7 +148,16 @@ export function TestimonialsSection() {
                   aria-current={i === index ? 'true' : undefined}
                   onClick={() => goTo(i)}
                 >
-                  <span className="testimonials-stage__rail-fill" aria-hidden="true" />
+                  {/* Keyed on `cycle` so the fill remounts — and so restarts
+                      from zero — on every advance, including a click on the
+                      segment that is already active, where the `--active` class
+                      does not move and a CSS animation would otherwise carry on
+                      from wherever it had got to. */}
+                  <span
+                    key={cycle}
+                    className="testimonials-stage__rail-fill"
+                    aria-hidden="true"
+                  />
                 </button>
               ))}
             </div>

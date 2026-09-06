@@ -262,45 +262,25 @@
 }
 
 /*
- * A surface that fades in is solid-tinted rather than blurred.
+ * A surface that fades in does not lens, and that is a deliberate trade.
  *
  * FadeInSection animates `opacity` on a wrapper, and an ancestor with
- * `opacity < 1` is a backdrop root — so for the whole entrance a card's
- * `backdrop-filter` has nothing to sample and paints tint only. The moment the
- * wrapper reaches 1 the blur switches on and the surface visibly changes
- * colour, which reads as a rendering fault rather than as an animation.
+ * `opacity < 1` is a backdrop root — so during the entrance a card's
+ * `backdrop-filter` has nothing to sample. Whatever switches it on afterwards
+ * changes the surface's colour at that moment, because `saturate()` is exactly
+ * a colour change. Tweening it in only makes the shift slower, not absent: you
+ * cannot have an ancestor-driven fade and live lensing on the same surface.
  *
- * The honest fix is to stop promising a lens these surfaces never had: they
- * carry the heavier tint throughout, so they look the same before and after.
- * Little is lost — the sections behind these cards paint a near-flat
- * background, so the blur was buying almost nothing. Surfaces that are NOT
- * faded in (the nav bar, the stats band, the auth card) sit over real content
- * and keep the full material.
+ * So these surfaces carry no backdrop-filter at all, and look identical from
+ * their first frame to their last. Very little is given up — with the accent
+ * blooms behind them and a tint that sits lighter than the page, they already
+ * read as lifted glass; the blur was contributing almost nothing over this
+ * backdrop while costing a compositing layer each.
  *
- * Expressed by neutralising the tokens rather than by naming `.glass`, because
- * a surface whose pseudo-elements are already spent on its own decoration
- * inlines the material instead of taking the class. Both forms build their
- * filter out of these same tokens — hardcoding one is a CLAUDE.md violation —
- * so overriding the tokens reaches every consumer, present and future.
+ * Surfaces that never fade in — the nav bar, the hero badge and stat card, the
+ * stats band — keep the full material. They sit over real content, they have no
+ * entrance to be caught mid-way through, and there the lensing earns its cost.
  */
-.fade-section,
-.fade-section.glass {
-  --glass-tint: var(--glass-bg-strong);
-  --glass-surface-tint: var(--glass-bg-strong);
-}
-
-/*
- * Removed outright, not zeroed. Neutralising `--glass-blur`/`--glass-saturate`
- * left `backdrop-filter: blur(0px) saturate(1)` standing, and a declared
- * backdrop-filter still promotes the element to its own compositing layer and
- * makes it a backdrop root even when the filter is a no-op — eleven of the
- * page's sixteen filtered layers were paying that cost for no visible effect.
- *
- * A surface that inlines the material rather than taking this class has to say
- * `backdrop-filter: none` for itself; there is no shared selector to hang it on.
- */
-/* Both forms: the surface nested inside the animated wrapper, and the wrapper
-   that is itself the surface (FadeInSection takes a className). */
 .fade-section .glass,
 .fade-section.glass {
   -webkit-backdrop-filter: none;

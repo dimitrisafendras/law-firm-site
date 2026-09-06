@@ -120,33 +120,6 @@ const en = {
   partnerSpecialtiesLabel: 'Specialisations',
   partnerContactCta: 'Request a consultation',
 
-  // ─── Network / Map ──────────────────────────────────────────────────────────
-  networkOverline: 'Our Reach',
-  networkTitle: 'Global Network',
-  networkSubtitle: 'Strategic presence in key jurisdictions for cross-border counsel.',
-
-  networkAthensLabel: 'European HQ',
-  networkAthensCity: 'Athens, GR',
-  networkAthensItem1: 'Real Estate & Startup Law',
-  networkAthensItem2: 'EU Regulatory Compliance',
-  networkAthensItem3: 'Venture Capital Structuring',
-
-  networkPiraeusLabel: 'Maritime Hub',
-  networkPiraeusCity: 'Piraeus, GR',
-  networkPiraeusItem1: 'Maritime Disputes & Finance',
-  networkPiraeusItem2: 'Flag State Compliance',
-  networkPiraeusItem3: 'Shipping Corridor Advisory',
-
-  networkDigitalLabel: 'Digital Jurisdiction',
-  networkDigitalCity: 'Decentralized',
-  networkDigitalItem1: 'Cryptocurrency Regulation',
-  networkDigitalItem2: 'DeFi Protocol Compliance',
-  networkDigitalItem3: 'DAO Governance Structures',
-
-  networkConnectNode: 'Connect Node',
-  // Caption on the map pin.
-  networkPinLabel: 'Athens',
-
   // ─── Stats ───────────────────────────────────────────────────────────────────
   statClients: 'Clients Served',
   statTransactions: 'In Transactions',
@@ -212,12 +185,37 @@ const en = {
   ctaButton: 'Establish Protocol Now',
 
   // ─── Contact ─────────────────────────────────────────────────────────────────
+  // This section is the old "Global Network" band merged with the contact form:
+  // one map, one pin, one office, and the form standing where the three node
+  // cards used to. The copy has to say that plainly - the heading it replaces
+  // claimed a global network above a picture of a single point in the Aegean.
   contactOverline: 'Get in Touch',
-  contactTitle: 'Get in Touch',
+  contactTitle: 'Find Us in Athens',
   contactSubtitle:
-    'Closing a deal, launching a venture, or navigating regulation \u2014 we\u2019re ready.',
+    'One office on Vasilissis Sofias, with the maritime side a short run down to Piraeus \u2014 near enough to be the same pin on this map. Tell us what the matter is; we\u2019ll tell you whether it is ours.',
   contactAddress: '12 Vasilissis Sofias Avenue, Athens 10674, Greece',
   contactEmail: 'info@nomos.legal',
+
+  // Column headings inside the glass panel over the map.
+  contactDetailsLabel: 'Direct lines',
+  contactFormLabel: 'Send a message',
+
+  // The one fact worth keeping from the three node cards the map used to carry.
+  contactOfficeNote:
+    'Real estate and venture work runs from the Athens office; maritime and digital-asset matters run from Piraeus, ten kilometres down the same coast.',
+
+  // The map pin, which is a copy-to-clipboard button. `contactPinCopy` is the
+  // control at rest; the other two are its result. The announced strings carry
+  // more than the chip does, because the chip is also visible and an
+  // announcement is not.
+  contactPinLabel: 'Athens',
+  contactPinCopy: 'Copy address',
+  contactPinCopied: 'Address copied',
+  contactPinFailed: 'Copy failed',
+  contactPinCopiedAnnounce: 'Office address copied to the clipboard.',
+  contactPinFailedAnnounce:
+    'Could not copy to the clipboard. The address is {{address}}, and it is now shown below the pin.',
+
   contactPromise1Label: 'Response time',
   contactPromise1Value: 'We reply to every enquiry within one business day.',
   contactPromise2Label: 'The first conversation',
@@ -371,9 +369,8 @@ const en = {
   // ─── Section chapter labels ──────────────────────────────────────────────────
   chapterExpertise: 'Chapter 01 / Expertise',
   chapterTeam: 'Chapter 02 / Team',
-  chapterNetwork: 'Chapter 03 / Network',
-  chapterTestimonials: 'Chapter 04 / Testimonials',
-  chapterContact: 'Chapter 05 / Contact',
+  chapterTestimonials: 'Chapter 03 / Testimonials',
+  chapterContact: 'Chapter 04 / Contact',
 
   // ─── Design System showcase labels ───────────────────────────────────────────
   dsAuthComponents: 'Auth & Content Editing',

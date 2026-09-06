@@ -102,12 +102,14 @@
   }
 }
 
+/* Runs into the label rather than sitting apart from it: the rule and the
+   words are one mark. Accent, so the pair reads as a deliberate device rather
+   than as a caption that lost its contrast. */
 .section-header__divider {
   display: block;
   width: 40px;
   height: 1px;
-  background: var(--text);
-  opacity: 0.4;
+  background: linear-gradient(90deg, transparent, var(--accent));
 
   @media (max-width: 768px) {
     width: 24px;
@@ -121,8 +123,16 @@
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--text);
-  opacity: 0.6;
+  /*
+   * Accent at full strength, not body text at 0.6.
+   *
+   * This was legible enough as one of three stacked labels above a title. It
+   * is now the *only* micro-label a section carries — the overlines are gone —
+   * and at 12px, 0.6 opacity over the ramp it measured as the faintest text on
+   * the page. A marker nobody can read is not a quiet marker, it is an absent
+   * one.
+   */
+  color: var(--accent);
   white-space: nowrap;
 }
 

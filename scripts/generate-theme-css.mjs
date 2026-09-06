@@ -26,7 +26,6 @@ import {
   radii,
   spacing,
   elevations,
-  elevationsMarble,
   decor,
   motion,
   typeScale,
@@ -103,39 +102,12 @@ function buildVarBlock(colorTokens, fontTokens, glassTokens, gradientTokens) {
 // including `color-scheme: dark` and the social-icon filter rule.
 const darkVars = buildVarBlock(colors.dark, fonts, glass.dark, gradients.dark);
 
-/**
- * The marble block.
- *
- * `colors.light` has been fully specified in tokens.ts since the beginning and
- * has never been emitted, because the app renders dark-only. It is not a light
- * *theme* — the site has no theme switch and is not getting one. It is a
- * second *material*: an opaque pale surface that a section can stand on, the
- * way the statue stands on a pedestal.
- *
- * Scoping it to an attribute rather than a media query is the whole point. Two
- * materials coexist on one page, in one theme, and a section opts in.
- *
- * Glass inside marble takes the light glass values, and elevation takes the
- * marble set: the dark shadows are tuned for a near-black canvas and read as
- * grime on #F5F5F5.
- */
-const marbleVars = [
-  ...mapVars(colors.light, colorVarNames),
-  ...mapVars(glass.light, glassVarNames),
-  ...mapVars(gradients.light, gradientVarNames),
-  ...mapVars(elevationsMarble, elevationVarNames),
-].join('\n');
-
 const css = `/* AUTO-GENERATED from src/theme/tokens.ts by scripts/generate-theme-css.mjs.
    Do not edit by hand — edit tokens.ts and run \`npm run generate:theme\`
    (runs automatically on predev / prebuild). */
 :root {
 ${darkVars}
   color-scheme: dark;
-}
-[data-material='marble'] {
-${marbleVars}
-  color-scheme: light;
 }
 #social .button-icon {
   filter: invert(1) brightness(2);

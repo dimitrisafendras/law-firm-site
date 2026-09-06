@@ -13,68 +13,12 @@ interface NavbarProps {
 }
 
 const MOBILE_MENU_ID = 'navbar-mobile-menu';
-
-/**
- * Reports the material of whatever is currently under the fixed header.
- *
- * The header floats over the page, so it cannot know from CSS alone what it is
- * sitting on — and the marble section is pale enough that the dark nav tint
- * composites to a light grey, which would leave the nav's light text at about
- * 1.4:1. Returning 'marble' lets the bar adopt the same `data-material`
- * attribute the section uses, so it inherits the entire light token block and
- * needs no parallel set of styles.
- *
- * Sampled per animation frame while scrolling rather than via an
- * IntersectionObserver: an observer on a strip as thin as the header can be
- * skipped entirely by a fast scroll, and this is a state that has to be right
- * at every scroll position rather than merely eventually.
- */
-function useMaterialUnderNav(): 'marble' | null {
-  const [material, setMaterial] = useState<'marble' | null>(null);
-
-  useEffect(() => {
-    let frame = 0;
-
-    const sample = () => {
-      frame = 0;
-      const header = document.querySelector('.navbar');
-      const band = header?.getBoundingClientRect().height ?? 64;
-      const hit = [...document.querySelectorAll<HTMLElement>('[data-material="marble"]')].some(
-        (el) => {
-          // Ignore the navbar itself once it has adopted the attribute,
-          // otherwise the state latches on and can never clear.
-          if (el.closest('.navbar')) return false;
-          const r = el.getBoundingClientRect();
-          return r.top <= band && r.bottom >= 0;
-        },
-      );
-      setMaterial(hit ? 'marble' : null);
-    };
-
-    const onScroll = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(sample);
-    };
-
-    sample();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, []);
-
-  return material;
-}
 const FOCUSABLE =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function Navbar({ logo, links, cta }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const material = useMaterialUnderNav();
 
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -159,7 +103,6 @@ export function Navbar({ logo, links, cta }: NavbarProps) {
   return (
     <nav
       className={`navbar ${scrolled ? 'navbar--scrolled' : ''} ${headerGlass ? 'glass' : ''}`}
-      data-material={material ?? undefined}
     >
       <div className="navbar__inner">
         <div className="navbar__logo">{logo}</div>

@@ -1,29 +1,9 @@
-/* ─── The plinth ───────────────────────────────────────────────────────────
- *
- * The site's one marble section. `data-material="marble"` (set on the section
- * in the TSX) swaps the colour tokens for the light set, so everything below
- * reads `var(--text)`, `var(--accent)` and so on exactly as any dark section
- * does — nothing here hardcodes a light value, and nothing needs to.
- * ────────────────────────────────────────────────────────────────────────── */
-
 .partner-ethos {
   position: relative;
   padding: var(--space-24) 0;
 
-  /*
-   * Full-bleed, and it paints its own ground rather than letting the page ramp
-   * through. This is the only element on the page that breaks the ramp, which
-   * is the entire point: an 8,600px page in one continuous tone has no
-   * landmark, and the eye has nothing to measure progress against.
-   */
-  background: linear-gradient(180deg, var(--grad-1) 0%, var(--grad-3) 100%);
-
-  /*
-   * No `content-visibility: auto`, deliberately — same reason as StatsBar.
-   * It always applies paint containment, and a section that owns an opaque
-   * background and is skipped paints nothing at all, leaving a hard hole in
-   * the page. That is exactly the failure `.page-ramp` was created to avoid.
-   */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1100px;
 
   @media (max-width: 1024px) {
     padding: var(--space-16) 0;
@@ -40,56 +20,79 @@
   }
 }
 
-/* Three across on one row. `align-items: start` so a longer biography grows
-   its own column downward instead of stretching all three to match. */
+/* Three across on one row. `align-items: start` so a longer biography grows its
+   own column downward instead of stretching all three to match. */
 .partner-ethos__plinth {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-12);
+  gap: var(--space-8);
   align-items: start;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    gap: var(--space-16);
+    gap: var(--space-8);
   }
 }
 
+/*
+ * One card per partner, portrait included — rather than a portrait beside a
+ * card, which is what left ~330px of dead page next to every photograph in the
+ * old alternating layout.
+ *
+ * No horizontal padding at the top: the portrait bleeds to the card's own
+ * edges (see the negative margins below), so the photograph is part of the
+ * surface instead of an inset tile sitting on it.
+ */
 .partner-ethos__bust {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-3xl);
+  padding: 0 var(--space-8) var(--space-8);
 }
 
 /* ─── Portrait ─────────────────────────────────────────────────────────────── */
 
-/*
- * A bust on a pedestal, not a card: no glass, no border, no radius beyond the
- * material's own. The portraits stay greyscale — on stone that reads as
- * museum, and it is the reason the marble is here rather than a colour pass on
- * three photographs.
- */
 .partner-ethos__portrait {
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  box-shadow: var(--elev-raised);
-  margin-bottom: var(--space-6);
+  /* Bleeds past the card's side padding to its clipped edge. */
+  margin: 0 calc(var(--space-8) * -1) var(--space-6);
 }
 
+/*
+ * In colour, deliberately.
+ *
+ * These three are the only photographs below the hero, which makes them the
+ * page's only chromatic content — everything else down here is type, glass and
+ * the ramp. `grayscale(1)` was spending that for a cohesion the one-row layout
+ * already provides.
+ */
 .partner-ethos__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center 20%;
   display: block;
-  filter: grayscale(1);
+}
+
+/* Keeps the badge legible over whatever the photograph does at its lower edge,
+   and settles the portrait into the card instead of ending on a hard cut. */
+.partner-ethos__portrait::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 40%;
+  background: linear-gradient(180deg, transparent, rgb(0 0 0 / 55%));
+  pointer-events: none;
 }
 
 .partner-ethos__badge {
   position: absolute;
-  left: var(--space-3);
-  bottom: var(--space-3);
+  left: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 1;
   font-family: var(--label);
   font-size: var(--type-caption-size);
   font-weight: var(--type-caption-weight);
@@ -102,37 +105,29 @@
   border-radius: var(--radius-full);
 }
 
-/* ─── Engraved name ────────────────────────────────────────────────────────── */
+/* ─── Text ─────────────────────────────────────────────────────────────────── */
 
-/*
- * The letterpress read: a 1px white highlight directly under navy type on a
- * pale ground is what makes lettering look cut into a surface rather than
- * printed on it. It is one shadow, and it only works on marble — which is why
- * it lives in this stylesheet and not in the type scale.
- */
 .partner-ethos__name {
   font-family: var(--heading);
-  font-size: var(--type-h2-size);
-  font-weight: var(--type-h2-weight);
-  line-height: var(--type-h2-leading);
-  letter-spacing: var(--type-h2-tracking);
+  font-size: var(--type-h4-size);
+  font-weight: var(--type-h4-weight);
+  line-height: var(--type-h4-leading);
+  letter-spacing: var(--type-h4-tracking);
   color: var(--text-h);
-  text-shadow: 0 1px 0 rgb(255 255 255 / 60%);
   margin: 0 0 var(--space-1);
 }
 
 /*
- * A real italic, at last. Jura has none, so this was a browser-synthesised
- * oblique — a slanted geometric sans, which at 18px looks precisely as cheap
- * as that description suggests.
+ * A real italic. Jura has none, so this was a browser-synthesised oblique — a
+ * slanted geometric sans, which at this size looks exactly as cheap as that
+ * description suggests.
  */
 .partner-ethos__role {
   font-family: var(--serif);
   font-style: italic;
   font-size: var(--type-body-lg-size);
   line-height: var(--type-body-lg-leading);
-  color: var(--text);
-  opacity: var(--text-emphasis-secondary);
+  color: var(--accent);
   margin: 0 0 var(--space-4);
 }
 
@@ -152,12 +147,14 @@
 
 /* ─── Meta ─────────────────────────────────────────────────────────────────── */
 
+/* `margin-top: auto` pins the meta row to the bottom of its card, so the three
+   cards' rules line up even when the biographies differ in length. */
 .partner-ethos__meta {
   display: flex;
   gap: var(--space-8);
   margin: auto 0 0;
   padding-top: var(--space-4);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--glass-edge);
 }
 
 .partner-ethos__meta-item {

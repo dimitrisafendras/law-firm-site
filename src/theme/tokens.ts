@@ -363,21 +363,6 @@ export const elevations = {
   overlay: '0 18px 46px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.35)',
 } as const;
 
-/**
- * Elevation on marble.
- *
- * The dark set above is tuned to separate a surface from a near-black canvas
- * and is far too heavy for a pale one — a 0.45-alpha drop shadow on #F5F5F5
- * reads as dirt, not as depth. These are the same four steps at the strengths
- * a light ground can carry.
- */
-export const elevationsMarble = {
-  flat: 'none',
-  raised: '0 1px 3px rgba(0, 43, 73, 0.08)',
-  floating: '0 8px 24px rgba(0, 43, 73, 0.1), 0 2px 6px rgba(0, 43, 73, 0.06)',
-  overlay: '0 18px 46px rgba(0, 43, 73, 0.14), 0 4px 10px rgba(0, 43, 73, 0.08)',
-} as const;
-
 // ─── Gradients ───────────────────────────────────────────────────────────────
 
 export const gradients = {
@@ -633,7 +618,6 @@ export const theme = {
   glass,
   materials,
   elevations,
-  elevationsMarble,
   typeScale,
   weights,
   capsTracking,

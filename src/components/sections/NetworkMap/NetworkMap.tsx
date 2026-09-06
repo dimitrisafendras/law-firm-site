@@ -2,6 +2,7 @@ import { useTranslation } from '@/i18n';
 import { EditableText } from '@/components';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
+import { EAST_MED_LAND, EAST_MED_VIEWBOX, ATHENS_PIRAEUS } from '@/assets/easternMediterranean';
 import './NetworkMap.css';
 
 const nodes = [
@@ -29,22 +30,23 @@ const nodes = [
 ] as const;
 
 /**
- * Presence — a photographic band with the locations as glass over it.
+ * Presence — a regional map, with the locations as glass over it.
  *
- * This was a dotted world map with a single pin on Athens, beside three cards
- * stretched to the map's height and about 40% empty as a result. The map was
- * the most template-derived element on the page and it contradicted its own
- * headline: a world map illustrating two offices ten kilometres apart.
+ * This was a dotted world map carrying a single pin on Athens, beside three
+ * cards stretched to the map's height and about 40% empty as a result. The
+ * problem was not the map, it was the span: a world map illustrating two
+ * offices ten kilometres apart is a headline contradicting its own picture.
  *
- * The band is the site's lensing showcase. The one place the glass material
- * has ever unambiguously worked is the mobile menu over the statue, where real
- * blur and saturation turn marble and cyan into colour; everywhere else it
- * floats over a flat dark ramp with nothing to concentrate. Here the cards sit
- * on a photograph, which is the condition the material was designed for.
+ * Cropped to the Eastern Mediterranean, the same picture becomes true — it
+ * shows the sea the maritime practice actually works on, the Aegean the
+ * shipping corridor runs through, and the EU coastline the real-estate and
+ * venture work sits inside. Athens and Piraeus are 2.4px apart at this scale,
+ * so they are one honest pin rather than two.
  *
- * PLACEHOLDER: the band renders a solid tonal ground until the client supplies
- * photography — Athens from Lycabettus, the Piraeus container terminal. Set it
- * on `--band-image` in NetworkMap.css; nothing else needs to change.
+ * The map is also where the glass finally gets to do its job on desktop. The
+ * one place the material has ever unambiguously worked is the mobile menu over
+ * the statue; everywhere else it floats over a flat ramp with nothing to
+ * concentrate. Here the cards sit over drawn coastline.
  */
 export function NetworkMap() {
   const { t } = useTranslation();
@@ -62,6 +64,20 @@ export function NetworkMap() {
       </div>
 
       <div className="network-map__band">
+        <svg
+          className="network-map__map"
+          viewBox={EAST_MED_VIEWBOX}
+          preserveAspectRatio="xMidYMax slice"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path className="network-map__land" d={EAST_MED_LAND} />
+          <g className="network-map__pin" transform={`translate(${ATHENS_PIRAEUS.x} ${ATHENS_PIRAEUS.y})`}>
+            <circle className="network-map__pin-halo" r="26" />
+            <circle className="network-map__pin-dot" r="4.5" />
+          </g>
+        </svg>
+
         <div className="network-map__band-inner">
           <StaggerGroup className="network-map__cards">
             {nodes.map(({ key, code, labelKey, cityKey, items }) => (

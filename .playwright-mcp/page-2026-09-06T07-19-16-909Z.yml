@@ -1,0 +1,477 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "NOMOS Νομικές Υπηρεσίες" [ref=e508] [cursor=pointer]:
+        - /url: "#"
+        - generic [ref=e14]:
+          - generic [ref=e15]: NOMOS
+          - generic [ref=e16]: Νομικές Υπηρεσίες
+      - list [ref=e17]:
+        - listitem [ref=e18]:
+          - link "Τομείς Δικαίου" [ref=e509] [cursor=pointer]:
+            - /url: "#practice"
+        - listitem [ref=e20]:
+          - link "Η Ομάδα μας" [ref=e510] [cursor=pointer]:
+            - /url: "#team"
+        - listitem [ref=e22]:
+          - link "Μαρτυρίες" [ref=e511] [cursor=pointer]:
+            - /url: "#testimonials"
+        - listitem [ref=e24]:
+          - link "Επικοινωνία" [ref=e512] [cursor=pointer]:
+            - /url: "#contact"
+      - generic [ref=e514]:
+        - button "Κλείστε Ραντεβού" [ref=e515] [cursor=pointer]
+        - generic [ref=e516]:
+          - button "EN — Switch to English" [active] [ref=e517] [cursor=pointer]: EN
+          - link "Σύνδεση" [ref=e518] [cursor=pointer]:
+            - /url: "#login"
+  - main [ref=e26]:
+    - generic [ref=e28]:
+      - generic [ref=e29]: Η Τομή Κληρονομιάς & Καινοτομίας
+      - heading "Υπέρτατη Νομική Συμβουλευτική" [level=1] [ref=e519]:
+        - generic [ref=e520]:
+          - generic [ref=e521]: Υ
+          - generic [ref=e522]: π
+          - generic [ref=e523]: έ
+          - generic [ref=e524]: ρ
+          - generic [ref=e525]: τ
+          - generic [ref=e526]: α
+          - generic [ref=e527]: τ
+          - generic [ref=e528]: η
+        - generic [ref=e529]:
+          - generic [ref=e530]: Ν
+          - generic [ref=e531]: ο
+          - generic [ref=e532]: μ
+          - generic [ref=e533]: ι
+          - generic [ref=e534]: κ
+          - generic [ref=e535]: ή
+          - generic [ref=e536]: Σ
+          - generic [ref=e537]: υ
+          - generic [ref=e538]: μ
+          - generic [ref=e539]: β
+          - generic [ref=e540]: ο
+          - generic [ref=e541]: υ
+          - generic [ref=e542]: λ
+          - generic [ref=e543]: ε
+          - generic [ref=e544]: υ
+          - generic [ref=e545]: τ
+          - generic [ref=e546]: ι
+          - generic [ref=e547]: κ
+          - generic [ref=e548]: ή
+      - paragraph [ref=e59]:
+        - generic [ref=e549]:
+          - generic [ref=e550]: Ένα
+          - generic [ref=e551]: δικηγορικό
+          - generic [ref=e552]: γραφείο
+          - generic [ref=e553]: νέας
+          - generic [ref=e554]: γενιάς
+          - generic [ref=e555]: που
+          - generic [ref=e556]: συνδυάζει
+          - generic [ref=e557]: βαθιά
+          - generic [ref=e558]: εξειδίκευση
+          - generic [ref=e559]: σε
+          - generic [ref=e560]: ακίνητα,
+          - generic [ref=e561]: χρηματοδότηση
+          - generic [ref=e562]: startups,
+          - generic [ref=e563]: ναυτικό
+          - generic [ref=e564]: δίκαιο
+          - generic [ref=e565]: και
+          - generic [ref=e566]: κρυπτονομίσματα.
+          - generic [ref=e567]: Σχεδιασμένο
+          - generic [ref=e568]: για
+          - generic [ref=e569]: φιλόδοξους
+          - generic [ref=e570]: επαγγελματίες.
+      - generic [ref=e84]:
+        - button "Κλείστε Ραντεβού" [ref=e571] [cursor=pointer]
+        - link "Γνωρίστε τους εταίρους" [ref=e572] [cursor=pointer]:
+          - /url: "#team"
+          - text: Γνωρίστε τους εταίρους
+          - generic [aria-hidden] [ref=e87]: ↓
+    - generic [ref=e92]:
+      - generic [ref=e93]:
+        - generic [ref=e94]: 500+
+        - generic [ref=e95]: Πελάτες
+      - generic [ref=e96]:
+        - generic [ref=e97]: 2δισ.+
+        - generic [ref=e98]: Σε Συναλλαγές
+      - generic [ref=e99]:
+        - generic [ref=e100]: 30+
+        - generic [ref=e101]: Χρόνια Συνολικής Εμπειρίας
+      - generic [ref=e102]:
+        - generic [ref=e103]: "12"
+        - generic [ref=e104]: Δικαιοδοσίες
+    - generic [ref=e106]:
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - heading "Η Ε ξ ε ι δ ί κ ε υ σ ή μ α ς" [level=2] [ref=e573]:
+            - generic [ref=e574]:
+              - generic [ref=e575]: Η
+              - generic [ref=e576]: Ε
+              - generic [ref=e577]: ξ
+              - generic [ref=e578]: ε
+              - generic [ref=e579]: ι
+              - generic [ref=e580]: δ
+              - generic [ref=e581]: ί
+              - generic [ref=e582]: κ
+              - generic [ref=e583]: ε
+              - generic [ref=e584]: υ
+              - generic [ref=e585]: σ
+              - generic [ref=e586]: ή
+              - generic [ref=e587]: μ
+              - generic [ref=e588]: α
+              - generic [ref=e589]: ς
+          - paragraph [ref=e125]:
+            - generic [ref=e590]:
+              - generic [ref=e591]: Τέσσερις
+              - generic [ref=e592]: πυλώνες
+              - generic [ref=e593]: εξειδίκευσης
+              - generic [ref=e594]: για
+              - generic [ref=e595]: πελάτες
+              - generic [ref=e596]: που
+              - generic [ref=e597]: χρειάζονται
+              - generic [ref=e598]: ακρίβεια
+              - generic [ref=e599]: και
+              - generic [ref=e600]: βάθος.
+        - generic [ref=e138]: Κεφάλαιο 01 / Εξειδίκευση
+      - generic [ref=e141]:
+        - generic [ref=e143]:
+          - generic [ref=e144]: Τομέας I
+          - heading "Ακίνητα" [level=3] [ref=e601]
+          - paragraph [ref=e146]: Ολοκληρωμένη νομική κάλυψη ακινήτων — αγορές, άδειες ανάπτυξης, έλεγχοι τίτλων, δομή μισθώσεων και διασυνοριακές συναλλαγές σε Ελλάδα και ΕΕ.
+          - link "Δείτε τον Τομέα" [ref=e602] [cursor=pointer]:
+            - /url: "#practice-realestate"
+            - text: Δείτε τον Τομέα
+            - generic [aria-hidden] [ref=e148]: →
+        - generic [ref=e150]:
+          - generic [ref=e151]: Τομέας II
+          - heading "Startups & Επιχειρηματικά Κεφάλαια" [level=3] [ref=e603]
+          - paragraph [ref=e153]: Από το seed στο Series C και πέρα. SAFE notes, συμφωνίες μετόχων, δομή κεφαλαιακών πινάκων, διαπραγματεύσεις με επενδυτές και κανονιστική συμμόρφωση.
+          - link "Δείτε τον Τομέα" [ref=e604] [cursor=pointer]:
+            - /url: "#practice-startup"
+            - text: Δείτε τον Τομέα
+            - generic [aria-hidden] [ref=e155]: →
+        - generic [ref=e157]:
+          - generic [ref=e158]: Τομέας III
+          - heading "Ναυτικό Δίκαιο" [level=3] [ref=e605]
+          - paragraph [ref=e160]: Ναυτιλιακή χρηματοδότηση, διαφορές ναυλοσυμφώνων, απαιτήσεις φορτίων, συμμόρφωση σημαίας και περιβαλλοντικοί κανονισμοί. Δεκαετίες εμπειρίας στον Πειραιά.
+          - link "Δείτε τον Τομέα" [ref=e606] [cursor=pointer]:
+            - /url: "#practice-maritime"
+            - text: Δείτε τον Τομέα
+            - generic [aria-hidden] [ref=e162]: →
+        - generic [ref=e164]:
+          - generic [ref=e165]: Τομέας IV
+          - heading "Κρυπτονομίσματα & Ψηφιακά Περιουσιακά" [level=3] [ref=e607]
+          - paragraph [ref=e167]: Έκδοση tokens, συμμόρφωση DeFi, κανονιστικό πλαίσιο MiCA, αδειοδότηση ανταλλακτηρίων, δομές διακυβέρνησης DAO και επίλυση διαφορών ψηφιακών περιουσιακών.
+          - link "Δείτε τον Τομέα" [ref=e608] [cursor=pointer]:
+            - /url: "#practice-crypto"
+            - text: Δείτε τον Τομέα
+            - generic [aria-hidden] [ref=e169]: →
+    - generic [ref=e171]:
+      - generic [ref=e174]:
+        - generic [ref=e175]:
+          - heading "Ο ι Ε τ α ί ρ ο ι μ α ς" [level=2] [ref=e609]:
+            - generic [ref=e610]:
+              - generic [ref=e611]: Ο
+              - generic [ref=e612]: ι
+              - generic [ref=e613]: Ε
+              - generic [ref=e614]: τ
+              - generic [ref=e615]: α
+              - generic [ref=e616]: ί
+              - generic [ref=e617]: ρ
+              - generic [ref=e618]: ο
+              - generic [ref=e619]: ι
+              - generic [ref=e620]: μ
+              - generic [ref=e621]: α
+              - generic [ref=e622]: ς
+          - paragraph [ref=e193]:
+            - generic [ref=e623]:
+              - generic [ref=e624]: Τρεις
+              - generic [ref=e625]: δικηγόροι,
+              - generic [ref=e626]: τρεις
+              - generic [ref=e627]: ειδικότητες,
+              - generic [ref=e628]: μία
+              - generic [ref=e629]: δέσμευση
+              - generic [ref=e630]: να
+              - generic [ref=e631]: σας
+              - generic [ref=e632]: ωθήσουμε
+              - generic [ref=e633]: μπροστά.
+        - generic [ref=e205]: Κεφάλαιο 02 / Ομάδα
+      - generic [ref=e208]:
+        - article [ref=e210]:
+          - generic [ref=e211]:
+            - img "Δημήτρης Αφένδρας" [ref=e634]
+            - generic [ref=e214]: Ιδρυτικός Εταίρος
+          - heading "Δημήτρης Αφένδρας" [level=3] [ref=e635]
+          - paragraph [ref=e216]: Ακίνητα & Χρηματοδότηση Startups
+          - paragraph [ref=e218]: Ο Δημήτρης φέρνει οξεία συναλλακτική ενστικτο στους πελάτες ακινήτων και startups. Γνωστός για τη δόμηση σύνθετων συμφωνιών ακινήτων και την καθοδήγηση ιδρυτών σε κρίσιμα ορόσημα χρηματοδότησης.
+          - generic [ref=e219]:
+            - generic [ref=e220]:
+              - term [ref=e221]: Εστίαση
+              - definition [ref=e222]: Συναλλακτική Στρατηγική
+            - generic [ref=e223]:
+              - term [ref=e224]: Καταγωγή
+              - definition [ref=e225]: Αθήνα
+        - article [ref=e227]:
+          - generic [ref=e228]:
+            - img "Αλεξάνδρα Μαρινάκη" [ref=e636]
+            - generic [ref=e231]: Ιδρυτική Εταίρος
+          - heading "Αλεξάνδρα Μαρινάκη" [level=3] [ref=e637]
+          - paragraph [ref=e233]: Ναυτικό Δίκαιο & Κρυπτονομίσματα
+          - paragraph [ref=e235]: Η Αλεξάνδρα πλοηγείται στη διασταύρωση παραδοσιακού ναυτικού δικαίου και ψηφιακών περιουσιακών. Η διπλή εξειδίκευσή της επιτρέπει στους πελάτες να κινούνται με σιγουριά.
+          - generic [ref=e236]:
+            - generic [ref=e237]:
+              - term [ref=e238]: Εστίαση
+              - definition [ref=e239]: Διασυνοριακή Ρύθμιση
+            - generic [ref=e240]:
+              - term [ref=e241]: Καταγωγή
+              - definition [ref=e242]: Πειραιάς
+        - article [ref=e244]:
+          - generic [ref=e245]:
+            - img "Σταύρος Λεβέντης" [ref=e638]
+            - generic [ref=e248]: Εταίρος
+          - heading "Σταύρος Λεβέντης" [level=3] [ref=e639]
+          - paragraph [ref=e250]: Ψηφιακά Περιουσιακά Στοιχεία & DeFi & Web3
+          - paragraph [ref=e252]: Ο Σταύρος συμβουλεύει ιδρυτές και επενδυτικά σχήματα που δραστηριοποιούνται στο ρυθμιστικό μέτωπο των ψηφιακών περιουσιακών στοιχείων. Δομεί εκδόσεις tokens, καθοδηγεί πρωτόκολλα στην αδειοδότηση MiCA και χειρίζεται διαφορές όπου ο κώδικας συναντά το δίκαιο των συμβάσεων.
+          - generic [ref=e253]:
+            - generic [ref=e254]:
+              - term [ref=e255]: Εστίαση
+              - definition [ref=e256]: Ρυθμιστική Αρχιτεκτονική
+            - generic [ref=e257]:
+              - term [ref=e258]: Καταγωγή
+              - definition [ref=e259]: Αθήνα
+    - generic [ref=e260]:
+      - generic [ref=e264]:
+        - generic [ref=e265]:
+          - heading "Π α γ κ ό σ μ ι ο Δ ί κ τ υ ο" [level=2] [ref=e640]:
+            - generic [ref=e641]:
+              - generic [ref=e642]: Π
+              - generic [ref=e643]: α
+              - generic [ref=e644]: γ
+              - generic [ref=e645]: κ
+              - generic [ref=e646]: ό
+              - generic [ref=e647]: σ
+              - generic [ref=e648]: μ
+              - generic [ref=e649]: ι
+              - generic [ref=e650]: ο
+              - generic [ref=e651]: Δ
+              - generic [ref=e652]: ί
+              - generic [ref=e653]: κ
+              - generic [ref=e654]: τ
+              - generic [ref=e655]: υ
+              - generic [ref=e656]: ο
+          - paragraph [ref=e281]:
+            - generic [ref=e657]:
+              - generic [ref=e658]: Στρατηγική
+              - generic [ref=e659]: παρουσία
+              - generic [ref=e660]: σε
+              - generic [ref=e661]: κρίσιμες
+              - generic [ref=e662]: δικαιοδοσίες
+              - generic [ref=e663]: για
+              - generic [ref=e664]: διασυνοριακή
+              - generic [ref=e665]: συμβουλευτική.
+        - generic [ref=e291]: Κεφάλαιο 03 / Δίκτυο
+      - generic [ref=e296]:
+        - generic [ref=e298]:
+          - generic [aria-hidden]: ATH
+          - generic [ref=e299]: Ευρωπαϊκά Κεντρικά
+          - heading "Αθήνα, GR" [level=3] [ref=e666]
+          - list [ref=e301]:
+            - listitem [ref=e302]: •Ακίνητα & Δίκαιο Startups
+            - listitem [ref=e303]: •Κανονιστική Συμμόρφωση ΕΕ
+            - listitem [ref=e304]: •Δόμηση Επιχειρηματικών Κεφαλαίων
+          - link "Σύνδεση Κόμβου" [ref=e667] [cursor=pointer]:
+            - /url: "#contact"
+            - text: Σύνδεση Κόμβου
+            - generic [aria-hidden] [ref=e306]: →
+        - generic [ref=e308]:
+          - generic [aria-hidden]: PIR
+          - generic [ref=e309]: Ναυτιλιακός Κόμβος
+          - heading "Πειραιάς, GR" [level=3] [ref=e668]
+          - list [ref=e311]:
+            - listitem [ref=e312]: •Ναυτικές Διαφορές & Χρηματοδότηση
+            - listitem [ref=e313]: •Συμμόρφωση Σημαίας
+            - listitem [ref=e314]: •Συμβουλευτική Ναυτιλιακού Διαδρόμου
+          - link "Σύνδεση Κόμβου" [ref=e669] [cursor=pointer]:
+            - /url: "#contact"
+            - text: Σύνδεση Κόμβου
+            - generic [aria-hidden] [ref=e316]: →
+        - generic [ref=e318]:
+          - generic [aria-hidden]: DEC
+          - generic [ref=e319]: Ψηφιακή Δικαιοδοσία
+          - heading "Αποκεντρωμένο" [level=3] [ref=e670]
+          - list [ref=e321]:
+            - listitem [ref=e322]: •Ρύθμιση Κρυπτονομισμάτων
+            - listitem [ref=e323]: •Συμμόρφωση Πρωτοκόλλων DeFi
+            - listitem [ref=e324]: •Δομές Διακυβέρνησης DAO
+          - link "Σύνδεση Κόμβου" [ref=e671] [cursor=pointer]:
+            - /url: "#contact"
+            - text: Σύνδεση Κόμβου
+            - generic [aria-hidden] [ref=e326]: →
+    - generic [ref=e328]:
+      - generic [ref=e331]:
+        - generic [ref=e332]:
+          - heading "Μ α ρ τ υ ρ ί ε ς Π ε λ α τ ώ ν" [level=2] [ref=e672]:
+            - generic [ref=e673]:
+              - generic [ref=e674]: Μ
+              - generic [ref=e675]: α
+              - generic [ref=e676]: ρ
+              - generic [ref=e677]: τ
+              - generic [ref=e678]: υ
+              - generic [ref=e679]: ρ
+              - generic [ref=e680]: ί
+              - generic [ref=e681]: ε
+              - generic [ref=e682]: ς
+              - generic [ref=e683]: Π
+              - generic [ref=e684]: ε
+              - generic [ref=e685]: λ
+              - generic [ref=e686]: α
+              - generic [ref=e687]: τ
+              - generic [ref=e688]: ώ
+              - generic [ref=e689]: ν
+          - paragraph [ref=e353]:
+            - generic [ref=e690]:
+              - generic [ref=e691]: Εμπιστοσύνη
+              - generic [ref=e692]: από
+              - generic [ref=e693]: φιλόδοξους
+              - generic [ref=e694]: επαγγελματίες
+              - generic [ref=e695]: σε
+              - generic [ref=e696]: κάθε
+              - generic [ref=e697]: κλάδο.
+        - generic [ref=e361]: Κεφάλαιο 04 / Μαρτυρίες
+      - region "Μαρτυρίες Πελατών" [ref=e698]:
+        - figure "Γιάννης Παπαδόπουλος CEO, Hellas Fintech" [ref=e699]:
+          - blockquote [ref=e367]: Η NOMOS καθοδήγησε το Series A μας από term sheet σε κλείσιμο σε 6 εβδομάδες. Η κατανόησή τους του ελληνικού και ευρωπαϊκού πλαισίου μας γλίτωσε μήνες.
+          - generic [ref=e368]:
+            - generic [ref=e369]: Γιάννης Παπαδόπουλος
+            - generic [ref=e370]: CEO, Hellas Fintech
+        - generic [ref=e371]:
+          - button "Μετάβαση στη μαρτυρία 1" [ref=e700] [cursor=pointer]
+          - button "Μετάβαση στη μαρτυρία 2" [ref=e701] [cursor=pointer]
+          - button "Μετάβαση στη μαρτυρία 3" [ref=e702] [cursor=pointer]
+          - button "Μετάβαση στη μαρτυρία 4" [ref=e703] [cursor=pointer]
+          - button "Μετάβαση στη μαρτυρία 5" [ref=e704] [cursor=pointer]
+          - button "Μετάβαση στη μαρτυρία 6" [ref=e705] [cursor=pointer]
+    - generic [ref=e379]:
+      - generic [ref=e382]:
+        - generic [ref=e383]:
+          - heading "Ε π ι κ ο ι ν ω ν ή σ τ ε" [level=2] [ref=e706]:
+            - generic [ref=e707]:
+              - generic [ref=e708]: Ε
+              - generic [ref=e709]: π
+              - generic [ref=e710]: ι
+              - generic [ref=e711]: κ
+              - generic [ref=e712]: ο
+              - generic [ref=e713]: ι
+              - generic [ref=e714]: ν
+              - generic [ref=e715]: ω
+              - generic [ref=e716]: ν
+              - generic [ref=e717]: ή
+              - generic [ref=e718]: σ
+              - generic [ref=e719]: τ
+              - generic [ref=e720]: ε
+          - paragraph [ref=e396]:
+            - generic [ref=e721]:
+              - generic [ref=e722]: Συμφωνία,
+              - generic [ref=e723]: εγχείρημα
+              - generic [ref=e724]: ή
+              - generic [ref=e725]: κανονιστική
+              - generic [ref=e726]: πλοήγηση
+              - generic [ref=e727]: —
+              - generic [ref=e728]: είμαστε
+              - generic [ref=e729]: έτοιμοι.
+        - generic [ref=e410]: Κεφάλαιο 05 / Επικοινωνία
+      - generic [ref=e413]:
+        - generic [ref=e414]:
+          - generic [ref=e415]:
+            - generic [ref=e416]:
+              - generic [aria-hidden] [ref=e417]: ⚲
+              - generic [ref=e418]: Λεωφ. Βασιλίσσης Σοφίας 12, Αθήνα 10674, Ελλάδα
+            - generic [ref=e419]:
+              - generic [aria-hidden] [ref=e420]: ✉
+              - link "info@nomos.legal" [ref=e421] [cursor=pointer]:
+                - /url: mailto:info@nomos.legal
+            - generic [ref=e422]:
+              - generic [aria-hidden] [ref=e423]: ☎
+              - link "+30 210 123 4567" [ref=e424] [cursor=pointer]:
+                - /url: tel:+30 210 123 4567
+          - generic [ref=e425]:
+            - generic [ref=e426]:
+              - term [ref=e427]: Χρόνος απόκρισης
+              - definition [ref=e428]: Απαντάμε σε κάθε αίτημα εντός μίας εργάσιμης ημέρας.
+            - generic [ref=e429]:
+              - term [ref=e430]: Η πρώτη συζήτηση
+              - definition [ref=e431]: Τριάντα λεπτά, χωρίς χρέωση — περιγράφετε την υπόθεση και σας λέμε αν είμαστε το κατάλληλο γραφείο και τι πιθανόν να απαιτηθεί.
+            - generic [ref=e432]:
+              - term [ref=e433]: Εμπιστευτικότητα
+              - definition [ref=e434]: Ό,τι μας στέλνετε καλύπτεται από το δικηγορικό απόρρητο από το πρώτο μήνυμα, ανεξάρτητα από το αν αναλάβουμε την υπόθεση.
+        - generic [ref=e436]:
+          - generic [ref=e437]:
+            - generic [ref=e438]:
+              - generic [ref=e439]: Ονοματεπώνυμο
+              - textbox "Ονοματεπώνυμο" [ref=e730]:
+                - /placeholder: Γιώργος Παπαδόπουλος
+            - generic [ref=e441]:
+              - generic [ref=e442]: Email
+              - textbox "Email" [ref=e443]:
+                - /placeholder: giorgos@example.com
+          - generic [ref=e444]:
+            - generic [ref=e445]: Τηλέφωνο
+            - textbox "Τηλέφωνο" [ref=e731]:
+              - /placeholder: +30 694 123 4567
+          - generic [ref=e447]:
+            - generic [ref=e448]: Πώς μπορούμε να βοηθήσουμε;
+            - textbox "Πώς μπορούμε να βοηθήσουμε;" [ref=e732]:
+              - /placeholder: Περιγράψτε συνοπτικά την υπόθεσή σας…
+          - button "Αίτημα Συνάντησης" [ref=e733] [cursor=pointer]
+  - contentinfo [ref=e451]:
+    - generic [ref=e452]:
+      - generic [ref=e453]:
+        - generic [ref=e454]: NOMOS
+        - generic [ref=e464]:
+          - generic [ref=e465]: Λεωφ. Βασιλίσσης Σοφίας 12, Αθήνα 10674, Ελλάδα
+          - generic [ref=e466]: Δικηγορικός Σύλλογος Αθηνών — εκκρεμεί εγγραφή
+          - generic [ref=e467]: ΑΦΜ σε εκκρεμότητα
+      - generic [ref=e468]:
+        - generic [ref=e734]:
+          - generic [ref=e735]: Τομείς
+          - list [ref=e736]:
+            - listitem [ref=e737]:
+              - link "Ακίνητα" [ref=e738] [cursor=pointer]:
+                - /url: "#practice"
+            - listitem [ref=e739]:
+              - link "Startups & Επιχειρηματικά Κεφάλαια" [ref=e740] [cursor=pointer]:
+                - /url: "#practice"
+            - listitem [ref=e741]:
+              - link "Ναυτικό Δίκαιο" [ref=e742] [cursor=pointer]:
+                - /url: "#practice"
+            - listitem [ref=e743]:
+              - link "Κρυπτονομίσματα & Ψηφιακά Περιουσιακά" [ref=e744] [cursor=pointer]:
+                - /url: "#practice"
+        - generic [ref=e745]:
+          - generic [ref=e746]: Γραφείο
+          - list [ref=e747]:
+            - listitem [ref=e748]:
+              - link "Σχετικά με εμάς" [ref=e749] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e750]:
+              - link "Η Ομάδα μας" [ref=e751] [cursor=pointer]:
+                - /url: "#team"
+            - listitem [ref=e752]:
+              - link "Καριέρα" [ref=e753] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e754]:
+              - link "Πολιτική Απορρήτου" [ref=e755] [cursor=pointer]:
+                - /url: "#"
+        - generic [ref=e756]:
+          - generic [ref=e757]: Σύνδεση
+          - list [ref=e758]:
+            - listitem [ref=e759]:
+              - link "LinkedIn" [ref=e760] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e761]:
+              - link "Email" [ref=e762] [cursor=pointer]:
+                - /url: mailto:info@nomos.legal
+            - listitem [ref=e763]:
+              - link "+30 210 123 4567" [ref=e764] [cursor=pointer]:
+                - /url: tel:+30 210 123 4567
+    - paragraph [ref=e501]: © 2026 NOMOS Νομικές Υπηρεσίες. Με επιφύλαξη παντός δικαιώματος. Αθήνα, Ελλάδα.

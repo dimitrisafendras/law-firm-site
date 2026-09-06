@@ -107,7 +107,14 @@
   color: var(--accent);
 }
 
+/* Lays out the primary button and the persistent controls as one row. It used
+   to hold a single node whose own wrapper handled this; the two are separate
+   props now, because only one of them may be deferred. */
 .navbar__cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+
   @media (max-width: 1024px) {
     display: none;
   }
@@ -299,23 +306,25 @@
  *
  * `visibility` rather than `display`, so the bar's layout does not reflow as
  * it appears and the language switcher and sign-in control beside it do not
- * jump sideways at 62% of the first screen. Pointer events go with it, so a
- * hidden button cannot be clicked or tabbed to.
+ * jump sideways at 62% of the first screen. Pointer events go with it, and
+ * `visibility: hidden` also takes the button out of the tab order, so a button
+ * nobody can see is not one a keyboard can reach.
  */
-.navbar__cta[data-deferred='true'] {
+.navbar__cta-primary[data-deferred='true'] {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transform: translateY(-4px);
 }
 
-.navbar__cta {
+.navbar__cta-primary {
+  display: inline-flex;
   transition: opacity 0.35s var(--ease-settle), transform 0.35s var(--ease-settle),
     visibility 0.35s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .navbar__cta {
+  .navbar__cta-primary {
     transition: none;
   }
 }

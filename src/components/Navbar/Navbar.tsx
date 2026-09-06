@@ -9,19 +9,24 @@ interface NavLinkItem {
 interface NavbarProps {
   logo: ReactNode;
   links: NavLinkItem[];
+  /**
+   * Persistent header controls — language, sign-in, avatar. Always visible.
+   */
   cta?: ReactNode;
   /**
-   * Hold the desktop call to action back until the page has scrolled past its
-   * first screen.
+   * The bar's primary call to action, kept separate from `cta` because it is
+   * the only part that may be deferred.
    *
-   * For a page whose hero carries its own call to action, showing the same
+   * On a page whose hero carries its own call to action, showing the same
    * button in the bar at the same time puts two identical primary controls in
    * one viewport — which reads as a mistake rather than as emphasis, and
-   * halves the weight of both. The bar takes over once the hero's has gone.
-   *
-   * Off by default: a page with no hero (login, account) wants its bar CTA
-   * from the first frame.
+   * halves the weight of both. This one waits until the hero's has scrolled
+   * away; the controls beside it never do, because hiding sign-in and the
+   * language switch on the first screen removes navigation rather than
+   * removing a duplicate.
    */
+  primaryCta?: ReactNode;
+  /** Defer `primaryCta` until the page has scrolled past its first screen. */
   deferCta?: boolean;
 }
 
@@ -29,7 +34,7 @@ const MOBILE_MENU_ID = 'navbar-mobile-menu';
 const FOCUSABLE =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export function Navbar({ logo, links, cta, deferCta = false }: NavbarProps) {
+export function Navbar({ logo, links, cta, primaryCta, deferCta = false }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -142,11 +147,16 @@ export function Navbar({ logo, links, cta, deferCta = false }: NavbarProps) {
           ))}
         </ul>
 
-        {cta && (
-          <div
-            className="navbar__cta"
-            data-deferred={deferCta && !pastHero ? 'true' : undefined}
-          >
+        {(primaryCta || cta) && (
+          <div className="navbar__cta">
+            {primaryCta && (
+              <span
+                className="navbar__cta-primary"
+                data-deferred={deferCta && !pastHero ? 'true' : undefined}
+              >
+                {primaryCta}
+              </span>
+            )}
             {cta}
           </div>
         )}
@@ -192,8 +202,9 @@ export function Navbar({ logo, links, cta, deferCta = false }: NavbarProps) {
             ))}
           </ul>
 
-          {cta && (
+          {(primaryCta || cta) && (
             <div className="navbar__mobile-cta" onClick={close}>
+              {primaryCta}
               {cta}
             </div>
           )}

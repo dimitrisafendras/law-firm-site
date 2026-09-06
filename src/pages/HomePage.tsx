@@ -32,17 +32,15 @@ export default function HomePage() {
           { label: t('navTestimonials'), href: '#testimonials' },
           { label: t('navContact'), href: '#contact' },
         ]}
-        cta={
-          <div className="navbar__actions">
-            <Button
-              size="sm"
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              {t('navCta')}
-            </Button>
-            <AuthNavControl />
-          </div>
+        primaryCta={
+          <Button
+            size="sm"
+            onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            {t('navCta')}
+          </Button>
         }
+        cta={<AuthNavControl />}
       />
 
       <main className="page-ramp">

@@ -1,0 +1,469 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "NOMOS Legal & Advisory" [ref=e6] [cursor=pointer]:
+        - /url: "#"
+        - generic [ref=e14]:
+          - generic [ref=e15]: NOMOS
+          - generic [ref=e16]: Legal & Advisory
+      - list [ref=e17]:
+        - listitem [ref=e18]:
+          - link "Practice Areas" [ref=e19] [cursor=pointer]:
+            - /url: "#practice"
+        - listitem [ref=e20]:
+          - link "Our Team" [ref=e21] [cursor=pointer]:
+            - /url: "#team"
+        - listitem [ref=e22]:
+          - link "Testimonials" [ref=e23] [cursor=pointer]:
+            - /url: "#testimonials"
+        - listitem [ref=e24]:
+          - link "Contact" [ref=e25] [cursor=pointer]:
+            - /url: "#contact"
+  - main [ref=e26]:
+    - generic [ref=e28]:
+      - generic [ref=e29]: The Intersection of Legacy & Innovation
+      - heading "Super Prime Legal Counsel" [level=1] [ref=e32]:
+        - generic [ref=e34]:
+          - generic [ref=e35]: S
+          - generic [ref=e36]: u
+          - generic [ref=e37]: p
+          - generic [ref=e38]: e
+          - generic [ref=e39]: r
+          - generic [ref=e40]: P
+          - generic [ref=e41]: r
+          - generic [ref=e42]: i
+          - generic [ref=e43]: m
+          - generic [ref=e44]: e
+        - generic [ref=e46]:
+          - generic [ref=e47]: L
+          - generic [ref=e48]: e
+          - generic [ref=e49]: g
+          - generic [ref=e50]: a
+          - generic [ref=e51]: l
+          - generic [ref=e52]: C
+          - generic [ref=e53]: o
+          - generic [ref=e54]: u
+          - generic [ref=e55]: "n"
+          - generic [ref=e56]: s
+          - generic [ref=e57]: e
+          - generic [ref=e58]: l
+      - paragraph [ref=e59]:
+        - generic [ref=e60]:
+          - generic [ref=e61]: A
+          - generic [ref=e62]: new-generation
+          - generic [ref=e63]: legal
+          - generic [ref=e64]: practice
+          - generic [ref=e65]: combining
+          - generic [ref=e66]: deep
+          - generic [ref=e67]: expertise
+          - generic [ref=e68]: in
+          - generic [ref=e69]: real
+          - generic [ref=e70]: estate,
+          - generic [ref=e71]: startup
+          - generic [ref=e72]: funding,
+          - generic [ref=e73]: maritime,
+          - generic [ref=e74]: and
+          - generic [ref=e75]: cryptocurrency
+          - generic [ref=e76]: law.
+          - generic [ref=e77]: Built
+          - generic [ref=e78]: for
+          - generic [ref=e79]: ambitious
+          - generic [ref=e80]: professionals
+          - generic [ref=e81]: navigating
+          - generic [ref=e82]: tomorrow’s
+          - generic [ref=e83]: challenges.
+      - generic [ref=e84]:
+        - button "Book Consultation" [ref=e85] [cursor=pointer]
+        - link "Meet the partners" [ref=e86] [cursor=pointer]:
+          - /url: "#team"
+          - text: Meet the partners
+          - generic [aria-hidden] [ref=e87]: ↓
+    - generic [ref=e92]:
+      - generic [ref=e93]:
+        - generic [ref=e94]: 0+
+        - generic [ref=e95]: Clients Served
+      - generic [ref=e96]:
+        - generic [ref=e97]: 0B+
+        - generic [ref=e98]: In Transactions
+      - generic [ref=e99]:
+        - generic [ref=e100]: 0+
+        - generic [ref=e101]: Years Combined Experience
+      - generic [ref=e102]:
+        - generic [ref=e103]: "0"
+        - generic [ref=e104]: Jurisdictions
+    - generic [ref=e106]:
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - heading "O u r E x p e r t i s e" [level=2] [ref=e111]:
+            - generic [ref=e112]:
+              - generic [ref=e113]: O
+              - generic [ref=e114]: u
+              - generic [ref=e115]: r
+              - generic [ref=e116]: E
+              - generic [ref=e117]: x
+              - generic [ref=e118]: p
+              - generic [ref=e119]: e
+              - generic [ref=e120]: r
+              - generic [ref=e121]: t
+              - generic [ref=e122]: i
+              - generic [ref=e123]: s
+              - generic [ref=e124]: e
+          - paragraph [ref=e125]:
+            - generic [ref=e126]:
+              - generic [ref=e127]: Four
+              - generic [ref=e128]: pillars
+              - generic [ref=e129]: of
+              - generic [ref=e130]: specialization
+              - generic [ref=e131]: for
+              - generic [ref=e132]: clients
+              - generic [ref=e133]: who
+              - generic [ref=e134]: need
+              - generic [ref=e135]: precision
+              - generic [ref=e136]: and
+              - generic [ref=e137]: depth.
+        - generic [ref=e138]: Chapter 01 / Expertise
+      - generic [ref=e141]:
+        - generic [ref=e143]:
+          - generic [ref=e144]: Domain I
+          - heading "Real Estate" [level=3] [ref=e145]
+          - paragraph [ref=e146]: Full-spectrum property counsel — acquisitions, development permits, title due diligence, lease structuring, and cross-border transactions across Greece and the EU.
+          - link "Explore Domain" [ref=e147] [cursor=pointer]:
+            - /url: "#practice-realestate"
+            - text: Explore Domain
+            - generic [aria-hidden] [ref=e148]: →
+        - generic [ref=e150]:
+          - generic [ref=e151]: Domain II
+          - heading "Startup & Venture Capital" [level=3] [ref=e152]
+          - paragraph [ref=e153]: Seed to Series C and beyond. SAFE notes, shareholder agreements, cap table structuring, investor negotiations, and regulatory compliance for tech ventures.
+          - link "Explore Domain" [ref=e154] [cursor=pointer]:
+            - /url: "#practice-startup"
+            - text: Explore Domain
+            - generic [aria-hidden] [ref=e155]: →
+        - generic [ref=e157]:
+          - generic [ref=e158]: Domain III
+          - heading "Maritime Law" [level=3] [ref=e159]
+          - paragraph [ref=e160]: Ship finance, charter party disputes, cargo claims, flag state compliance, and environmental regulations. Decades of Piraeus shipping corridor experience.
+          - link "Explore Domain" [ref=e161] [cursor=pointer]:
+            - /url: "#practice-maritime"
+            - text: Explore Domain
+            - generic [aria-hidden] [ref=e162]: →
+        - generic [ref=e164]:
+          - generic [ref=e165]: Domain IV
+          - heading "Cryptocurrency & Digital Assets" [level=3] [ref=e166]
+          - paragraph [ref=e167]: Token issuance, DeFi protocol compliance, MiCA regulatory frameworks, exchange licensing, DAO governance structures, and digital asset dispute resolution.
+          - link "Explore Domain" [ref=e168] [cursor=pointer]:
+            - /url: "#practice-crypto"
+            - text: Explore Domain
+            - generic [aria-hidden] [ref=e169]: →
+    - generic [ref=e171]:
+      - generic [ref=e174]:
+        - generic [ref=e175]:
+          - heading "M e e t t h e P a r t n e r s" [level=2] [ref=e176]:
+            - generic [ref=e177]:
+              - generic [ref=e178]: M
+              - generic [ref=e179]: e
+              - generic [ref=e180]: e
+              - generic [ref=e181]: t
+              - generic [ref=e182]: t
+              - generic [ref=e183]: h
+              - generic [ref=e184]: e
+              - generic [ref=e185]: P
+              - generic [ref=e186]: a
+              - generic [ref=e187]: r
+              - generic [ref=e188]: t
+              - generic [ref=e189]: "n"
+              - generic [ref=e190]: e
+              - generic [ref=e191]: r
+              - generic [ref=e192]: s
+          - paragraph [ref=e193]:
+            - generic [ref=e194]:
+              - generic [ref=e195]: Three
+              - generic [ref=e196]: attorneys,
+              - generic [ref=e197]: three
+              - generic [ref=e198]: disciplines,
+              - generic [ref=e199]: one
+              - generic [ref=e200]: commitment
+              - generic [ref=e201]: to
+              - generic [ref=e202]: moving
+              - generic [ref=e203]: you
+              - generic [ref=e204]: forward.
+        - generic [ref=e205]: Chapter 02 / Team
+      - generic [ref=e208]:
+        - article [ref=e210]:
+          - generic [ref=e211]:
+            - img "Dimitris Afendras" [ref=e213]
+            - generic [ref=e214]: Founding Partner
+          - heading "Dimitris Afendras" [level=3] [ref=e215]
+          - paragraph [ref=e216]: Real Estate & Startup Funding
+          - paragraph [ref=e218]: Dimitris brings sharp transactional instinct to property and startup clients. Known for structuring complex real estate deals and guiding founders through critical funding milestones with clarity and precision.
+          - generic [ref=e219]:
+            - generic [ref=e220]:
+              - term [ref=e221]: Focus
+              - definition [ref=e222]: Transactional Strategy
+            - generic [ref=e223]:
+              - term [ref=e224]: Origin
+              - definition [ref=e225]: Athens
+        - article [ref=e227]:
+          - generic [ref=e228]:
+            - img "Alexandra Marinaki" [ref=e230]
+            - generic [ref=e231]: Founding Partner
+          - heading "Alexandra Marinaki" [level=3] [ref=e232]
+          - paragraph [ref=e233]: Maritime Law & Cryptocurrency
+          - paragraph [ref=e235]: Alexandra navigates the intersection of traditional maritime law and the digital asset frontier. Her dual expertise allows clients to move confidently through both high-seas disputes and blockchain regulation.
+          - generic [ref=e236]:
+            - generic [ref=e237]:
+              - term [ref=e238]: Focus
+              - definition [ref=e239]: Cross-Border Regulation
+            - generic [ref=e240]:
+              - term [ref=e241]: Origin
+              - definition [ref=e242]: Piraeus
+        - article [ref=e244]:
+          - generic [ref=e245]:
+            - img "Stavros Leventis" [ref=e247]
+            - generic [ref=e248]: Partner
+          - heading "Stavros Leventis" [level=3] [ref=e249]
+          - paragraph [ref=e250]: Digital Assets & DeFi & Web3
+          - paragraph [ref=e252]: Stavros advises founders and funds operating at the regulatory frontier of digital assets. He structures token offerings, guides protocols through MiCA authorisation, and resolves disputes where code and contract law meet.
+          - generic [ref=e253]:
+            - generic [ref=e254]:
+              - term [ref=e255]: Focus
+              - definition [ref=e256]: Regulatory Architecture
+            - generic [ref=e257]:
+              - term [ref=e258]: Origin
+              - definition [ref=e259]: Athens
+    - generic [ref=e260]:
+      - generic [ref=e264]:
+        - generic [ref=e265]:
+          - heading "G l o b a l N e t w o r k" [level=2] [ref=e266]:
+            - generic [ref=e267]:
+              - generic [ref=e268]: G
+              - generic [ref=e269]: l
+              - generic [ref=e270]: o
+              - generic [ref=e271]: b
+              - generic [ref=e272]: a
+              - generic [ref=e273]: l
+              - generic [ref=e274]: "N"
+              - generic [ref=e275]: e
+              - generic [ref=e276]: t
+              - generic [ref=e277]: w
+              - generic [ref=e278]: o
+              - generic [ref=e279]: r
+              - generic [ref=e280]: k
+          - paragraph [ref=e281]:
+            - generic [ref=e282]:
+              - generic [ref=e283]: Strategic
+              - generic [ref=e284]: presence
+              - generic [ref=e285]: in
+              - generic [ref=e286]: key
+              - generic [ref=e287]: jurisdictions
+              - generic [ref=e288]: for
+              - generic [ref=e289]: cross-border
+              - generic [ref=e290]: counsel.
+        - generic [ref=e291]: Chapter 03 / Network
+      - generic [ref=e296]:
+        - generic [ref=e298]:
+          - generic [aria-hidden]: ATH
+          - generic [ref=e299]: European HQ
+          - heading "Athens, GR" [level=3] [ref=e300]
+          - list [ref=e301]:
+            - listitem [ref=e302]: •Real Estate & Startup Law
+            - listitem [ref=e303]: •EU Regulatory Compliance
+            - listitem [ref=e304]: •Venture Capital Structuring
+          - link "Connect Node" [ref=e305] [cursor=pointer]:
+            - /url: "#contact"
+            - text: Connect Node
+            - generic [aria-hidden] [ref=e306]: →
+        - generic [ref=e308]:
+          - generic [aria-hidden]: PIR
+          - generic [ref=e309]: Maritime Hub
+          - heading "Piraeus, GR" [level=3] [ref=e310]
+          - list [ref=e311]:
+            - listitem [ref=e312]: •Maritime Disputes & Finance
+            - listitem [ref=e313]: •Flag State Compliance
+            - listitem [ref=e314]: •Shipping Corridor Advisory
+          - link "Connect Node" [ref=e315] [cursor=pointer]:
+            - /url: "#contact"
+            - text: Connect Node
+            - generic [aria-hidden] [ref=e316]: →
+        - generic [ref=e318]:
+          - generic [aria-hidden]: DEC
+          - generic [ref=e319]: Digital Jurisdiction
+          - heading "Decentralized" [level=3] [ref=e320]
+          - list [ref=e321]:
+            - listitem [ref=e322]: •Cryptocurrency Regulation
+            - listitem [ref=e323]: •DeFi Protocol Compliance
+            - listitem [ref=e324]: •DAO Governance Structures
+          - link "Connect Node" [ref=e325] [cursor=pointer]:
+            - /url: "#contact"
+            - text: Connect Node
+            - generic [aria-hidden] [ref=e326]: →
+    - generic [ref=e328]:
+      - generic [ref=e331]:
+        - generic [ref=e332]:
+          - heading "C l i e n t T e s t i m o n i a l s" [level=2] [ref=e333]:
+            - generic [ref=e334]:
+              - generic [ref=e335]: C
+              - generic [ref=e336]: l
+              - generic [ref=e337]: i
+              - generic [ref=e338]: e
+              - generic [ref=e339]: "n"
+              - generic [ref=e340]: t
+              - generic [ref=e341]: T
+              - generic [ref=e342]: e
+              - generic [ref=e343]: s
+              - generic [ref=e344]: t
+              - generic [ref=e345]: i
+              - generic [ref=e346]: m
+              - generic [ref=e347]: o
+              - generic [ref=e348]: "n"
+              - generic [ref=e349]: i
+              - generic [ref=e350]: a
+              - generic [ref=e351]: l
+              - generic [ref=e352]: s
+          - paragraph [ref=e353]:
+            - generic [ref=e354]:
+              - generic [ref=e355]: Trusted
+              - generic [ref=e356]: by
+              - generic [ref=e357]: ambitious
+              - generic [ref=e358]: professionals
+              - generic [ref=e359]: across
+              - generic [ref=e360]: industries.
+        - generic [ref=e361]: Chapter 04 / Testimonials
+      - region "Client Testimonials" [ref=e365]:
+        - figure "Yiannis Papadopoulos CEO, Hellas Fintech" [ref=e366]:
+          - blockquote [ref=e367]: NOMOS guided our Series A from term sheet to close in 6 weeks. Their understanding of both Greek and EU venture frameworks saved us months of back-and-forth.
+          - generic [ref=e368]:
+            - generic [ref=e369]: Yiannis Papadopoulos
+            - generic [ref=e370]: CEO, Hellas Fintech
+        - generic [ref=e371]:
+          - button "Go to testimonial 1" [ref=e372] [cursor=pointer]
+          - button "Go to testimonial 2" [ref=e373] [cursor=pointer]
+          - button "Go to testimonial 3" [ref=e374] [cursor=pointer]
+          - button "Go to testimonial 4" [ref=e375] [cursor=pointer]
+          - button "Go to testimonial 5" [ref=e376] [cursor=pointer]
+          - button "Go to testimonial 6" [ref=e377] [cursor=pointer]
+    - generic [ref=e379]:
+      - generic [ref=e382]:
+        - generic [ref=e383]:
+          - heading "G e t i n T o u c h" [level=2] [ref=e384]:
+            - generic [ref=e385]:
+              - generic [ref=e386]: G
+              - generic [ref=e387]: e
+              - generic [ref=e388]: t
+              - generic [ref=e389]: i
+              - generic [ref=e390]: "n"
+              - generic [ref=e391]: T
+              - generic [ref=e392]: o
+              - generic [ref=e393]: u
+              - generic [ref=e394]: c
+              - generic [ref=e395]: h
+          - paragraph [ref=e396]:
+            - generic [ref=e397]:
+              - generic [ref=e398]: Closing
+              - generic [ref=e399]: a
+              - generic [ref=e400]: deal,
+              - generic [ref=e401]: launching
+              - generic [ref=e402]: a
+              - generic [ref=e403]: venture,
+              - generic [ref=e404]: or
+              - generic [ref=e405]: navigating
+              - generic [ref=e406]: regulation
+              - generic [ref=e407]: —
+              - generic [ref=e408]: we’re
+              - generic [ref=e409]: ready.
+        - generic [ref=e410]: Chapter 05 / Contact
+      - generic [ref=e413]:
+        - generic [ref=e414]:
+          - generic [ref=e415]:
+            - generic [ref=e416]:
+              - generic [aria-hidden] [ref=e417]: ⚲
+              - generic [ref=e418]: 12 Vasilissis Sofias Avenue, Athens 10674, Greece
+            - generic [ref=e419]:
+              - generic [aria-hidden] [ref=e420]: ✉
+              - link "info@nomos.legal" [ref=e421] [cursor=pointer]:
+                - /url: mailto:info@nomos.legal
+            - generic [ref=e422]:
+              - generic [aria-hidden] [ref=e423]: ☎
+              - link "+30 210 123 4567" [ref=e424] [cursor=pointer]:
+                - /url: tel:+30 210 123 4567
+          - generic [ref=e425]:
+            - generic [ref=e426]:
+              - term [ref=e427]: Response time
+              - definition [ref=e428]: We reply to every enquiry within one business day.
+            - generic [ref=e429]:
+              - term [ref=e430]: The first conversation
+              - definition [ref=e431]: Thirty minutes, no charge — you describe the matter, we tell you whether we are the right firm for it and what it is likely to involve.
+            - generic [ref=e432]:
+              - term [ref=e433]: Confidentiality
+              - definition [ref=e434]: Everything you send is privileged from the first message, whether or not we go on to act for you.
+        - generic [ref=e436]:
+          - generic [ref=e437]:
+            - generic [ref=e438]:
+              - generic [ref=e439]: Full Name
+              - textbox "Full Name" [ref=e440]:
+                - /placeholder: John Smith
+            - generic [ref=e441]:
+              - generic [ref=e442]: Email
+              - textbox "Email" [ref=e443]:
+                - /placeholder: john@example.com
+          - generic [ref=e444]:
+            - generic [ref=e445]: Phone
+            - textbox "Phone" [ref=e446]:
+              - /placeholder: (555) 123-4567
+          - generic [ref=e447]:
+            - generic [ref=e448]: How can we help?
+            - textbox "How can we help?" [ref=e449]:
+              - /placeholder: Briefly describe your legal matter...
+          - button "Schedule Consultation" [ref=e450] [cursor=pointer]
+  - contentinfo [ref=e451]:
+    - generic [ref=e452]:
+      - generic [ref=e453]:
+        - generic [ref=e454]: NOMOS
+        - generic [ref=e464]:
+          - generic [ref=e465]: 12 Vasilissis Sofias Avenue, Athens 10674, Greece
+          - generic [ref=e466]: Athens Bar Association — registration pending
+          - generic [ref=e467]: VAT number pending
+      - generic [ref=e468]:
+        - generic [ref=e469]:
+          - generic [ref=e470]: Practice
+          - list [ref=e471]:
+            - listitem [ref=e472]:
+              - link "Real Estate" [ref=e473] [cursor=pointer]:
+                - /url: "#practice"
+            - listitem [ref=e474]:
+              - link "Startup & Venture Capital" [ref=e475] [cursor=pointer]:
+                - /url: "#practice"
+            - listitem [ref=e476]:
+              - link "Maritime Law" [ref=e477] [cursor=pointer]:
+                - /url: "#practice"
+            - listitem [ref=e478]:
+              - link "Cryptocurrency & Digital Assets" [ref=e479] [cursor=pointer]:
+                - /url: "#practice"
+        - generic [ref=e480]:
+          - generic [ref=e481]: Firm
+          - list [ref=e482]:
+            - listitem [ref=e483]:
+              - link "About Us" [ref=e484] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e485]:
+              - link "Our Team" [ref=e486] [cursor=pointer]:
+                - /url: "#team"
+            - listitem [ref=e487]:
+              - link "Careers" [ref=e488] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e489]:
+              - link "Privacy Policy" [ref=e490] [cursor=pointer]:
+                - /url: "#"
+        - generic [ref=e491]:
+          - generic [ref=e492]: Connect
+          - list [ref=e493]:
+            - listitem [ref=e494]:
+              - link "LinkedIn" [ref=e495] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e496]:
+              - link "Email" [ref=e497] [cursor=pointer]:
+                - /url: mailto:info@nomos.legal
+            - listitem [ref=e498]:
+              - link "+30 210 123 4567" [ref=e499] [cursor=pointer]:
+                - /url: tel:+30 210 123 4567
+    - paragraph [ref=e501]: © 2026 NOMOS Legal & Advisory. All rights reserved. Athens, Greece.

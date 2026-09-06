@@ -115,22 +115,6 @@ html {
    * The reduced-motion block further down this file overrides this to `auto`.
    */
   scroll-behavior: smooth;
-
-  /*
-   * Section snapping, on `proximity` rather than `mandatory`.
-   *
-   * `mandatory` would be wrong here and worth spelling out: several sections
-   * are taller than the viewport (practice ~1,110px, the partners ~1,100px,
-   * the map band 620px plus its header), and mandatory snapping on a section
-   * you cannot see all of means the browser fights every attempt to read the
-   * bottom of it — you scroll, it pulls you back to the top of the section.
-   * It also traps keyboard and screen-reader users mid-section.
-   *
-   * `proximity` snaps only when a release already lands near a boundary, so a
-   * flick settles the map band or a section header neatly in frame while a
-   * deliberate scroll through a long section is left alone.
-   */
-  scroll-snap-type: y proximity;
 }
 
 /*
@@ -144,56 +128,6 @@ html {
 #testimonials,
 #contact {
   scroll-margin-top: var(--space-24);
-}
-
-/*
- * The snap points. `start` aligns a section's top edge to the top of the
- * viewport, and `scroll-margin-top` offsets that alignment by the same amount
- * the anchors use, so a snapped section lands below the fixed header instead of
- * under it. It repeats the value rather than relying on the anchor rule above:
- * that rule only covers the four sections with ids, and the network section has
- * none.
- *
- * The hero and the stats bar are excluded for free — the hero is a `<header>`
- * and the stats bar a `<div>`, so neither matches. That is the behaviour we
- * want anyway: the hero is already the resting position at scroll 0, and giving
- * it a snap point makes the first scroll away from it feel sticky.
- */
-.page-ramp > section {
-  scroll-snap-align: start;
-  scroll-margin-top: var(--space-24);
-}
-
-/*
- * The map band gets a second snap point inside its own section, so scrolling
- * past the section header settles with the coastline filling the frame rather
- * than half-cut by the fold. It sits ~200px below the section's own snap point;
- * under `proximity` the browser resolves to whichever is nearer the natural
- * resting position, so the two do not fight.
- */
-.network-map__band {
-  scroll-snap-align: start;
-  scroll-margin-top: var(--space-16);
-}
-
-/*
- * Two opt-outs, both about not taking the scroll away from someone who did not
- * ask for help with it.
- *
- * Reduced motion: a snap is an unrequested animated scroll, which is precisely
- * the class of movement the preference exists to suppress.
- *
- * Coarse pointers: touch scrolling is momentum-based, and snapping is at its
- * most intrusive against a flick — the page arrives somewhere the thumb did not
- * put it, and a long section takes several fighting swipes to read. The
- * sections here run 900–1,300px against a phone viewport, so a mobile reader is
- * almost always mid-section, which is exactly where snapping has nothing to
- * offer and something to cost.
- */
-@media (prefers-reduced-motion: reduce), (pointer: coarse) {
-  html {
-    scroll-snap-type: none;
-  }
 }
 
 html::-webkit-scrollbar {

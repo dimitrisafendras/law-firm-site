@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '@/i18n';
 import { Card, EditableText } from '@/components';
+import { EditableSpawnText } from '@/components/animations/EditableSpawnText';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import { useCarousel } from './useCarousel';
@@ -11,7 +12,13 @@ const DWELL_MS = 8000;
 
 /* Keys, not resolved strings: routed through EditableText so an admin can edit
    the copy in place. */
-const testimonials = [
+interface Testimonial {
+  quoteKey: string;
+  authorKey: string;
+  roleKey: string;
+}
+
+const testimonials: Testimonial[] = [
   { quoteKey: 'testimonial1Quote', authorKey: 'testimonial1Author', roleKey: 'testimonial1Role' },
   { quoteKey: 'testimonial2Quote', authorKey: 'testimonial2Author', roleKey: 'testimonial2Role' },
   { quoteKey: 'testimonial3Quote', authorKey: 'testimonial3Author', roleKey: 'testimonial3Role' },
@@ -64,6 +71,55 @@ const testimonials = [
  * All three fold into one boolean before touching the hook, so they cannot
  * fight over `pause()`/`resume()` in whatever order their effects happen to run.
  */
+/**
+ * One quote, and the reason the stage never changes height.
+ *
+ * The sizer and the visible quote render *this same component*, which is the
+ * whole point of it existing. They used to be two hand-written blocks that
+ * happened to look alike, and they were not alike: the visible one splits its
+ * copy into one `inline-block` span per word for the entrance animation, and an
+ * inline-block contributes a taller line box than a bare text node does. The
+ * sizer measured plain text, came out ~3px shorter per line, and the card's own
+ * `overflow: hidden` quietly clipped the three longest quotes by 12px.
+ *
+ * Sharing the component makes that class of mismatch impossible rather than
+ * fixed: whatever the visible quote does to its own height — a different split,
+ * a new element, an admin editing in place — the sizer does identically,
+ * because it is the same code.
+ *
+ * `live` marks the one on screen. It drives the animation hooks in CSS and
+ * nothing else; the sizer's copies are inert, hidden and only ever measured.
+ */
+function QuoteFigure({ item, live = false }: { item: Testimonial; live?: boolean }) {
+  const { t } = useTranslation();
+
+  return (
+    <figure className={`testimonials-stage__quote ${live ? 'testimonials-stage__quote--live' : ''}`}>
+      {/*
+        The quote assembles a word at a time, using the same split-text machinery
+        as the hero and every section heading — so the one moment this section
+        moves speaks the site's own motion language rather than inventing a
+        second one. `word` and not `char`: at 30-odd words a character split is
+        200 animated spans for copy that is read as sentences, and the stagger
+        would run past the dwell.
+
+        `aria-label` on the blockquote is not optional. SpawnText emits one
+        `inline-block` span per unit, and a browser inserts a separator between
+        non-inline boxes when it computes an accessible name — so the split is
+        hidden and this label is what the live region announces. Same contract
+        as SectionHeader's h2.
+      */}
+      <blockquote className="testimonials-stage__text" aria-label={t(item.quoteKey)}>
+        <EditableSpawnText tKey={item.quoteKey} mode="word" />
+      </blockquote>
+      <figcaption className="testimonials-stage__attribution">
+        <EditableText tKey={item.authorKey} as="span" className="testimonials-stage__author" />
+        <EditableText tKey={item.roleKey} as="span" className="testimonials-stage__role" />
+      </figcaption>
+    </figure>
+  );
+}
+
 export function TestimonialsSection() {
   const { t } = useTranslation();
   const { index, next, prev, goTo, pause, resume, paused, cycle } = useCarousel({
@@ -115,6 +171,7 @@ export function TestimonialsSection() {
         <FadeInSection>
           <Card
             className="testimonials-stage"
+            variant="glow"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             role="region"
@@ -168,35 +225,11 @@ export function TestimonialsSection() {
               */}
               <div className="testimonials-stage__sizer" aria-hidden="true">
                 {testimonials.map((item) => (
-                  <figure key={item.quoteKey} className="testimonials-stage__quote">
-                    <blockquote className="testimonials-stage__text">{t(item.quoteKey)}</blockquote>
-                    <figcaption className="testimonials-stage__attribution">
-                      <span className="testimonials-stage__author">{t(item.authorKey)}</span>
-                      <span className="testimonials-stage__role">{t(item.roleKey)}</span>
-                    </figcaption>
-                  </figure>
+                  <QuoteFigure key={item.quoteKey} item={item} />
                 ))}
               </div>
 
-              {/* `--live` is not styling — it is the hook that tells the one
-                  visible figure apart from the six the sizer holds. */}
-              <figure key={index} className="testimonials-stage__quote testimonials-stage__quote--live">
-                <blockquote className="testimonials-stage__text">
-                  <EditableText tKey={active.quoteKey} as="span" />
-                </blockquote>
-                <figcaption className="testimonials-stage__attribution">
-                  <EditableText
-                    tKey={active.authorKey}
-                    as="span"
-                    className="testimonials-stage__author"
-                  />
-                  <EditableText
-                    tKey={active.roleKey}
-                    as="span"
-                    className="testimonials-stage__role"
-                  />
-                </figcaption>
-              </figure>
+              <QuoteFigure key={index} item={active} live />
             </div>
 
             <div className="testimonials-stage__controls">

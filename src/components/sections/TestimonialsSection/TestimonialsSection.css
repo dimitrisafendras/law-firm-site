@@ -173,20 +173,58 @@
   grid-area: 1 / 1;
 }
 
+/*
+ * The figure itself no longer animates — the words inside it do.
+ *
+ * It used to fade and rise as one block, which is a different motion vocabulary
+ * from the rest of the site: every heading and the hero assemble a unit at a
+ * time. Fading the block *and* spawning the words would have run the two
+ * against each other and doubled the opacity ramp.
+ */
 .testimonials-stage__quote {
   margin: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: var(--space-8);
-  animation: testimonial-enter 0.6s var(--ease-settle) both;
 }
 
-/* The sizer's copies must not animate: `testimonial-enter` starts at opacity 0
-   and `both` holds that backwards fill before the delay, and an animating
-   element is one more thing for the compositor to keep six of. They are only
-   ever measured. */
-.testimonials-stage__sizer .testimonials-stage__quote {
+/*
+ * The quote's own pacing, set here rather than taken from the defaults, because
+ * this is body-length copy on an 8s dwell and not a six-word heading.
+ *
+ * `--stagger-word` across ~30 words is 0.75s of tail; with the per-unit
+ * duration that is comfortably inside the dwell and still reads as a sweep
+ * rather than a list of words arriving.
+ */
+.testimonials-stage__quote--live .spawn-text__unit {
+  --spawn-stagger: var(--stagger-word);
+  --spawn-duration: var(--dur-spawn-element);
+}
+
+/*
+ * The attribution arrives after the quote, not with it — one beat behind, so
+ * the person is credited once the thing they said has landed.
+ *
+ * Guarded to `no-preference` in the same shape SpawnText uses: the resting
+ * state is the final state, and the animation is purely additive, so reduced
+ * motion gets a fully-formed attribution rather than one held at opacity 0 by
+ * a fill mode that never runs.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .testimonials-stage__quote--live .testimonials-stage__attribution {
+    animation: testimonial-enter var(--dur-spawn-element) var(--ease-spawn) backwards;
+    animation-delay: var(--seq-beat);
+  }
+}
+
+/* The sizer's copies are plain text and never animate — they are only ever
+   measured. They deliberately do NOT use SpawnText: six more split copies would
+   be hundreds of spans to hold, and the split changes nothing about how the
+   copy wraps, because a word split breaks at exactly the spaces normal text
+   does. The heights match, and that is checked rather than assumed. */
+.testimonials-stage__sizer .testimonials-stage__quote,
+.testimonials-stage__sizer .testimonials-stage__attribution {
   animation: none;
 }
 
@@ -372,6 +410,9 @@
   inset: var(--space-3) auto var(--space-3) 0;
   width: 0;
   background: var(--accent);
+  /* A 2px rule is a small thing to find on a wide panel; the bloom is what makes
+     the elapsed time readable at a glance rather than something you look for. */
+  box-shadow: 0 0 8px var(--glass-glow);
 }
 
 .testimonials-stage__rail-segment--active .testimonials-stage__rail-fill {
@@ -391,9 +432,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .testimonials-stage__quote {
-    animation: none;
-  }
 
   /*
    * The fill still has to show which segment is active — it just arrives rather

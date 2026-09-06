@@ -1,43 +1,87 @@
+import { createContext, useContext, type ReactNode } from 'react';
+import wordmarkWhite from './vkm-wordmark-white.svg';
+import monogramWhite from './vkm-monogram-white.svg';
+
 /*
- * VKM Legal — the mark, drawn.
+ * VKM Legal — the supplied white wordmark.
  *
- * The same geometry as `public/favicon.svg`, so the tab icon and the header
- * mark are one design rather than two that happen to share three letters.
+ * `brand/vkm-wordmark-white.svg` verbatim (its C2PA metadata block stripped,
+ * since that would otherwise ship on every page load): white V and M, the K in
+ * #BCE8FF, each carrying an 8px #002B49 keyline painted behind the fill, over a LEGAL
+ * sub-label in #1A6B8A.
  *
- * Drawn as paths rather than set as text, for the reason the favicon forced:
- * the supplied artwork names no `font-family` and positions its glyphs for a
- * face it does not name, so it rendered in whatever default the browser had,
- * with the letters overlapping and its 8px white keyline running them together.
- * Paths depend on no font and render identically everywhere. The originals are
- * kept in `src/assets/brand/` — see the README there for what differs.
+ * This is the dark-ground variant, and it is the right one here for a reason
+ * the navy pair could not meet: white on this page's #0F1A2E is legible, where
+ * #002B49 on it measures about 1.3:1. Its K is also #BCE8FF, which is this
+ * site's `--accent` exactly — the mark and the page already agree on that
+ * colour.
  *
- * Built on a 48 grid: a 16-unit cap height on a y=32 baseline, monolinear
- * strokes with round caps, letters at x=8/19/30 with 3 units of air between
- * them.
+ * The keyline works on a dark ground too, and does the job it was drawn for.
+ * On the navy variant the keyline is white, so on this page it read as three
+ * bright outlines colliding into a smudge. Here it is navy against a navy
+ * ground, so where the glyphs overlap it reads as a cut between them rather
+ * than as an outline around them — which is what "keyline interlock" means.
  *
- * The stroke is 2.3 here against the favicon's 3, which is the one number the
- * two do not share. At the navbar's 34px a 3-unit stroke computes to about
- * 5.4px, which reads heavier than anything else on a page set in a light
- * geometric sans. The favicon needs the extra weight for the opposite reason:
- * at 16px a thinner stroke drops below a pixel and the letters break up. The K keeps a wide aperture and the M a full-depth vertex,
- * because both are what stop the letterforms filling in when the mark is
- * scaled down.
+ * An <img>, not inlined markup: inlining hands page CSS a way to reach inside
+ * and change the colours or the face, which is how an earlier revision ended up
+ * rendering something that was not the client's logo.
  *
- * The K is picked out in `--brand-sky` against `--brand-navy-on-dark` for the V
- * and M — the construction the artwork is actually about, two weights of blue
- * with the middle letter lifted. `--brand-navy` itself is unusable here:
- * #002B49 on this page's #0F1A2E measures about 1.3:1, so the V and M would
- * disappear. It stays in tokens.ts for anything printed on white, and the
- * favicon uses it as a *ground* rather than as ink.
+ * The one thing still unsettled is the face. The file names no `font-family`,
+ * so it renders in whatever the browser defaults to rather than the site's own
+ * — see `src/assets/brand/README.md`. Fixing it means changing the artwork.
+ * The favicon does not use this file at all, for the same reason: it is drawn
+ * geometry, because a favicon document gets neither the stylesheet nor the
+ * webfonts.
  *
- * No plate. The favicon needs one because a browser tab strip is somebody
- * else's surface and usually light; here the mark sits on the page's own ramp,
- * where a white rectangle behind it would read as a sticker.
+ * One measurement worth carrying: LEGAL is 14px against 110px glyphs, so its
+ * rendered size is `height x 14/140`. At the navbar's 56px that is 5.6px and at
+ * the footer's 72px it is 7.2px — legible in the footer, marginal in the bar.
+ * The separate HTML tagline that used to sit under the mark is gone, since the
+ * wordmark now carries those words itself and rendering them twice was the
+ * thing to avoid.
  *
- * The viewBox is cropped to the ink — x 6.5 to 41.5, y 14.5 to 33.5 — rather
- * than left at the 48 grid, so the mark fills whatever height CSS gives it
- * instead of carrying the grid's margin as dead space.
+ * ─── The monogram variant ────────────────────────────────────────────────────
+ *
+ * `vkm-monogram-white.svg` is the same three glyphs without the LEGAL row, for
+ * the one place the sub-label stops earning its space: the scrolled header,
+ * where the bar tightens and 5.6px of tracked-out caps is a grey smear rather
+ * than a word. Dropping the row is the honest fix — shrinking the whole mark to
+ * fit a label nobody can read shrinks the letters too.
+ *
+ * It is a separate file rather than a CSS crop of the wordmark because the two
+ * are different drawings, and because a crop would have to live in a stylesheet
+ * — which is the reach-inside this component exists to prevent.
+ *
+ * The two boxes are NOT interchangeable at a given CSS height. The wordmark's
+ * viewBox is 140 units tall and its glyphs are 110 of them; the monogram is
+ * cropped to the glyphs alone, 100 units tall for the same 110-unit letters. So
+ * the same `height` draws the monogram's letters 40% larger. The header sizes
+ * around that — see `.navbar--scrolled` in src/App.css, which carries the
+ * arithmetic.
  */
+
+export type VkmLogoVariant = 'wordmark' | 'monogram';
+
+/*
+ * Which drawing an ancestor wants, for the marks it does not construct itself.
+ *
+ * The navbar takes its logo as an opaque `ReactNode` that each page builds —
+ * anchor, aria-label and all — so it has no prop to hand down and no business
+ * knowing there is an <img> in there. It publishes the variant it wants and any
+ * VkmLogo in that subtree picks it up. An explicit `variant` still wins, so a
+ * caller that has an opinion is never overruled by where it happens to sit.
+ */
+const VariantContext = createContext<VkmLogoVariant>('wordmark');
+
+export function VkmLogoVariantProvider({
+  variant,
+  children,
+}: {
+  variant: VkmLogoVariant;
+  children: ReactNode;
+}) {
+  return <VariantContext.Provider value={variant}>{children}</VariantContext.Provider>;
+}
 
 interface VkmLogoProps {
   className?: string;
@@ -47,26 +91,23 @@ interface VkmLogoProps {
    * announce the firm twice.
    */
   title?: string;
+  /**
+   * Which drawing to render. Left off, it follows the nearest
+   * `VkmLogoVariantProvider`, and defaults to the full wordmark.
+   */
+  variant?: VkmLogoVariant;
 }
 
-export function VkmLogo({ className, title }: VkmLogoProps) {
+export function VkmLogo({ className, title, variant }: VkmLogoProps) {
+  const inherited = useContext(VariantContext);
+  const resolved = variant ?? inherited;
+
   return (
-    <svg
+    <img
+      src={resolved === 'monogram' ? monogramWhite : wordmarkWhite}
       className={className}
-      viewBox="6.5 14.5 35 19"
-      xmlns="http://www.w3.org/2000/svg"
-      role={title ? 'img' : undefined}
-      aria-label={title}
-      aria-hidden={title ? undefined : true}
-      focusable="false"
-      fill="none"
-      strokeWidth="2.3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M8 16 L12 32 L16 16" stroke="var(--brand-navy-on-dark)" />
-      <path d="M19 16 V32 M26 16 L19.5 24 L26 32" stroke="var(--brand-sky)" />
-      <path d="M30 32 V16 L35 26 L40 16 V32" stroke="var(--brand-navy-on-dark)" />
-    </svg>
+      alt={title ?? ''}
+      draggable={false}
+    />
   );
 }

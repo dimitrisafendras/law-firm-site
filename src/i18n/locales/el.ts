@@ -224,6 +224,16 @@ const el = {
   contactPromise3Value: 'Ό,τι μας στέλνετε καλύπτεται από το δικηγορικό απόρρητο από το πρώτο μήνυμα, ανεξάρτητα από το αν αναλάβουμε την υπόθεση.',
   contactPhone: '+30 210 123 4567',
 
+  // Οι τρεις γραμμές επικοινωνίας έχουν η καθεμία κουμπί αντιγραφής, και η
+  // διεύθυνση είναι επιπλέον σύνδεσμος προς τους Χάρτες Google.
+  contactAddressLabel: 'Διεύθυνση',
+  contactEmailLabel: 'Email',
+  contactPhoneLabel: 'Τηλέφωνο',
+  contactAddressMap: 'Άνοιγμα της διεύθυνσης του γραφείου στους Χάρτες Google',
+  contactCopyLabel: 'Αντιγραφή: {{label}}',
+  contactCopiedAnnounce: 'Αντιγράφηκε στο πρόχειρο: {{label}}.',
+  contactCopyFailedAnnounce: 'Δεν ήταν δυνατή η αντιγραφή. Επιλέξτε το κείμενο για χειροκίνητη αντιγραφή: {{label}}.',
+
   // Contact form. Labels and placeholders reach the DOM as element text and
   // attributes on Input / Textarea, so they stay plain t() lookups.
   contactFormName: 'Ονοματεπώνυμο',

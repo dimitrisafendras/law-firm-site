@@ -374,6 +374,13 @@ export default function DesignSystem() {
               <CardBody><Text variant="small" className="glass-demo-text">Stronger glass for higher contrast on busy backgrounds.</Text></CardBody>
               <CardFooter><Button size="sm">Contact Us</Button></CardFooter>
             </Card>
+            {/* Side by side with the default above, which is the point: the
+                difference is only visible against a ground with colour in it. */}
+            <Card lensing={false}>
+              <CardHeader><Heading level={3} className="glass-demo-heading">Unlensed Card</Heading></CardHeader>
+              <CardBody><Text variant="small" className="glass-demo-text">Same tint, rim and glow, no backdrop blur or saturate. For a card that has to match one whose backdrop root is empty — anything inside a section with <code>content-visibility: auto</code> cannot lens, so a card elsewhere that is the same object declares it.</Text></CardBody>
+              <CardFooter><Button variant="ghost" size="sm">Details</Button></CardFooter>
+            </Card>
           </div>
         </div>
 

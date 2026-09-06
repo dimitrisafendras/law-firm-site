@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { JSX } from 'react';
 import { useTranslation } from '@/i18n';
-import { Navbar, Footer, Container, Card, EditableText, AuthNavControl } from '@/components';
+import { Navbar, Container, Card, EditableText, AuthNavControl } from '@/components';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '@/components/CircuitField/CircuitField';
 import type { PracticeArea } from '@/components/sections/PracticeGrid/practiceAreas';
@@ -19,10 +19,13 @@ interface PracticeDetailPageProps {
  * an admin editing either one edits both. The fuller copy this page adds lives
  * under `…Detail` and `…Service1..4`.
  *
- * Same skeleton as the partner and auth pages — Navbar, a `.page-ramp` main
- * with the circuit field, Footer — so it stands on the site's ground rather
- * than beside it. `App` resolves the slug before rendering; a slug with no area
- * behind it never reaches this component.
+ * Same ground as the partner and auth pages — Navbar over a `.page-ramp` main
+ * with the circuit field — so it stands on the site's ground rather than beside
+ * it. No footer: this page is one domain with a way back to the practice
+ * section at the top of it, and a full sitemap under a single area is a second
+ * navigation for a page that has exactly one destination. The main's own bottom
+ * padding closes the composition instead. `App` resolves the slug before
+ * rendering; a slug with no area behind it never reaches this component.
  */
 export default function PracticeDetailPage({ area }: PracticeDetailPageProps): JSX.Element {
   const { key, slug, icon: Icon, bg: Bg, num } = area;
@@ -49,7 +52,6 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
         logo={
           <a href="#" className="firm-logo" aria-label={t('firmName')}>
             <VkmLogo className="firm-logo__mark" />
-            <span className="firm-logo__tagline">{t('firmTagline')}</span>
           </a>
         }
         links={[
@@ -74,7 +76,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
             {/* The card's own illustration, at the size it was drawn for. On the
                 card it is a masked corner engraving behind body copy; here it
                 has a panel to itself, so it reads as the domain's mark. */}
-            <Card as="figure" className="practice-page__art" aria-hidden="true">
+            <Card as="figure" lensing={false} className="practice-page__art" aria-hidden="true">
               <Bg className="practice-page__art-drawing" />
               <Icon className="practice-page__art-mark" />
             </Card>
@@ -94,7 +96,12 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
           </div>
 
           <div className="practice-page__panels">
-            <Card as="section" className="practice-page__panel" aria-labelledby={`practice-overview-${slug}`}>
+            <Card
+              as="section"
+              lensing={false}
+              className="practice-page__panel"
+              aria-labelledby={`practice-overview-${slug}`}
+            >
               <h2 className="practice-page__panel-title" id={`practice-overview-${slug}`}>
                 {t('practiceOverviewLabel')}
               </h2>
@@ -105,7 +112,12 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
               />
             </Card>
 
-            <Card as="section" className="practice-page__panel" aria-labelledby={`practice-services-${slug}`}>
+            <Card
+              as="section"
+              lensing={false}
+              className="practice-page__panel"
+              aria-labelledby={`practice-services-${slug}`}
+            >
               <h2 className="practice-page__panel-title" id={`practice-services-${slug}`}>
                 {t('practiceServicesLabel')}
               </h2>
@@ -120,16 +132,6 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
           </div>
         </Container>
       </main>
-
-      <Footer
-        logo={
-          <div className="footer-brand">
-            <VkmLogo className="footer-brand__mark" title={t('firmName')} />
-          </div>
-        }
-        columns={[]}
-        bottom={<EditableText tKey="footerCopyright" as="p" />}
-      />
     </>
   );
 }

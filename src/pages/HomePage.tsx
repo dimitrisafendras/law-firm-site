@@ -78,7 +78,6 @@ export default function HomePage() {
         logo={
           <a href="#" className="firm-logo" aria-label={t('firmName')}>
             <VkmLogo className="firm-logo__mark" />
-            <EditableText tKey="firmTagline" as="span" className="firm-logo__tagline" />
           </a>
         }
         links={[

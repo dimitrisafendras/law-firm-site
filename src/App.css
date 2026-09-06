@@ -9,8 +9,37 @@
   color: inherit;
 }
 
+/*
+ * The bar's mark height, published on the header rather than set on the <img>
+ * so `.navbar__logo` in Navbar.css can pin the row slot to the same number and
+ * ease between the two. `.firm-logo__mark` only ever appears inside a `.navbar`
+ * — the design-system showcase has its own `ds-*` sizes — so there is nothing
+ * this leaves unsized.
+ */
+.navbar {
+  --firm-mark-height: 56px;
+}
+
+/*
+ * Scrolled, the bar carries the monogram instead of the wordmark (Navbar.tsx),
+ * and the two drawings do not share a scale. The wordmark's viewBox is 140
+ * units tall for 110 units of glyph; the monogram is cropped to the glyphs
+ * alone, 100 units tall for the same 110. So:
+ *
+ *   wordmark at 56px  ->  glyphs 110 x 56/140 = 44px
+ *   monogram at 56px  ->  glyphs 110 x 56/100 = 61.6px   (bigger, not smaller)
+ *   monogram at 40px  ->  glyphs 110 x 40/100 = 44px     (the break-even)
+ *   monogram at 36px  ->  glyphs 110 x 36/100 = 39.6px   (0.9x — "a bit smaller")
+ *
+ * 36px it is. Reading the raw heights as if they were comparable is the trap
+ * here: 36 next to 56 looks like a third off, and it is a tenth.
+ */
+.navbar--scrolled {
+  --firm-mark-height: 36px;
+}
+
 .firm-logo__mark {
-  height: 34px;
+  height: var(--firm-mark-height, 56px);
   width: auto;
   display: block;
 }
@@ -43,7 +72,7 @@
 
 /* The footer has more room than the bar. */
 .footer-brand__mark {
-  height: 42px;
+  height: 72px;
   width: auto;
   display: block;
 }
@@ -129,24 +158,26 @@
  * stops and four blooms are squeezed into a seventh of the height: the gradient
  * runs seven times faster and every bloom is a seventh of the size.
  *
- * The glass then looks like a different material even though it is not —
- * measured identical tint, blur, saturate, shadow and radius on both — because
- * a `backdrop-filter` shows you whatever is behind it, and what is behind it is
- * a much steeper gradient crossed by much smaller blooms.
+ * Pinning the layers to `--layout-ramp-span` — the home page's own height —
+ * gives a short page the *top* of that wash at full scale: the same stops in
+ * the same places, the same 2,300px-tall blooms, just fewer of them in view.
  *
- * Sizing the layers to the viewport instead of the element fixes the rate: a
- * short page now shows a slice of the same wash at the same scale as the home
- * page's opening screen, rather than the entire wash in miniature. `100vh` per
- * layer with the ramp repeating means a page a little taller than the fold
- * continues the wash rather than restarting it mid-screen.
+ * `100vh` was tried here first and is worse than it sounds. A viewport is
+ * usually *shorter* than the ~995px element it replaced, so the blooms came out
+ * smaller rather than larger, and `repeat-y` put a hard tile edge every screen
+ * where the ramp snapped from `--grad-5` back to `--bg` and all four blooms
+ * restarted mid-fade — a horizontal band across the middle of the content, on
+ * exactly the pages this rule exists to rescue. `repeat-y` stays only so a page
+ * that somehow outgrew the home page still has ground under it; at this span
+ * nothing on the site reaches the seam.
  */
 .page-ramp--short {
   background-size:
-    100% 100vh,
-    100% 100vh,
-    100% 100vh,
-    100% 100vh,
-    100% 100vh;
+    100% var(--layout-ramp-span),
+    100% var(--layout-ramp-span),
+    100% var(--layout-ramp-span),
+    100% var(--layout-ramp-span),
+    100% var(--layout-ramp-span);
   background-repeat: repeat-y;
 }
 

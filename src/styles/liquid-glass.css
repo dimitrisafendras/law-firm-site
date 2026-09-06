@@ -64,6 +64,35 @@
   color: var(--on-accent);
 }
 
+/* ---- Lensing off --------------------------------------------------------- */
+/*
+ * The material without its backdrop sampling: same tint, same rim, same
+ * illumination, no blur and no saturate.
+ *
+ * This is not a style choice, it is how a surface says which *backdrop root* it
+ * is standing in. A `backdrop-filter` shows only what paints inside its nearest
+ * backdrop root, and paint containment forms one — which `content-visibility:
+ * auto` applies at all times, not only while a section is skipped. Three of the
+ * home page's sections carry it (PracticeGrid, PartnerEthos,
+ * TestimonialsSection), so the cards inside them sample an empty backdrop and
+ * render as a flat tint over the page. StatsBar and ContactSection leave
+ * `content-visibility` off for exactly this reason and do lens; both say so in
+ * their own stylesheets.
+ *
+ * That makes lensing an accident of which ancestor happens to be contained. A
+ * surface that has to match one of the flat cards — the detail pages' panels
+ * are the same object as the practice and partner cards they are reached from —
+ * cannot rely on being placed under a contained ancestor, so it declares the
+ * state instead. Turning the filter off produces the identical pixels: a filter
+ * over an empty backdrop paints nothing either way.
+ *
+ * Both forms of the material answer to the same attribute, as with `clear`.
+ */
+.ds-glass[data-lensing='off'] {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
 /* ---- Layer 1: highlight — specular light cast on the top edge ------------- */
 .ds-glass__highlight {
   position: absolute;
@@ -274,6 +303,15 @@
   --glass-highlight: rgba(255, 255, 255, 0.18);
   --glass-edge: rgba(255, 255, 255, 0.1);
   --glass-glow: rgba(188, 232, 255, 0.1);
+}
+
+/* The pseudo-element form of the lensing opt-out documented beside its
+   component-form twin above. The hover saturation bump some cards set through
+   `--glass-saturate` is inert here, which is correct: a card that does not lens
+   has nothing to saturate, and the flat cards it matches have none either. */
+.glass[data-lensing='off'] {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 /* The surface's own children must ride above both layers. Scoped to direct

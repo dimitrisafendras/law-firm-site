@@ -226,10 +226,14 @@ export const letterSpacings = {
 /**
  * Spacing — the design system's 4px grid.
  *
- * Steps 1-16 are the system's own. 20 and 24 are a documented extension: the
- * scale stops at 64px, which is a control-layer measure, and this site's
+ * Steps 1-16 are the system's own. 20, 24 and 32 are a documented extension:
+ * the scale stops at 64px, which is a control-layer measure, and this site's
  * sections breathe at roughly 100px. Extending the same grid keeps section
  * rhythm on it rather than sending every section back to a magic number.
+ *
+ * 32 is the terminal step, for the bottom of a page that ends without a footer:
+ * the detail pages close on a card, and a page whose last surface is followed
+ * by one section's worth of ground reads as cut off rather than finished.
  */
 export const spacing = {
   0: '0px',
@@ -243,6 +247,7 @@ export const spacing = {
   16: '64px',
   20: '80px',
   24: '96px',
+  32: '128px',
 } as const;
 
 // ─── Radii ────────────────────────────────────────────────────────────────────
@@ -279,6 +284,22 @@ export const breakpoints = {
 
 export const layout = {
   maxWidth: '1440px',
+  /*
+   * How tall the page ramp's wash is, for pages too short to set it themselves.
+   *
+   * `.page-ramp` in App.css sizes its gradient and its four blooms as
+   * percentages of the element, which is the whole scrolling page — about
+   * 6,860px on the home page. Every other page is a fraction of that, so the
+   * identical five stops and four blooms get squeezed into a fraction of the
+   * height: the ramp runs several times faster and every bloom shrinks with it.
+   *
+   * `.page-ramp--short` pins the layers to this absolute span instead, so a
+   * short page shows the *top* of the same wash at the same scale rather than
+   * the whole wash in miniature. It is a measurement of the home page, not a
+   * step of a scale — which is exactly why it belongs here rather than being
+   * retyped into a stylesheet.
+   */
+  rampSpan: '6860px',
 } as const;
 
 // ─── Glass ───────────────────────────────────────────────────────────────────
@@ -656,6 +677,7 @@ export const spacingVarNames: Record<string, string> = {
   16: '--space-16',
   20: '--space-20',
   24: '--space-24',
+  32: '--space-32',
 };
 
 export const weightVarNames: Record<string, string> = {
@@ -674,6 +696,7 @@ export const textEmphasisVarNames: Record<string, string> = {
 
 export const layoutVarNames: Record<string, string> = {
   maxWidth: '--layout-max-width',
+  rampSpan: '--layout-ramp-span',
 };
 
 export const elevationVarNames: Record<string, string> = {

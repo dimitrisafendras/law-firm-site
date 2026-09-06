@@ -68,6 +68,22 @@ function liveRegion(container: HTMLElement): HTMLElement {
   return el;
 }
 
+/*
+ * The one quote on screen.
+ *
+ * The stage renders seven figures: six inside an `aria-hidden` sizer that only
+ * exists to hold the column at the tallest quote's height, and the one the
+ * reader is actually looking at. That makes `expect(shownQuote(container)).toHaveTextContent(...)`
+ * useless here — the container holds every quote's text at all times, so such an
+ * assertion passes whatever the carousel is doing, including nothing. Every
+ * assertion about *which* quote is showing goes through this.
+ */
+function shownQuote(container: HTMLElement): HTMLElement {
+  const figure = container.querySelector<HTMLElement>('.testimonials-stage__quote--live');
+  if (!figure) throw new Error('No visible quote figure rendered');
+  return figure;
+}
+
 describe('TestimonialsSection', () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -87,18 +103,18 @@ describe('TestimonialsSection', () => {
       const { container } = renderWithProviders(<TestimonialsSection />);
 
       const region = liveRegion(container);
-      const figureBefore = region.querySelector('figure');
-      expect(region).toHaveTextContent(FIRST_AUTHOR);
+      const figureBefore = shownQuote(container);
+      expect(shownQuote(container)).toHaveTextContent(FIRST_AUTHOR);
 
       act(() => {
         vi.advanceTimersByTime(DWELL);
       });
 
       expect(liveRegion(container)).toBe(region);
-      expect(region).toHaveTextContent(SECOND_AUTHOR);
+      expect(shownQuote(container)).toHaveTextContent(SECOND_AUTHOR);
       // …and the figure inside it is a different element, which is what makes
       // the entering quote run its cross-fade from the start.
-      expect(region.querySelector('figure')).not.toBe(figureBefore);
+      expect(shownQuote(container)).not.toBe(figureBefore);
     });
 
     it('reads the quote with its attribution rather than in fragments', () => {
@@ -119,8 +135,8 @@ describe('TestimonialsSection', () => {
         vi.advanceTimersByTime(DWELL);
       });
 
-      expect(container).toHaveTextContent(FIRST_AUTHOR);
-      expect(container).not.toHaveTextContent(SECOND_AUTHOR);
+      expect(shownQuote(container)).toHaveTextContent(FIRST_AUTHOR);
+      expect(shownQuote(container)).not.toHaveTextContent(SECOND_AUTHOR);
     });
 
     it('still lets the reader drive it by hand', () => {
@@ -128,7 +144,7 @@ describe('TestimonialsSection', () => {
       const { container } = renderWithProviders(<TestimonialsSection />);
 
       fireEvent.click(screen.getByLabelText('Go to testimonial 2'));
-      expect(container).toHaveTextContent(SECOND_AUTHOR);
+      expect(shownQuote(container)).toHaveTextContent(SECOND_AUTHOR);
     });
 
     /* There is no autoplay to pause, so offering a pause button would be
@@ -151,7 +167,7 @@ describe('TestimonialsSection', () => {
       act(() => {
         vi.advanceTimersByTime(DWELL);
       });
-      expect(container).toHaveTextContent(SECOND_AUTHOR);
+      expect(shownQuote(container)).toHaveTextContent(SECOND_AUTHOR);
 
       act(() => preference.set(true));
       act(() => {
@@ -161,7 +177,7 @@ describe('TestimonialsSection', () => {
         vi.advanceTimersByTime(DWELL);
       });
 
-      expect(container).toHaveTextContent(SECOND_AUTHOR);
+      expect(shownQuote(container)).toHaveTextContent(SECOND_AUTHOR);
       expect(screen.queryByLabelText(PAUSE_LABEL)).toBeNull();
     });
 
@@ -174,7 +190,7 @@ describe('TestimonialsSection', () => {
         vi.advanceTimersByTime(DWELL);
       });
 
-      expect(container).toHaveTextContent(SECOND_AUTHOR);
+      expect(shownQuote(container)).toHaveTextContent(SECOND_AUTHOR);
       expect(screen.getByLabelText(PAUSE_LABEL)).toBeInTheDocument();
     });
   });
@@ -212,13 +228,13 @@ describe('TestimonialsSection', () => {
       act(() => {
         vi.advanceTimersByTime(DWELL);
       });
-      expect(container).toHaveTextContent(FIRST_AUTHOR);
+      expect(shownQuote(container)).toHaveTextContent(FIRST_AUTHOR);
 
       fireEvent.click(screen.getByLabelText(RESUME_LABEL));
       act(() => {
         vi.advanceTimersByTime(DWELL);
       });
-      expect(container).toHaveTextContent(SECOND_AUTHOR);
+      expect(shownQuote(container)).toHaveTextContent(SECOND_AUTHOR);
     });
 
     /*
@@ -240,7 +256,7 @@ describe('TestimonialsSection', () => {
         vi.advanceTimersByTime(DWELL);
       });
 
-      expect(container).toHaveTextContent(FIRST_AUTHOR);
+      expect(shownQuote(container)).toHaveTextContent(FIRST_AUTHOR);
       expect(screen.getByLabelText(RESUME_LABEL)).toBeInTheDocument();
     });
 
@@ -253,13 +269,13 @@ describe('TestimonialsSection', () => {
       act(() => {
         vi.advanceTimersByTime(DWELL);
       });
-      expect(container).toHaveTextContent(FIRST_AUTHOR);
+      expect(shownQuote(container)).toHaveTextContent(FIRST_AUTHOR);
 
       fireEvent.mouseOut(stage(container));
       act(() => {
         vi.advanceTimersByTime(DWELL);
       });
-      expect(container).toHaveTextContent(SECOND_AUTHOR);
+      expect(shownQuote(container)).toHaveTextContent(SECOND_AUTHOR);
     });
   });
 });

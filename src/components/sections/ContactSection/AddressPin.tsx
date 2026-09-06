@@ -72,7 +72,7 @@ export function AddressPin() {
           <span className="contact-section__pin-halo" />
           <span className="contact-section__pin-dot" />
         </span>
-        <span className="contact-section__pin-chip glass">
+        <span className="contact-section__pin-chip">
           <span className="contact-section__pin-city">{t('contactPinLabel')}</span>
           <span className="contact-section__pin-action">{actionLabel}</span>
           {/*
@@ -92,7 +92,7 @@ export function AddressPin() {
         prints the address as selectable text directly under the pin.
       */}
       {state === 'failed' && (
-        <p className="contact-section__pin-fallback glass">{address}</p>
+        <p className="contact-section__pin-fallback">{address}</p>
       )}
 
       {/*

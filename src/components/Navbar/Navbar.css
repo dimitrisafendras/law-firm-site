@@ -62,6 +62,37 @@
   padding-bottom: 14px;
 }
 
+/*
+ * The logo slot is height-pinned, and that is the whole layout-shift guard.
+ *
+ * On scroll the mark swaps drawing and size in the same frame (Navbar.tsx +
+ * `--firm-mark-height` in src/App.css). Left to size itself, this slot — the
+ * tallest thing in the row — would snap 56px to 36px while `.navbar__inner`
+ * eased its padding over 0.3s, so the bar would drop most of its height in one
+ * frame and then settle the rest. Pinning the slot moves that change onto a
+ * property that can be animated, and the row shrinks as one movement.
+ *
+ * The transition is on the slot, never on the <img>. Animating the image's own
+ * height would run the new drawing through the old height first, and 56px of
+ * monogram is 61.6px of glyph — the letters would jump up 40% before shrinking
+ * back. Swapping the picture instantly inside a box that eases is the version
+ * with no pop in it.
+ *
+ * 0.3s to match `.navbar__inner`'s padding above, so the two read as one
+ * settle. Reduced motion is already handled globally in src/index.css, which
+ * collapses every transition-duration on the page.
+ *
+ * `:has()` because the slot takes whatever node the page hands it, and a text
+ * logo — the design-system showcase passes one — has no mark to swap and no
+ * business being stretched to a mark's height.
+ */
+.navbar__logo:has(.firm-logo__mark) {
+  display: flex;
+  align-items: center;
+  height: var(--firm-mark-height);
+  transition: height 0.3s;
+}
+
 .navbar__logo {
   font-family: var(--heading);
   /* The wordmark sits between the h3 and h2 steps by design; it is a mark, not

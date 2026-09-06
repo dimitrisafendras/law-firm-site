@@ -1,34 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="VKM">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="VKM Legal">
   <!--
-    VKM favicon: drawn, not set.
+    Scale of justice, baby blue on the site's navy ground.
 
-    Three reasons this is geometry rather than the brand artwork scaled down.
+    Literal hex, not a CSS custom property: a favicon is fetched as a standalone
+    document and never sees the app's stylesheet, so var() resolves to nothing
+    here. #BCE8FF is the accent from tokens.ts and #0F1A2E the page ground;
+    change either there and it has to be changed here by hand.
 
-    A favicon is fetched as a standalone document. It never sees the app's
-    stylesheet or its webfonts, so a CSS custom property resolves to nothing
-    here and any font-family falls back to whatever the platform has. The
-    wordmark relies on both. As paths it depends on neither.
+    Geometry, not type, which is what makes it work at 16px — the wordmark
+    depends on a font this document does not get, and its three glyphs close
+    into a single dot at tab size.
 
-    The artwork also positions its glyphs for a face it does not name; measured,
-    they overlap before its 8px keyline widens each of them further. At 16px
-    that collapses into a single smudge.
-
-    And 16px is 16px. Letterforms that work at 110px need redrawing, not
-    resampling: monolinear strokes, a wide aperture on the K, generous gaps,
-    because a browser downscale closes anything tighter.
-
-    Built on a 48 grid: 16-unit cap height on a y=32 baseline, 3-unit strokes
-    with round caps, letters at x=8/19/30 with 3 units of air between them. At a
-    rendered 16px that is a 1px stroke, the thinnest that survives.
-
-    Colours are the brand's, as literals: sky on navy, the pairing the artwork
-    already uses for its picked-out K. Change the brand block in tokens.ts and
-    these have to be changed here by hand.
+    Mirrors ScaleOfJustice in src/assets/illustrations.tsx, scaled 0.73 and
+    inset so the drawing sits inside the rounded plate rather than touching it.
   -->
-  <rect width="48" height="48" rx="11" fill="#002B49"/>
-  <g fill="none" stroke="#89CFF0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M8 16 L12 32 L16 16"/>
-    <path d="M19 16 V32 M26 16 L19.5 24 L26 32"/>
-    <path d="M30 32 V16 L35 26 L40 16 V32"/>
+  <rect width="48" height="48" rx="10" fill="#0F1A2E"/>
+  <g transform="translate(6.5,5.5) scale(0.73)" stroke="#BCE8FF" fill="none">
+    <line x1="24" y1="6" x2="24" y2="42" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="24" cy="6" r="3" stroke-width="2"/>
+    <line x1="6" y1="16" x2="42" y2="16" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M6 16L2 28H18L14 16" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M2 28C2 30 6 32 10 32C14 32 18 30 18 28" stroke-width="1.5"/>
+    <path d="M34 16L30 28H46L42 16" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M30 28C30 30 34 32 38 32C42 32 46 30 46 28" stroke-width="1.5"/>
+    <rect x="14" y="42" width="20" height="3" rx="1.5" stroke-width="1.5"/>
   </g>
 </svg>

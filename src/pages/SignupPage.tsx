@@ -16,7 +16,6 @@ export default function SignupPage(): JSX.Element {
         logo={
           <a href="#" className="firm-logo" aria-label={t('firmName')}>
             <VkmLogo className="firm-logo__mark" />
-            <span className="firm-logo__tagline">{t('firmTagline')}</span>
           </a>
         }
         links={[

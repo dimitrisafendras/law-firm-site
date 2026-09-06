@@ -45,13 +45,16 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-12);
-  max-width: calc(900px + var(--space-24) * 2);
+  max-width: calc(900px + var(--space-16) * 2);
   margin: var(--space-16) auto 0;
-  padding: var(--space-16) var(--space-24);
+  /* Was 64/96. The stage is now exactly as tall as the longest quote and not a
+     pixel more — the sizer settled that — so the padding no longer has to
+     stand in for the height a short quote left empty. */
+  padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-3xl);
 
   @media (max-width: 1024px) {
-    padding: var(--space-8) var(--space-6);
+    padding: var(--space-6) var(--space-6);
     max-width: 100%;
   }
 }
@@ -61,30 +64,60 @@
   outline-offset: var(--space-2);
 }
 
-/* The stable live region: an ordinary block that wraps the keyed figure and
-   nothing else, so the stage's column measures exactly what it did before.
-   Deliberately NOT `display: contents` — that is the tidy-looking choice and
-   it is the wrong one here, because a box removed from the box tree has a
-   history of being dropped from the accessibility tree with it, and a live
-   region that is not in the accessibility tree announces nothing. */
+/*
+ * The stable live region, and the stack that keeps the stage one height.
+ *
+ * A one-cell grid: the sizer and the visible figure both sit in `1 / 1`, so the
+ * cell is as tall as the taller of them — which is always the sizer, since it
+ * holds every quote. The height is therefore the tallest quote's, at every
+ * width and in either language, and it is settled on first paint rather than
+ * discovered as the carousel comes round.
+ *
+ * Deliberately NOT `display: contents` — that is the tidy-looking choice and it
+ * is the wrong one here, because a box removed from the box tree has a history
+ * of being dropped from the accessibility tree with it, and a live region that
+ * is not in the accessibility tree announces nothing.
+ */
 .testimonials-stage__live {
-  display: block;
+  display: grid;
 }
 
-/* Fixed minimum height so a short quote followed by a long one does not make
-   the rail jump up and down the page as they cycle. */
+.testimonials-stage__live > * {
+  grid-area: 1 / 1;
+}
+
+/*
+ * The measuring stick. `visibility: hidden` rather than `display: none` is the
+ * whole trick: a `none` box is not laid out and so measures nothing, while a
+ * hidden one takes its full space and paints nothing. `pointer-events` because
+ * a hidden box still sits over the visible quote and would otherwise eat the
+ * text selection.
+ */
+.testimonials-stage__sizer {
+  display: grid;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.testimonials-stage__sizer > * {
+  grid-area: 1 / 1;
+}
+
 .testimonials-stage__quote {
   margin: 0;
-  min-height: 15rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: var(--space-8);
   animation: testimonial-enter 0.6s var(--ease-settle) both;
+}
 
-  @media (max-width: 1024px) {
-    min-height: 18rem;
-  }
+/* The sizer's copies must not animate: `testimonial-enter` starts at opacity 0
+   and `both` holds that backwards fill before the delay, and an animating
+   element is one more thing for the compositor to keep six of. They are only
+   ever measured. */
+.testimonials-stage__sizer .testimonials-stage__quote {
+  animation: none;
 }
 
 @keyframes testimonial-enter {

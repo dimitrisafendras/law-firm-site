@@ -224,6 +224,18 @@ const en = {
   contactPromise3Value: 'Everything you send is privileged from the first message, whether or not we go on to act for you.',
   contactPhone: '+30 210 123 4567',
 
+  // The three direct-line rows each carry a copy control, and the address row is
+  // also a link out to Google Maps. `{{label}}` is the row's own name — "Email",
+  // "Phone", "Address" — because "Copy" alone names the action and not its
+  // object, and there are three of these controls within a few centimetres.
+  contactAddressLabel: 'Address',
+  contactEmailLabel: 'Email',
+  contactPhoneLabel: 'Phone',
+  contactAddressMap: 'Open the office address in Google Maps',
+  contactCopyLabel: 'Copy {{label}}',
+  contactCopiedAnnounce: '{{label}} copied to the clipboard.',
+  contactCopyFailedAnnounce: 'Could not copy {{label}} to the clipboard. Select it to copy by hand.',
+
   // Contact form. Labels and placeholders reach the DOM as element text and
   // attributes on Input / Textarea, so they stay plain t() lookups.
   contactFormName: 'Full Name',

@@ -26,6 +26,19 @@ export interface CardProps extends HTMLAttributes<HTMLElement> {
    * a saturation bump. Implies `interactive`.
    */
   clickable?: boolean;
+  /**
+   * Whether the material lenses — blurs and saturates what is behind it.
+   *
+   * On by default, and left on for anything that stands on the page itself.
+   * Turn it off for a card that has to match one which *cannot* lens: a
+   * `backdrop-filter` samples only what paints inside its backdrop root, and
+   * every home-page section that carries `content-visibility: auto`
+   * (PracticeGrid, PartnerEthos, TestimonialsSection) has paint containment and
+   * is therefore a backdrop root with nothing in it. The cards in those sections
+   * show a flat tint over the page; a card elsewhere on the site that is meant
+   * to read as the same object has to say so. See src/styles/liquid-glass.css.
+   */
+  lensing?: boolean;
   /** Rendered element. `article`, `section`, `figure` and `blockquote` are all in use. */
   as?: ElementType;
   children: ReactNode;
@@ -60,6 +73,7 @@ export const Card = forwardRef<HTMLElement, CardProps>(function Card(
     variant = 'default',
     interactive = false,
     clickable = false,
+    lensing = true,
     as,
     children,
     className = '',
@@ -85,6 +99,7 @@ export const Card = forwardRef<HTMLElement, CardProps>(function Card(
       ref={ref}
       className={classes}
       data-variant={variant === 'clear' ? 'clear' : undefined}
+      data-lensing={lensing ? undefined : 'off'}
       {...props}
     >
       {children}

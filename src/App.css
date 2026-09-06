@@ -237,8 +237,8 @@
  * and landing somewhere nobody chose. Each gesture advances exactly one screen.
  */
 @media (min-width: 1280px) and (min-height: 700px) {
-  .page-ramp > header,
-  .page-ramp > section {
+  .page-ramp--deck > header,
+  .page-ramp--deck > section {
     height: 100svh;
     overflow: hidden;
     scroll-snap-align: start;
@@ -256,7 +256,7 @@
  * screen's own height be the only one that counts.
  */
 @media (min-width: 1280px) and (min-height: 700px) {
-  .page-ramp > .hero-section {
+  .page-ramp--deck > .hero-section {
     min-height: 0;
   }
 }
@@ -277,7 +277,7 @@
  * once; the value is the estimate used before that ever happens.
  */
 @media (min-width: 1280px) and (min-height: 700px) {
-  .page-ramp > section {
+  .page-ramp--deck > section {
     contain-intrinsic-size: auto 100svh;
   }
 }

@@ -173,18 +173,42 @@ html {
  * reserved size can be exactly right (App.css sets it), and the offsets stop
  * moving.
  */
-@media (min-width: 1280px) and (min-height: 700px) {
-  html {
-    scroll-snap-type: y mandatory;
-  }
+@supports selector(:has(*)) {
+  @media (min-width: 1280px) and (min-height: 700px) {
+    /*
+     * Scoped to the page that actually is a deck. The scroll container is the
+     * document, so this has to be set on `html` — and `html` is shared by every
+     * route, which is why it asks whether a deck is present rather than
+     * assuming one. Without `:has` there is no snapping at all, which is the
+     * right way to lose this feature.
+     */
+    html:has(.page-ramp--deck) {
+      scroll-snap-type: y mandatory;
+    }
 
-  /* The bar is fixed and overlays the top of each screen; the sections pad
-     themselves clear of it. See the note above. */
-  #practice,
-  #team,
-  #testimonials,
-  #contact {
-    scroll-margin-top: 0;
+    /* The bar is fixed and overlays the top of each screen; the sections pad
+       themselves clear of it. See the note above. */
+    html:has(.page-ramp--deck) :is(#practice, #team, #testimonials, #contact) {
+      scroll-margin-top: 0;
+    }
+
+    /*
+     * The footer is the deck's last stop, and without this it is unreachable.
+     *
+     * It lives outside the ramp, so it was not a snap point — and under
+     * `mandatory` the browser refuses to rest anywhere but one. Measured: the
+     * document ran to 4,166px of scroll while the last snap point was 3,628,
+     * so every attempt to reach the footer snapped straight back to contact and
+     * the footer could not be seen at all.
+     *
+     * `end`, not `start`: the footer is ~314px, and aligning its *top* to the
+     * viewport would ask for a screen it cannot fill. Aligning its bottom to
+     * the viewport's bottom puts the whole footer on screen with the end of the
+     * contact section above it, which is what a footer is for.
+     */
+    html:has(.page-ramp--deck) .footer {
+      scroll-snap-align: end;
+    }
   }
 }
 

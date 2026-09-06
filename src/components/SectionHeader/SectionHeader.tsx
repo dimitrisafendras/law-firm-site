@@ -1,3 +1,4 @@
+import { useTranslation } from '@/i18n';
 import { EditableText } from '../EditableText';
 import { EditableSpawnText } from '../animations/EditableSpawnText';
 import './SectionHeader.css';
@@ -35,6 +36,8 @@ export function SectionHeader({
   subtitleKey,
   labelKey,
 }: SectionHeaderProps) {
+  const { t } = useTranslation();
+
   return (
     <div className={`section-header section-header--${align}`}>
       {overlineKey ? (
@@ -56,9 +59,17 @@ export function SectionHeader({
             not belong to anything else, and below the fold everything was a
             generic fade. Scroll-linked here rather than delay-driven, so it
             plays when the title is reached instead of on page load.
+
+            `aria-label` carries the real string. Without it the heading's
+            accessible name is computed from the split's inline-block boxes,
+            which a browser separates — the name came out as "O u r
+            E x p e r t i s e", spelled letter by letter to every screen reader,
+            rotor heading list and braille display. EditableSpawnText hides the
+            split itself, so this label is what remains. Same pattern as the
+            hero's <h1>.
           */}
           {titleKey ? (
-            <h2 className="section-header__title">
+            <h2 className="section-header__title" aria-label={t(titleKey)}>
               <EditableSpawnText tKey={titleKey} className="spawn-text--scroll" />
             </h2>
           ) : (
@@ -66,7 +77,7 @@ export function SectionHeader({
           )}
 
           {subtitleKey ? (
-            <p className="section-header__subtitle">
+            <p className="section-header__subtitle" aria-label={t(subtitleKey)}>
               <EditableSpawnText tKey={subtitleKey} mode="word" className="spawn-text--scroll" />
             </p>
           ) : (

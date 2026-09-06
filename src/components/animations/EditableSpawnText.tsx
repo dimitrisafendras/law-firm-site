@@ -37,9 +37,20 @@ export function EditableSpawnText({
   const { t } = useTranslation();
   const { canEdit } = useEditMode();
 
+  // The admin rendering is a real, contiguous, editable string — it must stay
+  // reachable by assistive tech, so it is never hidden. Callers therefore cannot
+  // put `aria-hidden` on a wrapper around this component: that would hide the
+  // editable text too. Hiding belongs here, on the branch that is actually
+  // decorative.
   if (canEdit) {
     return <EditableText tKey={tKey} as={as} className={className} />;
   }
 
-  return <SpawnText text={t(tKey)} mode={mode} gradient={gradient} className={className} />;
+  // Decorative: one inline-block span per character or word. Every call site
+  // labels the owning element with the same string (see SectionHeader's <h2>
+  // and the hero's <h1>), so hiding the split leaves the real text exposed once
+  // rather than spelled out letter by letter.
+  return (
+    <SpawnText text={t(tKey)} mode={mode} gradient={gradient} className={className} ariaHidden />
+  );
 }

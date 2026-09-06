@@ -4,6 +4,7 @@ import { Navbar, Footer, Container, Card, CardBody, Button, Heading, Text } from
 import { ScaleOfJustice } from '@/assets/illustrations';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
 import { AuthForm } from '@/components/AuthForm/AuthForm';
+import { CircuitField } from '@/components/CircuitField/CircuitField';
 import './AuthPages.css';
 
 export default function SignupPage(): JSX.Element {
@@ -37,7 +38,8 @@ export default function SignupPage(): JSX.Element {
         }
       />
 
-      <main className="auth-page">
+      <main className="auth-page page-ramp">
+        <CircuitField />
         <Container className="auth-page__inner">
           <Card variant="glow" className="auth-page__card">
             <CardBody>

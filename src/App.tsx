@@ -5,6 +5,8 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import AccountPage from './pages/AccountPage';
 import AdminUsersPage from './pages/AdminUsersPage';
+import PartnerDetailPage from './pages/PartnerDetailPage';
+import { partnerFromRoute } from './components/sections/PartnerEthos/partners';
 import './App.css';
 
 // Dev-only design-system page. Gated on import.meta.env.DEV, which Vite
@@ -54,6 +56,13 @@ function App() {
 
   const Page = ROUTES[route];
   if (Page) return <Page />;
+
+  // The one parameterised route: `#partner/1`. A slash rather than a query, so
+  // `routeOf()`'s `[?&]` split leaves the id intact. `partnerFromRoute` returns
+  // null for an id no partner has, which falls through to the home page below
+  // rather than rendering a profile of missing copy.
+  const partner = partnerFromRoute(route);
+  if (partner) return <PartnerDetailPage partner={partner} />;
 
   return <HomePage />;
 }

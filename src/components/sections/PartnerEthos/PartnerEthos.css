@@ -39,15 +39,37 @@
  * card, which is what left ~330px of dead page next to every photograph in the
  * old alternating layout.
  *
- * No horizontal padding at the top: the portrait bleeds to the card's own
+ * The card carries no padding of its own: the portrait bleeds to its clipped
  * edges (see the negative margins below), so the photograph is part of the
- * surface instead of an inset tile sitting on it.
+ * surface instead of an inset tile sitting on it. The padding lives on
+ * `__body` instead — see there for why the body exists at all.
  */
 .partner-ethos__bust {
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border-radius: var(--radius-3xl);
+  padding: 0;
+  transition:
+    transform 0.45s var(--ease-settle),
+    box-shadow 0.45s var(--ease-settle),
+    background-color 0.3s ease;
+}
+
+/*
+ * The card's single child, and the reason the whole surface can be one link.
+ *
+ * A stretched `::after` needs a containing block that covers the card. `.glass`
+ * sets `position: relative` on every *direct* child (so the material's own
+ * light layers stay underneath them), which would have made the `<h3>` the
+ * anchor's containing block and shrunk the click target to the name. One
+ * positioned wrapper takes that treatment instead, fills the card, and leaves
+ * everything inside it static — so `inset: 0` on the link resolves to the card.
+ */
+.partner-ethos__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   padding: 0 var(--space-8) var(--space-8);
 }
 
@@ -57,7 +79,7 @@
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  /* Bleeds past the card's side padding to its clipped edge. */
+  /* Bleeds past the body's side padding to the card's clipped edge. */
   margin: 0 calc(var(--space-8) * -1) var(--space-6);
 }
 
@@ -75,6 +97,10 @@
   object-fit: cover;
   object-position: center 20%;
   display: block;
+  transform-origin: center 20%;
+  transition:
+    transform 0.6s var(--ease-settle),
+    filter 0.45s ease;
 }
 
 /* Keeps the badge legible over whatever the photograph does at its lower edge,
@@ -86,6 +112,29 @@
   height: 40%;
   background: linear-gradient(180deg, transparent, rgb(0 0 0 / 55%));
   pointer-events: none;
+  transition:
+    height 0.45s var(--ease-settle),
+    opacity 0.45s ease;
+}
+
+/*
+ * The hover's one piece of choreography: an accent rule that wipes across the
+ * card's top edge, where the portrait meets it. The card's own `::before` and
+ * `::after` are spent on the glass material, so this borrows the portrait's
+ * free `::before` — the portrait bleeds to the card's edges, so the two are the
+ * same line.
+ */
+.partner-ethos__portrait::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--secondary));
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+  transition: transform 0.5s var(--ease-settle);
 }
 
 .partner-ethos__badge {
@@ -118,11 +167,46 @@
 }
 
 /*
- * A real italic. Jura has none, so this was a browser-synthesised oblique — a
- * slanted geometric sans, which at this size looks exactly as cheap as that
- * description suggests.
+ * The card's one link, and the whole card's click target.
+ *
+ * The underline is a background image rather than `text-decoration`, because a
+ * decoration cannot be animated from one side to the other — this one wipes in
+ * from the left on hover, the same direction as the rule at the card's top
+ * edge.
  */
+.partner-ethos__link {
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: background-size 0.45s var(--ease-settle);
+}
+
+/*
+ * The stretched target. It covers the card, which is what makes the whole
+ * surface clickable without a second control and without a click handler on the
+ * `<article>` — the accessible name stays the partner's name, in the heading.
+ *
+ * The known cost of the pattern is that text inside the card can no longer be
+ * selected with the mouse. That is the trade for a card-sized target; the
+ * biography is repeated in full on the detail page this leads to.
+ */
+.partner-ethos__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: var(--radius-3xl);
+}
+
 .partner-ethos__role {
+  /*
+   * A real italic. Jura has none, so this was a browser-synthesised oblique — a
+   * slanted geometric sans, which at this size looks exactly as cheap as that
+   * description suggests.
+   */
   font-family: var(--serif);
   font-style: italic;
   font-size: var(--type-body-lg-size);
@@ -179,4 +263,168 @@
   line-height: var(--type-small-leading);
   color: var(--text-h);
   margin: 0;
+}
+
+/* ─── The link affordance ──────────────────────────────────────────────────── */
+
+/*
+ * `aria-hidden` in the markup: this says out loud what the heading link already
+ * is, so a screen reader announcing both would announce the card twice. It is
+ * here for the eye — a card with no visible verb reads as a panel, not a door.
+ */
+.partner-ethos__cue {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--text);
+  opacity: var(--text-emphasis-muted);
+  transition:
+    color 0.35s ease,
+    opacity 0.35s ease;
+}
+
+.partner-ethos__cue-arrow {
+  display: inline-block;
+  transition: transform 0.45s var(--ease-settle);
+}
+
+.partner-ethos__bust--linked {
+  cursor: pointer;
+}
+
+/* ─── Hover ────────────────────────────────────────────────────────────────── */
+
+/*
+ * Gated on a real hovering pointer, the same gate `.card--clickable` uses: a
+ * touch browser latches `:hover` on the last-tapped element, and a lift this
+ * size would stay stuck there after every tap.
+ *
+ * It is deliberately larger than the site's other card hover, which was a 2px
+ * nudge and a shadow — on a 380px-tall card with a photograph in it, that read
+ * as nothing at all. Six things move here, and they move together: the card
+ * rises and gains the overlay elevation plus an accent halo, its edge turns
+ * accent, the material saturates further, the portrait pushes in and brightens
+ * under a deeper scrim, an accent rule wipes across the top edge, the name
+ * underlines from the left, and the cue brightens and steps right. Every one of
+ * them is a property the card already had — none of it is decoration invented
+ * for the hover.
+ */
+@media (hover: hover) {
+  .partner-ethos__bust--linked:hover {
+    /* Read back by `.glass`'s backdrop-filter, so the lift comes with a
+       saturation bump rather than a second filter declaration. */
+    --glass-saturate: 200%;
+
+    transform: translateY(-6px);
+    box-shadow:
+      var(--elev-overlay),
+      inset 0 0 0 1px var(--accent-border),
+      0 0 48px var(--glass-glow);
+  }
+
+  .partner-ethos__bust--linked:hover .partner-ethos__image {
+    transform: scale(1.05);
+    filter: brightness(1.06) saturate(1.08);
+  }
+
+  .partner-ethos__bust--linked:hover .partner-ethos__portrait::after {
+    height: 52%;
+  }
+
+  .partner-ethos__bust--linked:hover .partner-ethos__portrait::before {
+    transform: scaleX(1);
+  }
+
+  .partner-ethos__bust--linked:hover .partner-ethos__link {
+    background-size: 100% 1px;
+  }
+
+  .partner-ethos__bust--linked:hover .partner-ethos__cue {
+    color: var(--accent-text);
+    opacity: 1;
+  }
+
+  .partner-ethos__bust--linked:hover .partner-ethos__cue-arrow {
+    transform: translateX(4px);
+  }
+}
+
+/* Press: the card settles back toward the page, so a click has a bottom. */
+.partner-ethos__bust--linked:active {
+  transform: translateY(-1px);
+}
+
+/* ─── Focus ────────────────────────────────────────────────────────────────── */
+
+/*
+ * The ring belongs on the card, not on the two words of the name — the card is
+ * what the Return key activates, so the card is what has to look focused.
+ *
+ * Only inside the `@supports` guard: without `:has()` there is no way to put a
+ * ring on the card, and dropping the anchor's own outline there would leave a
+ * keyboard user with no focus indicator at all. Without support they get the
+ * global `a:focus-visible` outline on the name, which is correct if plainer.
+ */
+@supports selector(:has(*)) {
+  .partner-ethos__link:focus-visible {
+    outline: none;
+  }
+
+  .partner-ethos__bust:has(.partner-ethos__link:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .partner-ethos__bust:has(.partner-ethos__link:focus-visible) .partner-ethos__link {
+    background-size: 100% 1px;
+  }
+
+  .partner-ethos__bust:has(.partner-ethos__link:focus-visible) .partner-ethos__portrait::before {
+    transform: scaleX(1);
+  }
+
+  .partner-ethos__bust:has(.partner-ethos__link:focus-visible) .partner-ethos__cue {
+    color: var(--accent-text);
+    opacity: 1;
+  }
+}
+
+/* ─── Reduce motion ────────────────────────────────────────────────────────── */
+
+/*
+ * The hover keeps everything that is a change of state — elevation, the accent
+ * edge and halo, the brighter cue — and loses everything that is a change of
+ * position or scale. The wipe and the underline are transform/size animations,
+ * so they land instantly rather than sweeping.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .partner-ethos__bust,
+  .partner-ethos__image,
+  .partner-ethos__portrait::after,
+  .partner-ethos__portrait::before,
+  .partner-ethos__link,
+  .partner-ethos__cue,
+  .partner-ethos__cue-arrow {
+    transition: none;
+  }
+
+  .partner-ethos__bust--linked:hover,
+  .partner-ethos__bust--linked:active {
+    transform: none;
+  }
+
+  .partner-ethos__bust--linked:hover .partner-ethos__image {
+    transform: none;
+  }
+
+  .partner-ethos__bust--linked:hover .partner-ethos__cue-arrow {
+    transform: none;
+  }
 }

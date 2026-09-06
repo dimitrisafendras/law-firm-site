@@ -1,6 +1,6 @@
 import { useTranslation } from '@/i18n';
 import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, elevations, elevationsMarble, typeScale, capsTracking, breakpoints, layout, transitions, colorVarNames } from '../theme';
-import { DissolutionField } from '../components/DissolutionField';
+import { CircuitField } from '../components/CircuitField';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import { SpawnText } from '../components/animations/SpawnText';
 import { EditableSpawnText } from '../components/animations/EditableSpawnText';
@@ -668,7 +668,7 @@ export default function DesignSystem() {
             page, so it is shown here inside a clipped, relatively-positioned
             box rather than escaping to cover the showcase. */}
         <div style={{ position: 'relative', height: '260px', overflow: 'hidden', borderRadius: radii['2xl'], background: 'var(--grad-3)' }}>
-          <DissolutionField />
+          <CircuitField />
         </div>
       </section>
 

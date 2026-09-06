@@ -31,6 +31,8 @@ export const colors = {
     gradStop4: '#F6F6F9',
     gradStop5: '#F4F5F8',
     gradStop6: '#F2F4F7',
+    heroDeep: '#E8EDF5',
+    heroDeepest: '#DCE5F2',
     border: 'rgba(0, 43, 73, 0.15)',
     codeBg: '#F0F0F0',
     accent: '#89CFF0',
@@ -53,12 +55,28 @@ export const colors = {
     textHeading: '#E2E2E8',
     background: '#111317',
     surface: '#181A1F',
-    gradStop1: '#202835',
-    gradStop2: '#1D2430',
-    gradStop3: '#1A202C',
-    gradStop4: '#171D28',
-    gradStop5: '#151A24',
-    gradStop6: '#131720',
+    /*
+     * The ramp carries the hero's blue down the whole page.
+     *
+     * It used to run #202835 → #131720: a 13-per-channel luminance drop across
+     * 8,600px, at roughly 25% saturation and 10–17% lightness — dark neutral in
+     * practice. The body had no chroma source of its own (the only images below
+     * the fold are greyscale), so every surface on it read as slate.
+     *
+     * These sit on the same navy the hero opens with, so the page is one
+     * continuous blue that deepens rather than a blue hero on a grey document.
+     * Luminance still descends monotonically stop to stop, which is what
+     * carries the eye downward instead of pulling it back out at the bottom.
+     */
+    gradStop1: '#1B2A44',
+    gradStop2: '#182540',
+    gradStop3: '#152039',
+    gradStop4: '#121B31',
+    gradStop5: '#101729',
+    gradStop6: '#0D1220',
+    /* The hero's own deep stops — the two values it used to hardcode. */
+    heroDeep: '#0F1A2E',
+    heroDeepest: '#112240',
     border: 'rgba(64, 72, 77, 0.15)',
     codeBg: '#1A1C20',
     accent: '#BCE8FF',
@@ -468,12 +486,26 @@ export const decor = {
   fieldAlphaStrong: '0.14',
   fieldAlphaMid: '0.1',
   fieldAlphaFaint: '0.06',
+  /*
+   * Accent bloom strengths for the page ramp.
+   *
+   * The previous values (12 / 10 / 9 / 8 percent, fading out by ~62% radius)
+   * put the brightest achievable pixel in the entire page body at about
+   * #2D3845 — which is grey. At bloom scale a low alpha does not read as
+   * subtle, it reads as absent.
+   */
+  bloomStrong: '20%',
+  bloomMid: '16%',
+  bloomSoft: '13%',
 } as const;
 
 export const decorVarNames: Record<string, string> = {
   fieldAlphaStrong: '--field-alpha-strong',
   fieldAlphaMid: '--field-alpha-mid',
   fieldAlphaFaint: '--field-alpha-faint',
+  bloomStrong: '--bloom-strong',
+  bloomMid: '--bloom-mid',
+  bloomSoft: '--bloom-soft',
 };
 
 // ─── Token → CSS variable name mapping ───────────────────────────────────────
@@ -507,6 +539,8 @@ export const colorVarNames: Record<string, string> = {
   gradStop4: '--grad-4',
   gradStop5: '--grad-5',
   gradStop6: '--grad-6',
+  heroDeep: '--hero-deep',
+  heroDeepest: '--hero-deepest',
 };
 
 export const glassVarNames: Record<string, string> = {

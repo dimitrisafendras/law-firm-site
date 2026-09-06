@@ -8,7 +8,7 @@ import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
 import { NetworkMap } from '@/components/sections/NetworkMap/NetworkMap';
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection/TestimonialsSection';
 import { ContactSection } from '@/components/sections/ContactSection/ContactSection';
-import { DissolutionField } from '@/components/DissolutionField';
+import { CircuitField } from '@/components/CircuitField';
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -45,7 +45,7 @@ export default function HomePage() {
       />
 
       <main className="page-ramp">
-        <DissolutionField />
+        <CircuitField />
         <HeroSection />
         <StatsBar />
         <PracticeGrid />

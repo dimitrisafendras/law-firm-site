@@ -204,6 +204,84 @@
   background-repeat: repeat-y;
 }
 
+/* ─── Screens ───────────────────────────────────────────────────────────────
+ *
+ * Each direct child of the ramp is one screen of the deck: exactly one viewport
+ * tall, and a snap stop.
+ *
+ * `100svh`, not `100vh`. `vh` is the *large* viewport height — the height the
+ * page has once a mobile browser's toolbars have retracted — so a `100vh` screen
+ * is taller than the visible area while they are still shown, and its bottom
+ * edge is cut off at exactly the moment a reader first sees it. `svh` is the
+ * small viewport, which is the one guaranteed to be visible.
+ *
+ * `height`, not `min-height`, and the difference is the whole thing working.
+ *
+ * `min-height: 100svh` was the first attempt and it does nothing useful here: a
+ * minimum is a floor, so a section still grows to whatever its content asks for
+ * and every "shrink to your share" rule underneath it stays theoretical, because
+ * nothing upstream is ever short of room. Measured that way the partner row sat
+ * at 1,266px inside a 963px screen with a perfectly correct flex chain beneath
+ * it. A definite height is what gives the chain something to divide.
+ *
+ * That makes the media gate load-bearing rather than a nicety — a hard height
+ * clips whatever cannot fit, so it may only be applied where the content is
+ * known to fit, and the gate is that promise. Below it the sections are plain
+ * blocks again with no height set at all.
+ *
+ * `overflow: hidden` is the backstop, not the plan. Nothing should reach it;
+ * it is here so that a future card with an un-shrinkable minimum is a crop
+ * rather than a section overlapping the one below it.
+ *
+ * `scroll-snap-stop: always` is what stops a fast flick skipping three screens
+ * and landing somewhere nobody chose. Each gesture advances exactly one screen.
+ */
+@media (min-width: 1280px) and (min-height: 700px) {
+  .page-ramp--deck > header,
+  .page-ramp--deck > section {
+    height: 100svh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}
+
+/*
+ * The opening screen is the hero, and only the hero.
+ *
+ * It carries its own `min-height: 100vh`, which has to be released inside the
+ * deck: `vh` is the *large* viewport height, so on a mobile browser with its
+ * toolbars still showing a `100vh` minimum is taller than the `100svh` screen
+ * containing it, and the floor wins over the height. Releasing it lets the
+ * screen's own height be the only one that counts.
+ */
+@media (min-width: 1280px) and (min-height: 700px) {
+  .page-ramp--deck > .hero-section {
+    min-height: 0;
+  }
+}
+
+/*
+ * Reserved heights, corrected.
+ *
+ * Three sections carry `content-visibility: auto`, which means the browser
+ * skips them while off-screen and reports `contain-intrinsic-size` in place of
+ * their real height. Those reservations were hand-measured guesses at the
+ * sections' natural heights — 1225px, 1100px, 900px — and every one of them is
+ * now wrong by hundreds of pixels, because a screen is one viewport tall.
+ *
+ * That mattered little on a page you merely scrolled; it matters completely on
+ * a page that snaps, because a snap point sits at an offset computed from the
+ * sections above it. Reserving the true height is what keeps the offsets still.
+ * `auto` keeps the last real measurement once the section has been rendered
+ * once; the value is the estimate used before that ever happens.
+ */
+@media (min-width: 1280px) and (min-height: 700px) {
+  .page-ramp--deck > section {
+    contain-intrinsic-size: auto 100svh;
+  }
+}
+
 /*
  * Every section sits above the circuit field, which is the ramp's first
  * child at z-index 0. They are all `position: relative` already for their own

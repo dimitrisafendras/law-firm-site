@@ -125,17 +125,7 @@ const el = {
   partnerContactCta: 'Ζητήστε συνάντηση',
 
   // ─── Stats ───────────────────────────────────────────────────────────────────
-  statClients: 'Πελάτες',
-  statTransactions: 'Σε Συναλλαγές',
-  statYears: 'Χρόνια Συνολικής Εμπειρίας',
-  statJurisdictions: 'Δικαιοδοσίες',
 
-  // Stat figures. StatsBar counts up to the leading digits and prints whatever
-  // trails them verbatim, so '2δισ.+' animates 0 -> 2 and then reads '2δισ.+'.
-  statClientsValue: '500+',
-  statTransactionsValue: '2δισ.+',
-  statYearsValue: '30+',
-  statJurisdictionsValue: '12',
 
   // ─── Testimonials ────────────────────────────────────────────────────────────
   testimonialsOverline: 'Τι Λένε οι Πελάτες',
@@ -194,8 +184,9 @@ const el = {
   // spawn animation, so a title wider than the heading column breaks mid-word.
   // 'Θα μας Βρείτε στην Αθήνα' did exactly that — "Αθή / να".
   contactTitle: 'Βρείτε μας στην Αθήνα',
-  contactSubtitle:
-    'Ένα γραφείο στη Βασιλίσσης Σοφίας, με τη ναυτιλιακή πλευρά λίγο πιο κάτω, στον Πειραιά \u2014 αρκετά κοντά ώστε να είναι η ίδια πινέζα σε αυτόν τον χάρτη. Πείτε μας ποια είναι η υπόθεση· θα σας πούμε αν είναι δική μας.',
+  // Κόπηκε στη μία πρόταση που κάνει δουλειά — το υπόλοιπο το λέει ήδη το
+  // `contactOfficeNote`, δίπλα στη διεύθυνση.
+  contactSubtitle: 'Πείτε μας ποια είναι η υπόθεση· θα σας πούμε αν είναι δική μας.',
   contactAddress: 'Λεωφ. Βασιλίσσης Σοφίας 12, Αθήνα 10674, Ελλάδα',
   contactEmail: 'info@vkm.legal',
 

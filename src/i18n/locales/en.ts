@@ -121,17 +121,7 @@ const en = {
   partnerContactCta: 'Request a consultation',
 
   // ─── Stats ───────────────────────────────────────────────────────────────────
-  statClients: 'Clients Served',
-  statTransactions: 'In Transactions',
-  statYears: 'Years Combined Experience',
-  statJurisdictions: 'Jurisdictions',
 
-  // Stat figures. StatsBar counts up to the leading digits and prints whatever
-  // trails them verbatim, so '2B+' animates 0 -> 2 and then reads '2B+'.
-  statClientsValue: '500+',
-  statTransactionsValue: '2B+',
-  statYearsValue: '30+',
-  statJurisdictionsValue: '12',
 
   // ─── Testimonials ────────────────────────────────────────────────────────────
   testimonialsOverline: 'What Clients Say',
@@ -191,8 +181,12 @@ const en = {
   // claimed a global network above a picture of a single point in the Aegean.
   contactOverline: 'Get in Touch',
   contactTitle: 'Find Us in Athens',
-  contactSubtitle:
-    'One office on Vasilissis Sofias, with the maritime side a short run down to Piraeus \u2014 near enough to be the same pin on this map. Tell us what the matter is; we\u2019ll tell you whether it is ours.',
+  // Trimmed to the one clause that is doing work. The half it lost — one office
+  // on Vasilissis Sofias, maritime a short run down to Piraeus — is already the
+  // whole of `contactOfficeNote`, set beside the address where a person looking
+  // for an office actually reads it, so the subtitle was restating the section
+  // it sits above.
+  contactSubtitle: 'Tell us what the matter is; we\u2019ll tell you whether it is ours.',
   contactAddress: '12 Vasilissis Sofias Avenue, Athens 10674, Greece',
   contactEmail: 'info@vkm.legal',
 

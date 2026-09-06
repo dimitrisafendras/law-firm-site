@@ -3,7 +3,6 @@ import { useTranslation } from '@/i18n';
 import { Navbar, Footer, Button, EditableText, AuthNavControl } from '@/components';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
-import { StatsBar } from '@/components/sections/StatsBar/StatsBar';
 import { PracticeGrid } from '@/components/sections/PracticeGrid/PracticeGrid';
 import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection/TestimonialsSection';
@@ -97,10 +96,14 @@ export default function HomePage() {
         cta={<AuthNavControl />}
       />
 
-      <main className="page-ramp">
+      {/* `--deck` is what turns snapping on. It is a class rather than a
+          blanket rule because the snap container has to be the document, and a
+          bare `html { scroll-snap-type }` applies on every page — the detail
+          and auth pages escape today only because their ramp's children are
+          divs rather than sections, which is luck, not design. */}
+      <main className="page-ramp page-ramp--deck">
         <CircuitField />
         <HeroSection />
-        <StatsBar />
         <PracticeGrid />
         <PartnerEthos />
         <TestimonialsSection />

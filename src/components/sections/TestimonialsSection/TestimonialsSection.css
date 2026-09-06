@@ -1,15 +1,51 @@
+/*
+ * The one section that already fitted a screen — 846px against 907 — so it is
+ * centred in the height rather than rebuilt for it. The stage holds one quote's
+ * worth of column (the sizer settles that) and the section has nothing else to
+ * put in the space, so the space goes above and below the content instead of
+ * being padded out of existence.
+ */
 .testimonials-section {
   position: relative;
   overflow: hidden;
-  /* Was a raw 100px; the scale's 96px step, like every other section. */
-  padding: var(--space-24) 0;
+  padding: var(--space-24) 0 var(--space-16);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
+  /* Reservation lives in App.css now, at one viewport. */
   content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
 
   @media (max-width: 1024px) {
     padding: var(--space-16) 0;
+    display: block;
   }
+}
+
+.testimonials-section__inner {
+  width: 100%;
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-12);
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 1024px) {
+    padding: 0 var(--space-4);
+    display: block;
+  }
+}
+
+.testimonials-section__inner > .fade-section:first-child {
+  flex: 0 0 auto;
+}
+
+.testimonials-section__inner > .fade-section:last-child {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
 }
 
 .testimonials-section__inner {
@@ -41,21 +77,38 @@
  * Wider than the 900px measure by its own padding, so the text column stays
  * where it was and the surface frames it.
  */
+/*
+ * The stage takes the screen, rather than floating in the middle of one.
+ *
+ * It used to be a ~250px card centred in a 963px screen with the header far
+ * away in the top-left corner and two-thirds of the section empty — a
+ * composition that read as unfinished the moment the page became a deck. It now
+ * fills the height the header leaves, with the quote centred in that space and
+ * the transport rail along the bottom edge, so the panel is the section rather
+ * than an island in it.
+ *
+ * The measure is unchanged at 900px. Filling the screen is a composition
+ * problem, not a licence to run body text to 1,300px — a quote you have to
+ * track across the full width is harder to read, not grander.
+ */
 .testimonials-stage {
   display: flex;
   flex-direction: column;
-  gap: var(--space-12);
+  gap: var(--space-8);
+  width: 100%;
   max-width: calc(900px + var(--space-16) * 2);
-  margin: var(--space-16) auto 0;
-  /* Was 64/96. The stage is now exactly as tall as the longest quote and not a
-     pixel more — the sizer settled that — so the padding no longer has to
-     stand in for the height a short quote left empty. */
+  margin: var(--space-12) auto 0;
   padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-3xl);
+  /* Fills the row the inner's last fade-section hands it. */
+  flex: 1 1 auto;
+  min-height: 0;
 
   @media (max-width: 1024px) {
     padding: var(--space-6) var(--space-6);
     max-width: 100%;
+    margin: var(--space-8) auto 0;
+    flex: 0 0 auto;
   }
 }
 
@@ -80,6 +133,23 @@
  */
 .testimonials-stage__live {
   display: grid;
+  /*
+   * Natural height — the sizer's — and centred in the stage's slack by auto
+   * margins rather than by flexing.
+   *
+   * Flexing this box was the obvious move and it was wrong: `flex: 1` makes the
+   * box the stage's leftover height, which means the sizer stops governing and
+   * the tallest quote is silently clipped by the card's own `overflow: hidden`.
+   * Measured that way the box sat at 353px while the longest quote wanted 427 —
+   * and no overflow probe could see it, because the clip is what hid it.
+   *
+   * `margin-block: auto` centres it and, unlike `justify-content: center`,
+   * resolves to 0 rather than a negative when the stage is shorter than the
+   * content: on a short screen the quote starts at the top and runs on instead
+   * of having its first line pushed off the top edge.
+   */
+  flex: 0 0 auto;
+  margin-block: auto;
 }
 
 .testimonials-stage__live > * {
@@ -136,7 +206,30 @@
 .testimonials-stage__text {
   font-family: var(--serif);
   font-style: italic;
-  font-size: var(--type-h1-size);
+  /*
+   * Sized against the screen, not fixed.
+   *
+   * This is a deck: the quote's job is to hold one whole screen, and one screen
+   * is 700px on the smallest display the deck runs on and 1,300px+ on a good
+   * monitor. A fixed size cannot serve both — measured at 907px tall, 48px was
+   * the largest that fitted and 52px clipped the longest quote by 74px, and at
+   * the 700px floor even today's 40px overruns.
+   *
+   * So the size tracks the viewport's height between two steps of the scale:
+   * `--type-h2-size` (28px) is the floor and `--type-display-size` (72px) the
+   * ceiling. The bounds are tokens rather than literals; the `vh` between them
+   * is a relationship, not a design value, and duplicates nothing.
+   *
+   * The rate is 4.4vh, and it is picked rather than guessed: it puts a 907px
+   * screen — the common laptop, and what this section was designed at — back on
+   * exactly the 40px it used to be fixed at, so the change costs nothing at the
+   * size most people see. Below that it eases down to 31px at the 700px floor;
+   * above it, a 1,300px monitor gets 57px, which is the point. A first pass used
+   * 3.4vh and capped at 40px, which made the quote *smaller* at 907 than the
+   * fixed size it replaced — scaling in the wrong direction for the one screen
+   * that matters most.
+   */
+  font-size: clamp(var(--type-h2-size), 4.4vh, var(--type-display-size));
   font-weight: var(--weight-regular);
   line-height: 1.35;
   letter-spacing: -0.01em;
@@ -155,13 +248,16 @@
   gap: var(--space-1);
 }
 
+/* Given some presence. Beside a quote this size the attribution had faded to
+   the point of reading as a caption on the rail below it rather than as the
+   person who said the thing above it. */
 .testimonials-stage__author {
   font-family: var(--label);
   font-size: var(--type-caption-size);
-  font-weight: var(--type-caption-weight);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: var(--type-caps-tracking-tight);
-  color: var(--text-h);
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent);
 }
 
 .testimonials-stage__role {
@@ -186,6 +282,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
+  flex: 0 0 auto;
 }
 
 /*

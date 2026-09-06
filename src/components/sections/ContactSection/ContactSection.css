@@ -1,10 +1,27 @@
 .contact-section {
   position: relative;
   overflow: hidden;
-  /* Top padding separates the band from the section above; bottom is zero
-     because the band is full-bleed and runs to the footer's edge. There is
-     nothing outside the band any more — the header moved into it. */
-  padding: var(--space-24) 0 0;
+  /*
+   * One screen, and the composition sits in the middle of it.
+   *
+   * The section used to carry `padding: var(--space-24) 0 0` — 96px whose only
+   * job was to separate the band from the section above it. The viewport does
+   * that job now: the page is a deck, every section is exactly one screen, and
+   * a fixed strip of air at the top of a screen is not separation, it is 96px
+   * the composition has to fit around. So the padding goes and the height
+   * arrives instead.
+   *
+   * `margin-block: auto` on the band rather than `align-items: center` here.
+   * They agree whenever the band is shorter than the screen, and they disagree
+   * in the one case that matters: an auto margin resolves to zero when the free
+   * space is negative, so a band that outgrows a short viewport starts at the
+   * top and runs off the bottom. Centring would have pushed its top edge off
+   * the screen — and this section clips.
+   */
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
 
   /*
    * `content-visibility: auto` is still off, and now for a different reason
@@ -12,11 +29,16 @@
    * containment on a section that owns its own background leaves a hole in the
    * page while it is skipped) is gone — but the map frame is a 2310px box
    * clipped to a band whose height its own content sets, and a skipped section
-   * reports `contain-intrinsic-size` instead. Re-enabling it means giving this
-   * section a measured intrinsic size first.
+   * reports `contain-intrinsic-size` instead. The `min-height` above is most of
+   * the answer to that now — a section that is one screen tall has an intrinsic
+   * size worth declaring — but only most of it: below 1024 the band is several
+   * screens and the height is still whatever the copy comes to.
    */
 
   @media (max-width: 1024px) {
+    /* Single-column below here, and taller than any phone — there is no screen
+       to fill and no snapping to fill it for. The old separating padding comes
+       back, and the auto margins below go inert on their own. */
     padding: var(--space-16) 0 0;
   }
 }
@@ -38,38 +60,68 @@
    * apart the moment one of them changes.
    *
    * --panel-clear
-   *           The strip the coastline and the pin appear in: how far the form
-   *           itself is pushed down inside its column. It is the *form's* offset
-   *           and not the panel's, which is what keeps the two columns' tops
-   *           level — pushing the whole panel down instead left the details card
-   *           starting 180px below where the right-hand side visibly began.
+   *           The strip the coastline and the pin appear in: the clear space
+   *           reserved at the top of the form column, above the form itself. It
+   *           belongs to that column alone and not to the panel — pushing the
+   *           whole panel down instead left the details card starting a strip's
+   *           worth below where the right-hand side visibly began.
+   *
+   *           It was 180px. 152 now, because the section has to fit one screen
+   *           and this was the largest single piece of air in it; see the fit
+   *           budget above `.contact-section__band-inner`. 152 is not a free
+   *           choice — it is what still holds the pin with room at both ends,
+   *           which is the solve below.
    * --pin-offset
-   *           Where Athens lands, measured down from the frame's top edge — so,
-   *           since the frame starts --panel-clear above the form, this is also
-   *           where she lands in the strip above the form. 88 leaves the marker
-   *           and its chip inside it with room at both ends.
+   *           Where Athens lands, measured down from the *frame's* top edge.
+   *           Solved, not chosen. The pin block — 28px marker, an 8px gap and
+   *           the two-line chip — measures 91px. The frame starts --space-8
+   *           (32px) above the column, and the block is pulled up by half the
+   *           marker (14px), so its top edge sits at `--pin-offset - 46` below
+   *           the column's top and its bottom at `--pin-offset + 45`. Centring
+   *           91px of pin in a 152px strip therefore wants
+   *
+   *               --pin-offset = (--panel-clear + 92 - 91) / 2 ≈ 76
+   *
+   *           which leaves 30px of coast above the marker and 31px between the
+   *           chip and the form's first label. Change --panel-clear and this
+   *           has to be re-solved with it; the two are one number in two parts.
+   *
+   *           The mask on the frame fades its top 7%, and the frame is roughly
+   *           650px tall here, so the fade ends about 14px below the column's
+   *           top. The block starts at 30. The pin is on solid coastline.
    * --map-box-h
    *           The SVG box's height. Governs the zoom, and only the zoom: see
-   *           the solve above `.contact-section__map`.
+   *           the solve above `.contact-section__map`. Unchanged by any of the
+   *           above — the box's height is measured against the viewBox, never
+   *           against the frame, which is the whole reason the crop holds still
+   *           while the frame around it gets shorter.
    *
    * The band has no height of its own. It used to carry a min-height solved
    * against the panel's measured 680px, which was a constant that had to be
    * re-derived every time the panel changed; the content sets it now, and
    * nothing in the map's placement is expressed against it.
    */
-  --panel-clear: 180px;
-  --pin-offset: 88px;
+  --panel-clear: 152px;
+  --pin-offset: 76px;
   --map-box-h: 2310px;
 
   position: relative;
   overflow: hidden;
+  /* The band is the section's only flex child, and this is what centres it on a
+     screen taller than it — collapsing to zero rather than to a negative on one
+     shorter. See the note on `.contact-section`. */
+  margin-block: auto;
 
   @media (max-width: 1024px) {
     /* Below 1024 the panel goes single-column, so the form column — and the map
        frame with it — drops below the details card. The frame keeps its shape,
        just shorter, and the box shrinks with it so the crop does not zoom in.
-       See the overrides further down. */
-    --pin-offset: 84px;
+       See the overrides further down.
+
+       --pin-offset is *not* overridden here. It used to be (84px), from when
+       the strip differed between the two layouts; it does not any more —
+       --panel-clear is one number at every width, so the solve above is the
+       same solve here. */
     --map-box-h: 620px;
   }
 }
@@ -84,9 +136,9 @@
  *
  *   `.contact-section__map-frame`  WHERE the map is allowed to show. It is the
  *      form column, edge to edge and top to bottom — so it is behind the form
- *      for the whole of it, and the --panel-clear strip the form is pushed down
- *      by is the part of it that shows, and where the pin sits. It clips and
- *      masks; it has no say in the crop.
+ *      for the whole of it, and the --panel-clear strip the column reserves
+ *      above the form is the part of it that shows, and where the pin sits. It
+ *      clips and masks; it has no say in the crop.
  *
  *   `.contact-section__map` (the svg)  WHAT part of the coast shows, and at what
  *      zoom. `slice` fills its own box and clips the rest, so the box's height
@@ -354,15 +406,56 @@
  * in separate FadeInSections and a margin between them would be at the mercy of
  * collapsing through those wrappers.
  */
+/*
+ * The fit budget.
+ *
+ * The section is one screen now, and at the reference viewport that screen is
+ * 907px. The composition measured 1143. The 236px came out of air, in this
+ * order, largest first — nothing on this list is content:
+ *
+ *      96   the section's own top padding, replaced by the viewport (above)
+ *      64   this element's vertical padding, --space-16 → --space-8
+ *      16   the gap below the header, --space-16 → --space-12
+ *      32   the details card's padding, --space-12 → --space-8
+ *      24   the two column eyebrows' margin, the office note's, and the
+ *           promises list's rule, each one step down the scale
+ *      16   the gaps inside the promises list, --space-6 → --space-4
+ *      24   the gaps between the form's field groups, --space-6 → --space-4
+ *      28   the coastline strip, --panel-clear 180 → 152
+ *      28   the message well, five rows → a --space-32 box it can be dragged
+ *           out of
+ *
+ * which comes to 328 — more than the 236 asked for, because the last four
+ * lines are spent inside the panel's two columns and the panel is only as tall
+ * as the taller of them. What the panel actually loses is 95: the details
+ * column, which is the taller one, goes 683 → 588.
+ *
+ * The vertical padding here is a floor, not the composition's air. On a screen
+ * taller than the band the auto margins above supply the rest, so the section
+ * opens up on a tall monitor instead of sitting in a 907px-shaped hole at the
+ * top of it.
+ */
 .contact-section__band-inner {
   position: relative;
   z-index: 2;
   max-width: var(--layout-max-width);
   margin: 0 auto;
-  padding: var(--space-16) var(--space-12) var(--space-16);
+  padding: var(--space-8) var(--space-12);
   display: flex;
   flex-direction: column;
-  gap: var(--space-16);
+  gap: var(--space-12);
+
+  /*
+   * Narrower gutters once the band stops being capped by --layout-max-width,
+   * and this is a *height* measure rather than a horizontal one. Below about
+   * 1330px the details column drops under the width the address needs, the
+   * address takes a second line, and the panel — and with it the section —
+   * grows 39px it does not have. Giving the columns back the 32px the gutters
+   * were spending is enough to hold the address on one line down to ~1250.
+   */
+  @media (max-width: 1440px) {
+    padding-inline: var(--space-8);
+  }
 
   @media (max-width: 1024px) {
     padding: var(--space-12) var(--space-4) var(--space-16);
@@ -396,7 +489,28 @@
      happy narrower than they were. */
   grid-template-columns: minmax(0, 6fr) minmax(0, 7fr);
   gap: var(--space-8);
-  align-items: start;
+  /*
+   * `stretch`, not `start`, and this is the alignment fix.
+   *
+   * With `start` each column was exactly as tall as its own contents and the
+   * two contents have nothing to do with each other: the details card measured
+   * 683 and the form column 671, so the card's bottom edge sat 11.5px below the
+   * form's last pixel. Eleven and a half pixels is the worst possible number —
+   * far too small to read as an offset, far too large to read as flush. It was
+   * not a decision at all, it was the difference between an address block and a
+   * contact form, which is a difference nobody chose.
+   *
+   * Stretched, both columns are the row's height, so the two bottom edges are
+   * the same edge by construction and stay that way through any copy change.
+   * What lands on that line is a card edge on the left and the submit button's
+   * own edge on the right, which is the pairing the eye reads as aligned.
+   *
+   * The tops were never the problem — both boxes already start on the panel's
+   * top line. What starts unevenly is the *copy*: the details eyebrow is one
+   * card-padding down, the form's eyebrow is one --panel-clear down, and that
+   * is deliberate. The strip between them is the coastline.
+   */
+  align-items: stretch;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
@@ -406,23 +520,33 @@
 
 /* Left: glass, and the only glass in the section. */
 .contact-section__info {
-  padding: var(--space-12);
+  padding: var(--space-8);
   border-radius: var(--radius-3xl);
-
-  @media (max-width: 1024px) {
-    padding: var(--space-8);
-  }
 }
 
 /*
  * Right: the form column, and the frame the map is clipped to.
  *
- * `position: relative` is the whole job — it is what the map frame and the pin
+ * `position: relative` is the first job — it is what the map frame and the pin
  * are absolute against, and therefore what confines the map to this side of the
  * panel.
+ *
+ * The second is holding the form on the row's bottom line. The column is
+ * stretched to the taller sibling's height now, so it has slack in it, and a
+ * flex column is what lets that slack be *placed* rather than left at the
+ * bottom where it would reopen the 11.5px gap in the other direction.
+ *
+ * `padding-top` rather than the form's old `margin-top` for --panel-clear: as
+ * padding it is a floor the auto margin below cannot eat into, so the strip is
+ * guaranteed its 152px and any slack beyond that lands on top of it. The map
+ * frame is unaffected — it is absolute against this box's padding edge, which
+ * is its border edge, so it still covers the column from top to bottom.
  */
 .contact-section__form-col {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--panel-clear);
 }
 
 /*
@@ -437,9 +561,17 @@
 .contact-section__form {
   position: relative;
   z-index: 1;
-  /* The clear strip, and the only thing that reserves it. Above this line the
-     frame is showing nothing but coastline, which is where the pin is. */
-  margin-top: var(--panel-clear);
+  /*
+   * Sits on the bottom of its column, which is the row's bottom, which is the
+   * details card's bottom edge. The strip above it is whatever is left — never
+   * less than --panel-clear, because the column reserves that as padding, and
+   * more than it whenever the details column runs longer.
+   *
+   * The auto margin is on this element and not on the form inside it because
+   * the eyebrow above the fields is part of the block: put the slack below the
+   * label and the label floats off the thing it labels.
+   */
+  margin-top: auto;
 }
 
 /*
@@ -479,7 +611,9 @@
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
   color: var(--accent);
-  margin-bottom: var(--space-6);
+  /* One step down from --space-6. Both columns carry one of these and they read
+     as a pair, so it moves in both places or neither. */
+  margin-bottom: var(--space-4);
 }
 
 /* ─── Details ──────────────────────────────────────────────────────────────── */
@@ -595,7 +729,7 @@
 }
 
 .contact-section__office-note {
-  margin: var(--space-6) 0 0;
+  margin: var(--space-4) 0 0;
   font-size: var(--type-body-size);
   line-height: var(--type-body-leading);
   color: var(--text);
@@ -605,12 +739,18 @@
 
 /* ─── What to expect ───────────────────────────────────────────────────────── */
 
+/*
+ * The rule and the air around it are symmetric on purpose — the same step above
+ * and below, so the line reads as belonging to neither block. It was --space-8
+ * on both sides, and this is the one place in the column where a whole step came
+ * off both at once: 32 of the 95px the details column gave up.
+ */
 .contact-section__promises {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
-  margin: var(--space-8) 0 0;
-  padding-top: var(--space-8);
+  gap: var(--space-4);
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-4);
   border-top: 1px solid var(--glass-edge);
   max-width: 46ch;
 }
@@ -643,4 +783,28 @@
    layout it also appears in. */
 .contact-section__form .contact-form {
   max-width: none;
+  /*
+   * And it closes up a step, --space-6 → --space-4. Scoped here rather than
+   * changed in ContactForm.css because the in-app copy of this form is not on a
+   * one-screen deck and has no reason to tighten. A group is a label 4px above
+   * its field, so 16px between groups still separates them at four times their
+   * internal gap.
+   */
+  gap: var(--space-4);
+}
+
+/*
+ * The message well, sized rather than counted.
+ *
+ * The <textarea rows={5}> renders 156px, and this is a form on a screen that
+ * cannot spend it. --space-32 is 128 — four lines and a bit — and the field
+ * keeps `resize: vertical` from Textarea.css, so a long message is a drag on the
+ * corner away rather than a scroll. Nothing is hidden at rest: the placeholder
+ * is one line.
+ *
+ * `height` and not `min-height`, because `rows` sets the intrinsic height and a
+ * min-height under it would not bind.
+ */
+.contact-section__form .textarea-field {
+  height: var(--space-32);
 }

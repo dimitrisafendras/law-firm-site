@@ -121,6 +121,12 @@ html {
  * A landing offset for every anchor target, so a section does not arrive
  * underneath the fixed header. 96px clears the bar plus a little air; without
  * it the section's own overline sits behind the nav on arrival.
+ *
+ * It is zeroed again inside the snap deck below, and has to be: `scroll-margin`
+ * is what a snap point is measured from as well as what an anchor lands on, so
+ * a section that snaps `start` with 96px of margin parks its top edge 96px down
+ * the viewport and shows a strip of the previous screen above it. Under the
+ * deck the sections clear the bar with their own padding instead.
  */
 :target,
 #practice,
@@ -129,6 +135,92 @@ html {
 #contact {
   scroll-margin-top: var(--space-24);
 }
+
+/* ─── The snap deck ─────────────────────────────────────────────────────────
+ *
+ * One section, one screen, one gesture.
+ *
+ * Gated on viewport height, and the gate is the whole safety story. `mandatory`
+ * means the browser refuses to rest anywhere but a snap point — so if a screen's
+ * content is taller than the viewport, the part below the fold becomes
+ * genuinely unreachable rather than merely awkward. Every section in the deck is
+ * built to fit whatever height it is given (see App.css), but that stops being
+ * true somewhere: below ~700px a display-size heading, a section header and a
+ * row of cards cannot coexist on one screen at any padding. So under that, no
+ * deck at all — the page falls back to ordinary flow, which is a worse ride and
+ * a page you can still read.
+ *
+ * The width bound is 1280px, and it is measured rather than chosen. Below 1024
+ * every section goes single-column and is several viewports tall by design — but
+ * the deck cannot start at 1025 either, because the contact section's details
+ * column drops under the width its address needs and the address, email and
+ * phone each take a second line. Measured overflow against a 907px screen:
+ * 137px at 1025, 40px at 1152, 0 at 1280. So 1280 is the first width at which
+ * every screen actually fits, which is the only thing that makes a hard height
+ * safe. Anything narrower gets ordinary flow.
+ *
+ * This number is repeated in App.css and in the two sections that reshape for
+ * the deck (PartnerEthos, PracticeGrid). It cannot be a token — custom
+ * properties do not work in media queries — so it is a literal in four places
+ * and they must move together.
+ *
+ * An earlier attempt at this snapped a page whose sections were their natural
+ * heights and carried `content-visibility: auto`. Off-screen sections report
+ * their reserved `contain-intrinsic-size` rather than their real height, so the
+ * snap points sat at guessed offsets that moved as sections realised — the page
+ * chased its own target and rode 3,231px past it. Fixed-height screens are what
+ * make snapping viable here: with every section exactly one viewport tall, the
+ * reserved size can be exactly right (App.css sets it), and the offsets stop
+ * moving.
+ */
+@supports selector(:has(*)) {
+  @media (min-width: 1280px) and (min-height: 700px) {
+    /*
+     * Scoped to the page that actually is a deck. The scroll container is the
+     * document, so this has to be set on `html` — and `html` is shared by every
+     * route, which is why it asks whether a deck is present rather than
+     * assuming one. Without `:has` there is no snapping at all, which is the
+     * right way to lose this feature.
+     */
+    html:has(.page-ramp--deck) {
+      scroll-snap-type: y mandatory;
+    }
+
+    /* The bar is fixed and overlays the top of each screen; the sections pad
+       themselves clear of it. See the note above. */
+    html:has(.page-ramp--deck) :is(#practice, #team, #testimonials, #contact) {
+      scroll-margin-top: 0;
+    }
+
+    /*
+     * The footer is the deck's last stop, and without this it is unreachable.
+     *
+     * It lives outside the ramp, so it was not a snap point — and under
+     * `mandatory` the browser refuses to rest anywhere but one. Measured: the
+     * document ran to 4,166px of scroll while the last snap point was 3,628,
+     * so every attempt to reach the footer snapped straight back to contact and
+     * the footer could not be seen at all.
+     *
+     * `end`, not `start`: the footer is ~314px, and aligning its *top* to the
+     * viewport would ask for a screen it cannot fill. Aligning its bottom to
+     * the viewport's bottom puts the whole footer on screen with the end of the
+     * contact section above it, which is what a footer is for.
+     */
+    html:has(.page-ramp--deck) .footer {
+      scroll-snap-align: end;
+    }
+  }
+}
+
+/*
+ * Reduced motion keeps the snapping and loses the gliding.
+ *
+ * Snap is not an animation — it is where the page comes to rest, and turning it
+ * off would change the layout rather than the motion. What that preference is
+ * actually asking to be spared is the smooth travel between rests, and the
+ * `scroll-behavior: auto` override further down this file already does that:
+ * the page jumps from screen to screen instead of sliding.
+ */
 
 html::-webkit-scrollbar {
   display: none;

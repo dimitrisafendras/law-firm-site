@@ -1,12 +1,31 @@
+/*
+ * One screen, sized off the height it is given.
+ *
+ * This was the page's tallest section by a distance — 1,298px against a 907px
+ * viewport — and the portraits were why: `aspect-ratio: 4 / 5` on a third of a
+ * 1,344px column is a 533px photograph before a word of biography is set. An
+ * aspect ratio asks the layout for height, which is the one thing a screen in a
+ * snap deck has none spare of.
+ *
+ * So the direction of the sizing is reversed all the way down. The section
+ * fills the viewport, the header takes what it needs, the row takes the rest,
+ * and the portrait takes what the biography leaves. The photographs are
+ * `object-fit: cover` and always were, so giving them a height instead of
+ * asking for one costs a slightly tighter crop and nothing else.
+ */
 .partner-ethos {
   position: relative;
-  padding: var(--space-24) 0;
+  padding: var(--space-24) 0 var(--space-16);
+  display: flex;
+  flex-direction: column;
 
+  /* Reservation lives in App.css now, at one viewport — the hand-counted
+     1100px it used to claim is a height this section can no longer have. */
   content-visibility: auto;
-  contain-intrinsic-size: auto 1100px;
 
   @media (max-width: 1024px) {
     padding: var(--space-16) 0;
+    display: block;
   }
 }
 
@@ -14,23 +33,64 @@
   max-width: var(--layout-max-width);
   margin: 0 auto;
   padding: 0 var(--space-12);
+  /* `min-height: 0` defeats the automatic content minimum that would otherwise
+     stop this shrinking to its share. Same note applies to every flex and grid
+     item below; it is the single reason this layout cannot overflow. */
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 
   @media (max-width: 1024px) {
     padding: 0 var(--space-4);
+    display: block;
   }
 }
 
-/* Three across on one row. `align-items: start` so a longer biography grows its
-   own column downward instead of stretching all three to match. */
+.partner-ethos__inner > .fade-section:first-child {
+  flex: 0 0 auto;
+}
+
+/*
+ * Three across on one row.
+ *
+ * `align-items: stretch` now, not `start`. The old note here said a longer
+ * biography should grow its own column downward rather than stretch all three —
+ * true when the row could be any height, wrong when the row has exactly one
+ * height to share. Stretched, the three cards are equal and each one's portrait
+ * absorbs the difference, which is the same intent (don't pad the short ones)
+ * reached the other way round.
+ */
 .partner-ethos__plinth {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-8);
-  align-items: start;
+  align-items: stretch;
+  /* One row, taking the height rather than asking for it. Without an explicit
+     `1fr` the implicit row is `auto` — i.e. max-content — and the grid reports
+     its tallest card as its minimum, which is precisely the demand the screen
+     cannot meet. */
+  grid-template-rows: 1fr;
+  flex: 1 1 auto;
+  min-height: 0;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
     gap: var(--space-8);
+    align-items: start;
+  }
+}
+
+@media (min-width: 1280px) {
+  .partner-ethos__plinth > .fade-section {
+    display: grid;
+    min-height: 0;
+  }
+
+  .partner-ethos__plinth > .fade-section > .partner-ethos__bust {
+    min-height: 0;
   }
 }
 
@@ -75,17 +135,41 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  /* Lets the portrait inside it flex. Without this the body's automatic
+     content minimum is its full natural height, and the portrait has nothing
+     to give back. */
+  min-height: 0;
   padding: 0 var(--space-8) var(--space-8);
 }
 
 /* ─── Portrait ─────────────────────────────────────────────────────────────── */
 
+/*
+ * The portrait is the card's shock absorber.
+ *
+ * `aspect-ratio` is kept only where the section is free to be as tall as it
+ * likes — below 1024px, where the deck is off and the cards stack. Inside the
+ * deck the ratio is dropped and the portrait becomes the one flexible box in
+ * the card: the name, role and biography take what they need, and the
+ * photograph takes everything left over. `object-fit: cover` on the image
+ * (below) means that reads as a crop, never as a distortion.
+ */
 .partner-ethos__portrait {
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
   /* Bleeds past the body's side padding to the card's clipped edge. */
   margin: 0 calc(var(--space-8) * -1) var(--space-6);
+}
+
+@media (min-width: 1280px) {
+  .partner-ethos__portrait {
+    aspect-ratio: auto;
+    flex: 1 1 auto;
+    /* A floor, so a short viewport crops the photograph rather than erasing it
+       and leaving three cards of pure text. */
+    min-height: 120px;
+  }
 }
 
 /*

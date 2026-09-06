@@ -80,8 +80,8 @@ export default function HomePage() {
           </a>
         }
         links={[
-          { label: t('navPractice'), href: '#practice' },
           { label: t('navTeam'), href: '#team' },
+          { label: t('navPractice'), href: '#practice' },
           { label: t('navTestimonials'), href: '#testimonials' },
           { label: t('navContact'), href: '#contact' },
         ]}
@@ -103,8 +103,8 @@ export default function HomePage() {
       <main className="page-ramp page-ramp--screens">
         <CircuitField />
         <HeroSection />
-        <PracticeGrid />
         <PartnerEthos />
+        <PracticeGrid />
         <TestimonialsSection />
         {/* The map band that used to be its own "Global Network" section lives
             inside ContactSection now — one office, one pin, one section. */}

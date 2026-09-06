@@ -48,67 +48,53 @@
   display: flex;
 }
 
-.testimonials-section__inner {
-  max-width: var(--layout-max-width);
-  margin: 0 auto;
-  padding: 0 var(--space-12);
-
-  @media (max-width: 1024px) {
-    padding: 0 var(--space-4);
-  }
-}
-
 /* ─── Stage ────────────────────────────────────────────────────────────────
  *
- * No card, no glass, no track. A quote this size is its own surface — putting
- * it on a panel would only draw a box around something that already commands
- * the column.
+ * The section's content column, on the section's own edges.
  * ────────────────────────────────────────────────────────────────────────── */
 
 /*
- * A surface, not bare page.
+ * No panel. The stage is the column the header already draws.
  *
- * The quote was set straight onto the ramp, which put the fixed circuit field
- * behind a display-size italic — lines crossing letterforms at exactly the
- * size and weight where that is hardest to read. Glass is the right answer
- * rather than an opaque panel: it blurs the field into texture instead of
- * hiding it, so the layer still reads through and the type gets a ground.
+ * The panel is gone and the centring with it, and both were the same defect
+ * measured two ways. At 1440x900 the stage was a 1028px box auto-centred in a
+ * 1344px inner: its left edge landed at x=206 and the quote's at x=270, while
+ * the section title starts at x=48 and the chapter marker ends at x=1392. Three
+ * horizontal alignments on one screen, none of them shared — which is what read
+ * as "weird". Every other screen in the sequence (the partner cards, the ten-up
+ * bento) puts its content on exactly the header's left and right edges, and this
+ * one now does too.
  *
- * Wider than the 900px measure by its own padding, so the text column stays
- * where it was and the surface frames it.
- */
-/*
- * The stage takes the screen, rather than floating in the middle of one.
+ * The surface itself could not survive the height budget either. A screen is
+ * 700px at the floor of the gated layout; the header eats 186 and the section's
+ * own padding 160, leaving ~306px for quote, attribution and rail together. The
+ * panel's `--space-12` block padding was 96px of that — a third of the budget
+ * spent on a border, and it is not even lensing: this section carries
+ * `content-visibility: auto`, which makes it a backdrop root with nothing behind
+ * it, so `backdrop-filter` sampled empty space and the "glass" rendered as a
+ * flat tint. See the `lensing` note in Card.tsx.
  *
- * It used to be a ~250px card centred in a 963px screen with the header far
- * away in the top-left corner and two-thirds of the section empty — a
- * composition that read as unfinished the moment each section became a screen.
- * It now
- * fills the height the header leaves, with the quote centred in that space and
- * the transport rail along the bottom edge, so the panel is the section rather
- * than an island in it.
+ * The legibility argument the panel was added for — a display-size italic laid
+ * over the fixed circuit field — is answered instead by the type no longer being
+ * display size. The quote caps at `--type-h1-size`, and the field reads as
+ * texture behind 40px rather than as lines crossing 63px letterforms.
  *
- * The measure is unchanged at 900px. Filling the screen is a composition
- * problem, not a licence to run body text to 1,300px — a quote you have to
- * track across the full width is harder to read, not grander.
+ * `flex: 1 1 auto` still takes the row the inner's last fade-section hands it,
+ * so the quote centres in the height the header leaves (`__live`'s auto margins)
+ * and the rail sits on the bottom edge, spanning the full column. That rule is
+ * what bases the composition now that there is no box around it.
  */
 .testimonials-stage {
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
   width: 100%;
-  max-width: calc(900px + var(--space-16) * 2);
-  margin: var(--space-12) auto 0;
-  padding: var(--space-12) var(--space-16);
-  border-radius: var(--radius-3xl);
-  /* Fills the row the inner's last fade-section hands it. */
+  margin-top: var(--space-12);
   flex: 1 1 auto;
   min-height: 0;
 
   @media (max-width: 1024px) {
-    padding: var(--space-6) var(--space-6);
-    max-width: 100%;
-    margin: var(--space-8) auto 0;
+    margin-top: var(--space-8);
     flex: 0 0 auto;
   }
 }
@@ -140,9 +126,11 @@
    *
    * Flexing this box was the obvious move and it was wrong: `flex: 1` makes the
    * box the stage's leftover height, which means the sizer stops governing and
-   * the tallest quote is silently clipped by the card's own `overflow: hidden`.
-   * Measured that way the box sat at 353px while the longest quote wanted 427 —
-   * and no overflow probe could see it, because the clip is what hid it.
+   * the tallest quote is silently clipped — by the stage's own `overflow` when
+   * the stage was a card, and by the section's `overflow: hidden` from App.css
+   * now that it is not. Measured that way the box sat at 353px while the longest
+   * quote wanted 427, and no overflow probe could see it, because the clip is
+   * what hid it.
    *
    * `margin-block: auto` centres it and, unlike `justify-content: center`,
    * resolves to 0 rather than a negative when the stage is shorter than the
@@ -182,11 +170,31 @@
  * time. Fading the block *and* spawning the words would have run the two
  * against each other and doubled the opacity ramp.
  */
+/*
+ * `flex-start`, and it finishes the job the sizer started.
+ *
+ * The sizer holds the *cell* at the tallest quote's height, which stopped the
+ * rail being shoved down the page — but the figure inside that cell was
+ * centring its two children in it, so a short quote sat lower in the cell than
+ * a long one and the copy still bounced on every advance. Measured at 1440x900
+ * in Greek: the first line moved 27px between slide 2 and slide 3 and the
+ * attribution 38px, on an 8s cycle. Not something a reader can name, and
+ * exactly the kind of twitch that makes a section feel unsettled.
+ *
+ * Pinning to the top fixes the line the eye actually lands on. The attribution
+ * still moves, because it follows the quote's last line, and that is the right
+ * half of the trade: `space-between` would pin it to the cell's bottom edge and
+ * hold both ends still, but it pays for that with a hole inside the group that
+ * varies with the quote — measured at 33px on the longest quote and 85px on the
+ * shortest, at which point the name has visibly detached from the sentence it
+ * belongs to. A credit that travels with its quote reads as attached; one
+ * stranded at a fixed distance does not.
+ */
 .testimonials-stage__quote {
   margin: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--space-8);
 }
 
@@ -219,13 +227,24 @@
   }
 }
 
-/* The sizer's copies are plain text and never animate — they are only ever
-   measured. They deliberately do NOT use SpawnText: six more split copies would
-   be hundreds of spans to hold, and the split changes nothing about how the
-   copy wraps, because a word split breaks at exactly the spaces normal text
-   does. The heights match, and that is checked rather than assumed. */
+/* The sizer's copies never animate — they are only ever measured.
+ *
+ * They *are* SpawnText, contrary to what this comment used to claim: the sizer
+ * and the visible quote render the same `QuoteFigure`, which is the whole
+ * reason that component exists (see its doc comment — the split's inline-block
+ * line boxes are ~3px taller per line than plain text, and a sizer that
+ * measured plain text under-measured every quote). So the split has to stay,
+ * and only the motion is turned off.
+ *
+ * The units are named explicitly because they are where the animation actually
+ * lives: `.spawn-text__unit` carries its own `animation-name` from
+ * SpawnText.css, so silencing the figure and the attribution left ~180 hidden
+ * word spans animating on mount for nobody. The attribution rule below it is
+ * scoped to `--live` and so was already inert here; it is kept because it costs
+ * nothing and states the intent for whatever is added to the figure next. */
 .testimonials-stage__sizer .testimonials-stage__quote,
-.testimonials-stage__sizer .testimonials-stage__attribution {
+.testimonials-stage__sizer .testimonials-stage__attribution,
+.testimonials-stage__sizer .spawn-text__unit {
   animation: none;
 }
 
@@ -245,30 +264,59 @@
 .testimonials-stage__text {
   font-family: var(--serif);
   font-style: italic;
+
   /*
-   * Sized against the screen, not fixed.
+   * The measure, held at a constant character count rather than a constant
+   * pixel width.
    *
-   * The quote's job is to hold one whole screen, and one screen is 700px on
-   * the smallest display the full-height layout runs on and 1,300px+ on a good
-   * monitor. A fixed size cannot serve both — measured at 907px tall, 48px was
-   * the largest that fitted and 52px clipped the longest quote by 74px, and at
-   * the 700px floor even today's 40px overruns.
+   * This is the defect the section was reported for. A fixed 900px column with
+   * a size that grew on `vh` meant the line got *shorter*, in characters, the
+   * bigger the screen got — the opposite of what should happen. Measured, in
+   * Greek, on the longest quote: 62 characters per line at 1280x700, 48 at
+   * 1440x900, 39 at 1920x1080 and 29 at 2560x1440. Body-length copy wants
+   * 60-75; a 29-character line is a column of two-word fragments, and that is
+   * what read as "big and weird" as much as the type size did.
    *
-   * So the size tracks the viewport's height between two steps of the scale:
-   * `--type-h2-size` (28px) is the floor and `--type-display-size` (72px) the
-   * ceiling. The bounds are tokens rather than literals; the `vh` between them
-   * is a relationship, not a design value, and duplicates nothing.
+   * `ch` is the unit that states the intent, because it scales with the font:
+   * the column grows and shrinks with the type and the character count does not
+   * move. EB Garamond italic's `0` advance is 0.470em, and the face's average
+   * lowercase advance is 0.353em in English and 0.368em in Greek (measured off
+   * the real strings, not assumed), so one `ch` buys about 1.3 characters of
+   * copy and ragged wrapping gives back roughly a fifth of that.
    *
-   * The rate is 4.4vh, and it is picked rather than guessed: it puts a 907px
-   * screen — the common laptop, and what this section was designed at — back on
-   * exactly the 40px it used to be fixed at, so the change costs nothing at the
-   * size most people see. Below that it eases down to 31px at the 700px floor;
-   * above it, a 1,300px monitor gets 57px, which is the point. A first pass used
-   * 3.4vh and capped at 40px, which made the quote *smaller* at 907 than the
-   * fixed size it replaced — scaling in the wrong direction for the one screen
-   * that matters most.
+   * 62ch is the calibrated result, not a round number: measured across all six
+   * quotes it renders 63-69 characters per line in English and 62-66 in Greek,
+   * which sits in the middle of the band rather than on its edge. 66ch was the
+   * first pass and put English on 72-73 — still legal, but spending the whole
+   * allowance for no gain, since the line count is identical either way.
    */
-  font-size: clamp(var(--type-h2-size), 4.4vh, var(--type-display-size));
+  max-width: 62ch;
+
+  /*
+   * Two constraints, whichever binds first.
+   *
+   * `4.4vh` is kept from the height-driven version and still earns its place:
+   * this section has to hold one screen, `App.css` clips it at `100svh`, and at
+   * the 700px floor the budget after the header and the section's padding is
+   * about 306px for quote, attribution and rail together. 4.4vh puts a 907px
+   * screen on 40px, which is where this section was designed.
+   *
+   * `3.1vw` is the new term and it is what keeps the measure honest on a screen
+   * that is short and wide, or narrow and tall. 62ch is 29.1em, so the column
+   * needs 29.1em of width; the inner gives `min(vw, 1440) - 96`, and
+   * (1 - 96/vw) / 29.1 is 3.11-3.20% across the whole gated range. 3.1vw is the
+   * conservative end of that, so the type shrinks to fit the column instead of
+   * letting the column clip the measure back to 50-odd characters. Without it,
+   * a 1280x1080 window would take its size from the height (47.5px), want
+   * 1382px of column, get 1184, and land back on 53 characters a line.
+   *
+   * The ceiling is `--type-h1-size` (40px), not `--type-display-size` (72px).
+   * 72 was never reached but 63 was, on a 1440p monitor — larger than the page's
+   * own h1 and within 17px of the section title above it, which inverts the
+   * hierarchy: a client's quote should not out-typeset the firm's own heading.
+   * 40px is the largest step that still sits under it.
+   */
+  font-size: clamp(var(--type-h2-size), min(4.4vh, 3.1vw), var(--type-h1-size));
   font-weight: var(--weight-regular);
   line-height: 1.35;
   letter-spacing: -0.01em;
@@ -276,8 +324,18 @@
   margin: 0;
   text-wrap: pretty;
 
+  /*
+   * Below the gate the column is the phone, and 66ch is unreachable at any size
+   * anyone would set a pull quote in: 60 characters across a 358px column would
+   * want 11px type. So the measure gives way and the size takes the smallest
+   * step that still reads as a quote rather than as body copy. 28px measured
+   * 26 characters per line on the longest Greek quote at 390px — eight lines of
+   * fragments; 24px lands 29, in six lines, which is as close to a phone's
+   * 35-45 as this face and this column reach. The next step down would buy a
+   * few more characters and stop reading as a pull quote.
+   */
   @media (max-width: 1024px) {
-    font-size: var(--type-h2-size);
+    font-size: var(--type-h4-size);
   }
 }
 

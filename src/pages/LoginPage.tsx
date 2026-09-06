@@ -19,8 +19,8 @@ export default function LoginPage(): JSX.Element {
           </a>
         }
         links={[
-          { label: t('navPractice'), href: '#practice' },
           { label: t('navTeam'), href: '#team' },
+          { label: t('navPractice'), href: '#practice' },
           { label: t('navTestimonials'), href: '#testimonials' },
           { label: t('navContact'), href: '#contact' },
         ]}

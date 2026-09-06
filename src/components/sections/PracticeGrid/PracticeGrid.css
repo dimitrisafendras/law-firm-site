@@ -11,6 +11,12 @@
  * happened to fit 907 would solve today's laptop and break the next one; a
  * layout driven by available height has no wrong viewport, only smaller cards.
  *
+ * Ten practice areas rather than four is exactly that promise being cashed in:
+ * nothing above had to move, the cards just got their smaller share. Measured
+ * at the tightest gated viewport, 1280x700: the section is handed 700px, the
+ * asymmetric padding spends 160, the section header takes 186, and 354px is
+ * what two rows of five have to divide — one gutter of 16 and 169px of card.
+ *
  * The top padding is asymmetric because the header bar is fixed and overlays
  * the top of every screen — space-24 clears it, space-16 below is just air.
  */
@@ -56,30 +62,120 @@
 }
 
 /* ─── Asymmetric Bento Grid ────────────────────────────────────────────────── */
-/* Row 1: 7 cols / 5 cols   |   Row 2: 5 cols / 7 cols */
+
+/*
+ * Three layouts, and the middle one is not a compromise.
+ *
+ * - up to 1024: one column of normal-flow cards, no height constraint.
+ * - 1025-1279: two columns, rows as tall as their content. This band is
+ *   *outside* the `min-width: 1280px and min-height: 700px` gate in App.css, so
+ *   the section is a plain block here and there is no height to divide. Five
+ *   across a 1100px window would be 200px cards for no reason — nothing is
+ *   asking them to be small.
+ * - 1280 and up: the bento, five across and two deep.
+ *
+ * The row is cut 7:8:8:8:9, and row two is its mirror, 9:8:8:8:7. That keeps
+ * the old four-card arrangement's gesture — 7/5 over 5/7, one wide card per
+ * row, on opposite sides — at five times the density, and it puts the two
+ * widest slots on the diagonal.
+ *
+ * Forty columns is simply what 7+8+8+8+9 adds up to: the coarsest track that
+ * expresses the cut. A 20-track can only manage 3/4/4/4/5, and that rhythm is
+ * too steep to survive its own narrow end — measured at 1280 the 3-column slot
+ * is 164px, 132px of measure, and the explore cue needs 145 in Greek and 141
+ * in English, so two of the ten cards wrapped their verb onto a second line.
+ * 7:8:9 lands the same slot at 194px (162 of measure) and still reads as three
+ * distinct widths rather than five equal boxes.
+ *
+ * Which slots are wide is not arbitrary either. Position 5 and position 6 land
+ * there, and in the practice order those are the two longest titles in both
+ * locales — "FinTech, Digital Assets & Digital Business" and "Privacy, GDPR &
+ * Data Governance". The two narrow slots go to positions 1 and 10, which are
+ * among the shortest.
+ */
 
 .practice-bento {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-6);
-  /* Two equal rows sharing whatever the header left. `1fr` here rather than
-     `auto` is what hands the cards a height instead of asking them for one. */
-  grid-template-rows: 1fr 1fr;
   flex: 1 1 auto;
   min-height: 0;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    grid-template-rows: none;
     display: grid;
+  }
+
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(40, 1fr);
+    /* Two equal rows sharing whatever the header left. `1fr` here rather than
+       `auto` is what hands the cards a height instead of asking them for one. */
+    grid-template-rows: 1fr 1fr;
+    /* Tighter gutters than the section's usual space-6, because with five
+       cards per row there are four of them: at space-6 they spend 96px of the
+       1184px row at 1280, at space-4 they spend 64 — most of a card's worth of
+       width bought back, and 8px of height on top. */
+    gap: var(--space-4);
+  }
+
+  /*
+   * Where the cards stop growing.
+   *
+   * `1fr` of the screen is the right rule right up until the card has more
+   * height than it has anything to put in it. The card is 190px wide from
+   * 1440 up — `--layout-max-width` fixes the inner column, so extra viewport
+   * width buys no measure — and at that measure the longest description in
+   * either locale is complete in a card 289px tall. Every pixel of card past
+   * that is void by construction: no copy exists to fill it. Measured at
+   * 2560x1440, where the uncapped card is 539px, the ten cards were carrying
+   * between 266 and 332px of nothing each.
+   *
+   * So the row is capped at the height where the copy runs out, and the grid
+   * takes the free space as margin instead of as card. That is the same
+   * decision the section already makes horizontally: on a 2560px screen this
+   * grid is a 1184px column with 688px of air either side, because a column
+   * has a width past which it stops being readable. A card has a height past
+   * which it stops being a card.
+   *
+   * 290px is that measurement plus one pixel of rounding, not a taste value —
+   * raise it and the void comes back, lower it and the longest descriptions
+   * start fading out early. The card grows at half a pixel per pixel of
+   * viewport, so the cap first binds at exactly 942px of viewport height and
+   * below that this rule does nothing at all: the card is already smaller.
+   *
+   * Gated on the height as well as the width, matching App.css's screen gate
+   * exactly: outside it the section has no definite height, `1fr` rows resolve
+   * to their content, and a max-height would be a crop rather than a cap.
+   */
+  @media (min-width: 1280px) and (min-height: 700px) {
+    /* One-off geometry: the tallest card whose content is complete. */
+    --bento-row-max: 290px;
+
+    max-height: calc(2 * var(--bento-row-max) + var(--space-4));
+    /* Auto margins take whatever the cap left over. In a flex column the
+       grow is resolved before free space reaches a margin, so these stay at
+       zero until `max-height` actually clamps the item — below 942px of
+       viewport they are inert and the grid sits where it always did. */
+    margin-block: auto;
   }
 }
 
-@media (min-width: 1025px) {
+@media (min-width: 1280px) {
+  /* Row 1 — 7 / 8 / 8 / 8 / 9 */
   .practice-bento > :nth-child(1) { grid-column: 1 / 8; }
-  .practice-bento > :nth-child(2) { grid-column: 8 / 13; }
-  .practice-bento > :nth-child(3) { grid-column: 1 / 6; }
-  .practice-bento > :nth-child(4) { grid-column: 6 / 13; }
+  .practice-bento > :nth-child(2) { grid-column: 8 / 16; }
+  .practice-bento > :nth-child(3) { grid-column: 16 / 24; }
+  .practice-bento > :nth-child(4) { grid-column: 24 / 32; }
+  .practice-bento > :nth-child(5) { grid-column: 32 / 41; }
+
+  /* Row 2 — the mirror, 9 / 8 / 8 / 8 / 7. No `grid-row` anywhere: each row's
+     spans total exactly 40, so auto-placement has nowhere to put the sixth
+     card but the second row, and DOM order stays reading order. */
+  .practice-bento > :nth-child(6) { grid-column: 1 / 10; }
+  .practice-bento > :nth-child(7) { grid-column: 10 / 18; }
+  .practice-bento > :nth-child(8) { grid-column: 18 / 26; }
+  .practice-bento > :nth-child(9) { grid-column: 26 / 34; }
+  .practice-bento > :nth-child(10) { grid-column: 34 / 41; }
 }
 
 /* The fade wrapper is the grid item; let the card inside stretch to fill it
@@ -121,6 +217,30 @@
   -webkit-mask-image: radial-gradient(88% 88% at 82% 82%, #000 42%, transparent 94%);
   mask-image: radial-gradient(88% 88% at 82% 82%, #000 42%, transparent 94%);
   transition: opacity 0.6s, transform 0.6s;
+
+  /*
+   * From 1025 up the drawing is sized off the card instead of being a fixed
+   * slab. 520px was a fair size for one of four cards 800px wide; on a 194px
+   * bento slot it is nearly three times the card and the mask has nothing left
+   * to fade — the whole surface becomes engraving.
+   *
+   * 70% of the card's width is the same proportion 520px had on the card it
+   * was drawn for (520/800 = 0.65), so the look is preserved rather than
+   * re-invented, and it now tracks every slot width in the 7:8:9 rhythm:
+   * 136/157/178px at 1280, 155/179/203px at 1440 and up. The bleed comes in
+   * with it — a 30px overhang off a 194px card is a sixth of the drawing lost.
+   *
+   * `aspect-ratio` rather than a matching height: every domain background is a
+   * square 400x400 viewBox, so one declaration keeps them square at any width
+   * and `height: auto` retires the fixed 520.
+   */
+  @media (min-width: 1025px) {
+    width: 70%;
+    height: auto;
+    aspect-ratio: 1;
+    bottom: calc(var(--space-4) * -1);
+    right: calc(var(--space-4) * -1);
+  }
 }
 
 /* The material comes from `<Card>` now — this card used to inline it, because
@@ -151,6 +271,24 @@
 
   @media (max-width: 1024px) {
     padding: var(--space-8) var(--space-6);
+  }
+
+  /*
+   * The bento card is small enough that its padding is a real fraction of it:
+   * space-12 either side of a 194px slot leaves 98px of measure, which is not
+   * a column, it is a stack of hyphens. Equal space-4 all round leaves 162,
+   * which is the least that still clears the explore cue on one line — 145px
+   * of it in Greek, 141 in English.
+   *
+   * A flex column so the cue can be pinned to the bottom edge — with ten cards
+   * the title line counts differ (two in English, often three in Greek) and a
+   * cue that floats to wherever the copy ended reads as ten misaligned cards
+   * rather than one grid.
+   */
+  @media (min-width: 1280px) {
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
   }
 }
 
@@ -297,6 +435,11 @@
   color: var(--accent);
   display: block;
   margin-bottom: var(--space-8);
+
+  /* space-8 under a 12px numeral is a third of a bento card's inner height. */
+  @media (min-width: 1280px) {
+    margin-bottom: var(--space-2);
+  }
 }
 
 .practice-domain__title {
@@ -307,6 +450,23 @@
   letter-spacing: var(--type-h3-tracking);
   color: var(--text-h);
   margin: 0 0 var(--space-4);
+
+  /*
+   * One step down in size only. The h3 specimen's weight, leading and tracking
+   * all stay — this is the same voice at bento scale, not the body step
+   * wearing a heading's job, which at weight 400 would stop reading as a title
+   * at all.
+   *
+   * A card 194px wide has room for three lines of title before the cue runs
+   * out of floor. Measured in Greek at 1280x700, which is the tightest case
+   * the gate allows: at the full 20px two of the ten titles reach a fourth
+   * line and clip by 13px; at 18px the longest is three lines and nothing
+   * clips. English clears both, so this step is what the second locale costs.
+   */
+  @media (min-width: 1280px) {
+    font-size: var(--type-body-lg-size);
+    margin-bottom: var(--space-2);
+  }
 }
 
 .practice-domain__desc {
@@ -315,9 +475,92 @@
   line-height: var(--type-body-leading);
   letter-spacing: var(--type-body-tracking);
   color: var(--text);
-  opacity: 0.7;
+  opacity: var(--text-emphasis-secondary);
   margin: 0 0 var(--space-8);
   max-width: 420px;
+
+  /*
+   * The one thing that does not survive the *short* end of ten-up.
+   *
+   * 169px of card at 1280x700 pays for the numeral, two or three lines of
+   * title and the cue with about 20px to spare — measured, the worst Greek
+   * card has 28px between the title's last line and the cue. Clamping a
+   * description into that was the alternative and it is worse than dropping
+   * it: a sentence cut mid-clause after five words tells a reader nothing and
+   * costs the card its one piece of breathing room.
+   *
+   * That was true at 700px of viewport and got applied at every height above
+   * it, which was the error. The card's height is `1fr` of what the header
+   * leaves, so it grows at half a pixel per pixel of viewport: 169px at 700,
+   * 273px at 907, 359px at 1080. The copy did not grow with it, so the same
+   * rule that saved the 700px card left 154px of empty card at 907 and 241px
+   * at 1080 — a title, then a hand's width of nothing, then the cue.
+   *
+   * So the rule is a floor now rather than a blanket, and 760px of viewport is
+   * where it lifts. That number is measured, not chosen: in Greek, which is
+   * the binding locale, the worst card's gap between title and cue is 28px at
+   * 700 and 58px at 760, and 58px is the `space-4` that separates copy from
+   * the cue plus exactly two whole lines of the `small` step — 2 x 21px. One
+   * pixel less and the box cannot hold two lines, which is the fragment the
+   * paragraph above rejects. English is looser at the same height (80px, three
+   * lines) and every card but the worst gets three or more.
+   *
+   * That floor is worth this much precision because the band just above it is
+   * where people actually are: a 1440x900 laptop screen is about 790px of
+   * viewport once the browser's own furniture is subtracted, and at 790 the
+   * old rule left 80-103px of a 199px card empty. A 700px viewport needs a
+   * screen shorter than any laptop still being sold.
+   *
+   * Nothing is lost below the floor: the description is what the detail page
+   * opens with, and the card is a door, not a summary. Below 1280 there is no
+   * height to divide and the copy stays at full size. Admin edit mode is
+   * unaffected either way — `practice{Key}Desc` is the detail page's lede and
+   * editable there.
+   */
+  @media (min-width: 1280px) {
+    display: none;
+  }
+
+  /*
+   * Above the floor the description is the card's flexible middle.
+   *
+   * `flex: 1 1 auto` rather than a line count per breakpoint, because the
+   * space left over is not a function of the viewport alone — a Greek card
+   * with a three-line title has two lines less room than the English card
+   * beside it, and a per-band `line-clamp` sized for the worst card leaves the
+   * best one with 50px of the void still in it. Growing into whatever the
+   * numeral, title and cue did not spend is the same measurement made ten
+   * times, per card, at every height, for free.
+   *
+   * `overflow: hidden` is what makes that safe, and the mask is what makes it
+   * look deliberate: the last 0.9em dissolves, so copy that runs out of card
+   * fades rather than being guillotined mid-x-height. When the copy is shorter
+   * than the box the fade falls on empty space and is invisible, which is why
+   * it can be unconditional.
+   *
+   * One step down in size, for the same reason the title takes one. Measured
+   * on this card's 190px of measure, the body step sets 22 characters to the
+   * line — a column that narrow spends more of itself on ragging than on
+   * words. The `small` specimen sets 25 to 29, and between the smaller glyph
+   * and the tighter 1.5 leading the longest Greek description goes from 205px
+   * of column to 147px: nearly three lines of card handed back, before the
+   * clamp has to take anything.
+   */
+  @media (min-width: 1280px) and (min-height: 760px) {
+    display: block;
+    font-size: var(--type-small-size);
+    font-weight: var(--type-small-weight);
+    line-height: var(--type-small-leading);
+    letter-spacing: var(--type-small-tracking);
+    max-width: none;
+    margin: 0 0 var(--space-4);
+
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 0.9em), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 0.9em), transparent);
+  }
 }
 
 /* ─── The card's one link ──────────────────────────────────────────────────── */
@@ -355,6 +598,21 @@
  * The known cost of the pattern is that text inside the card can no longer be
  * selected with the mouse. That is the trade for a card-sized target; the
  * description is repeated in full on the detail page this leads to.
+ *
+ * `z-index: 3` is not on its own enough, and this was measured rather than
+ * reasoned: with the description visible, `elementsFromPoint` at the middle of
+ * a card returns `__desc` above this overlay, and a dispatched click there does
+ * not navigate. The description carries a `mask-image` for its fade, which
+ * makes it a stacking context of its own, and the overlay stopped winning the
+ * hit test against it. It went unnoticed while the description was
+ * `display: none`, because then the only uncovered strip was the cue.
+ *
+ * So the copy is taken out of hit testing instead of being out-stacked. Every
+ * child here is decorative or plain text — the cue is already `aria-hidden`,
+ * and the accessible name lives in the heading — so none of them wants the
+ * pointer. Scoped to `--linked` because the class is dropped in admin edit
+ * mode, where these same elements become `EditableText` editors and must take
+ * clicks; that is also why this cannot simply live on the base class.
  */
 .practice-domain__link::after {
   content: '';
@@ -362,6 +620,13 @@
   inset: 0;
   z-index: 3;
   border-radius: var(--radius-3xl);
+}
+
+.practice-domain--linked > .practice-domain__bg,
+.practice-domain--linked > .practice-domain__num,
+.practice-domain--linked > .practice-domain__desc,
+.practice-domain--linked > .practice-domain__cue {
+  pointer-events: none;
 }
 
 /* ─── The link affordance ──────────────────────────────────────────────────── */
@@ -388,6 +653,20 @@
      colour swap here would compute to no change at all. */
   opacity: var(--text-emphasis-secondary);
   transition: opacity 0.35s ease;
+
+  /* Pinned to the card's bottom edge by the flex column above, so ten cards
+     with differing title lengths still line their verbs up. `flex-start` keeps
+     the hit area and the arrow's 4px hover step tight to the text rather than
+     stretched across the card.
+
+     Above the description's floor the pinning is done twice over — the
+     description grows into the same space, so there is no free margin left for
+     `auto` to claim. It stays because below the floor it is the only thing
+     holding the verbs in line. */
+  @media (min-width: 1280px) {
+    margin-top: auto;
+    align-self: flex-start;
+  }
 }
 
 .practice-domain__cue-arrow {

@@ -150,6 +150,15 @@ const showcaseLabel: React.CSSProperties = {
   display: 'block',
 };
 
+/**
+ * Three of the ten domains, not all ten. `PracticeDomainCard` takes no prop but
+ * the area, so cards four through ten are the same component with different
+ * copy — a screen of scrolling between this showcase and the next, showing a
+ * reader nothing the first row has not. Sliced off the live array rather than
+ * listed by key, so a domain added or renumbered still appears here.
+ */
+const showcasedPracticeAreas = practiceAreas.slice(0, 3);
+
 function luminance(r: number, g: number, b: number): number {
   const [rs, gs, bs] = [r, g, b].map((c) => {
     const s = c / 255;
@@ -486,7 +495,8 @@ export default function DesignSystem() {
         <div style={showcaseBox}>
           <span style={showcaseLabel}>{t('dsPracticeDomainCard')}</span>
           <p style={{ fontSize: '14px', opacity: 0.75, marginBottom: '16px', maxWidth: '60ch' }}>
-            {t('dsPracticeDomainCardNote')}
+            {t('dsPracticeDomainCardNote')}{' '}
+            {`Showing ${showcasedPracticeAreas.length} of ${practiceAreas.length} domains.`}
           </p>
           <div
             style={{
@@ -496,7 +506,7 @@ export default function DesignSystem() {
               alignItems: 'start',
             }}
           >
-            {practiceAreas.map((area) => (
+            {showcasedPracticeAreas.map((area) => (
               <PracticeDomainCard key={area.key} area={area} />
             ))}
           </div>

@@ -9,93 +9,122 @@
    `content-visibility: auto`, whose paint containment is a backdrop root with
    nothing in it, so those cards cannot lens. Left to lens here, the same card
    read as a different, bluer material one click later. See
-   src/styles/liquid-glass.css. */
+   src/styles/liquid-glass.css.
+
+   ─── The composition ────────────────────────────────────────────────────────
+
+   This file and PracticeDetailPage.css are deliberate twins: same four regions
+   under the same names, same track ratios, same gaps, same gate, same entrance.
+   PracticeDetailPage.css carries the reasoning for the shared parts — read it
+   there and change both together. What differs here is documented where it
+   differs, and there are three such places:
+
+     · the plate's column is 0.9fr against the practice page's 0.6. A portrait
+       of the person the reader is deciding whether to call is information; a
+       decorative line drawing of a ship is not, and the two should not be
+       rationed the same width.
+     · the identity's right-hand column carries two chips (the title, then the
+       call to action) where the practice page's carries one, because a partner
+       has a rank and a domain does not.
+     · the plate's foot strip captions the portrait with focus and origin, and
+       is a column of two label/value pairs. On the practice page the same strip
+       is a row, because it carries one datum beside a 32px mark.
+
+   The layout this replaced was a masthead — a 380px 4/5 portrait beside an
+   identity column — stacked above a panel row. Measured at 1440x900 it
+   overflowed the window by 127px while leaving the entire right half of the
+   masthead empty below the call to action and all but the top eighth of the
+   specialisations panel empty below three pills. Nothing in it was sized by the
+   space it had.
+
+   ─── Where the one-screen layout applies ────────────────────────────────────
+
+   `min-width: 1280px and min-height: 700px`, the home page's own screens gate
+   (App.css), for the reason it gives: a definite height clips whatever cannot
+   fit, so it may only be applied where the content is known to fit. Below it
+   every rule that pins a height is off and the page is an ordinary document.
+
+   Above it nothing is clipped either — the panel bodies scroll internally
+   before the page does. This page has far less copy than the practice page
+   (the longest biography is 272 Greek characters against a 714-character
+   overview), and no panel on any of the three partners scrolls at any size in
+   the supported range, in either language. */
 
 .partner-page {
   flex: 1;
-  /* 88px clears the fixed navbar — a measurement of another element, not a
-     spacing step.
+  /* 88px does not clear the fixed navbar, which is why this is 88 + a step —
+     PracticeDetailPage.css measures the bar. The step beside it is the air
+     under the bar, which the back link used to carry as its own margin.
 
-     The bottom is the scale's terminal step rather than a section step: this
-     page has no footer, so nothing follows the last panel and the padding is
-     the only thing between it and the end of the document. At one section's
-     worth the page reads as cut off at the last card. */
-  padding: 88px 0 var(--space-32);
+     The bottom is the scale's terminal step rather than a section step: below
+     the gate this page has no footer, so nothing follows the last panel and the
+     padding is the only thing between it and the end of the document. At one
+     section's worth the page reads as cut off at the last card. Inside the gate
+     it is replaced (see the gate block) — there is no document to end there,
+     only a screen to sit on. */
+  padding: calc(88px + var(--space-8)) 0 var(--space-32);
 
   @media (max-width: 1024px) {
-    padding: 88px 0 var(--space-20);
+    padding: calc(88px + var(--space-8)) 0 var(--space-20);
   }
 }
 
 .partner-page__inner {
   display: flex;
   flex-direction: column;
-  gap: var(--space-12);
+  gap: var(--space-8);
 }
 
-/* ─── Back ─────────────────────────────────────────────────────────────────── */
+/* ─── Rail ─────────────────────────────────────────────────────────────────── */
 
+.partner-page__rail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-8);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--glass-edge);
+}
+
+/* The way off the page, styled as one — PracticeDetailPage.css carries the
+   argument, the no-opacity-on-text rule it belongs to, and the rest of the
+   measurements. Here: `--text` at `--text-emphasis-secondary` measured 4.88:1
+   against the pixels under it; undimmed it is 8.05:1, and 8.43:1 over the
+   typical background. This page's ground is the circuit field rather than a
+   domain drawing, so it has less to fight than the practice page — but the two
+   rails are one component, and a control that is confident on one page and
+   apologetic on the other is how a system comes apart. */
 .partner-page__back {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  align-self: flex-start;
-  margin-top: var(--space-8);
   font-family: var(--label);
   font-size: var(--type-caption-size);
-  font-weight: var(--type-caption-weight);
+  font-weight: var(--weight-semibold);
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--text);
-  opacity: var(--text-emphasis-secondary);
+  color: var(--text-h);
   text-decoration: none;
   border-radius: var(--radius-sm);
-  transition:
-    color 0.3s ease,
-    opacity 0.3s ease;
+  transition: color 0.3s ease;
 }
 
-.partner-page__back:hover {
-  color: var(--accent-text);
-  opacity: 1;
+/* The arrow leads on hover — it is the only moving part in a row of static
+   labels, so it carries the affordance the underline used to. */
+.partner-page__back > span[aria-hidden] {
+  transition: transform 0.3s var(--ease-settle);
 }
 
-/* ─── Masthead ─────────────────────────────────────────────────────────────── */
-
-/* Portrait beside the identity block. The portrait column is fixed rather than
-   fractional so the biography panels below can keep their own measure. */
-.partner-page__masthead {
-  display: grid;
-  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
-  gap: var(--space-12);
-  align-items: start;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
+@media (hover: hover) {
+  .partner-page__back:hover {
+    color: var(--accent-text);
   }
-}
 
-.partner-page__portrait {
-  margin: 0;
-  overflow: hidden;
-  border-radius: var(--radius-3xl);
-  aspect-ratio: 4 / 5;
-}
-
-.partner-page__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 20%;
-  display: block;
-}
-
-.partner-page__intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  .partner-page__back:hover > span[aria-hidden] {
+    transform: translateX(-3px);
+  }
 }
 
 .partner-page__overline {
@@ -108,20 +137,203 @@
   color: var(--accent-text);
 }
 
+/* ─── Stage ────────────────────────────────────────────────────────────────── */
+
+/* Three columns and two rows; PracticeDetailPage.css explains the ratio. The
+   first track is 0.9 rather than 0.5 — see the note at the top of this file. */
+.partner-page__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: stretch;
+}
+
+.partner-page__plate {
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+.partner-page__identity {
+  grid-area: 1 / 2 / 2 / 4;
+}
+
+.partner-page__panel--prose {
+  grid-area: 2 / 1 / 3 / 3;
+}
+
+.partner-page__panel--ledger {
+  grid-area: 2 / 3 / 3 / 4;
+}
+
+@media (max-width: 1024px) {
+  .partner-page__stage {
+    grid-template-columns: 1fr;
+  }
+
+  .partner-page__plate,
+  .partner-page__identity,
+  .partner-page__panel--prose,
+  .partner-page__panel--ledger {
+    grid-area: auto;
+  }
+}
+
+/* ─── Plate ────────────────────────────────────────────────────────────────── */
+
+/* Where the practice page puts its artwork. Below the gate it keeps the 4/5 box
+   the photography was cropped to; inside the gate the aspect ratio is released
+   and the plate takes the full height of the stage. */
+.partner-page__plate {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+}
+
+.partner-page__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 14%, not the 20% this used to take. Inside the gate the plate is taller
+     than 4/5 — nearer 1:2.6 — so `cover` scales the 512x640 source off its
+     height and crops the sides. The head has to sit higher in the frame than it
+     did in a squarer box or the crop takes the top of it; at 14% the eyeline
+     lands on the upper third at every supported height. */
+  object-position: center 14%;
+  display: block;
+}
+
+/* The `<picture>` is the element `.glass > *` promotes, not the image inside
+   it, so the sizing has to reach the wrapper too — otherwise the img resolves
+   its `height: 100%` against a shrink-wrapped inline box. */
+.partner-page__plate > picture {
+  display: block;
+  height: 100%;
+}
+
+/* The strip across the plate's foot — the practice page's twin carries that
+   domain's mark and numeral, this one captions the portrait. It is the same
+   object on both pages: a scrim rising off the bottom edge, a hairline above
+   it, and the page's index data stacked on it in the label register.
+
+   A column and not a row, and on both pages, because both plates are narrow
+   now: at ~210px two cells side by side leave the longest Greek focus value
+   ("Στρατηγική συναλλαγών", 22 characters) a few characters per line.
+
+   The scrim is the material's own strong tint rather than a black or a white,
+   so it reads as more of the same glass gathering at the foot in both themes —
+   and over a photograph it has to be a tint rather than a wash, because the
+   values underneath it are what the labels have to stay legible against. */
+.partner-page__plate > .partner-page__plate-foot {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  /* 48px of top padding, not 32: the scrim below has to reach full strength
+     *under* the first label rather than at it, and the fade needs the room. */
+  padding: var(--space-12) var(--space-4) var(--space-4);
+  border-top: 1px solid var(--glass-edge);
+  /*
+   * A scrim on `--surface`, not on the glass tint this used to use.
+   *
+   * `--glass-bg-strong` is rgba(78, 94, 122, 0.54) — a mid blue at just over
+   * half strength, which is enough over the ramp and nowhere near enough over a
+   * photograph. Partner 2's portrait has a white shirt collar directly behind
+   * the focus label, and 46% of it came through: measured, the label sat at
+   * 1.06:1 and its value at 1.71:1. That is not a dim label, that is an
+   * invisible one, and no choice of text colour fixes it because the ground
+   * underneath is brighter than any text on this site.
+   *
+   * `--surface` is a caption scrim rather than a tint, and it has to hold its
+   * strength past the top label rather than start fading at it — the first
+   * version fell to 76% by 58% of the strip and left the label at 3.09:1, which
+   * is better than invisible and still not readable. Full strength to 76%, then
+   * out: the collar composites to rgb(42, 44, 49), and the label and its value
+   * measure 10.73:1 and 10.99:1 at the brightest pixel under them, against
+   * 1.03:1 and 1.09:1 before — 11.03:1 and 11.73:1 at p95. The last
+   * quarter of the strip is still a fade, so the portrait's shoulders read
+   * through the top of it rather than meeting a bar.
+   */
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--surface) 95%, transparent) 0%,
+    color-mix(in oklab, var(--surface) 92%, transparent) 76%,
+    transparent 100%
+  );
+}
+
+.partner-page__meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* The one label on either page that sits over a photograph rather than over the
+   page's own ground, and it was the worst contrast on the site: `--text` at
+   `--text-emphasis-muted` over partner 2's white shirt collar measured
+   **1.06:1**, with its value at 1.71:1. Not dim — gone. A portrait is not a
+   flat colour and the values behind "FOCUS" change with the partner, so no
+   choice of ink fixes it on its own; the scrim above had to do the real work,
+   and it does. With the scrim rebuilt, this label measures 11.03:1 and its
+   value 11.73:1 there, 13.25:1 and 13.50:1 typical. Accent rather than `--text`
+   puts it in the same register as every other micro-label on the two pages. */
+.partner-page__meta-label {
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent-text);
+}
+
+.partner-page__meta-value {
+  font-size: var(--type-small-size);
+  line-height: var(--type-small-leading);
+  color: var(--text-h);
+  margin: 0;
+}
+
+/* ─── Identity ─────────────────────────────────────────────────────────────── */
+
+/*
+ * Two rows, and the right-hand column is a stack of chips: the rank, then the
+ * call to action under it.
+ *
+ * That column is the layout's largest reclamation. The name, rank, role and
+ * button were four stacked blocks in a ~900px column, so a rectangle roughly
+ * 550 x 160 sat permanently empty to the right of copy that is at most 30
+ * characters wide, and the four rows pushed the panels below off the screen.
+ * Set as two rows with the chips right-aligned, the identity is 100px shorter,
+ * the void is gone, and the two chips read as one column of credentials.
+ */
+.partner-page__identity {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  column-gap: var(--space-8);
+  row-gap: var(--space-6);
+}
+
 /* The page's <h1>. index.css gives every h1 the display step and a vertical
-   margin; both are wrong for a name sitting between an overline and a title, so
-   the step is restated one down and the margin removed. */
+   margin; both are wrong for a name sitting above a role line, so the step is
+   restated one down and the margin removed. */
 .partner-page__name {
+  grid-column: 1;
   font-family: var(--heading);
   font-size: var(--type-h1-size);
   font-weight: var(--type-h1-weight);
   line-height: var(--type-h1-leading);
   letter-spacing: var(--type-h1-tracking);
   color: var(--text-h);
-  margin: var(--space-2) 0 0;
+  margin: 0;
 }
 
+/* The rank, as a filled pill on the name's line. */
 .partner-page__title {
+  grid-column: 2;
+  justify-self: end;
   font-family: var(--label);
   font-size: var(--type-caption-size);
   font-weight: var(--type-caption-weight);
@@ -132,58 +344,27 @@
   background: var(--accent);
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
-  margin: var(--space-4) 0 0;
+  margin: 0;
+  white-space: nowrap;
 }
 
 /* The same real italic the card uses — Jura has no italic of its own, so this
    has to be the serif rather than a synthesised oblique. */
 .partner-page__role {
+  grid-column: 1;
   font-family: var(--serif);
   font-style: italic;
   font-size: var(--type-body-lg-size);
   line-height: var(--type-body-lg-leading);
   color: var(--accent);
-  margin: var(--space-4) 0 0;
-}
-
-.partner-page__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-8);
-  margin: var(--space-8) 0 0;
-  padding-top: var(--space-6);
-  border-top: 1px solid var(--glass-edge);
-  width: 100%;
-}
-
-.partner-page__meta-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.partner-page__meta-label {
-  font-family: var(--label);
-  font-size: var(--type-caption-size);
-  font-weight: var(--type-caption-weight);
-  line-height: var(--type-caption-leading);
-  text-transform: uppercase;
-  letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--text);
-  opacity: var(--text-emphasis-muted);
-}
-
-.partner-page__meta-value {
-  font-size: var(--type-small-size);
-  line-height: var(--type-small-leading);
-  color: var(--text-h);
   margin: 0;
 }
 
 .partner-page__cta {
+  grid-column: 2;
   display: inline-flex;
   align-items: center;
-  margin-top: var(--space-8);
+  justify-self: end;
   padding: var(--space-3) var(--space-6);
   font-family: var(--label);
   font-size: var(--type-small-size);
@@ -196,6 +377,7 @@
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-full);
   text-decoration: none;
+  white-space: nowrap;
   transition:
     background-color 0.3s ease,
     border-color 0.3s ease,
@@ -211,71 +393,375 @@
   }
 }
 
-/* ─── Panels ───────────────────────────────────────────────────────────────── */
-
-.partner-page__panels {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: var(--space-8);
-  align-items: start;
-
-  @media (max-width: 1024px) {
+/* At the narrow end the chip column becomes a second measure competing with the
+   name for ~340px, so everything goes into one column in reading order. */
+@media (max-width: 1024px) {
+  .partner-page__identity {
     grid-template-columns: 1fr;
+    row-gap: var(--space-4);
+  }
+
+  .partner-page__name,
+  .partner-page__title,
+  .partner-page__role,
+  .partner-page__cta {
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .partner-page__cta {
+    margin-top: var(--space-4);
   }
 }
 
+/* ─── Panels ───────────────────────────────────────────────────────────────── */
+
+/* A column, so the title stays put and the body below it is the part that
+   scrolls when there is more copy than row. */
 .partner-page__panel {
-  border-radius: var(--radius-3xl);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   padding: var(--space-8);
 }
 
 .partner-page__panel-title {
+  flex: none;
   font-family: var(--label);
   font-size: var(--type-caption-size);
-  font-weight: var(--type-caption-weight);
+  /* Semibold, because colour cannot help here. This label sits on the glass's
+     own specular highlight — `.glass::before`, the brightest band on the
+     surface — and every foreground the theme offers has almost the same
+     luminance there (`--accent-text` measures 4.82:1 and `--text-h` 4.6:1), so
+     the contrast is set by the material, not by the choice of ink. Weight is
+     the lever that is left. */
+  font-weight: var(--weight-semibold);
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--text);
-  opacity: var(--text-emphasis-muted);
+  /* Undimmed accent and a heavier weight, matching the practice page rule that
+     documents the measurements — 3.04:1 before, 4.82:1 after, and the reason
+     colour alone cannot do better than that is the glass's own specular
+     highlight, which this title sits on. */
+  color: var(--accent-text);
   margin: 0 0 var(--space-6);
 }
 
+/* The scrolling region, and the reason nothing on this page is ever clipped.
+
+   It is a wrapper rather than the Card itself for two reasons. `.glass` spends
+   both pseudo-elements on the material's highlight and illumination and they
+   are painted inside the surface's padding box, so scrolling that box would
+   drag the light off the top of the panel and leave the rest on bare tint — the
+   same trap the navbar's mobile overlay documents. And the Card's `overflow:
+   hidden` is what keeps the scrolled copy inside the 22px corner.
+
+   `min-height: 0` is what makes it work at all: a flex child's automatic
+   minimum size is its content, so without this the body refuses to shrink, the
+   panel grows past its grid row, and the page scrolls instead. */
+.partner-page__panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Firefox's form of the rail below. `thin` is deliberately NOT set alongside
+     it: in Chromium, any `scrollbar-width` value suppresses the
+     `::-webkit-scrollbar` rules entirely and hands back the platform's overlay
+     scrollbar, which on macOS is invisible until the reader already knows there
+     is something to scroll. This panel is the one place on the site where that
+     matters — a paragraph that stops at the panel's edge with no rail beside it
+     reads as clipped copy rather than as a scrollport. */
+  scrollbar-color: var(--accent-border) transparent;
+}
+
+/* A 4px rail on the accent's own border alpha, so it reads as part of the
+   panel's edge treatment rather than as chrome. It is a real, classic scrollbar
+   where the platform has them (Windows and Linux); macOS overlays its own and
+   ignores these rules, which is why the rule above refuses `scrollbar-width` —
+   that is the one lever that would take the styling away everywhere at once.
+   Either way the bar only exists when the body overflows, which measured
+   happens on one screen size in one language — see the note at the top of this
+   file. */
+.partner-page__panel-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.partner-page__panel-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.partner-page__panel-body::-webkit-scrollbar-thumb {
+  background: var(--accent-border);
+  border-radius: var(--radius-full);
+}
+
+/* The body step rather than the lede's, matching the practice page's overview:
+   a fixed-height reference column reads better at 16px on a ~66 character
+   measure than at 18px on 58. The role line above keeps 18px — that is the
+   page's voice, this is its record.
+
+   Undimmed for the reason the practice page's overview is: `--text` at
+   `--text-emphasis-secondary` measured 4.26:1 against the pixels under this
+   paragraph, under the AA floor the token was chosen to hold. Undimmed it is
+   6.81:1 worst and 7.99:1 typical. */
 .partner-page__bio {
-  font-size: var(--type-body-lg-size);
-  line-height: var(--type-body-lg-leading);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-leading);
   color: var(--text);
-  opacity: var(--text-emphasis-secondary);
   margin: 0;
 }
 
-.partner-page__specialties {
+/* ─── Ledger ───────────────────────────────────────────────────────────────── */
+
+/*
+ * The three specialisations, as numbered rows on their own hairlines — the same
+ * object the practice page gives its five services, and PracticeDetailPage.css
+ * carries the reasoning.
+ *
+ * They were pills, which put three accent-on-accent chips in the top eighth of
+ * the panel and nothing under them. Spaced by one step of the scale and nothing
+ * else: `space-between` over the panel's height was tried and is the trap this
+ * layout is about — it made the rhythm a function of the window, so the same
+ * three rows sat 12px apart at 700px and 200px apart at 1080px and read as
+ * three things that had come loose.
+ */
+.partner-page__ledger {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
+  flex-direction: column;
+  /* Fluid between two steps of the scale, and bounded at both ends. The rows do
+     have to breathe more on a tall screen — the ledger holds less copy than the
+     prose panel beside it and shares its height — but the growth is a clamp
+     rather than `space-between`, so it is a rhythm that widens by 12px between
+     the shortest supported screen and the tallest, not one that is redrawn by
+     every window. */
+  gap: clamp(var(--space-4), 2.6svh, var(--space-8));
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.partner-page__specialty {
+.partner-page__ledger-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--glass-edge);
+}
+
+.partner-page__ledger-row:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* The index is the accent, the clause is not — inverted from the pills this
+   replaced, where every row was accent-on-accent and the three read as one blue
+   block. `tabular-nums` so 01 and 03 occupy the same width and the clauses
+   start on one line. */
+.partner-page__ledger-index {
+  flex: none;
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--type-caption-leading);
+  letter-spacing: var(--type-caps-tracking-tight);
+  font-variant-numeric: tabular-nums;
+  color: var(--accent-text);
+}
+
+.partner-page__ledger-text {
   font-family: var(--label);
   font-size: var(--type-caption-size);
   font-weight: var(--type-caption-weight);
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
-  letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent-text);
-  background: var(--accent-bg);
-  border: 1px solid var(--accent-border);
-  border-radius: var(--radius-full);
-  padding: var(--space-1) var(--space-3);
+  /* The tight step rather than the wide one the labels take: the longest Greek
+     specialisation is 28 characters, and at 0.2em it wraps to three lines in
+     this column. */
+  letter-spacing: var(--type-caps-tracking-tight);
+  color: var(--text);
+}
+
+/* ─── One screen ───────────────────────────────────────────────────────────── */
+
+/* The gate, identical to the practice page's — see PracticeDetailPage.css for
+   why it is this one and what each rule in it is for. */
+@media (min-width: 1280px) and (min-height: 700px) {
+  .partner-page {
+    /* `flex: none` before `height`, and PracticeDetailPage.css explains why:
+       with `flex: 1` still on it this main takes its height from flex layout,
+       whose automatic minimum is the content — so the height was ignored and
+       the screen grew to the page instead of the page fitting the screen. */
+    flex: none;
+    height: 100svh;
+    padding-bottom: var(--space-8);
+    /* The backstop, not the plan: the panel bodies scroll first. */
+    overflow: hidden;
+  }
+
+  .partner-page__inner {
+    height: 100%;
+    min-height: 0;
+  }
+
+  /* The stage is as tall as what it holds, and no taller — the rule
+     PracticeDetailPage.css sets out at length, and the one whose absence
+     inflated every card on both pages. `max-content` rather than `fit-content`,
+     which resolves through `stretch` when there is room; `max-height: 100%` is
+     what keeps it inside the screen when the copy is long. */
+  .partner-page__stage {
+    height: max-content;
+    max-height: 100%;
+    min-height: 0;
+    /* The leftover height, as a margin rather than as padding inside four
+       cards. Whatever the composition does not need is split above and below
+       it by the auto margins, so the stage sits centred between the rail and
+       the foot of the screen — the partner page, which has the least copy on
+       the site, has ~190px of ground on each side of it at 1920x1080. Air
+       around a composition is a margin; the same air divided into every panel
+       is four stretched cards. */
+    margin-block: auto;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  /* The two panels agree on a height, and it is the taller one's content. */
+  .partner-page__panel {
+    align-self: stretch;
+  }
+
+  /* The name grows with the screen it is set on: it is the page's subject, and
+     the one element with room to spend the leftover height on. Capped at 56px,
+     where the longest name still holds one line beside the rank chip. */
+  .partner-page__name {
+    font-size: clamp(var(--type-h1-size), 6.4svh, var(--type-display-size));
+  }
+
+  .partner-page__plate {
+    grid-area: 1 / 1 / 3 / 2;
+    aspect-ratio: auto;
+  }
+
+  .partner-page__panel--prose {
+    grid-area: 2 / 2 / 3 / 3;
+  }
+
+  /* ── Spending what is left over ──────────────────────────────────────────
+   *
+   * Above 1000px of screen the composition has more room than its copy needs,
+   * and there are only two honest places to put it: into the type, and into the
+   * air around the composition. Not into the panels — that is the mistake this
+   * layout was rebuilt to undo.
+   *
+   * The identity's floor is what stops the surplus all landing in the margins.
+   * `space-between` then holds the title against the rail and the second row
+   * against the panels, so the identity reads as a masthead spanning the plate
+   * rather than as a caption floating above the cards. The floor is deliberately
+   * below what the identity already measures at 1000px (~250px for the longest
+   * Greek title and description), so on a shorter screen it changes nothing and
+   * cannot take a row the panels need. 30svh at 1080 is 324px, against ~130px
+   * of actual content on a partner page — which is where the surplus is
+   * largest, because a profile carries the least copy on the site.
+   *
+   * The panel copy goes up a step for the same reason it came down one: 16px on
+   * a ~66 character measure is right when the row is short, and on a 1000px+
+   * screen the row is not. 1000 and not 900, which was tried: at 900 the extra
+   * lines cost the longest Greek overview more than the screen had, and the
+   * panel that had just stopped scrolling started again.
+   */
+  @media (min-height: 1000px) {
+    .partner-page__identity {
+      min-height: clamp(0px, 30svh, 340px);
+      align-content: space-between;
+    }
+
+    /* The prose column takes a little from the ledger, and only here.
+       The two panels share a height, so the gap between them is the shorter
+       one's void — and on a 1080px screen that gap was 174px in Greek, because
+       a paragraph grows with its measure and a five-line ledger does not.
+       Moving 0.15 of a unit across closes it from both ends at once: the prose
+       loses a line or two, and the ledger's longest clauses gain one. It is
+       wrong below this height, where the ledger is the panel that is short of
+       room, which is why it lives in this block and not in the base grid. */
+    .partner-page__stage {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.7fr) minmax(0, 0.85fr);
+    }
+
+    .partner-page__bio {
+      font-size: var(--type-body-lg-size);
+      line-height: var(--type-body-lg-leading);
+    }
+  }
+
+  /* ── The tight end of the gate ───────────────────────────────────────────
+   *
+   * 1280x700 is the one size where the longest Greek areas do not fit and a
+   * panel body has to scroll. These two rules are what keeps that to a few
+   * lines rather than a screenful: a step off each panel's padding is 16px of
+   * height and 16px of measure back, and a step off the stage's own gap is
+   * another 8. Nothing on this page reaches that — the numbers are the practice
+   * page's — but the two layouts are one system and a rule that exists on one
+   * of them and not the other is how they drift apart.
+   *
+   * They stop at 820px because above it nothing scrolls and the looser padding
+   * is the better-looking of the two. */
+  @media (max-height: 819px) {
+    .partner-page__stage {
+      gap: var(--space-6);
+    }
+
+    .partner-page__panel {
+      padding: var(--space-6);
+    }
+  }
+}
+
+/* ─── Entrance ─────────────────────────────────────────────────────────────── */
+
+/* The four regions arrive in the order they are read, one beat apart — the
+   practice page's entrance, on this page's class names. Purely additive: the
+   resting state is the visible one, so a browser that runs none of this shows
+   the finished page. */
+@keyframes partner-page-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .partner-page__rail,
+  .partner-page__plate,
+  .partner-page__identity,
+  .partner-page__panel {
+    animation: partner-page-arrive var(--dur-spawn-element) var(--ease-spawn)
+      both;
+  }
+
+  .partner-page__plate {
+    animation-delay: var(--stagger-element-tight);
+  }
+
+  .partner-page__identity {
+    animation-delay: calc(var(--stagger-element-tight) * 2);
+  }
+
+  .partner-page__panel--prose {
+    animation-delay: calc(var(--stagger-element-tight) * 3);
+  }
+
+  .partner-page__panel--ledger {
+    animation-delay: calc(var(--stagger-element-tight) * 4);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .partner-page__back,
+  .partner-page__back > span[aria-hidden],
   .partner-page__cta {
     transition: none;
+  }
+
+  .partner-page__back:hover > span[aria-hidden] {
+    transform: none;
   }
 
   .partner-page__cta:hover {

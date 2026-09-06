@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '@/i18n';
-import { Card, EditableText } from '@/components';
+import { EditableText } from '@/components';
 import { EditableSpawnText } from '@/components/animations/EditableSpawnText';
 import { FadeInSection } from '@/components/animations/FadeInSection';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
@@ -45,12 +45,13 @@ const testimonials: Testimonial[] = [
  * and unlike dots it does not need one target per quote, so it works the same
  * with three quotes or ten.
  *
- * The stage is a glass surface rather than bare page. Set directly on the
- * ramp, the display-size italic had the fixed circuit field running straight
- * through it — lines crossing letterforms at the size where they are least
- * forgiving. The material solves it the way it is supposed to: it blurs what
- * is behind into texture instead of masking it, so the field still shows and
- * the quote sits on something.
+ * The stage is bare page, on the section's own column. It spent a while as a
+ * centred glass panel, on the argument that a display-size italic needs a
+ * ground or the fixed circuit field runs straight through the letterforms. The
+ * argument was sound and the premise stopped being true: the quote caps at
+ * `--type-h1-size` now rather than running to 63px, and the field reads as
+ * texture behind 40px. The panel is gone with it — see the stage's block in the
+ * stylesheet for why it could not have stayed anyway.
  *
  * ## Who is allowed to stop it
  *
@@ -169,9 +170,21 @@ export function TestimonialsSection() {
         </FadeInSection>
 
         <FadeInSection>
-          <Card
+          {/*
+            A plain element, not a `Card`.
+
+            The stage used to be a glow-variant glass card, and it was neither
+            glass nor doing anything a card does: `content-visibility: auto` on
+            this section makes it a backdrop root with nothing behind it, so the
+            material's `backdrop-filter` sampled empty space and painted a flat
+            tint — see the `lensing` note in Card.tsx, which names this section.
+            What was left was a rounded rectangle drawn around a quote, centred
+            on nothing, spending a third of the 700px height budget on its own
+            padding. The region role, the hover surface and the keyboard target
+            were the only parts worth keeping, and none of them needed a card.
+          */}
+          <div
             className="testimonials-stage"
-            variant="glow"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             role="region"
@@ -216,12 +229,15 @@ export function TestimonialsSection() {
                 in the same grid cell as the visible one, so the cell measures
                 the tallest and the layout is settled before the first frame.
 
-                `t()` rather than EditableText on purpose: this is a measuring
-                stick, not content. Six more editable regions holding the same
-                strings would give an admin five wrong places to click, and the
-                whole block is `aria-hidden` and `visibility: hidden` — out of
-                the accessibility tree, out of the live region's announcements,
-                and untabbable, but still measured.
+                It renders the same `QuoteFigure` as the visible quote, editable
+                spans and all, because measuring anything else is how the sizer
+                stops measuring the thing it is standing in for — see that
+                component's doc comment. The copies stay harmless because the
+                whole block is `aria-hidden` and `visibility: hidden` with
+                `pointer-events: none`: out of the accessibility tree, out of
+                the live region's announcements, untabbable and unclickable, so
+                an admin cannot reach the five wrong places to click. Still
+                measured, which is the only job it has.
               */}
               <div className="testimonials-stage__sizer" aria-hidden="true">
                 {testimonials.map((item) => (
@@ -305,7 +321,7 @@ export function TestimonialsSection() {
                 ))}
               </div>
             </div>
-          </Card>
+          </div>
         </FadeInSection>
       </div>
     </section>

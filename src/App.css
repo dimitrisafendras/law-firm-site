@@ -300,6 +300,102 @@
   }
 }
 
+/* ─── Screens dim as they leave ─────────────────────────────────────────────
+ *
+ * One fade for the whole page: every screen loses its opacity as it scrolls off
+ * the top, so a section hands over to the next one instead of sliding out from
+ * under the header. The hero's own exit (HeroSection.css) is a four-part
+ * de-resolution that runs *underneath* this — the statue's erasure, the copy's
+ * recede, the grid's dim — and this is the one treatment they all share.
+ *
+ * ── Why `view()` here and a named timeline in the hero ──────────────────────
+ *
+ * The hero names its timeline because four different elements *inside* it have
+ * to agree on what "40% scrolled" means, and each would otherwise get its own
+ * subject. Here the subject IS the animated element, so the anonymous `view()`
+ * is not a shortcut — it is the correct timeline, and it is the only one that
+ * generalises. A named timeline would have to be declared per section anyway,
+ * and the hero's reasoning ("the hero is one viewport at the top of the
+ * document, so exit maps onto scrollY") does not transfer to a section in the
+ * middle of the page. `exit` does transfer, because it is defined relative to
+ * the element rather than to the document: it begins when the element stops
+ * covering the viewport and ends when its bottom edge reaches the viewport top.
+ *
+ * That is also what makes this safe below the screens gate, where the sections
+ * are ordinary blocks of whatever height their content comes to. For an element
+ * taller than the viewport the `exit` phase is its last viewport of travel; for
+ * a short one it is its own height. Either way the fade is over exactly as the
+ * element leaves, so the rule is deliberately NOT gated — there is nothing for
+ * a gate to correct.
+ *
+ * ── The window ──────────────────────────────────────────────────────────────
+ *
+ * 15% to 100%, and the far end is the load-bearing one. Anything that finishes
+ * early leaves a blank band: at `exit p` the element still occupies the top
+ * `(1 - p)` of the screen, so a fade completing at 50% would hand the reader
+ * half a screen of nothing above the incoming section. Landing on 100% means
+ * the last pixel of opacity goes with the last pixel of the element. The 15%
+ * of lead-in is there so a small scroll — a nudge, a trackpad twitch — does not
+ * visibly dim a section the reader is still reading.
+ *
+ * Opacity only. A translate was the obvious companion (it would mirror
+ * FadeInSection's entrance, which rises 24px) and it is wrong at this scale:
+ * a section transformed upward stops meeting the section below it, and the two
+ * overlap along an edge that is not where either of them is laid out.
+ *
+ * ── The last section is exempt, and this is not tidiness ────────────────────
+ *
+ * A section only ever finishes its `exit` if there is enough document below it
+ * to scroll it off the top, and behind the last one there is only the footer.
+ * Measured at 1512x900: the page bottoms out at scrollY 3914, which leaves
+ * `#contact` stranded at opacity 0.77 with 586px of itself — the whole enquiry
+ * form and its submit button — still on screen and no scroll left to restore
+ * it. The reader would have to scroll *up* to read the form properly. A 314px
+ * footer cannot carry a viewport-long fade, and nothing about the rule can know
+ * that, so the last screen simply does not fade.
+ *
+ * `:not(:last-of-type)` rather than `:not(:last-child)`: a decorative div
+ * appended to the ramp later would quietly re-arm this on the contact section,
+ * and the failure mode is a washed-out contact form nobody would connect to
+ * that div. The header needs no such guard — the hero is never the last screen.
+ *
+ * ── `content-visibility: auto` ──────────────────────────────────────────────
+ *
+ * Three of these sections carry it and it is left alone — it is load-bearing
+ * for below-the-fold paint cost, and it does not interfere: it applies paint
+ * containment, not a bar on compositing the element itself, and the animation
+ * was measured running on all five screens with it in place. It does form a
+ * backdrop root, but that is already true at rest and is why ContactSection
+ * opts out of it (see liquid-glass.css); a fading section is fading, and its
+ * glass has nothing left to lens by the time the opacity is low enough to
+ * matter.
+ *
+ * Scoped to `--screens`, so the detail and auth pages under `--short` never see
+ * it — those are read top to bottom as ordinary documents, and dimming their
+ * body as it scrolled would be a bug, not an effect.
+ */
+
+@keyframes page-screen-dim {
+  /* `to` only: the implicit 0% is the element's own computed opacity, so a
+     section that sets one of its own keeps it until the fade starts. */
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Same discipline as every other entrance on this site: the resting state is
+     the visible one, this block is purely additive, and a browser without
+     scroll-driven timelines simply gets the page as it is. Nobody is ever left
+     looking at a section that faded out and did not come back. */
+  @supports (animation-timeline: view()) {
+    .page-ramp--screens > header,
+    .page-ramp--screens > section:not(:last-of-type) {
+      animation: page-screen-dim linear both;
+      animation-timeline: view();
+      animation-range: exit 15% exit 100%;
+    }
+  }
+}
+
 /*
  * Every section sits above the circuit field, which is the ramp's first
  * child at z-index 0. They are all `position: relative` already for their own

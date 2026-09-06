@@ -15,7 +15,7 @@ const en = {
   heroTitleLine2: 'Legal Counsel',
   heroTitle: 'Super Prime Legal Counsel',
   heroSubtitle:
-    'A new-generation legal practice combining deep expertise in real estate, startup funding, maritime, and cryptocurrency law. Built for ambitious professionals navigating tomorrow\u2019s challenges.',
+    'A new-generation legal practice combining deep expertise in corporate, commercial and transactional work, technology and digital assets, shipping, real estate, and disputes. Built for ambitious professionals navigating tomorrow\u2019s challenges.',
   heroCta: 'Establish Protocol',
   heroSecondaryCta: 'Meet the partners',
 
@@ -23,27 +23,51 @@ const en = {
   practiceOverline: 'Practice Areas',
   practiceTitle: 'Our Expertise',
   practiceSubtitle:
-    'Four pillars of specialization for clients who need precision and depth.',
+    'Ten areas of specialization for clients who need precision and depth.',
 
-  // `num` is the roman numeral of the card (I..IV), supplied by PracticeGrid.
+  // `num` is the roman numeral of the card (I..X), supplied by PracticeGrid.
   practiceDomainNum: 'Domain {{num}}',
   practiceExploreDomain: 'Explore Domain',
 
-  practiceRealEstateTitle: 'Real Estate',
-  practiceRealEstateDesc:
-    'Full-spectrum property counsel \u2014 acquisitions, development permits, title due diligence, lease structuring, and cross-border transactions across Greece and the EU.',
+  practiceCorporateTitle: 'Corporate & Governance',
+  practiceCorporateDesc:
+    'Formation and structuring of Greek and cross-border groups, with shareholders\u2019 agreements and board governance written for the day they are argued over.',
 
-  practiceStartupTitle: 'Startup & Venture Capital',
+  practiceCommercialTitle: 'Commercial Contracts',
+  practiceCommercialDesc:
+    'Distribution, supply, services, SaaS and licensing agreements drafted and negotiated, with the liability and termination terms settled before anyone needs them.',
+
+  practiceMergersTitle: 'M&A, Investments & Funding',
+  practiceMergersDesc:
+    'Due diligence, structuring and documentation from term sheet to closing \u2014 share deals, asset deals and investments, with every finding priced into the agreement.',
+
+  practiceStartupTitle: 'Startups, Technology & IP',
   practiceStartupDesc:
-    'Seed to Series C and beyond. SAFE notes, shareholder agreements, cap table structuring, investor negotiations, and regulatory compliance for tech ventures.',
+    'Incorporation, funding rounds and cap tables, alongside the software, licensing and IP agreements that decide what the company actually owns.',
 
-  practiceMaritimeTitle: 'Maritime Law',
-  practiceMaritimeDesc:
-    'Ship finance, charter party disputes, cargo claims, flag state compliance, and environmental regulations. Decades of Piraeus shipping corridor experience.',
-
-  practiceCryptoTitle: 'Cryptocurrency & Digital Assets',
+  practiceCryptoTitle: 'FinTech, Digital Assets & Digital Business',
   practiceCryptoDesc:
-    'Token issuance, DeFi protocol compliance, MiCA regulatory frameworks, exchange licensing, DAO governance structures, and digital asset dispute resolution.',
+    'Structuring, licensing and compliance for fintech and digital-asset businesses \u2014 MiCA readiness, AML and KYC, platform terms and the vendor agreements beneath them.',
+
+  practicePrivacyTitle: 'Privacy, GDPR & Data Governance',
+  practicePrivacyDesc:
+    'GDPR from audit to breach response \u2014 processing records, privacy notices, consent frameworks, international transfers and the documents a regulator asks for first.',
+
+  practiceRealEstateTitle: 'Real Estate & Hospitality',
+  practiceRealEstateDesc:
+    'Acquisitions, title and cadastral diligence, development, leases and hotel transactions \u2014 including the structures foreign investors hold Greek property through.',
+
+  practiceMaritimeTitle: 'Shipping & Maritime Commerce',
+  practiceMaritimeDesc:
+    'Charterparties, ship-management agreements and maritime corporate structures for owners, charterers and managers \u2014 with the disputes that follow handled in the same office.',
+
+  practiceDisputesTitle: 'Disputes & Mediation',
+  practiceDisputesDesc:
+    'Commercial, corporate, property, IP and maritime disputes \u2014 litigation and interim relief where they are needed, mediation and settlement where they are faster.',
+
+  practiceFamilyTitle: 'Family & Private Client',
+  practiceFamilyDesc:
+    'Divorce, custody, maintenance and property between spouses, including the cross-border cases where two jurisdictions each claim the same family.',
 
   // ─── Practice area detail pages (#practice/<slug>) ───────────────────────────
   practiceAreaLabel: 'Practice Area',
@@ -52,33 +76,85 @@ const en = {
   practiceServicesLabel: 'What we handle',
   practiceContactCta: 'Request a consultation',
 
-  practiceRealEstateDetail:
-    'Property work in Greece rarely fails on the contract; it fails on what was never checked. We run an acquisition from the title search forward \u2014 Land Registry and Cadastre position, planning and forestry status, arrears and encumbrances \u2014 then build the structure that holds: preliminary agreements, notarial deeds, development and construction permits, and lease terms that survive a change of tenant. Buyers coming from outside Greece get the residence, tax and repatriation questions answered in the same file rather than in a second one.',
-  practiceRealEstateService1: 'Acquisitions & disposals',
-  practiceRealEstateService2: 'Title & cadastral due diligence',
-  practiceRealEstateService3: 'Development & planning permits',
-  practiceRealEstateService4: 'Lease structuring & landlord disputes',
+  practiceCorporateDetail:
+    'A company is a set of documents someone will one day read against you. We form and structure Greek and cross-border groups \u2014 subsidiaries, holdings, operating companies, SPVs \u2014 and draft the shareholders\u2019 agreement around the questions nobody wants to raise at signing: who blocks what, who leaves at what price, what happens when two equal founders stop speaking. Board decisions, directors\u2019 duties and ordinary corporate housekeeping are kept current, because those are what a buyer\u2019s diligence actually opens.',
+  practiceCorporateService1: 'Formation, subsidiaries & SPVs',
+  practiceCorporateService2: 'Shareholders\u2019 & founder arrangements',
+  practiceCorporateService3: 'Board governance & directors\u2019 duties',
+  practiceCorporateService4: 'Reorganisations & deadlock mechanisms',
+  practiceCorporateService5: 'Cross-border group structuring',
+
+  practiceCommercialDetail:
+    'Contract disputes turn on the same three clauses \u2014 limitation of liability, termination, and governing law \u2014 so those are the ones we negotiate first and concede last. We cover the full commercial range: distribution, agency, franchise, supply and outsourcing, joint ventures and strategic collaborations, SaaS and software licensing, master services agreements and statements of work, NDAs and non-competes. For a client with a portfolio rather than a contract, we review the whole set and leave templates the commercial team can use without calling us.',
+  practiceCommercialService1: 'Distribution, agency & franchise',
+  practiceCommercialService2: 'SaaS, software & licensing',
+  practiceCommercialService3: 'NDAs & restrictive covenants',
+  practiceCommercialService4: 'Warranties, indemnities & liability caps',
+  practiceCommercialService5: 'Contract frameworks & portfolio reviews',
+
+  practiceMergersDetail:
+    'A diligence report that only lists risks is half a report. We review corporate, commercial, employment, real estate, regulatory, IP, data-protection and litigation exposure \u2014 full scope or red flag, depending on what the target is worth \u2014 and then say what each finding should do to the deal: remediation, a warranty, an indemnity, a price adjustment, or a condition precedent. From there we structure and paper the transaction to closing, and keep the financial, tax and technical advisers on one timetable.',
+  practiceMergersService1: 'Legal & red-flag due diligence',
+  practiceMergersService2: 'Diligence reporting & risk assessment',
+  practiceMergersService3: 'Share deals, asset deals & JVs',
+  practiceMergersService4: 'Term sheets, SPAs & closing',
+  practiceMergersService5: 'Post-acquisition corporate implementation',
 
   practiceStartupDetail:
-    'From incorporation to the round that changes everything. We paper seed and venture financings \u2014 SAFEs, convertible notes, preferred share terms \u2014 and keep the cap table legible while the company grows into it: founder vesting, option pools, employee grants, and the shareholder agreement that decides who actually controls an exit. Investor-side diligence is answered out of a data room we help assemble before anyone asks for it.',
-  practiceStartupService1: 'Incorporation & founder agreements',
-  practiceStartupService2: 'SAFEs, notes & priced rounds',
-  practiceStartupService3: 'Cap table & option plans',
-  practiceStartupService4: 'Investor diligence & exits',
-
-  practiceMaritimeDetail:
-    'Piraeus is the practice, not the postcode. We act on ship finance and mortgages, sale and purchase, newbuildings, charter party disputes, cargo claims and collisions, and the flag state and port state compliance that decides whether a vessel sails at all. Environmental exposure \u2014 from the EU ETS to sulphur limits \u2014 is handled inside the commercial file rather than beside it, because that is where the cost lands.',
-  practiceMaritimeService1: 'Ship finance & mortgages',
-  practiceMaritimeService2: 'Sale, purchase & newbuildings',
-  practiceMaritimeService3: 'Charter party & cargo disputes',
-  practiceMaritimeService4: 'Flag state & environmental compliance',
+    'From incorporation to the round that changes everything. We paper seed and venture financings \u2014 SAFEs, convertible notes, preferred share terms \u2014 and keep the cap table legible while the company grows into it: founder vesting, option pools, employee grants, and the shareholder agreement that decides who controls an exit. The other half is what the company owns: development, SaaS and white-label agreements, trademarks, IP assignments and platform terms. A startup whose product was built by a contractor with no assignment clause has a diligence problem, not a legal theory.',
+  practiceStartupService1: 'Incorporation, founder terms & cap tables',
+  practiceStartupService2: 'Funding rounds & investor negotiation',
+  practiceStartupService3: 'Software, SaaS & licensing agreements',
+  practiceStartupService4: 'Trademarks, IP ownership & transfers',
+  practiceStartupService5: 'Platform & marketplace terms',
 
   practiceCryptoDetail:
-    'MiCA turned crypto counsel from an argument about analogies into a licensing exercise, and we treat it as one. We take issuers and platforms through white papers, CASP authorisation, and the Bank of Greece and Capital Market Commission touchpoints; we structure token distributions and DeFi protocols that have to survive both their regulators and their own governance; and we act when custody, exchange or DAO arrangements end in dispute. Tax treatment is settled in the same file rather than deferred to one.',
-  practiceCryptoService1: 'MiCA & CASP authorisation',
-  practiceCryptoService2: 'Token issuance & white papers',
-  practiceCryptoService3: 'DeFi & DAO governance',
-  practiceCryptoService4: 'Custody, exchange & asset disputes',
+    'MiCA turned crypto counsel from an argument about analogies into a licensing exercise, and we treat it as one. We map the regulatory perimeter before a business is built, then structure it: holding and operating companies, jurisdiction and substance, CASP authorisation, and the Bank of Greece and Capital Market Commission touchpoints. Underneath sits the half a supervisor actually audits \u2014 AML and KYC procedures, onboarding, investor classification, conflicts and risk controls \u2014 together with the payment, custody, outsourcing and white-label agreements the platform runs on.',
+  practiceCryptoService1: 'FinTech & digital-asset structuring',
+  practiceCryptoService2: 'MiCA readiness & licensing strategy',
+  practiceCryptoService3: 'Platform, exchange & tokenisation terms',
+  practiceCryptoService4: 'AML, KYC & governance frameworks',
+  practiceCryptoService5: 'Payment, custody & outsourcing agreements',
+
+  practicePrivacyDetail:
+    'When the Hellenic Data Protection Authority opens a file, its first request is almost always the record of processing activities \u2014 the one document most businesses do not have. We build the programme from that end backwards: data mapping and retention, privacy notices, cookie and consent frameworks, controller and processor agreements, and Standard Contractual Clauses for transfers outside the EEA. DPIAs and legitimate-interest assessments get written while they are cheap rather than when they are evidence, and breach notification runs against the seventy-two-hour clock, not after it.',
+  practicePrivacyService1: 'GDPR audits & compliance programmes',
+  practicePrivacyService2: 'Privacy notices & processing agreements',
+  practicePrivacyService3: 'Data mapping, retention & transfers',
+  practicePrivacyService4: 'DPIAs & data-breach response',
+  practicePrivacyService5: 'Employee privacy & GDPR diligence',
+
+  practiceRealEstateDetail:
+    'Property work in Greece rarely fails on the contract; it fails on what was never checked. We run an acquisition from the title search forward \u2014 Land Registry and Cadastre position, planning and forestry status, arrears and encumbrances \u2014 then build the structure that holds: SPVs and joint ventures, notarial deeds, development permits, commercial and hotel leases, and financing. Hotels bring their own layer: management, franchise and licensing agreements that outlive the sale. Buyers from outside Greece get residence, tax and Golden Visa questions answered in the same file.',
+  practiceRealEstateService1: 'Acquisitions, disposals & title diligence',
+  practiceRealEstateService2: 'SPVs, joint ventures & investment structures',
+  practiceRealEstateService3: 'Hotel transactions & management agreements',
+  practiceRealEstateService4: 'Commercial leases & real estate financing',
+  practiceRealEstateService5: 'Golden Visa & foreign investor support',
+
+  practiceMaritimeDetail:
+    'Piraeus is the practice, not the postcode. We act for shipowners, charterers and managers on the commercial side: time, voyage and bareboat charterparties, ship-management and maritime services contracts, and the risk allocation written into them. Around that sits the corporate work \u2014 establishing and restructuring maritime companies, shareholder arrangements, joint ventures and acquisitions \u2014 and what a modern fleet runs on: outsourcing, SaaS and the data-protection questions crew management raises. When a charterparty dispute starts we take it from strategy through negotiation to settlement, with foreign counsel where the forum requires it.',
+  practiceMaritimeService1: 'Shipowner & charterer commercial support',
+  practiceMaritimeService2: 'Charterparties & ship-management agreements',
+  practiceMaritimeService3: 'Maritime corporate structures & investments',
+  practiceMaritimeService4: 'Cross-border technology & data arrangements',
+  practiceMaritimeService5: 'Charterparty disputes & settlement',
+
+  practiceDisputesDetail:
+    'Greek civil proceedings move slowly enough that the decision to litigate is commercial before it is legal. So we start with the arithmetic: what the claim is worth, what the evidence actually proves, how long the forum will take, and whether interim measures can hold the position in the meantime. We run contractual, shareholder, M&A, real estate, IP, technology and charterparty disputes, in civil and criminal proceedings alike. Where a negotiated outcome is available we say so early and mediate, rather than bill through a hearing that changes nothing.',
+  practiceDisputesService1: 'Commercial, contractual & shareholder disputes',
+  practiceDisputesService2: 'M&A, property & technology claims',
+  practiceDisputesService3: 'Charterparty & maritime disputes',
+  practiceDisputesService4: 'Interim measures & urgent relief',
+  practiceDisputesService5: 'Mediation & settlement agreements',
+
+  practiceFamilyDetail:
+    'This is the one area where the quickest route is usually the quietest, and we advise accordingly. We act in consensual and contested divorce, custody, residence and parental communication, child support, spousal maintenance, property relations between spouses and cohabitation agreements. Urgent matters \u2014 interim measures, domestic-violence protection, a child about to be relocated \u2014 are treated as urgent the day they arrive. Cross-border files are where families lose the most: an international divorce, a foreign judgment that has to be recognised here, two sets of proceedings that must be kept in step.',
+  practiceFamilyService1: 'Consensual & contested divorce',
+  practiceFamilyService2: 'Custody, residence & child support',
+  practiceFamilyService3: 'Maintenance & matrimonial property',
+  practiceFamilyService4: 'Interim measures & protection orders',
+  practiceFamilyService5: 'International divorce & child relocation',
 
   // ─── Team / Attorneys ────────────────────────────────────────────────────────
   teamOverline: 'Partner Ethos',
@@ -346,7 +422,7 @@ const en = {
   attorney3Bio:
     'Stavros advises founders and funds operating at the regulatory frontier of digital assets. He structures token offerings, guides protocols through MiCA authorisation, and resolves disputes where code and contract law meet.',
   attorney3Spec1: 'Digital Assets',
-  attorney3Spec2: 'DeFi & Web3',
+  attorney3Spec2: 'AML & Licensing',
   attorney3Spec3: 'MiCA Compliance',
   attorney3Focus: 'Regulatory Architecture',
   attorney3Origin: 'Athens',
@@ -373,8 +449,8 @@ const en = {
   menuLanguage: 'Language',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────
-  chapterExpertise: 'Chapter 01 / Expertise',
-  chapterTeam: 'Chapter 02 / Team',
+  chapterTeam: 'Chapter 01 / Team',
+  chapterExpertise: 'Chapter 02 / Expertise',
   chapterTestimonials: 'Chapter 03 / Testimonials',
   chapterContact: 'Chapter 04 / Contact',
 

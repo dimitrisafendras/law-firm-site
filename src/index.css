@@ -141,6 +141,12 @@ html {
  * page scrolls normally — but the sections keep their one-viewport height, so
  * the composition still reads as a sequence of screens rather than a long ramp.
  *
+ * Snapping only the hero-to-section-one boundary was tried and removed too. CSS
+ * snap attraction is symmetric and there is no way to make an edge pull one way
+ * only, so a snap point at section one's start also caught the reader coming
+ * back up out of section two: measured at 1728x907, a rest at 1200 was pulled
+ * to 907, and the first ~450px of section two sat inside the radius.
+ *
  * What is left needing a gate is the height itself. `height: 100svh` with
  * `overflow: hidden` (App.css) clips anything that does not fit, so it may only
  * be applied where the content is known to fit, and that was measured rather

@@ -125,17 +125,7 @@ const el = {
   partnerContactCta: 'Ζητήστε συνάντηση',
 
   // ─── Stats ───────────────────────────────────────────────────────────────────
-  statClients: 'Πελάτες',
-  statTransactions: 'Σε Συναλλαγές',
-  statYears: 'Χρόνια Συνολικής Εμπειρίας',
-  statJurisdictions: 'Δικαιοδοσίες',
 
-  // Stat figures. StatsBar counts up to the leading digits and prints whatever
-  // trails them verbatim, so '2δισ.+' animates 0 -> 2 and then reads '2δισ.+'.
-  statClientsValue: '500+',
-  statTransactionsValue: '2δισ.+',
-  statYearsValue: '30+',
-  statJurisdictionsValue: '12',
 
   // ─── Testimonials ────────────────────────────────────────────────────────────
   testimonialsOverline: 'Τι Λένε οι Πελάτες',

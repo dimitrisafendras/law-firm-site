@@ -121,17 +121,7 @@ const en = {
   partnerContactCta: 'Request a consultation',
 
   // ─── Stats ───────────────────────────────────────────────────────────────────
-  statClients: 'Clients Served',
-  statTransactions: 'In Transactions',
-  statYears: 'Years Combined Experience',
-  statJurisdictions: 'Jurisdictions',
 
-  // Stat figures. StatsBar counts up to the leading digits and prints whatever
-  // trails them verbatim, so '2B+' animates 0 -> 2 and then reads '2B+'.
-  statClientsValue: '500+',
-  statTransactionsValue: '2B+',
-  statYearsValue: '30+',
-  statJurisdictionsValue: '12',
 
   // ─── Testimonials ────────────────────────────────────────────────────────────
   testimonialsOverline: 'What Clients Say',

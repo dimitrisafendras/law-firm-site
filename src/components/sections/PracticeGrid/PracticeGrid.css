@@ -1,15 +1,34 @@
+/*
+ * One screen, and it fits by construction.
+ *
+ * The section used to be as tall as its content made it — 1,029px at a 907px
+ * viewport, which is fine on a page you scroll and impossible on a page that
+ * gives each section exactly one screen. Every box from here down is now sized
+ * off the height it is *given* rather than the height it wants: the section is
+ * a flex column, the header takes what it needs, and the grid takes the rest.
+ *
+ * That is what "does not overflow" actually requires. Trimming padding until it
+ * happened to fit 907 would solve today's laptop and break the next one; a
+ * layout driven by available height has no wrong viewport, only smaller cards.
+ *
+ * The top padding is asymmetric because the header bar is fixed and overlays
+ * the top of every screen — space-24 clears it, space-16 below is just air.
+ */
 .practice-section {
   position: relative;
   overflow: hidden;
-  padding: var(--space-24) 0;
+  padding: var(--space-24) 0 var(--space-16);
+  display: flex;
+  flex-direction: column;
 
-  /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
-     height (self-corrects after first render via the `auto` keyword). */
+  /* Below-the-fold: skip rendering until near-viewport. The reservation is set
+     in App.css to one viewport, which is what this section now measures — the
+     hand-counted 1225px it used to claim is a height it can no longer have. */
   content-visibility: auto;
-  contain-intrinsic-size: auto 1225px;
 
   @media (max-width: 1024px) {
     padding: var(--space-8) 0;
+    display: block;
   }
 }
 
@@ -17,10 +36,23 @@
   max-width: var(--layout-max-width);
   margin: 0 auto;
   padding: 0 var(--space-12);
+  /* Fills the section, and `min-height: 0` is load-bearing: a flex item's
+     default `min-height: auto` refuses to shrink below its content, which is
+     exactly the overflow this layout exists to prevent. */
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 
   @media (max-width: 1024px) {
     padding: 0 var(--space-4);
+    display: block;
   }
+}
+
+.practice-section__inner > .fade-section:first-child {
+  flex: 0 0 auto;
 }
 
 /* ─── Asymmetric Bento Grid ────────────────────────────────────────────────── */
@@ -30,9 +62,16 @@
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: var(--space-6);
+  /* Two equal rows sharing whatever the header left. `1fr` here rather than
+     `auto` is what hands the cards a height instead of asking them for one. */
+  grid-template-rows: 1fr 1fr;
+  flex: 1 1 auto;
+  min-height: 0;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
+    display: grid;
   }
 }
 
@@ -44,9 +83,18 @@
 }
 
 /* The fade wrapper is the grid item; let the card inside stretch to fill it
-   so both cards in a row stay equal height. */
+   so both cards in a row stay equal height. `min-height: 0` for the same
+   reason as above — a grid item's automatic minimum is its content, and
+   without this the row refuses to shrink to its `1fr` share. */
 .practice-bento > .fade-section {
   display: grid;
+  min-height: 0;
+}
+
+@media (min-width: 1280px) {
+  .practice-bento > .fade-section > .practice-domain {
+    min-height: 0;
+  }
 }
 
 /* ─── Domain Card ──────────────────────────────────────────────────────────── */

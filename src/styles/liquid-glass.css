@@ -75,9 +75,9 @@
  * auto` applies at all times, not only while a section is skipped. Three of the
  * home page's sections carry it (PracticeGrid, PartnerEthos,
  * TestimonialsSection), so the cards inside them sample an empty backdrop and
- * render as a flat tint over the page. StatsBar and ContactSection leave
- * `content-visibility` off for exactly this reason and do lens; both say so in
- * their own stylesheets.
+ * render as a flat tint over the page. ContactSection leaves
+ * `content-visibility` off for exactly this reason and does lens; it says so in
+ * its own stylesheet.
  *
  * That makes lensing an accident of which ancestor happens to be contained. A
  * surface that has to match one of the flat cards — the detail pages' panels

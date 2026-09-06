@@ -1,15 +1,29 @@
+/*
+ * The one section that already fitted a screen — 846px against 907 — so it is
+ * centred in the height rather than rebuilt for it. The stage holds one quote's
+ * worth of column (the sizer settles that) and the section has nothing else to
+ * put in the space, so the space goes above and below the content instead of
+ * being padded out of existence.
+ */
 .testimonials-section {
   position: relative;
   overflow: hidden;
-  /* Was a raw 100px; the scale's 96px step, like every other section. */
-  padding: var(--space-24) 0;
+  padding: var(--space-24) 0 var(--space-16);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
+  /* Reservation lives in App.css now, at one viewport. */
   content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
 
   @media (max-width: 1024px) {
     padding: var(--space-16) 0;
+    display: block;
   }
+}
+
+.testimonials-section__inner {
+  width: 100%;
 }
 
 .testimonials-section__inner {

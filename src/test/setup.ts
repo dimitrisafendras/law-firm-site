@@ -66,7 +66,7 @@ function createMediaQueryList(query: string): MediaQueryList {
 /**
  * An IntersectionObserver a test can drive.
  *
- * `FadeInSection` and `StatsBar` only ever reveal content from an observer
+ * `FadeInSection` only ever reveals content from an observer
  * callback, and jsdom never fires one on its own — without this, scroll-revealed
  * content would simply never appear and every such test would look broken.
  */

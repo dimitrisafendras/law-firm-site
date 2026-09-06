@@ -3,7 +3,6 @@ import { useTranslation } from '@/i18n';
 import { Navbar, Footer, Button, EditableText, AuthNavControl } from '@/components';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
-import { StatsBar } from '@/components/sections/StatsBar/StatsBar';
 import { PracticeGrid } from '@/components/sections/PracticeGrid/PracticeGrid';
 import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection/TestimonialsSection';
@@ -100,7 +99,6 @@ export default function HomePage() {
       <main className="page-ramp">
         <CircuitField />
         <HeroSection />
-        <StatsBar />
         <PracticeGrid />
         <PartnerEthos />
         <TestimonialsSection />

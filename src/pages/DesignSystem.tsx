@@ -6,6 +6,8 @@ import { SpawnText } from '../components/animations/SpawnText';
 import { EditableSpawnText } from '../components/animations/EditableSpawnText';
 import { PartnerCard } from '../components/sections/PartnerEthos/PartnerCard';
 import { partners } from '../components/sections/PartnerEthos/partners';
+import { PracticeDomainCard } from '../components/sections/PracticeGrid/PracticeDomainCard';
+import { practiceAreas } from '../components/sections/PracticeGrid/practiceAreas';
 import {
   Button,
   Container,
@@ -459,6 +461,26 @@ export default function DesignSystem() {
           </div>
         </div>
 
+        {/* PracticeDomainCard — the practice section's linked card */}
+        <div style={showcaseBox}>
+          <span style={showcaseLabel}>{t('dsPracticeDomainCard')}</span>
+          <p style={{ fontSize: '14px', opacity: 0.75, marginBottom: '16px', maxWidth: '60ch' }}>
+            {t('dsPracticeDomainCardNote')}
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: '24px',
+              alignItems: 'start',
+            }}
+          >
+            {practiceAreas.map((area) => (
+              <PracticeDomainCard key={area.key} area={area} />
+            ))}
+          </div>
+        </div>
+
         {/* TestimonialCard */}
         <div style={showcaseBox}>
           <span style={showcaseLabel}>Testimonial Card</span>
@@ -666,10 +688,13 @@ export default function DesignSystem() {
       <section style={sectionStyle}>
         <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '12px' }}>{t('dsFieldTitle')}</h2>
         <p style={{ maxWidth: '70ch', marginBottom: '24px', opacity: 0.75 }}>{t('dsFieldBody')}</p>
-        {/* Scoped preview: the real layer is `position: fixed` behind the whole
-            page, so it is shown here inside a clipped, relatively-positioned
-            box rather than escaping to cover the showcase. */}
-        <div style={{ position: 'relative', height: '260px', overflow: 'hidden', borderRadius: radii['2xl'], background: 'var(--grad-3)' }}>
+        {/* Scoped preview. `position: relative` and `overflow: hidden` are not
+            enough on their own: the real layer is `position: fixed`, whose
+            containing block is the viewport, so it ignored both and covered the
+            whole showcase page. `transform` makes this box a containing block
+            for fixed-position descendants, which is what actually pins the
+            field inside it; the overflow then clips it. */}
+        <div style={{ position: 'relative', height: '260px', overflow: 'hidden', borderRadius: radii['2xl'], background: 'var(--grad-3)', transform: 'translateZ(0)' }}>
           <CircuitField />
         </div>
       </section>

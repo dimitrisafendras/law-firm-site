@@ -45,6 +45,41 @@ const en = {
   practiceCryptoDesc:
     'Token issuance, DeFi protocol compliance, MiCA regulatory frameworks, exchange licensing, DAO governance structures, and digital asset dispute resolution.',
 
+  // ─── Practice area detail pages (#practice/<slug>) ───────────────────────────
+  practiceAreaLabel: 'Practice Area',
+  practiceBackToAreas: 'All practice areas',
+  practiceOverviewLabel: 'Overview',
+  practiceServicesLabel: 'What we handle',
+  practiceContactCta: 'Request a consultation',
+
+  practiceRealEstateDetail:
+    'Property work in Greece rarely fails on the contract; it fails on what was never checked. We run an acquisition from the title search forward \u2014 Land Registry and Cadastre position, planning and forestry status, arrears and encumbrances \u2014 then build the structure that holds: preliminary agreements, notarial deeds, development and construction permits, and lease terms that survive a change of tenant. Buyers coming from outside Greece get the residence, tax and repatriation questions answered in the same file rather than in a second one.',
+  practiceRealEstateService1: 'Acquisitions & disposals',
+  practiceRealEstateService2: 'Title & cadastral due diligence',
+  practiceRealEstateService3: 'Development & planning permits',
+  practiceRealEstateService4: 'Lease structuring & landlord disputes',
+
+  practiceStartupDetail:
+    'From incorporation to the round that changes everything. We paper seed and venture financings \u2014 SAFEs, convertible notes, preferred share terms \u2014 and keep the cap table legible while the company grows into it: founder vesting, option pools, employee grants, and the shareholder agreement that decides who actually controls an exit. Investor-side diligence is answered out of a data room we help assemble before anyone asks for it.',
+  practiceStartupService1: 'Incorporation & founder agreements',
+  practiceStartupService2: 'SAFEs, notes & priced rounds',
+  practiceStartupService3: 'Cap table & option plans',
+  practiceStartupService4: 'Investor diligence & exits',
+
+  practiceMaritimeDetail:
+    'Piraeus is the practice, not the postcode. We act on ship finance and mortgages, sale and purchase, newbuildings, charter party disputes, cargo claims and collisions, and the flag state and port state compliance that decides whether a vessel sails at all. Environmental exposure \u2014 from the EU ETS to sulphur limits \u2014 is handled inside the commercial file rather than beside it, because that is where the cost lands.',
+  practiceMaritimeService1: 'Ship finance & mortgages',
+  practiceMaritimeService2: 'Sale, purchase & newbuildings',
+  practiceMaritimeService3: 'Charter party & cargo disputes',
+  practiceMaritimeService4: 'Flag state & environmental compliance',
+
+  practiceCryptoDetail:
+    'MiCA turned crypto counsel from an argument about analogies into a licensing exercise, and we treat it as one. We take issuers and platforms through white papers, CASP authorisation, and the Bank of Greece and Capital Market Commission touchpoints; we structure token distributions and DeFi protocols that have to survive both their regulators and their own governance; and we act when custody, exchange or DAO arrangements end in dispute. Tax treatment is settled in the same file rather than deferred to one.',
+  practiceCryptoService1: 'MiCA & CASP authorisation',
+  practiceCryptoService2: 'Token issuance & white papers',
+  practiceCryptoService3: 'DeFi & DAO governance',
+  practiceCryptoService4: 'Custody, exchange & asset disputes',
+
   // ─── Team / Attorneys ────────────────────────────────────────────────────────
   teamOverline: 'Partner Ethos',
   teamTitle: 'Meet the Partners',
@@ -168,6 +203,8 @@ const en = {
   testimonialsPrevLabel: 'Previous testimonial',
   testimonialsNextLabel: 'Next testimonial',
   testimonialsGoToLabel: 'Go to testimonial {{index}}',
+  testimonialsPause: 'Pause the rotating quotes',
+  testimonialsPlay: 'Resume the rotating quotes',
 
   // ─── CTA ──────────────────────────────────────────────────────────────────────
   ctaTitle: 'Ready to Secure\nYour Future?',
@@ -355,6 +392,9 @@ const en = {
   dsPartnerCard: 'PartnerCard',
   dsPartnerCardNote:
     'The team section’s card. The whole surface links to that partner’s page at #partner/<n> through a stretched ::after on the name, so the accessible name is the name and nothing is nested inside the link. In admin edit mode the link is dropped and the copy becomes editable instead.',
+  dsPracticeDomainCard: 'PracticeDomainCard',
+  dsPracticeDomainCardNote:
+    'The practice section\u2019s card. The whole surface links to that domain\u2019s page at #practice/<slug> through a stretched ::after on the title, so the accessible name is the domain and nothing is nested inside the link. In admin edit mode the link is dropped and the copy becomes editable instead.',
 } as const;
 
 export default en;

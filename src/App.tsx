@@ -6,7 +6,9 @@ import SignupPage from './pages/SignupPage';
 import AccountPage from './pages/AccountPage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import PartnerDetailPage from './pages/PartnerDetailPage';
+import PracticeDetailPage from './pages/PracticeDetailPage';
 import { partnerFromRoute } from './components/sections/PartnerEthos/partners';
+import { practiceFromRoute } from './components/sections/PracticeGrid/practiceAreas';
 import './App.css';
 
 // Dev-only design-system page. Gated on import.meta.env.DEV, which Vite
@@ -57,12 +59,20 @@ function App() {
   const Page = ROUTES[route];
   if (Page) return <Page />;
 
-  // The one parameterised route: `#partner/1`. A slash rather than a query, so
-  // `routeOf()`'s `[?&]` split leaves the id intact. `partnerFromRoute` returns
-  // null for an id no partner has, which falls through to the home page below
-  // rather than rendering a profile of missing copy.
+  // The parameterised routes: `#partner/1` and `#practice/real-estate`. A slash
+  // rather than a query in both, so `routeOf()`'s `[?&]` split leaves the
+  // parameter intact. Each resolver returns null for a parameter with nothing
+  // behind it, which falls through to the home page below rather than rendering
+  // a page of missing copy.
+  //
+  // `#practice` itself is the home page's practice-section anchor, and it stays
+  // one: `routeOf('#practice')` is `practice`, which does not start with
+  // `practice/`, so it falls through here exactly as it always did.
   const partner = partnerFromRoute(route);
   if (partner) return <PartnerDetailPage partner={partner} />;
+
+  const practiceArea = practiceFromRoute(route);
+  if (practiceArea) return <PracticeDetailPage area={practiceArea} />;
 
   return <HomePage />;
 }

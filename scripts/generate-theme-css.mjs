@@ -28,6 +28,7 @@ import {
   elevations,
   decor,
   motion,
+  transitions,
   typeScale,
   weights,
   layout,
@@ -92,6 +93,11 @@ function buildVarBlock(colorTokens, fontTokens, glassTokens, gradientTokens) {
     `  --type-caps-tracking-wide: ${capsTracking.wide};`,
     `  --motion-enter-travel: ${motion.enter.travel};`,
     `  --motion-enter-range: ${motion.enter.range};`,
+    // 24 declarations across the component stylesheets read this as
+    // `var(--transition, 0.3s)`. It was exported from tokens.ts but never
+    // emitted, so every one of them was silently running on the literal
+    // fallback and editing the token changed nothing.
+    `  --transition: ${transitions.default};`,
     ...mapVars(decor, decorVarNames),
     ...typeVars(),
   ].join('\n');

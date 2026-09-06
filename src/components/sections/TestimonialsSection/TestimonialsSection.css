@@ -61,6 +61,16 @@
   outline-offset: var(--space-2);
 }
 
+/* The stable live region: an ordinary block that wraps the keyed figure and
+   nothing else, so the stage's column measures exactly what it did before.
+   Deliberately NOT `display: contents` — that is the tidy-looking choice and
+   it is the wrong one here, because a box removed from the box tree has a
+   history of being dropped from the accessibility tree with it, and a live
+   region that is not in the accessibility tree announces nothing. */
+.testimonials-stage__live {
+  display: block;
+}
+
 /* Fixed minimum height so a short quote followed by a long one does not make
    the rail jump up and down the page as they cycle. */
 .testimonials-stage__quote {
@@ -136,8 +146,63 @@
  * scales to any number of quotes without becoming a row of targets.
  * ────────────────────────────────────────────────────────────────────────── */
 
+/* Transport control, then rail. The button is `flex: none` and the rail takes
+   the rest, so removing the button under reduced motion simply gives the rail
+   the full width back rather than leaving a hole where a control used to be. */
+.testimonials-stage__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/*
+ * The pause/resume toggle.
+ *
+ * Round and outlined, following IconToggle, because the rail beside it is a row
+ * of flat 2px segments: a control that shared their shape would read as a
+ * seventh quote target. Its accessible name carries the state — see the
+ * component — so nothing here needs to encode pressed-ness in colour, which is
+ * just as well, since colour alone could not.
+ */
+.testimonials-stage__playback {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-8);
+  height: var(--space-8);
+  padding: 0;
+  border: 1px solid var(--glass-control-edge);
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--text-h);
+  cursor: pointer;
+  transition:
+    background var(--transition, 0.3s),
+    border-color var(--transition, 0.3s),
+    color var(--transition, 0.3s);
+}
+
+.testimonials-stage__playback:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.testimonials-stage__playback:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.testimonials-stage__playback-icon {
+  width: var(--space-3);
+  height: var(--space-3);
+  display: block;
+}
+
 .testimonials-stage__rail {
   display: flex;
+  flex: 1;
   gap: var(--space-2);
 }
 
@@ -200,9 +265,20 @@
     animation: none;
   }
 
-  /* The fill still has to show which segment is active — it just arrives
-     rather than travelling. */
-  .testimonials-stage__rail-segment--active .testimonials-stage__rail-fill {
+  /*
+   * The fill still has to show which segment is active — it just arrives rather
+   * than travelling.
+   *
+   * The `[data-paused]` selector is repeated here on purpose. Under this
+   * preference the timer is held permanently (the section stops autoplay
+   * outright), so the active segment is always `data-paused`, and that rule is
+   * the more specific of the two: without this the fill would be left with
+   * `animation-play-state: paused` on an animation that had been cancelled, and
+   * relying on a shorthand reset to sort that out is a subtlety the next
+   * person editing this file should not have to reconstruct.
+   */
+  .testimonials-stage__rail-segment--active .testimonials-stage__rail-fill,
+  .testimonials-stage__rail-segment[data-paused='true'] .testimonials-stage__rail-fill {
     animation: none;
     width: 100%;
   }

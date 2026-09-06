@@ -19,7 +19,7 @@
 //   record; it is intentionally NOT imported by the app anymore (the six hashed
 //   variant files are what ship).
 //
-//   Partner portraits + world map: their sources are only 512x512. The existing
+//   Partner portraits: their sources are only 512x512. The existing
 //   .jpg files are already mozjpeg-optimized (q85 / q75) and double as the
 //   <img> fallback the components reference, so we leave them untouched and only
 //   emit an AVIF sibling. (Re-encoding them in place every run would both drift
@@ -148,7 +148,6 @@ async function run() {
   await buildStatue();
   await buildSingle('partner-male', { quality: 55, effort: 6 });
   await buildSingle('partner-female', { quality: 55, effort: 6 });
-  await buildSingle('world-map', { quality: 50, effort: 6 });
 
   console.log('\n  file                         size');
   console.log('  ----------------------------------------');

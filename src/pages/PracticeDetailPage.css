@@ -1,0 +1,261 @@
+/* The practice-area detail page at `#practice/<slug>`.
+   Same ground as the partner and auth pages: `.page-ramp` (App.css) carries the
+   site's gradient and accent blooms, so the glass here has real colour to
+   concentrate and the footer's first stop meets the page's last without a
+   seam. */
+
+.practice-page {
+  flex: 1;
+  /* 88px clears the fixed navbar — a measurement of another element, not a
+     spacing step. */
+  padding: 88px 0 var(--space-24);
+
+  @media (max-width: 1024px) {
+    padding: 88px 0 var(--space-16);
+  }
+}
+
+.practice-page__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+/* ─── Back ─────────────────────────────────────────────────────────────────── */
+
+.practice-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  margin-top: var(--space-8);
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--text);
+  opacity: var(--text-emphasis-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition:
+    color 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.practice-page__back:hover {
+  color: var(--accent-text);
+  opacity: 1;
+}
+
+/* ─── Masthead ─────────────────────────────────────────────────────────────── */
+
+/* The illustration beside the identity block, on the same column rhythm the
+   partner page uses for its portrait. */
+.practice-page__masthead {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  gap: var(--space-12);
+  align-items: start;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+}
+
+/* Where the partner page puts a photograph. The drawing is oversized and bled
+   past the panel's edges for the same reason it is on the card: at its natural
+   size inside the panel it reads as a small icon rather than as engraving in
+   the surface. */
+.practice-page__art {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-3xl);
+  aspect-ratio: 4 / 5;
+}
+
+/* Sized in percentages of the panel rather than the card's fixed 520px: this
+   panel is a 4/5 box in a fluid column, so a pixel size that bleeds correctly
+   at 380px wide swallows the whole drawing at 260px. */
+.practice-page__art-drawing {
+  position: absolute;
+  bottom: -12%;
+  right: -12%;
+  width: 124%;
+  height: 124%;
+  color: var(--accent);
+  opacity: var(--domain-art-hover);
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(88% 88% at 78% 78%, #000 42%, transparent 94%);
+  mask-image: radial-gradient(88% 88% at 78% 78%, #000 42%, transparent 94%);
+}
+
+/* The domain's icon, top left, where the drawing's mask has released. */
+.practice-page__art-mark {
+  position: absolute;
+  top: var(--space-8);
+  left: var(--space-8);
+  width: 88px;
+  height: 88px;
+  color: var(--accent);
+}
+
+.practice-page__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.practice-page__overline {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent-text);
+}
+
+/* The roman numeral, dimmed against the label it follows — it is an index, not
+   a second label. */
+.practice-page__num {
+  color: var(--text);
+  opacity: var(--text-emphasis-muted);
+}
+
+/* The page's <h1>. index.css gives every h1 the display step and a vertical
+   margin; both are wrong for a title sitting between an overline and a lede,
+   so the step is restated one down and the margin removed. */
+.practice-page__title {
+  font-family: var(--heading);
+  font-size: var(--type-h1-size);
+  font-weight: var(--type-h1-weight);
+  line-height: var(--type-h1-leading);
+  letter-spacing: var(--type-h1-tracking);
+  color: var(--text-h);
+  margin: var(--space-2) 0 0;
+}
+
+.practice-page__lede {
+  font-size: var(--type-body-lg-size);
+  line-height: var(--type-body-lg-leading);
+  color: var(--text);
+  opacity: var(--text-emphasis-secondary);
+  margin: var(--space-6) 0 0;
+  max-width: 60ch;
+}
+
+.practice-page__cta {
+  display: inline-flex;
+  align-items: center;
+  margin-top: var(--space-8);
+  padding: var(--space-3) var(--space-6);
+  font-family: var(--label);
+  font-size: var(--type-small-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--type-small-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent-text);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s var(--ease-settle);
+}
+
+@media (hover: hover) {
+  .practice-page__cta:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+    transform: translateY(-2px);
+  }
+}
+
+/* ─── Panels ───────────────────────────────────────────────────────────────── */
+
+.practice-page__panels {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: start;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.practice-page__panel {
+  border-radius: var(--radius-3xl);
+  padding: var(--space-8);
+}
+
+.practice-page__panel-title {
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--text);
+  opacity: var(--text-emphasis-muted);
+  margin: 0 0 var(--space-6);
+}
+
+.practice-page__detail {
+  font-size: var(--type-body-lg-size);
+  line-height: var(--type-body-lg-leading);
+  color: var(--text);
+  opacity: var(--text-emphasis-secondary);
+  margin: 0;
+}
+
+/* A column rather than the partner page's wrapping pill row: these are four
+   clauses, not four one-word tags, and wrapped pills of that length break into
+   ragged rows that read as broken rather than as a set. */
+.practice-page__services {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.practice-page__service {
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent-text);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--glass-edge);
+}
+
+.practice-page__service:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .practice-page__back,
+  .practice-page__cta {
+    transition: none;
+  }
+
+  .practice-page__cta:hover {
+    transform: none;
+  }
+}

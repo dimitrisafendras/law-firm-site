@@ -4,6 +4,8 @@ import { CircuitField } from '../components/CircuitField';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import { SpawnText } from '../components/animations/SpawnText';
 import { EditableSpawnText } from '../components/animations/EditableSpawnText';
+import { PartnerCard } from '../components/sections/PartnerEthos/PartnerCard';
+import { partners } from '../components/sections/PartnerEthos/partners';
 import {
   Button,
   Container,
@@ -434,6 +436,26 @@ export default function DesignSystem() {
               specialties={['IP', 'Technology']}
               bio="Specializing in patent prosecution and technology licensing agreements."
             />
+          </div>
+        </div>
+
+        {/* PartnerCard — the team section's linked card */}
+        <div style={showcaseBox}>
+          <span style={showcaseLabel}>{t('dsPartnerCard')}</span>
+          <p style={{ fontSize: '14px', opacity: 0.75, marginBottom: '16px', maxWidth: '60ch' }}>
+            {t('dsPartnerCardNote')}
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '32px',
+              alignItems: 'start',
+            }}
+          >
+            {partners.map((partner) => (
+              <PartnerCard key={partner.n} partner={partner} />
+            ))}
           </div>
         </div>
 

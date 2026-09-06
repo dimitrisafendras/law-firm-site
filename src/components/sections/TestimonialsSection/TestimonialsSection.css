@@ -153,11 +153,18 @@
   box-sizing: content-box;
 }
 
+/*
+ * The unfilled track. On `--glass-edge` (0.24 white) this composited to 2.15:1
+ * against the stage — under the 3:1 that 1.4.11 asks of a control's visual
+ * boundary, and visibly so: the rail read as one lone accent bar with no hint
+ * that the space either side of it was clickable. `--glass-control-edge` is the
+ * same white at the alpha that measures 3.29:1 there.
+ */
 .testimonials-stage__rail-segment::before {
   content: '';
   position: absolute;
   inset: var(--space-3) 0;
-  background: var(--glass-edge);
+  background: var(--glass-control-edge);
 }
 
 .testimonials-stage__rail-segment:focus-visible {

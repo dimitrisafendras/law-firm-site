@@ -76,6 +76,14 @@ const en = {
 
   teamFocusLabel: 'Focus',
   teamOriginLabel: 'Origin',
+  teamViewProfile: 'View profile',
+
+  // ─── Partner detail page (#partner/<n>) ─────────────────────────────────────
+  partnerProfileLabel: 'Partner Profile',
+  partnerBackToTeam: 'All partners',
+  partnerAboutLabel: 'About',
+  partnerSpecialtiesLabel: 'Specialisations',
+  partnerContactCta: 'Request a consultation',
 
   // ─── Network / Map ──────────────────────────────────────────────────────────
   networkOverline: 'Our Reach',
@@ -344,6 +352,9 @@ const en = {
     'Splits an already-translated string into per-character or per-word units for the hero entrance. Reduced motion renders it fully assembled.',
   dsEditableTextNote:
     'Renders a plain translated string for visitors. Signed in as an admin, it gains an inline edit affordance and writes to site_content.',
+  dsPartnerCard: 'PartnerCard',
+  dsPartnerCardNote:
+    'The team section’s card. The whole surface links to that partner’s page at #partner/<n> through a stretched ::after on the name, so the accessible name is the name and nothing is nested inside the link. In admin edit mode the link is dropped and the copy becomes editable instead.',
 } as const;
 
 export default en;

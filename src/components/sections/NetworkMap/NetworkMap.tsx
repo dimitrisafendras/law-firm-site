@@ -1,4 +1,5 @@
 import { useTranslation } from '@/i18n';
+import { useEditMode } from '@/lib/edit-mode';
 import { EditableText } from '@/components';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
@@ -50,6 +51,11 @@ const nodes = [
  */
 export function NetworkMap() {
   const { t } = useTranslation();
+  // The whole card is a click target (see the stretched link in the CSS), and
+  // the overlay that makes it one sits above the card's copy — which is exactly
+  // the copy an admin has to be able to click to edit. So the overlay is turned
+  // off while editing is unlocked; for every visitor it is always on.
+  const { canEdit } = useEditMode();
 
   return (
     <section className="network-map">
@@ -64,10 +70,16 @@ export function NetworkMap() {
       </div>
 
       <div className="network-map__band">
+        {/* Mid/Mid, not YMax. The viewBox is centred on Athens (see
+            easternMediterranean.ts), and the centre is the only point a
+            symmetric `slice` crop leaves put — so she lands at the centre of
+            this SVG's box at every viewport width instead of drifting up to the
+            top edge as the viewport gets wider. The box is then offset above the
+            band in CSS so that centre is not behind the cards. */}
         <svg
           className="network-map__map"
           viewBox={EAST_MED_VIEWBOX}
-          preserveAspectRatio="xMidYMax slice"
+          preserveAspectRatio="xMidYMid slice"
           aria-hidden="true"
           focusable="false"
         >
@@ -85,7 +97,11 @@ export function NetworkMap() {
               // own hover `transition`, which would override the wrapper's
               // entrance animation if both lived on one element.
               <FadeInSection key={key}>
-                <div className="network-map__card glass glass--interactive" data-variant="clear">
+                <div
+                  className="network-map__card glass glass--interactive"
+                  data-variant="clear"
+                  data-editing={canEdit ? '' : undefined}
+                >
                   <span className="network-map__card-code" aria-hidden="true">{code}</span>
                   <EditableText tKey={labelKey} as="span" className="network-map__card-label" />
                   <EditableText tKey={cityKey} as="h3" className="network-map__card-city" />
@@ -94,7 +110,18 @@ export function NetworkMap() {
                       <EditableText key={itemKey} tKey={itemKey} as="li" />
                     ))}
                   </ul>
-                  <a className="network-map__card-link" href="#contact">
+                  {/* The card's only interactive element, and the whole card's
+                      hit area: its ::after is stretched over the card in CSS.
+                      Nothing is nested inside it and nothing else is focusable,
+                      so the card exposes exactly one tab stop with one name —
+                      and the name has to say *which* node it connects, because
+                      three cards reading "Connect Node" is three identical
+                      links in a screen reader's link list. */}
+                  <a
+                    className="network-map__card-link"
+                    href="#contact"
+                    aria-label={`${t('networkConnectNode')} — ${t(cityKey)}`}
+                  >
                     {t('networkConnectNode')} <span aria-hidden="true">&rarr;</span>
                   </a>
                 </div>

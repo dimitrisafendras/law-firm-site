@@ -314,6 +314,7 @@ export const glass = {
     tintClear: 'rgba(255, 255, 255, 0.24)',
     highlight: 'rgba(255, 255, 255, 0.7)',
     edge: 'rgba(255, 255, 255, 0.5)',
+    controlEdge: 'rgba(0, 0, 0, 0.42)',
     glow: 'rgba(255, 255, 255, 0.45)',
   },
   /*
@@ -349,6 +350,20 @@ export const glass = {
     tintClear: 'rgba(78, 94, 122, 0.2)',
     highlight: 'rgba(255, 255, 255, 0.5)',
     edge: 'rgba(255, 255, 255, 0.24)',
+    /*
+     * `edge` for things WCAG holds to 3:1 rather than to taste.
+     *
+     * A decorative hairline and the unfilled track of a control are the same
+     * material but not the same requirement: 1.4.11 asks a control's visual
+     * boundary to clear 3:1 against its ground, and `edge` at 0.24 composites
+     * to 2.15:1 over the glass stage — the carousel rail's inactive segments
+     * were effectively invisible, so the control read as one filled bar with no
+     * indication that the rest of it could be clicked.
+     *
+     * 0.38 measures 3.29:1 over that same ground, which clears the bar with
+     * margin without turning a hairline into a rule.
+     */
+    controlEdge: 'rgba(255, 255, 255, 0.38)',
     glow: 'rgba(188, 232, 255, 0.24)',
   },
 } as const;
@@ -566,6 +581,7 @@ export const glassVarNames: Record<string, string> = {
   tintClear: '--glass-tint-clear',
   highlight: '--glass-highlight',
   edge: '--glass-edge',
+  controlEdge: '--glass-control-edge',
   glow: '--glass-glow',
 };
 

@@ -125,8 +125,18 @@
       animation-delay: 0s;
       animation-fill-mode: both;
       animation-timeline: view();
-      animation-range: entry calc(var(--spawn-index, 0) * 1.5%) entry
-        calc(38% + var(--spawn-index, 0) * 1.5%);
+      /*
+       * Deliberately fast. An earlier pass ran this over 38% of the element's
+       * entry with a 1.5% offset per character, and a title caught part-way
+       * showed a single letter floating in an empty section — the exact
+       * "looks broken, not animated" failure this whole rework is about.
+       *
+       * The reveal now completes within the first fifth of the entry, and the
+       * per-character offset is small enough that a long title still finishes
+       * well before it is read. The stagger is a texture, not a wait.
+       */
+      animation-range: entry calc(var(--spawn-index, 0) * 0.45%) entry
+        calc(14% + var(--spawn-index, 0) * 0.45%);
     }
 
     .spawn-text--scroll.spawn-text--gradient .spawn-text__unit {

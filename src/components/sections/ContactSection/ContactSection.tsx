@@ -51,6 +51,27 @@ export function ContactSection() {
                 />
               </div>
             </div>
+
+            {/*
+              What a first consultation actually involves. The column was ~200px
+              of details over ~500px of nothing, and this is the part a person
+              deciding whether to make contact actually wants to know — response
+              time, what the call covers, and that it is privileged.
+            */}
+            <dl className="contact-section__promises">
+              <div className="contact-section__promise">
+                <EditableText tKey="contactPromise1Label" as="dt" />
+                <EditableText tKey="contactPromise1Value" as="dd" />
+              </div>
+              <div className="contact-section__promise">
+                <EditableText tKey="contactPromise2Label" as="dt" />
+                <EditableText tKey="contactPromise2Value" as="dd" />
+              </div>
+              <div className="contact-section__promise">
+                <EditableText tKey="contactPromise3Label" as="dt" />
+                <EditableText tKey="contactPromise3Value" as="dd" />
+              </div>
+            </dl>
           </FadeInSection>
 
           <FadeInSection step={1} className="contact-section__form">

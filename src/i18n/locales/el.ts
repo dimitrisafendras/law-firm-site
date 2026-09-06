@@ -177,6 +177,12 @@ const el = {
     'Συμφωνία, εγχείρημα ή κανονιστική πλοήγηση \u2014 είμαστε έτοιμοι.',
   contactAddress: 'Λεωφ. Βασιλίσσης Σοφίας 12, Αθήνα 10674, Ελλάδα',
   contactEmail: 'info@nomos.legal',
+  contactPromise1Label: 'Χρόνος απόκρισης',
+  contactPromise1Value: 'Απαντάμε σε κάθε αίτημα εντός μίας εργάσιμης ημέρας.',
+  contactPromise2Label: 'Η πρώτη συζήτηση',
+  contactPromise2Value: 'Τριάντα λεπτά, χωρίς χρέωση — περιγράφετε την υπόθεση και σας λέμε αν είμαστε το κατάλληλο γραφείο και τι πιθανόν να απαιτηθεί.',
+  contactPromise3Label: 'Εμπιστευτικότητα',
+  contactPromise3Value: 'Ό,τι μας στέλνετε καλύπτεται από το δικηγορικό απόρρητο από το πρώτο μήνυμα, ανεξάρτητα από το αν αναλάβουμε την υπόθεση.',
   contactPhone: '+30 210 123 4567',
 
   // Contact form. Labels and placeholders reach the DOM as element text and

@@ -10,8 +10,16 @@
 /* The material itself is carried by the `glass` class, added in the TSX once the
    page has scrolled. This rule only draws the seam that separates the header
    from the content sliding under it. */
+/*
+ * A heavier tint than the shared surface value, and it is a legibility fix
+ * rather than a style choice: the bar floats over whatever the page puts under
+ * it, and at the shared 0.28 a card title passing beneath it read straight
+ * through the nav's own wordmark. Every other glass surface on the site has
+ * content of its own behind it that it can afford to show.
+ */
 .navbar--scrolled {
   border-bottom: 1px solid var(--glass-border);
+  --glass-surface-tint: var(--glass-bg-strong);
 }
 
 /* `.glass` rings its whole box with a 1px inset edge. On a bar that bleeds to

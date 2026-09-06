@@ -173,6 +173,12 @@ const en = {
     'Closing a deal, launching a venture, or navigating regulation \u2014 we\u2019re ready.',
   contactAddress: '12 Vasilissis Sofias Avenue, Athens 10674, Greece',
   contactEmail: 'info@nomos.legal',
+  contactPromise1Label: 'Response time',
+  contactPromise1Value: 'We reply to every enquiry within one business day.',
+  contactPromise2Label: 'The first conversation',
+  contactPromise2Value: 'Thirty minutes, no charge — you describe the matter, we tell you whether we are the right firm for it and what it is likely to involve.',
+  contactPromise3Label: 'Confidentiality',
+  contactPromise3Value: 'Everything you send is privileged from the first message, whether or not we go on to act for you.',
   contactPhone: '+30 210 123 4567',
 
   // Contact form. Labels and placeholders reach the DOM as element text and

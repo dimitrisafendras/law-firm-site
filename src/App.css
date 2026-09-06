@@ -123,6 +123,7 @@
  * the gaps between them and behind any translucent surface, rather than being
  * painted over.
  */
+.page-ramp > header,
 .page-ramp > section,
 .page-ramp > div:not(.dissolution-field) {
   position: relative;

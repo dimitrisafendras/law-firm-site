@@ -80,3 +80,39 @@
   color: var(--accent);
   flex-shrink: 0;
 }
+
+/* ─── What to expect ───────────────────────────────────────────────────────── */
+
+.contact-section__promises {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin: var(--space-16) 0 0;
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--glass-edge);
+  max-width: 46ch;
+}
+
+.contact-section__promise {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.contact-section__promise dt {
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent);
+}
+
+.contact-section__promise dd {
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-leading);
+  color: var(--text);
+  opacity: var(--text-emphasis-secondary);
+  margin: 0;
+}

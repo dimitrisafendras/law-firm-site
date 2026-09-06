@@ -66,10 +66,14 @@ export function HeroSection() {
         </span>
 
         <h1 className="hero-section__title" aria-label={`${titleLine1} ${titleLine2}`}>
-          <span className="hero-section__title-line hero-section__title-line--1" aria-hidden="true">
+          {/* No `aria-hidden` on these wrappers: EditableSpawnText hides its own
+              split, and hiding it out here would have hidden the *admin*
+              rendering too — a contiguous, editable string that has to stay
+              reachable. The h1's aria-label above is what AT announces. */}
+          <span className="hero-section__title-line hero-section__title-line--1">
             <EditableSpawnText tKey="heroTitleLine1" />
           </span>
-          <span className="hero-section__title-line hero-section__title-line--2" aria-hidden="true">
+          <span className="hero-section__title-line hero-section__title-line--2">
             <EditableSpawnText tKey="heroTitleLine2" gradient />
           </span>
         </h1>

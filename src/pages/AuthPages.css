@@ -1,12 +1,29 @@
 /* Shared layout for LoginPage, SignupPage and AccountPage.
    All colours, fonts, radii and spacing come from the theme custom properties. */
 
+/*
+ * The ground, not just a layout box.
+ *
+ * This was `background: var(--bg)` — a flat #111317 grey, left behind when the
+ * rest of the site moved onto navy. Two things followed from that. The footer
+ * begins at #101729 and the page above it was #111317, so the two met as a hard
+ * horizontal seam across the viewport. And the card carries `.glass`, whose
+ * whole premise is concentrating the colour of what sits behind it: over a flat
+ * grey there was no colour to concentrate, so a 20px blur and 180% saturate ran
+ * on every frame to produce a rectangle indistinguishable from a plain fill.
+ *
+ * `.page-ramp` (App.css) is the same ramp and the same accent blooms the home
+ * page uses, so these pages now stand on the site's ground rather than beside
+ * it. The ramp's stops are proportional, so compressing five of them into one
+ * viewport reads as a single navy gradient rather than a scaled-down copy of
+ * the home page — and its final stop is the footer's first, which is what
+ * closes the seam.
+ */
 .auth-page {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg);
   /* 88px clears the fixed navbar — a measurement of another element, not a
      spacing step. */
   padding: 88px 0 var(--space-12);

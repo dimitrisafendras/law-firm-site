@@ -15,6 +15,21 @@ interface SpawnTextProps {
    */
   gradient?: boolean;
   className?: string;
+  /**
+   * Hide the split from assistive technology.
+   *
+   * A split root is one `inline-block` box per character, and a browser inserts
+   * a separator between non-inline child boxes when it computes an accessible
+   * name — so an unhidden `char` split inside a heading gives that heading the
+   * accessible name "O u r  E x p e r t i s e", spelled out. The owning element
+   * must therefore carry the real string as an `aria-label` and hide the spans.
+   *
+   * Not defaulted to true: raw `SpawnText` is also used for showcase copy that
+   * has no labelled owner, where hiding it would remove the text from the
+   * accessibility tree entirely rather than fix how it reads. `EditableSpawnText`
+   * sets it on the visitor branch, which is where every labelled call site is.
+   */
+  ariaHidden?: boolean;
 }
 
 interface SpawnUnit {
@@ -55,7 +70,13 @@ function splitUnits(text: string, mode: SpawnMode): SpawnUnit[] {
  * The rendered spans are decorative — mark the owning element with an
  * `aria-label` and hide the spans from assistive tech.
  */
-export function SpawnText({ text, mode = 'char', gradient = false, className = '' }: SpawnTextProps) {
+export function SpawnText({
+  text,
+  mode = 'char',
+  gradient = false,
+  className = '',
+  ariaHidden = false,
+}: SpawnTextProps) {
   const units = splitUnits(text, mode);
   const animatedCount = units.reduce((total, unit) => (unit.index === null ? total : total + 1), 0);
   // Guard against divide-by-zero on single-unit strings.
@@ -73,7 +94,7 @@ export function SpawnText({ text, mode = 'char', gradient = false, className = '
   return (
     // Keying on the text remounts (and so replays) the reveal when the
     // active language changes.
-    <span key={text} className={rootClass}>
+    <span key={text} className={rootClass} aria-hidden={ariaHidden || undefined}>
       {units.map((unit, i) => {
         if (unit.index === null) {
           // A bare text node, deliberately NOT a styled span. A space wrapped in

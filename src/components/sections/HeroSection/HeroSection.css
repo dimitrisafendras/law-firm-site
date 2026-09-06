@@ -179,7 +179,15 @@
   overflow: hidden;
 
   @media (max-width: 1024px) {
-    display: none;
+    /*
+     * Visible again. It was hidden because the mobile hero had no room for it:
+     * with the subtitle squeezed into a 150px column beside the statue, a pill
+     * above it would have wrapped to three lines. The scrim gives the copy the
+     * full measure back, so the badge fits — and it is the line that frames
+     * everything under it.
+     */
+    font-size: 11px;
+    padding: var(--space-1) var(--space-3);
   }
 }
 

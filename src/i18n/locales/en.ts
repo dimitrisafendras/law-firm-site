@@ -373,8 +373,8 @@ const en = {
   menuLanguage: 'Language',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────
-  chapterExpertise: 'Chapter 01 / Expertise',
-  chapterTeam: 'Chapter 02 / Team',
+  chapterTeam: 'Chapter 01 / Team',
+  chapterExpertise: 'Chapter 02 / Expertise',
   chapterTestimonials: 'Chapter 03 / Testimonials',
   chapterContact: 'Chapter 04 / Contact',
 

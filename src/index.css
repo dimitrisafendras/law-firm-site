@@ -137,9 +137,27 @@ html {
 
 /* ─── Full-viewport sections ────────────────────────────────────────────────
  *
- * The home page gives each section a screen of its own. Snapping is gone — the
- * page scrolls normally — but the sections keep their one-viewport height, so
- * the composition still reads as a sequence of screens rather than a long ramp.
+ * The home page gives each section a screen of its own. The sections keep their
+ * one-viewport height, so the composition reads as a sequence of screens rather
+ * than a long ramp, and the page scrolls normally through all of them but one.
+ *
+ * The exception is the very first move. Leaving the hero is the only transition
+ * on the page that has a right answer — there is exactly one place the reader
+ * can be going — so that boundary snaps and nothing else does. Full-page
+ * snapping was tried and removed: with a snap point at every section the reader
+ * loses the ability to rest between two of them, and the whole page fights
+ * every scroll rather than helping the one that matters.
+ *
+ * `proximity`, not `mandatory`. Mandatory forces a resting position even when
+ * the reader is nowhere near a snap point, which is what makes content past an
+ * oversized screen's fold unreachable; proximity engages only when the scroll
+ * would come to rest near one, so a flick straight past the team section behaves
+ * exactly as it does today.
+ *
+ * The second snap point is written as `.hero-section + section` rather than by
+ * id. It means "whatever section follows the hero", which is the thing being
+ * described — the sections were reordered once already and the rule should not
+ * have to be found and edited the next time.
  *
  * What is left needing a gate is the height itself. `height: 100svh` with
  * `overflow: hidden` (App.css) clips anything that does not fit, so it may only
@@ -166,6 +184,17 @@ html {
    */
   :is(#practice, #team, #testimonials, #contact) {
     scroll-margin-top: 0;
+  }
+
+  html {
+    scroll-snap-type: y proximity;
+  }
+
+  /* The hero's own snap point sits at scroll 0, where the page already rests;
+     it is here so the boundary pulls both ways rather than only downward. */
+  .page-ramp--screens > .hero-section,
+  .page-ramp--screens > .hero-section + section {
+    scroll-snap-align: start;
   }
 }
 

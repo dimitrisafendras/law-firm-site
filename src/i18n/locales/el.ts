@@ -369,8 +369,8 @@ const el = {
   menuLanguage: 'Γλώσσα',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────
-  chapterExpertise: 'Κεφάλαιο 01 / Εξειδίκευση',
-  chapterTeam: 'Κεφάλαιο 02 / Ομάδα',
+  chapterTeam: 'Κεφάλαιο 01 / Ομάδα',
+  chapterExpertise: 'Κεφάλαιο 02 / Εξειδίκευση',
   chapterTestimonials: 'Κεφάλαιο 03 / Μαρτυρίες',
   chapterContact: 'Κεφάλαιο 04 / Επικοινωνία',
 

@@ -55,8 +55,8 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
           </a>
         }
         links={[
-          { label: t('navPractice'), href: '#practice' },
           { label: t('navTeam'), href: '#team' },
+          { label: t('navPractice'), href: '#practice' },
           { label: t('navTestimonials'), href: '#testimonials' },
           { label: t('navContact'), href: '#contact' },
         ]}

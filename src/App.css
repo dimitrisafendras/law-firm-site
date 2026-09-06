@@ -22,20 +22,28 @@
 
 /*
  * Scrolled, the bar carries the monogram instead of the wordmark (Navbar.tsx),
- * and the two drawings do not share a scale. The wordmark's viewBox is 140
- * units tall for 110 units of glyph; the monogram is cropped to the glyphs
- * alone, 100 units tall for the same 110. So:
+ * and the two drawings do not share a scale. Both crops are 78.32 units of
+ * glyph; the wordmark's box is 121.01 tall because it also carries the LEGAL
+ * row and the air above it, and the monogram's is 78.32 — the glyphs and
+ * nothing else. So:
  *
- *   wordmark at 56px  ->  glyphs 110 x 56/140 = 44px
- *   monogram at 56px  ->  glyphs 110 x 56/100 = 61.6px   (bigger, not smaller)
- *   monogram at 40px  ->  glyphs 110 x 40/100 = 44px     (the break-even)
- *   monogram at 36px  ->  glyphs 110 x 36/100 = 39.6px   (0.9x — "a bit smaller")
+ *   wordmark at 56px  ->  glyphs 78.32 x 56/121.01 = 36.2px
+ *   monogram at 56px  ->  glyphs 56px                (55% bigger, not smaller)
+ *   monogram at 36px  ->  glyphs 36px                (0.99x — no longer smaller)
+ *   monogram at 33px  ->  glyphs 33px                (0.91x — "a bit smaller")
  *
- * 36px it is. Reading the raw heights as if they were comparable is the trap
- * here: 36 next to 56 looks like a third off, and it is a tenth.
+ * 33px it is. Reading the raw heights as if they were comparable is the trap
+ * here: 33 next to 56 looks like a huge drop, and it is a tenth.
+ *
+ * These numbers moved when the artwork did. The previous set carried an 8px
+ * keyline stroke painted *outside* the outline, which added 4 units on every
+ * side; this set cuts the interlock inward with a mask and has no stroke at
+ * all, so the ink is the geometry exactly and every ratio here had to be
+ * re-derived rather than carried across. 36px was right for the old boxes and
+ * is a break-even for these.
  */
 .navbar--scrolled {
-  --firm-mark-height: 36px;
+  --firm-mark-height: 33px;
 }
 
 .firm-logo__mark {

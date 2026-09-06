@@ -36,6 +36,13 @@ const testimonials = [
  * where you are and that something is moving, which is what a dot row is for —
  * and unlike dots it does not need one target per quote, so it works the same
  * with three quotes or ten.
+ *
+ * The stage is a glass surface rather than bare page. Set directly on the
+ * ramp, the display-size italic had the fixed circuit field running straight
+ * through it — lines crossing letterforms at the size where they are least
+ * forgiving. The material solves it the way it is supposed to: it blurs what
+ * is behind into texture instead of masking it, so the field still shows and
+ * the quote sits on something.
  */
 export function TestimonialsSection() {
   const { t } = useTranslation();
@@ -80,7 +87,7 @@ export function TestimonialsSection() {
 
         <FadeInSection>
           <div
-            className="testimonials-stage"
+            className="testimonials-stage glass"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             role="region"

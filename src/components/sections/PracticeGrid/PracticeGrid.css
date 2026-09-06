@@ -64,9 +64,14 @@
   /* Faded out toward the card's text rather than cropped at its edge: at 520px
      the drawing is large enough to read as engraving into the surface, but a
      hard edge behind body copy reads as a pasted image. The mask puts the line
-     weight where the card is empty and nothing where it is not. */
-  -webkit-mask-image: radial-gradient(75% 75% at 78% 78%, #000 0%, transparent 78%);
-  mask-image: radial-gradient(75% 75% at 78% 78%, #000 0%, transparent 78%);
+     weight where the card is empty and nothing where it is not.
+
+     The core is solid rather than falling off from the centre — a gradient
+     that starts fading at 0% thins the drawing everywhere, including the
+     corner it is anchored in, which is the part meant to read. It holds full
+     strength across the bottom-right quadrant and releases before the copy. */
+  -webkit-mask-image: radial-gradient(88% 88% at 82% 82%, #000 42%, transparent 94%);
+  mask-image: radial-gradient(88% 88% at 82% 82%, #000 42%, transparent 94%);
   transition: opacity 0.6s, transform 0.6s;
 }
 

@@ -29,19 +29,36 @@
  * the column.
  * ────────────────────────────────────────────────────────────────────────── */
 
+/*
+ * A surface, not bare page.
+ *
+ * The quote was set straight onto the ramp, which put the fixed circuit field
+ * behind a display-size italic — lines crossing letterforms at exactly the
+ * size and weight where that is hardest to read. Glass is the right answer
+ * rather than an opaque panel: it blurs the field into texture instead of
+ * hiding it, so the layer still reads through and the type gets a ground.
+ *
+ * Wider than the 900px measure by its own padding, so the text column stays
+ * where it was and the surface frames it.
+ */
 .testimonials-stage {
   display: flex;
   flex-direction: column;
   gap: var(--space-12);
-  /* The 900px measure the quote is set to, centred in the section. */
-  max-width: 900px;
+  max-width: calc(900px + var(--space-24) * 2);
   margin: var(--space-16) auto 0;
+  padding: var(--space-16) var(--space-24);
+  border-radius: var(--radius-3xl);
+
+  @media (max-width: 1024px) {
+    padding: var(--space-8) var(--space-6);
+    max-width: 100%;
+  }
 }
 
 .testimonials-stage:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: var(--space-6);
-  border-radius: var(--radius-md);
+  outline-offset: var(--space-2);
 }
 
 /* Fixed minimum height so a short quote followed by a long one does not make

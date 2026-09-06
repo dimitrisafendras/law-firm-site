@@ -494,12 +494,18 @@ export const decor = {
   bloomStrong: '20%',
   bloomMid: '16%',
   bloomSoft: '13%',
-  /* The practice cards' domain line-art. Its own value, not one of the field
-     alphas above: the field is a page-wide backdrop and has to stay under
-     everything, while these are a card's own illustration and are meant to be
-     seen. */
-  domainArt: '0.25',
-  domainArtHover: '0.45',
+  /*
+   * The practice cards' domain line-art.
+   *
+   * Higher than it looks like it should be, because this value is not the
+   * opacity anything actually renders at — it multiplies. Every element inside
+   * those SVGs carries its own opacity between 0.08 and 0.5, and the container
+   * is masked on top of that, so at 0.25 the faintest strokes were landing
+   * around 0.02 effective and the strongest around 0.125. The drawings were
+   * present in the DOM and invisible on screen.
+   */
+  domainArt: '0.55',
+  domainArtHover: '0.85',
 } as const;
 
 export const decorVarNames: Record<string, string> = {

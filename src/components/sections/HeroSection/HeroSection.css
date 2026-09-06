@@ -44,6 +44,22 @@
   --hero-t-actions: calc(var(--hero-beat) * 7);
   --hero-t-hint: calc(var(--hero-beat) * 8);
 
+  /* ── Exit timeline ────────────────────────────────────────────────────────
+   * Windows on the hero's own `--hero-exit` view timeline (see the exit
+   * choreography at the foot of this file). Each is a whole `animation-range`
+   * value rather than a pair of numbers, because that is the shape the four
+   * rules below actually consume.
+   *
+   * The hero is one viewport tall and sits at the top of the document, so its
+   * `exit` phase maps one-to-one onto the first screen of scrolling: 0% is
+   * scrollY 0 and 100% is scrollY 100svh. Read every percentage here as
+   * "fraction of the first screen scrolled".
+   */
+  --hero-x-hint: exit 0% exit 15%;
+  --hero-x-copy: exit 5% exit 50%;
+  --hero-x-statue: exit 0% exit 62%;
+  --hero-x-grid: exit 35% exit 100%;
+
   /* The per-character stagger has to come down with the beat: at the old
      0.03s a long title line took longer to finish spelling itself out than
      the step it was allotted. */
@@ -459,7 +475,11 @@
   /* Circuit grid traces itself in left→right. Opacity is deliberately absent
      so the mobile `opacity: 0.5` on the layer is preserved. */
   .hero-section__lines {
-    animation: hero-trace var(--dur-wipe) var(--ease-wipe) var(--hero-t-scene) backwards;
+    /* Published as a custom property so the exit rule at the foot of this file
+       can re-declare the animation *list* — entrance plus exit — without
+       restating the entrance and giving the two a chance to drift apart. */
+    --hero-lines-entrance: hero-trace var(--dur-wipe) var(--ease-wipe) var(--hero-t-scene) backwards;
+    animation: var(--hero-lines-entrance);
   }
 
   /* Junctions pop once the trace has swept past them. */
@@ -507,8 +527,212 @@
     animation: hero-panel-unfurl var(--dur-spawn-element) var(--ease-spawn) var(--hero-t-actions) backwards;
   }
 
-  /* Scroll hint arrives last; the idle bounce on the inner svg is untouched. */
+  /* Scroll hint arrives last; the idle bounce on the inner svg is untouched.
+     Published for the same reason as the circuit grid's entrance above. */
   .hero-section__scroll-hint {
-    animation: hero-hint-arrive var(--dur-spawn-element) var(--ease-spawn) var(--hero-t-hint) backwards;
+    --hero-hint-entrance: hero-hint-arrive var(--dur-spawn-element) var(--ease-spawn) var(--hero-t-hint) backwards;
+    animation: var(--hero-hint-entrance);
+  }
+}
+
+
+/* ─── Exit choreography ───────────────────────────────────────────────────── */
+/*
+ * How the hero leaves.
+ *
+ * Above the screens gate (src/App.css) the hero is `height: 100svh` with
+ * `overflow: hidden`, so scrolling used to guillotine it. The statue is the
+ * casualty: the artwork is cropped flat at its own last row — row 1040 of 1041
+ * is still 54% opaque, measured on the decoded bitmap in ea79f97 — and
+ * `.hero-section__bg` puts that row on the hero's bottom edge, so the plinth
+ * ends in a square cut. On a 1512x900 viewport, by scrollY 300 that cut is
+ * sitting around two thirds of the way down the screen with open page ramp
+ * under it, which is where it stops being an edge and starts being a mistake.
+ *
+ * A static bottom mask on the statue was the previous answer, and it was
+ * removed at the client's request (added ea79f97, narrowed e00fd2a, dropped
+ * 9e77764). The objection holds: a permanent fade taxes the resting
+ * composition — the hero everyone actually looks at — to fix a state nobody
+ * sees until they scroll. So everything below starts from the identity state.
+ * At scrollY 0 the hero is pixel-for-pixel what it was before this block
+ * existed; only scrolling spends anything.
+ *
+ * Driven by `animation-timeline`, like the section entrances in
+ * FadeInSection.css, not by a scroll listener: the timeline is scroll position
+ * rather than seconds, so the exit reverses exactly when the reader scrolls
+ * back up, holds still when they hold still, costs nothing per frame in script,
+ * and has no opinion about the page's `scroll-behavior: smooth`.
+ *
+ * One named timeline for all four pieces, declared on the hero itself.
+ * A bare `view()` would give each element *its own* subject: `.hero-section__bg`
+ * is 95% of the hero and bottom-anchored, so its `exit 0%` lands 45px into the
+ * scroll rather than at 0, and the scroll hint's lands somewhere else again.
+ * Naming the hero's timeline makes one percentage mean one thing everywhere.
+ *
+ * Four pieces, four departures, roughly the reverse of the order they arrived:
+ *
+ *   hint      0 → 15%   the instruction has been obeyed; the first thing that
+ *                       should stop asking
+ *   copy      5 → 50%   recedes and blurs — read, and released
+ *   statue    0 → 62%   de-resolves: an erasure sweeps up from the plinth while
+ *                       the stone flares back to the unrendered brightness the
+ *                       entrance materialised out of. It leaves by the door it
+ *                       came in through, which is why this reads as part of the
+ *                       drawing rather than as an effect applied to it
+ *   grid     35 → 100%  the substrate everything else dissolves into, so it is
+ *                       the last thing left on screen
+ *
+ * The statue's window is the load-bearing one, and 62% comes off that same
+ * measurement rather than off taste. By the scrollY 300 above, the sweep has
+ * already taken everything from the figure's hips down, so the cropped plinth
+ * is gone before it can be looked at. Stretched much past 62% the crop is still
+ * there when it matters; pulled much below it the statue evaporates while the
+ * headline is still being read.
+ *
+ * Reachability: the call to action inside `.hero-section__content` reaches
+ * opacity 0 while its box is still nominally on screen. That is safe here
+ * because the windows are scroll positions — tabbing to the button scrolls it
+ * back into view, which winds the timeline back and restores it. Nothing is
+ * hidden from assistive tech and no element is removed from the tab order.
+ */
+
+@keyframes hero-hint-dismiss {
+  to { opacity: 0; }
+}
+
+@keyframes hero-copy-recede {
+  to {
+    opacity: 0;
+    /* Up, not down: the copy is being taken away from the reader, not pushed
+       ahead of them. Same travel as every section entrance on the page. */
+    transform: translate3d(0, calc(var(--motion-enter-travel) * -1), 0);
+    filter: blur(var(--blur-spawn-soft));
+  }
+}
+
+@keyframes hero-statue-deresolve {
+  from {
+    /* Resting position: the mask's opaque band covers the element exactly, so
+       nothing is masked at scrollY 0. See the geometry note on the rule. */
+    mask-position: 0 0%;
+    filter: brightness(1) saturate(1);
+  }
+
+  /* The flare is held back to the last third. Ramping brightness linearly
+     alongside the erasure washed the figure out while most of it was still
+     standing there; arriving late, it reads as the stone giving up its last
+     detail rather than as a light being turned on. */
+  65% {
+    filter: brightness(1.5) saturate(0.6);
+    opacity: 1;
+  }
+
+  to {
+    /* The mask has travelled its full 1.5x-element-height offset, which puts
+       the transparent stop on the element's top edge: the sweep has passed the
+       crown and nothing is left behind it. */
+    mask-position: 0 100%;
+    /* Mirrors the `from` state of `statue-rise` in DigitalStatue.css — the
+       unrendered brightness the statue materialises out of. Kept in step by
+       hand: the value belongs to that one drawing, and hoisting it to :root to
+       share it between two component stylesheets would put a number in the
+       design system that nothing else can use. */
+    filter: brightness(2.6) saturate(0.25);
+    opacity: 0;
+    /* A little faster than the page, so the last of it lifts away rather than
+       being carried off. Percentage of the element's own height. */
+    transform: translate3d(0, -6%, 0);
+  }
+}
+
+@keyframes hero-grid-dim {
+  /* `to` only, deliberately. The implicit 0% is the layer's own computed
+     opacity, which is 1 on desktop and 0.5 on the phone branch; writing
+     `from { opacity: 1 }` would brighten the mobile grid for the whole exit
+     before dimming it, undoing the reason that 0.5 is there. */
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /*
+   * `@supports` rather than a bare rule: a browser without scroll-driven
+   * animations gets no exit at all and the hero scrolls away exactly as it does
+   * today — the same resting-state-is-correct discipline as the entrance block
+   * above, and as FadeInSection.css. The fallback is the current behaviour,
+   * not a broken one, so there is nothing to polyfill.
+   */
+  @supports (animation-timeline: view()) {
+    .hero-section {
+      /* Declaring a named view timeline changes no layout and paints nothing;
+         it only gives the four rules below a shared subject. Descendants can
+         reference it by name without `timeline-scope`. */
+      view-timeline: --hero-exit block;
+    }
+
+    .hero-section__scroll-hint {
+      /*
+       * The exit is listed FIRST and the entrance second. Both write `opacity`,
+       * and later entries in an animation list win — so this order lets the
+       * entrance own the arrow while it is still arriving (a reader can be
+       * scrolling within its 0.8s window), and hands the property to the exit
+       * the moment the entrance ends and its `backwards` fill stops
+       * contributing. The other way round, the arrow would never arrive.
+       */
+      animation: hero-hint-dismiss linear both, var(--hero-hint-entrance);
+      animation-timeline: --hero-exit, auto;
+      animation-range: var(--hero-x-hint), normal;
+    }
+
+    .hero-section__content {
+      animation: hero-copy-recede linear both;
+      animation-timeline: --hero-exit;
+      animation-range: var(--hero-x-copy);
+    }
+
+    /*
+     * The mask goes on the wrapper, not on the statue component. It has to take
+     * the ambient canvases — rain, sparkles, both flames — with it, or they keep
+     * painting over ground the eye has just watched the stone dissolve out of.
+     * It also keeps the component ignorant of the seam it is standing on: the
+     * same drawing ends square perfectly happily anywhere it is not.
+     */
+    .hero-section__bg {
+      /*
+       * The erasure is a stencil that SLIDES, not a gradient whose stops move.
+       * Animating the stops was the obvious way to write this and it silently
+       * does not work: Chrome interpolates `mask-image` between two gradients
+       * discretely, so the mask sat at its start value for the first half of
+       * the range and then snapped to its end value — measured at 55% progress,
+       * `mask-image` had already jumped to the final gradient while `filter`
+       * and `transform` on the same keyframes were interpolating correctly.
+       *
+       * `mask-position` is a <position>, so it interpolates. The geometry:
+       * the stencil is 2.5 element-heights tall (`mask-size: 100% 250%`) and
+       * opaque for its first 40% — exactly one element height — then fades to
+       * nothing by 60%, a soft edge half an element tall. At `0 0%` the opaque
+       * band covers the element and the mask is a no-op; at `0 100%` the
+       * stencil has slid up by 1.5 element-heights, which lands the transparent
+       * stop on the element's top edge. `no-repeat` is load-bearing — the
+       * default would tile the opaque band straight back over the statue.
+       *
+       * All of it declared here rather than in the base rule, so a reduced-
+       * motion reader and a browser without view() timelines carry no mask at
+       * all.
+       */
+      mask-image: linear-gradient(180deg, #000 40%, transparent 60%);
+      mask-size: 100% 250%;
+      mask-repeat: no-repeat;
+      animation: hero-statue-deresolve linear both;
+      animation-timeline: --hero-exit;
+      animation-range: var(--hero-x-statue);
+    }
+
+    .hero-section__lines {
+      /* Entrance first here, and it does not matter: the trace writes
+         `clip-path` and the dim writes `opacity`, so the two never contend. */
+      animation: var(--hero-lines-entrance), hero-grid-dim linear both;
+      animation-timeline: auto, --hero-exit;
+      animation-range: normal, var(--hero-x-grid);
+    }
   }
 }

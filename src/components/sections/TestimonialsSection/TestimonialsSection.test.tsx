@@ -195,6 +195,45 @@ describe('TestimonialsSection', () => {
     });
   });
 
+  describe('the stage', () => {
+    /*
+     * The stage was a glow-variant `Card` and is deliberately not one any more:
+     * this section carries `content-visibility: auto`, which makes it a
+     * backdrop root with nothing behind it, so the material could not lens and
+     * rendered as a flat tint — a rounded box drawn around a quote, spending a
+     * third of the 700px height budget on its own padding. That is a decision a
+     * later refactor could undo by reaching for the nearest surface component
+     * without knowing why it was dropped, which is what this pins.
+     */
+    it('is the section own column rather than a glass card', () => {
+      const { container } = renderWithProviders(<TestimonialsSection />);
+      const el = stage(container);
+      expect(el.classList.contains('card')).toBe(false);
+      expect(el.classList.contains('glass')).toBe(false);
+    });
+
+    /*
+     * …and dropping the component must not drop what it was carrying. The
+     * region role, the accessible name and the arrow keys were props on the
+     * `Card`; they are props on a `div` now, and nothing else in this file
+     * would notice if one of them went missing.
+     */
+    it('keeps the region and its arrow keys on the plain element', () => {
+      const { container } = renderWithProviders(<TestimonialsSection />);
+      const el = stage(container);
+
+      expect(el).toHaveAttribute('role', 'region');
+      expect(el).toHaveAttribute('tabindex', '0');
+      expect(el).toHaveAttribute('aria-roledescription', 'carousel');
+
+      fireEvent.keyDown(el, { key: 'ArrowRight' });
+      expect(shownQuote(container)).toHaveTextContent(SECOND_AUTHOR);
+
+      fireEvent.keyDown(el, { key: 'ArrowLeft' });
+      expect(shownQuote(container)).toHaveTextContent(FIRST_AUTHOR);
+    });
+  });
+
   describe('the transport control', () => {
     it('carries its state in its accessible name, and only there', () => {
       renderWithProviders(<TestimonialsSection />);

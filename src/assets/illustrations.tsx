@@ -306,6 +306,131 @@ export function CryptoIcon({ className }: { className?: string }) {
   );
 }
 
+/** Corporate — a holding company over two subsidiaries */
+export function CorporateIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      {/* Parent entity */}
+      <rect x="17" y="5" width="14" height="11" rx="1" stroke="currentColor" strokeWidth="2.5" />
+      {/* Shareholding lines */}
+      <line x1="24" y1="16" x2="24" y2="21" stroke="currentColor" strokeWidth="2" />
+      <line x1="11" y1="21" x2="37" y2="21" stroke="currentColor" strokeWidth="2" />
+      <line x1="11" y1="21" x2="11" y2="27" stroke="currentColor" strokeWidth="2" />
+      <line x1="24" y1="21" x2="24" y2="27" stroke="currentColor" strokeWidth="2" />
+      <line x1="37" y1="21" x2="37" y2="27" stroke="currentColor" strokeWidth="2" />
+      {/* Subsidiaries */}
+      <rect x="4" y="27" width="14" height="11" rx="1" stroke="currentColor" strokeWidth="2" />
+      <rect x="17" y="27" width="14" height="11" rx="1" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
+      <rect x="30" y="27" width="14" height="11" rx="1" stroke="currentColor" strokeWidth="2" />
+      {/* Register line */}
+      <line x1="6" y1="44" x2="42" y2="44" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
+    </svg>
+  );
+}
+
+/** Commercial — an executed contract with its wax seal */
+export function CommercialIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      {/* Sheet */}
+      <rect x="9" y="4" width="27" height="34" rx="2" stroke="currentColor" strokeWidth="2.5" />
+      {/* Clauses */}
+      <line x1="15" y1="12" x2="30" y2="12" stroke="currentColor" strokeWidth="1.5" opacity="0.6" />
+      <line x1="15" y1="18" x2="30" y2="18" stroke="currentColor" strokeWidth="1.5" opacity="0.6" />
+      <line x1="15" y1="24" x2="25" y2="24" stroke="currentColor" strokeWidth="1.5" opacity="0.6" />
+      {/* Counter-signature */}
+      <path d="M14 32c3-3 5 3 8-1s5 2 8-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+      {/* Seal over the corner */}
+      <circle cx="34" cy="37" r="7" stroke="currentColor" strokeWidth="2" />
+      <circle cx="34" cy="37" r="2.5" stroke="currentColor" strokeWidth="1.5" opacity="0.6" />
+      <path d="M31 43.5L30 47" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+      <path d="M37 43.5L38 47" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+    </svg>
+  );
+}
+
+/** Mergers — two entities overlapping into one, consideration flowing inward */
+export function MergersIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      {/* The two entities */}
+      <circle cx="18" cy="19" r="12" stroke="currentColor" strokeWidth="2.5" />
+      <circle cx="30" cy="19" r="12" stroke="currentColor" strokeWidth="2.5" />
+      {/* Combined centre */}
+      <circle cx="24" cy="19" r="2.5" fill="currentColor" opacity="0.5" />
+      {/* Converging consideration */}
+      <line x1="4" y1="40" x2="15" y2="40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M17 40l-5-4v8z" fill="currentColor" />
+      <line x1="44" y1="40" x2="33" y2="40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M31 40l5-4v8z" fill="currentColor" />
+      <circle cx="24" cy="40" r="2" stroke="currentColor" strokeWidth="1.5" opacity="0.6" />
+    </svg>
+  );
+}
+
+/** Privacy — a shield and keyhole guarding the record set */
+export function PrivacyIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      {/* Shield */}
+      <path d="M24 4L40 10V24C40 34 33 41 24 44C15 41 8 34 8 24V10L24 4Z" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />
+      {/* Keyhole */}
+      <circle cx="24" cy="21" r="4" stroke="currentColor" strokeWidth="2" />
+      <path d="M22 25L20.5 33H27.5L26 25" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      {/* Records held behind it */}
+      <circle cx="14" cy="15" r="1.5" fill="currentColor" opacity="0.45" />
+      <circle cx="34" cy="15" r="1.5" fill="currentColor" opacity="0.45" />
+      <circle cx="14" cy="28" r="1.5" fill="currentColor" opacity="0.3" />
+      <circle cx="34" cy="28" r="1.5" fill="currentColor" opacity="0.3" />
+    </svg>
+  );
+}
+
+/** Disputes — a balance tipped out of true */
+export function DisputesIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      {/* Standard */}
+      <line x1="24" y1="18" x2="24" y2="42" stroke="currentColor" strokeWidth="2.5" />
+      <path d="M16 42H32" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Beam, tipped */}
+      <line x1="8" y1="12" x2="40" y2="24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="18" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+      {/* Risen pan */}
+      <line x1="8" y1="12" x2="8" y2="18" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M2 18H14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M2 18C2 23 4.7 26 8 26C11.3 26 14 23 14 18" stroke="currentColor" strokeWidth="1.5" />
+      {/* Weighted pan */}
+      <line x1="40" y1="24" x2="40" y2="30" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M34 30H46" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M34 30C34 35 36.7 38 40 38C43.3 38 46 35 46 30" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="40" cy="33" r="2" fill="currentColor" opacity="0.4" />
+    </svg>
+  );
+}
+
+/** Family — the hearth of the oikos, standing between its doorposts */
+export function FamilyIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      {/* Hearth */}
+      <rect x="17" y="24" width="14" height="14" stroke="currentColor" strokeWidth="2.5" />
+      <line x1="14" y1="24" x2="34" y2="24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <rect x="12" y="38" width="24" height="4" rx="1" stroke="currentColor" strokeWidth="2" />
+      <rect x="21" y="30" width="6" height="8" stroke="currentColor" strokeWidth="1.5" opacity="0.6" />
+      {/* Smoke */}
+      <path d="M24 21C20 16 28 13 24 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M18 21C15 17 21 15 18 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+      <path d="M30 21C33 17 27 15 30 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+      {/* Doorposts */}
+      <path d="M10 30V44" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+      <path d="M38 30V44" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+      <path d="M10 30H14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+      <path d="M38 30H34" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+    </svg>
+  );
+}
+
 // ─── Attorney Avatar Placeholders ────────────────────────────────────────────
 // Stylized geometric avatars — professional silhouettes with accent highlights
 

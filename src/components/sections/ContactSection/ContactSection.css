@@ -74,21 +74,31 @@
    * --pin-offset
    *           Where Athens lands, measured down from the *frame's* top edge.
    *           Solved, not chosen. The pin block — 28px marker, an 8px gap and
-   *           the two-line chip — measures 91px. The frame starts --space-8
-   *           (32px) above the column, and the block is pulled up by half the
-   *           marker (14px), so its top edge sits at `--pin-offset - 46` below
-   *           the column's top and its bottom at `--pin-offset + 45`. Centring
-   *           91px of pin in a 152px strip therefore wants
+   *           the two-line chip — measures 91px. The frame is now flush with
+   *           the column top, and the block is pulled up by half the marker
+   *           (14px), so its top edge sits at `--pin-offset - 14` below the
+   *           column's top and its bottom at `--pin-offset + 77`. Centring 91px
+   *           of pin in a 152px strip therefore wants
    *
-   *               --pin-offset = (--panel-clear + 92 - 91) / 2 ≈ 76
+   *               --pin-offset = (--panel-clear + 28 - 91) / 2 ≈ 44
    *
    *           which leaves 30px of coast above the marker and 31px between the
    *           chip and the form's first label. Change --panel-clear and this
    *           has to be re-solved with it; the two are one number in two parts.
    *
-   *           The mask on the frame fades its top 7%, and the frame is roughly
-   *           650px tall here, so the fade ends about 14px below the column's
-   *           top. The block starts at 30. The pin is on solid coastline.
+   *           It was 76 while the frame bled --space-8 above the column: the
+   *           `+ 92` in the old solve was 2x32 of bleed plus the 28 of marker.
+   *           Dropping the vertical bleed dropped 32 from the answer. Measured
+   *           after the change with 76 still in place, the chip landed 3px off
+   *           the form's first label instead of 31 — the frame and the pin move
+   *           together, so one cannot be re-seated without the other.
+   *
+   *           The mask on the frame fades its top 4%, and the frame is 587px
+   *           here (the column's own height, now that it does not bleed), so
+   *           the fade ends about 23px down. The block starts at 30. The pin is
+   *           on solid coastline. That 4% was 7% while the frame was both
+   *           taller and higher; at 587px flush, 7% put the marker inside the
+   *           fade and Athens sat on coastline that was dissolving.
    * --map-box-h
    *           The SVG box's height. Governs the zoom, and only the zoom: see
    *           the solve above `.contact-section__map`. Unchanged by any of the
@@ -102,7 +112,7 @@
    * nothing in the map's placement is expressed against it.
    */
   --panel-clear: 152px;
-  --pin-offset: 76px;
+  --pin-offset: 44px;
   --map-box-h: 2310px;
 
   position: relative;
@@ -159,13 +169,27 @@
 .contact-section__map-frame {
   position: absolute;
   z-index: 0;
-  /* Bled past the form's own edges: a map that stopped exactly on the text
-     column would read as an image sitting in the layout rather than as ground
-     under it. The mask below dissolves the bleed. */
+  /* Bled sideways, flush top and bottom — and the asymmetry is the point.
+     A map that stopped exactly on the text column would read as an image
+     sitting in the layout rather than as ground under it, so it still runs
+     past both vertical edges and the mask below dissolves the bleed. The
+     left bleed is also what carries it the last --space-8 to the details
+     panel's right edge, so the two meet with no gap.
+
+     Vertically it must not bleed. This column and the details panel are the
+     same box to the pixel (measured at 1728x907: both 245 to 832), so 32px of
+     top and bottom bleed put the coastline that far above the panel's top
+     corner and below its bottom — the one edge in this section where a reader
+     has something to compare it against, and it did not line up.
+
+     The pin moves with the frame, so --pin-offset was re-solved with it
+     (76 -> 44) and the mask's top fade shortened (7% -> 4%) for a frame that
+     is now both flush and 64px shorter. The derivation is above; the point
+     here is only that the three are one change, not three. */
   left: calc(-1 * var(--space-8));
   right: calc(-1 * var(--space-8));
-  top: calc(-1 * var(--space-8));
-  bottom: calc(-1 * var(--space-8));
+  top: 0;
+  bottom: 0;
   overflow: hidden;
   /* The frame does not take the pointer — the pin inside it takes its own back.
      Without this the frame's bleed would sit over the details card's right edge
@@ -175,7 +199,7 @@
      together so a corner is faded by both. `intersect` is the standard property;
      `source-in` is the -webkit- prefixed equivalent for the same effect. */
   mask-image:
-    linear-gradient(180deg, transparent 0%, #000 7%, #000 88%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, #000 4%, #000 88%, transparent 100%),
     linear-gradient(90deg, transparent 0%, #000 9%, #000 91%, transparent 100%);
   mask-composite: intersect;
   -webkit-mask-composite: source-in;

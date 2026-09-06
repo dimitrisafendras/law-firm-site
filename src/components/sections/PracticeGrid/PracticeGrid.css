@@ -137,41 +137,69 @@
    browsers leave :hover latched on the last-tapped card, so an ungated rule
    never releases — the card would sit lifted, brightened and scaled up until
    some other card is tapped, and a half-gated card releases only part of the
-   state, which reads as a rendering fault. */
+   state, which reads as a rendering fault.
+
+   Gated on `--linked` as well: in admin edit mode the card is not a door, and
+   a surface that lifts under the pointer while its copy is being edited is
+   promising a navigation that will not happen. */
 @media (hover: hover) {
   /*
-   * A hover you can actually see.
+   * The same hover as the partner cards, in this card's own vocabulary.
    *
-   * It used to change the rim colour and swap one shadow token for another,
-   * which on a translucent surface over a dark ground is a difference of a few
-   * values — the card gave no feedback at all. Four things move together now:
-   * the card lifts, its surface brightens, the rim goes to full accent, and
-   * the illustration behind it nearly doubles. That is one gesture, not four
-   * effects, because they all resolve on the same curve at the same duration.
+   * Both cards do one thing now: rise, take the overlay elevation with an
+   * accent rim and an accent halo, and saturate the material further by handing
+   * `backdrop-filter` a new `--glass-saturate` rather than declaring a second
+   * filter. On that shared base each card moves the asset it actually has — the
+   * partner's portrait pushes in, this card's engraved illustration steps
+   * forward — and both finish with the title underlining from the left and the
+   * cue coming up to full and stepping right. Same language, same intensity,
+   * same curve and duration, so the two sections read as one system.
    */
-  .practice-domain:hover {
-    transform: translateY(-4px);
+  .practice-domain--linked:hover {
+    /* Read back by this card's inlined backdrop-filter, exactly as `.glass`
+       reads it on the partner card. */
+    --glass-saturate: 200%;
+
+    transform: translateY(-6px);
     background-color: var(--glass-bg-strong);
     box-shadow:
       var(--elev-overlay),
-      inset 0 0 0 1px var(--accent);
+      inset 0 0 0 1px var(--accent-border),
+      0 0 48px var(--glass-glow);
   }
 
-  .practice-domain:hover::before {
+  .practice-domain--linked:hover::before {
     transform: scale(1.08);
     opacity: 1;
   }
 
   /* The illustration is the card's best asset, so hover is where it steps
      forward — nearly doubling in presence rather than shifting a hairline. */
-  .practice-domain:hover .practice-domain__bg {
+  .practice-domain--linked:hover .practice-domain__bg {
     opacity: var(--domain-art-hover);
     transform: scale(1.03);
   }
 
-  .practice-domain:hover .practice-domain__icon-bg {
+  .practice-domain--linked:hover .practice-domain__icon-bg {
     opacity: 0.7;
   }
+
+  .practice-domain--linked:hover .practice-domain__link {
+    background-size: 100% 1px;
+  }
+
+  .practice-domain--linked:hover .practice-domain__cue {
+    opacity: 1;
+  }
+
+  .practice-domain--linked:hover .practice-domain__cue-arrow {
+    transform: translateX(4px);
+  }
+}
+
+/* Press: the card settles back toward the page, so a click has a bottom. */
+.practice-domain--linked:active {
+  transform: translateY(-1px);
 }
 
 @media (prefers-reduced-transparency: reduce) {
@@ -186,9 +214,32 @@
   }
 }
 
+/*
+ * The hover keeps everything that is a change of state — the elevation, the
+ * accent edge and halo, the brighter material, the fuller illustration, the cue
+ * at full strength — and loses everything that is a change of position or
+ * scale. The underline is a background-size animation, so it lands instantly
+ * rather than wiping in.
+ */
 @media (prefers-reduced-motion: reduce) {
-  .practice-domain::before {
+  .practice-domain,
+  .practice-domain::before,
+  .practice-domain__bg,
+  .practice-domain__link,
+  .practice-domain__cue,
+  .practice-domain__cue-arrow {
     transition: none;
+  }
+
+  .practice-domain--linked:hover,
+  .practice-domain--linked:active {
+    transform: none;
+  }
+
+  .practice-domain--linked:hover::before,
+  .practice-domain--linked:hover .practice-domain__bg,
+  .practice-domain--linked:hover .practice-domain__cue-arrow {
+    transform: none;
   }
 }
 
@@ -240,7 +291,57 @@
   max-width: 420px;
 }
 
+/* ─── The card's one link ──────────────────────────────────────────────────── */
+
+/*
+ * The title is the link, and the whole card's click target.
+ *
+ * The underline is a background image rather than `text-decoration`, because a
+ * decoration cannot be animated from one side to the other — this one wipes in
+ * from the left, the same gesture the partner card's name uses.
+ */
 .practice-domain__link {
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: background-size 0.45s var(--ease-settle);
+}
+
+/*
+ * The stretched target. It covers the card, which is what makes the whole
+ * surface clickable without a second control and without a click handler on the
+ * `<article>` — the accessible name stays the domain's name, in the heading.
+ *
+ * `inset: 0` resolves against `.practice-domain` because nothing between the
+ * two is positioned: this card inlines the glass material rather than wearing
+ * `.glass`, so there is no `.glass > *` rule making the `<h3>` a containing
+ * block. If it is ever converted to `.glass`, the card's content has to move
+ * into a single positioned wrapper first — see `.partner-ethos__body` — or this
+ * shrinks back to the width of the title.
+ *
+ * The known cost of the pattern is that text inside the card can no longer be
+ * selected with the mouse. That is the trade for a card-sized target; the
+ * description is repeated in full on the detail page this leads to.
+ */
+.practice-domain__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: var(--radius-3xl);
+}
+
+/* ─── The link affordance ──────────────────────────────────────────────────── */
+
+/*
+ * `aria-hidden` in the markup: this says out loud what the heading link already
+ * is, so a screen reader announcing both would announce the card twice. It is
+ * here for the eye — a card with no visible verb reads as a panel, not a door.
+ */
+.practice-domain__cue {
   display: inline-flex;
   align-items: center;
   gap: var(--space-4);
@@ -251,10 +352,49 @@
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-tight);
   color: var(--accent);
-  text-decoration: none;
-  transition: gap 0.3s;
+  /* Rests a step down and comes to full on hover, the way the partner card's
+     cue does. It cannot brighten by changing colour the way that one does:
+     `--accent-text` and `--accent` are the same value in this palette, so a
+     colour swap here would compute to no change at all. */
+  opacity: var(--text-emphasis-secondary);
+  transition: opacity 0.35s ease;
 }
 
-.practice-domain__link:hover {
-  gap: var(--space-6);
+.practice-domain__cue-arrow {
+  display: inline-block;
+  transition: transform 0.45s var(--ease-settle);
+}
+
+.practice-domain--linked {
+  cursor: pointer;
+}
+
+/* ─── Focus ────────────────────────────────────────────────────────────────── */
+
+/*
+ * The ring belongs on the card, not on the two words of the title — the card is
+ * what the Return key activates, so the card is what has to look focused.
+ *
+ * Only inside the `@supports` guard: without `:has()` there is no way to put a
+ * ring on the card, and dropping the anchor's own outline there would leave a
+ * keyboard user with no focus indicator at all. Without support they get the
+ * global `a:focus-visible` outline on the title, which is correct if plainer.
+ */
+@supports selector(:has(*)) {
+  .practice-domain__link:focus-visible {
+    outline: none;
+  }
+
+  .practice-domain:has(.practice-domain__link:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .practice-domain:has(.practice-domain__link:focus-visible) .practice-domain__link {
+    background-size: 100% 1px;
+  }
+
+  .practice-domain:has(.practice-domain__link:focus-visible) .practice-domain__cue {
+    opacity: 1;
+  }
 }

@@ -274,6 +274,8 @@ code {
   --blur-spawn: 12px;
   --blur-spawn-soft: 6px;
   --blur-spawn-tight: 8px;
+}
+
 /* ─── Reduced motion ──────────────────────────────────────────────────────────
    Global kill-switch for users who prefer reduced motion. Neutralises the
    infinite decorative animations (pulse-dot, arrow-bounce, pin-bob) and

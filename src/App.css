@@ -123,6 +123,21 @@
    * orange, and at bloom scale even 6% of it reads as a distinct orange wash
    * across a whole section rather than as depth — the one place on the page
    * where the ramp stops looking like one material.
+   *
+   * ─── The first stop is `--hero-deep`, not `--bg` ─────────────────────────
+   *
+   * The linear ramp's 0% lands at the top of the document, and its 20% lands
+   * at roughly the hero's bottom edge — so that first stop is the hero's own
+   * ground, and every other stop below it is navy. `--bg` is #111317: four
+   * points of chroma, dark neutral in practice. The hero's scrim covers the
+   * left two thirds and paints `--hero-deep` over it, so the black only ever
+   * showed on the right, beside the statue, where it read as a grey-black
+   * corner on an otherwise blue page.
+   *
+   * `--hero-deep` (#0F1A2E) is the value the hero's deep stops are built from.
+   * It is darker than `--grad-1`, so the ramp still opens dark and lifts into
+   * the first bloom exactly as before — the shape of the wash is unchanged,
+   * only its hue.
    */
   background:
     radial-gradient(
@@ -147,7 +162,7 @@
     ),
     linear-gradient(
       180deg,
-      var(--bg) 0%,
+      var(--hero-deep) 0%,
       var(--grad-1) 20%,
       var(--grad-2) 40%,
       var(--grad-3) 60%,

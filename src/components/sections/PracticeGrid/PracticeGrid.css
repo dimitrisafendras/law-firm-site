@@ -59,7 +59,7 @@
   width: 520px;
   height: 520px;
   color: var(--accent);
-  opacity: var(--field-alpha-strong);
+  opacity: var(--domain-art);
   pointer-events: none;
   /* Faded out toward the card's text rather than cropped at its edge: at 520px
      the drawing is large enough to read as engraving into the surface, but a
@@ -93,7 +93,10 @@
   box-shadow:
     var(--elev-floating),
     inset 0 0 0 1px var(--glass-edge);
-  transition: box-shadow 0.5s var(--ease-settle);
+  transition:
+    box-shadow 0.4s var(--ease-settle),
+    transform 0.4s var(--ease-settle),
+    background-color 0.4s ease;
 
   @media (max-width: 1024px) {
     padding: var(--space-8) var(--space-6);
@@ -131,10 +134,22 @@
    some other card is tapped, and a half-gated card releases only part of the
    state, which reads as a rendering fault. */
 @media (hover: hover) {
+  /*
+   * A hover you can actually see.
+   *
+   * It used to change the rim colour and swap one shadow token for another,
+   * which on a translucent surface over a dark ground is a difference of a few
+   * values — the card gave no feedback at all. Four things move together now:
+   * the card lifts, its surface brightens, the rim goes to full accent, and
+   * the illustration behind it nearly doubles. That is one gesture, not four
+   * effects, because they all resolve on the same curve at the same duration.
+   */
   .practice-domain:hover {
+    transform: translateY(-4px);
+    background-color: var(--glass-bg-strong);
     box-shadow:
       var(--elev-overlay),
-      inset 0 0 0 1px var(--accent-border);
+      inset 0 0 0 1px var(--accent);
   }
 
   .practice-domain:hover::before {
@@ -145,7 +160,7 @@
   /* The illustration is the card's best asset, so hover is where it steps
      forward — nearly doubling in presence rather than shifting a hairline. */
   .practice-domain:hover .practice-domain__bg {
-    opacity: 0.45;
+    opacity: var(--domain-art-hover);
     transform: scale(1.03);
   }
 

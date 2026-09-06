@@ -293,3 +293,29 @@
     margin-top: var(--space-6);
   }
 }
+
+/*
+ * The deferred call to action.
+ *
+ * `visibility` rather than `display`, so the bar's layout does not reflow as
+ * it appears and the language switcher and sign-in control beside it do not
+ * jump sideways at 62% of the first screen. Pointer events go with it, so a
+ * hidden button cannot be clicked or tabbed to.
+ */
+.navbar__cta[data-deferred='true'] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-4px);
+}
+
+.navbar__cta {
+  transition: opacity 0.35s var(--ease-settle), transform 0.35s var(--ease-settle),
+    visibility 0.35s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar__cta {
+    transition: none;
+  }
+}

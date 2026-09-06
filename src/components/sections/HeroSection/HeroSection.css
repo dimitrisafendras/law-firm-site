@@ -16,33 +16,46 @@
 
   /* ── Entrance timeline ────────────────────────────────────────────────────
    * Strictly sequential: one element at a time, each at a multiple of the
-   * single `--seq-beat` pacing token. Nothing arrives together, so the eye is
+   * single `--hero-beat` pacing token. Nothing arrives together, so the eye is
    * led down the composition instead of being hit with the whole hero at once.
+   *
+   * The whole sequence used to run on `--seq-beat` (0.4s) at multiples up to
+   * 15.5, which put the subtitle at 4s and the call to action at 5.4s. That is
+   * a long time to look at a headline and nothing else, and a visitor who
+   * scrolls in the first two seconds — most of them — never saw the CTA arrive
+   * at all. Same order, same one-at-a-time discipline, roughly a third of the
+   * wall clock: the CTA now lands under two seconds.
    *
    *   0.0 beats  the scene — statue rises with its ambient effects, and the
    *              circuit grid traces in behind it
-   *   3.0        overline
-   *   5.0        title line 1   (its per-character stagger is this step's pace)
-   *   7.5        title line 2
-   *  10.0        subtitle       (per-word)
-   *  13.5        call to action
-   *  15.5        scroll hint
+   *   1.5        overline
+   *   2.5        title line 1   (its per-character stagger is this step's pace)
+   *   4.0        title line 2
+   *   5.5        subtitle       (per-word)
+   *   7.0        call to action
+   *   8.0        scroll hint
    */
+  --hero-beat: 0.24s;
   --hero-t-scene: 0s;
-  --hero-t-overline: calc(var(--seq-beat) * 3);
-  --hero-t-title-1: calc(var(--seq-beat) * 5);
-  --hero-t-title-2: calc(var(--seq-beat) * 7.5);
-  --hero-t-subtitle: calc(var(--seq-beat) * 10);
-  --hero-t-actions: calc(var(--seq-beat) * 13.5);
-  --hero-t-hint: calc(var(--seq-beat) * 15.5);
+  --hero-t-overline: calc(var(--hero-beat) * 1.5);
+  --hero-t-title-1: calc(var(--hero-beat) * 2.5);
+  --hero-t-title-2: calc(var(--hero-beat) * 4);
+  --hero-t-subtitle: calc(var(--hero-beat) * 5.5);
+  --hero-t-actions: calc(var(--hero-beat) * 7);
+  --hero-t-hint: calc(var(--hero-beat) * 8);
+
+  /* The per-character stagger has to come down with the beat: at the old
+     0.03s a long title line took longer to finish spelling itself out than
+     the step it was allotted. */
+  --stagger-char: var(--stagger-char-tight);
 
   @media (max-width: 1024px) {
     align-items: flex-start;
     min-height: 100svh;
     padding-bottom: env(safe-area-inset-bottom, 0px);
 
-    /* Same order, tighter pacing on small screens. */
-    --seq-beat: var(--seq-beat-tight);
+    /* Same order, tighter still on small screens. */
+    --hero-beat: 0.18s;
     --stagger-char: var(--stagger-char-tight);
     --blur-spawn: var(--blur-spawn-tight);
   }

@@ -102,6 +102,32 @@
    scrolling, supports dragging, and fades out after a short idle. */
 html {
   scrollbar-width: none;
+
+  /*
+   * Anchor navigation glides rather than jumps.
+   *
+   * The buttons that scroll to #contact already passed `behavior: 'smooth'` to
+   * scrollIntoView, but the header's own links are plain `href="#practice"`
+   * anchors, which the browser resolves as an instant jump. That is what made
+   * the nav feel like it teleported while the CTA beside it did not — the same
+   * destination reached two different ways.
+   *
+   * The reduced-motion block further down this file overrides this to `auto`.
+   */
+  scroll-behavior: smooth;
+}
+
+/*
+ * A landing offset for every anchor target, so a section does not arrive
+ * underneath the fixed header. 96px clears the bar plus a little air; without
+ * it the section's own overline sits behind the nav on arrival.
+ */
+:target,
+#practice,
+#team,
+#testimonials,
+#contact {
+  scroll-margin-top: var(--space-24);
 }
 
 html::-webkit-scrollbar {

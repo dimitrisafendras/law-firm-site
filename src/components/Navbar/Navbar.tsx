@@ -10,24 +10,49 @@ interface NavbarProps {
   logo: ReactNode;
   links: NavLinkItem[];
   cta?: ReactNode;
+  /**
+   * Hold the desktop call to action back until the page has scrolled past its
+   * first screen.
+   *
+   * For a page whose hero carries its own call to action, showing the same
+   * button in the bar at the same time puts two identical primary controls in
+   * one viewport — which reads as a mistake rather than as emphasis, and
+   * halves the weight of both. The bar takes over once the hero's has gone.
+   *
+   * Off by default: a page with no hero (login, account) wants its bar CTA
+   * from the first frame.
+   */
+  deferCta?: boolean;
 }
 
 const MOBILE_MENU_ID = 'navbar-mobile-menu';
 const FOCUSABLE =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export function Navbar({ logo, links, cta }: NavbarProps) {
+export function Navbar({ logo, links, cta, deferCta = false }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  const [pastHero, setPastHero] = useState(false);
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+      // 62% of the viewport: past the hero's own call to action but well
+      // before the next section's, so the bar is never the only one on screen
+      // for long and never the second one.
+      setPastHero(window.scrollY > window.innerHeight * 0.62);
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
   const close = useCallback(() => {
@@ -117,7 +142,14 @@ export function Navbar({ logo, links, cta }: NavbarProps) {
           ))}
         </ul>
 
-        {cta && <div className="navbar__cta">{cta}</div>}
+        {cta && (
+          <div
+            className="navbar__cta"
+            data-deferred={deferCta && !pastHero ? 'true' : undefined}
+          >
+            {cta}
+          </div>
+        )}
 
         <button
           ref={toggleRef}

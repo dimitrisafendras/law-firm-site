@@ -317,27 +317,39 @@ export const glass = {
     glow: 'rgba(255, 255, 255, 0.45)',
   },
   /*
-   * The dark tint is LIGHTER than the surface it sits on, deliberately.
+   * The dark tint is LIGHTER than the surface it sits on, deliberately — and
+   * it has been raised twice, for two different reasons.
    *
-   * It used to be rgba(24, 26, 31, …) — darker than the page ramp behind it —
-   * which made every card recede into its own background and measure 1.05:1
-   * against it. Glass over a dark ground catches light; it reads lighter than
-   * its surroundings, not darker. The values below lift the card off the page
-   * and give the rim something to sit against.
+   * It began at rgba(24, 26, 31, …), darker than the page ramp behind it, so
+   * every card receded into its own background and measured 1.05:1 against it.
+   * Glass over a dark ground catches light: it reads lighter than what
+   * surrounds it, not darker.
+   *
+   * rgba(52, 62, 82, 0.28) fixed that against a neutral slate ramp. It stopped
+   * working when the ramp moved onto the hero's navy — 52/62/82 is close
+   * enough in both hue and value to #152039 that a card composited to about
+   * rgb(30, 40, 64) against a ground of rgb(21, 32, 57), which is a difference
+   * you cannot see.
+   *
+   * The fix is a lighter tint rather than a heavier one: raising alpha on a
+   * dark tint buys contrast by turning the glass opaque, which is the one
+   * thing the material must not do. 78/94/122 at 0.38 separates the card
+   * clearly while leaving it 62% transparent, and with lensing restored the
+   * blur and saturate are doing real work behind it.
    */
   dark: {
-    bg: 'rgba(52, 62, 82, 0.28)',
-    bgStrong: 'rgba(52, 62, 82, 0.44)',
-    border: 'rgba(255, 255, 255, 0.18)',
+    bg: 'rgba(78, 94, 122, 0.38)',
+    bgStrong: 'rgba(78, 94, 122, 0.54)',
+    border: 'rgba(255, 255, 255, 0.24)',
     shadow: '0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3)',
     blur: '20px',
     blurStrong: '28px',
     saturate: '180%',
-    tint: 'rgba(52, 62, 82, 0.28)',
-    tintClear: 'rgba(52, 62, 82, 0.16)',
-    highlight: 'rgba(255, 255, 255, 0.42)',
-    edge: 'rgba(255, 255, 255, 0.18)',
-    glow: 'rgba(188, 232, 255, 0.20)',
+    tint: 'rgba(78, 94, 122, 0.38)',
+    tintClear: 'rgba(78, 94, 122, 0.2)',
+    highlight: 'rgba(255, 255, 255, 0.5)',
+    edge: 'rgba(255, 255, 255, 0.24)',
+    glow: 'rgba(188, 232, 255, 0.24)',
   },
 } as const;
 
@@ -482,6 +494,12 @@ export const decor = {
   bloomStrong: '20%',
   bloomMid: '16%',
   bloomSoft: '13%',
+  /* The practice cards' domain line-art. Its own value, not one of the field
+     alphas above: the field is a page-wide backdrop and has to stay under
+     everything, while these are a card's own illustration and are meant to be
+     seen. */
+  domainArt: '0.25',
+  domainArtHover: '0.45',
 } as const;
 
 export const decorVarNames: Record<string, string> = {
@@ -491,6 +509,8 @@ export const decorVarNames: Record<string, string> = {
   bloomStrong: '--bloom-strong',
   bloomMid: '--bloom-mid',
   bloomSoft: '--bloom-soft',
+  domainArt: '--domain-art',
+  domainArtHover: '--domain-art-hover',
 };
 
 // ─── Token → CSS variable name mapping ───────────────────────────────────────

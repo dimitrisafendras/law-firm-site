@@ -16,6 +16,7 @@ export default function HomePage() {
   return (
     <>
       <Navbar
+        deferCta
         logo={
           <a href="#" className="firm-logo">
             <ScaleOfJustice className="firm-logo__icon" />

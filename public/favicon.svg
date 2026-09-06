@@ -1,4 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 160" width="420" height="160">
-<text x="108" y="130" text-anchor="middle" font-size="110" font-weight="600" fill="#002B49" stroke="#FFFFFF" stroke-width="8" paint-order="stroke">V</text>
-<text x="172" y="130" text-anchor="middle" font-size="110" font-weight="600" fill="#89CFF0" stroke="#FFFFFF" stroke-width="8" paint-order="stroke">K</text>
-<text x="240" y="130" text-anchor="middle" font-size="110" font-weight="600" fill="#002B49" stroke="#FFFFFF" stroke-width="8" paint-order="stroke">M</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="VKM">
+  <!--
+    VKM favicon: drawn, not set.
+
+    Three reasons this is geometry rather than the brand artwork scaled down.
+
+    A favicon is fetched as a standalone document. It never sees the app's
+    stylesheet or its webfonts, so a CSS custom property resolves to nothing
+    here and any font-family falls back to whatever the platform has. The
+    wordmark relies on both. As paths it depends on neither.
+
+    The artwork also positions its glyphs for a face it does not name; measured,
+    they overlap before its 8px keyline widens each of them further. At 16px
+    that collapses into a single smudge.
+
+    And 16px is 16px. Letterforms that work at 110px need redrawing, not
+    resampling: monolinear strokes, a wide aperture on the K, generous gaps,
+    because a browser downscale closes anything tighter.
+
+    Built on a 48 grid: 16-unit cap height on a y=32 baseline, 3-unit strokes
+    with round caps, letters at x=8/19/30 with 3 units of air between them. At a
+    rendered 16px that is a 1px stroke, the thinnest that survives.
+
+    Colours are the brand's, as literals: sky on navy, the pairing the artwork
+    already uses for its picked-out K. Change the brand block in tokens.ts and
+    these have to be changed here by hand.
+  -->
+  <rect width="48" height="48" rx="11" fill="#002B49"/>
+  <g fill="none" stroke="#89CFF0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 16 L12 32 L16 16"/>
+    <path d="M19 16 V32 M26 16 L19.5 24 L26 32"/>
+    <path d="M30 32 V16 L35 26 L40 16 V32"/>
+  </g>
+</svg>

@@ -1,169 +1,108 @@
 import { useTranslation } from '@/i18n';
-import { FadeInSection } from '@/components/animations/FadeInSection';
+import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
 import partnerMaleImg from '@/assets/images/partner-male.jpg';
 import partnerFemaleImg from '@/assets/images/partner-female.jpg';
 import partnerMaleAvif from '@/assets/images/partner-male.avif';
 import partnerFemaleAvif from '@/assets/images/partner-female.avif';
-// PLACEHOLDER: no third headshot exists yet, and partners.jpg is a two-person
-// group shot. Reuses partner 1's portrait so the row renders; swap in a real
-// photo of the crypto partner.
-const partnerCryptoAvif = partnerMaleAvif;
-import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import { EditableText } from '@/components';
 import './PartnerEthos.css';
 
+interface Partner {
+  /** 1-based, matching the `attorneyN*` translation keys. */
+  n: 1 | 2 | 3;
+  avif: string;
+  fallback: string;
+}
+
+/*
+ * PLACEHOLDER: no third headshot exists yet, so partner 3 reuses partner 1's
+ * portrait. Two slots therefore point at the same file — when the real
+ * photography arrives, both `avif`/`fallback` pairs below must be updated, not
+ * just one.
+ */
+const partners: Partner[] = [
+  { n: 1, avif: partnerMaleAvif, fallback: partnerMaleImg },
+  { n: 2, avif: partnerFemaleAvif, fallback: partnerFemaleImg },
+  { n: 3, avif: partnerMaleAvif, fallback: partnerMaleImg },
+];
+
+/**
+ * The partners, standing on marble.
+ *
+ * This was three alternating rows — portrait one side, glass card the other,
+ * mirrored on every second row. It cost 2,615px for three people and still
+ * looked empty, because a ~780px portrait beside a ~450px top-aligned text
+ * card leaves ~330px of dead page next to every photograph. Mirroring the
+ * layout also mirrored the type, so one partner's biography was right-aligned
+ * for no reason other than symmetry.
+ *
+ * Three busts on one plinth instead: portraits at 4:5 in a single row, names
+ * engraved beneath them, everything left-aligned. About 1,100px.
+ *
+ * The section is the site's one marble surface. It is not a light theme — the
+ * page has no theme switch — it is a second *material*, opted into with
+ * `data-material="marble"` and emitted from the `colors.light` tokens that
+ * have been sitting unused in tokens.ts since the beginning. It earns its
+ * place twice: it is the only tonal landmark on an 8,600px page that is
+ * otherwise one continuous dark, and greyscale portraits on stone read as
+ * museum where the same portraits on navy glass read as a team page.
+ */
 export function PartnerEthos() {
   const { t } = useTranslation();
 
   return (
-    <section id="team" className="partner-ethos">
-      <CircuitLines variant="a" />
+    <section id="team" className="partner-ethos" data-material="marble">
       <div className="partner-ethos__inner">
-        <FadeInSection variant="fade-up">
-          <SectionHeader
-            overlineKey="teamOverline"
-            titleKey="teamTitle"
-            subtitleKey="teamSubtitle"
-            labelKey="chapterTeam"
-          />
+        <FadeInSection>
+          <SectionHeader titleKey="teamTitle" subtitleKey="teamSubtitle" />
         </FadeInSection>
 
-        <div className="partner-ethos__profiles">
-          {/* Partner 1 — image left, text right */}
-          <div className="partner-ethos__row">
-            <FadeInSection variant="fade-left" className="partner-ethos__image-col">
-              <div className="partner-ethos__image-wrapper">
+        <StaggerGroup className="partner-ethos__plinth">
+          {partners.map(({ n, avif, fallback }) => (
+            <FadeInSection key={n} as="article" className="partner-ethos__bust">
+              <div className="partner-ethos__portrait">
                 <picture>
-                  <source type="image/avif" srcSet={partnerMaleAvif} />
+                  <source type="image/avif" srcSet={avif} />
                   <img
-                    src={partnerMaleImg}
-                    alt={t('attorney1Name')}
+                    src={fallback}
+                    alt={t(`attorney${n}Name`)}
                     className="partner-ethos__image"
                     width={512}
-                    height={512}
+                    height={640}
                     loading="lazy"
                     decoding="async"
                   />
                 </picture>
-                <div className="partner-ethos__image-overlay" />
                 <EditableText
-                  tKey="attorney1Title"
+                  tKey={`attorney${n}Title`}
                   as="span"
-                  className="partner-ethos__badge partner-ethos__badge--left"
+                  className="partner-ethos__badge"
                 />
               </div>
-            </FadeInSection>
 
-            <FadeInSection variant="fade-right" delay={0.15} className="partner-ethos__text-col glass">
-              <EditableText tKey="attorney1Name" as="h3" className="partner-ethos__name" />
+              <EditableText tKey={`attorney${n}Name`} as="h3" className="partner-ethos__name" />
               <p className="partner-ethos__role">
-                <EditableText tKey="attorney1Spec1" as="span" /> &amp;{' '}
-                <EditableText tKey="attorney1Spec2" as="span" />
+                <EditableText tKey={`attorney${n}Spec1`} as="span" /> &amp;{' '}
+                <EditableText tKey={`attorney${n}Spec2`} as="span" />
               </p>
               <div className="partner-ethos__bio">
-                <EditableText tKey="attorney1Bio" as="p" />
+                <EditableText tKey={`attorney${n}Bio`} as="p" />
               </div>
-              <div className="partner-ethos__meta">
-                <div className="partner-ethos__meta-item">
-                  <EditableText tKey="teamFocusLabel" as="span" className="partner-ethos__meta-label" />
-                  <EditableText tKey="attorney1Focus" as="span" className="partner-ethos__meta-value" />
-                </div>
-                <div className="partner-ethos__meta-item">
-                  <EditableText tKey="teamOriginLabel" as="span" className="partner-ethos__meta-label" />
-                  <EditableText tKey="attorney1Origin" as="span" className="partner-ethos__meta-value" />
-                </div>
-              </div>
-            </FadeInSection>
-          </div>
 
-          {/* Partner 2 — text left (right-aligned), image right */}
-          <div className="partner-ethos__row partner-ethos__row--reversed">
-            <FadeInSection variant="fade-left" delay={0.15} className="partner-ethos__text-col partner-ethos__text-col--right glass">
-              <EditableText tKey="attorney2Name" as="h3" className="partner-ethos__name" />
-              <p className="partner-ethos__role">
-                <EditableText tKey="attorney2Spec1" as="span" /> &amp;{' '}
-                <EditableText tKey="attorney2Spec2" as="span" />
-              </p>
-              <div className="partner-ethos__bio">
-                <EditableText tKey="attorney2Bio" as="p" />
-              </div>
-              <div className="partner-ethos__meta partner-ethos__meta--right">
+              <dl className="partner-ethos__meta">
                 <div className="partner-ethos__meta-item">
-                  <EditableText tKey="teamFocusLabel" as="span" className="partner-ethos__meta-label" />
-                  <EditableText tKey="attorney2Focus" as="span" className="partner-ethos__meta-value" />
+                  <EditableText tKey="teamFocusLabel" as="dt" className="partner-ethos__meta-label" />
+                  <EditableText tKey={`attorney${n}Focus`} as="dd" className="partner-ethos__meta-value" />
                 </div>
                 <div className="partner-ethos__meta-item">
-                  <EditableText tKey="teamOriginLabel" as="span" className="partner-ethos__meta-label" />
-                  <EditableText tKey="attorney2Origin" as="span" className="partner-ethos__meta-value" />
+                  <EditableText tKey="teamOriginLabel" as="dt" className="partner-ethos__meta-label" />
+                  <EditableText tKey={`attorney${n}Origin`} as="dd" className="partner-ethos__meta-value" />
                 </div>
-              </div>
+              </dl>
             </FadeInSection>
-
-            <FadeInSection variant="fade-right" className="partner-ethos__image-col">
-              <div className="partner-ethos__image-wrapper">
-                <picture>
-                  <source type="image/avif" srcSet={partnerFemaleAvif} />
-                  <img
-                    src={partnerFemaleImg}
-                    alt={t('attorney2Name')}
-                    className="partner-ethos__image"
-                    width={512}
-                    height={512}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </picture>
-                <div className="partner-ethos__image-overlay" />
-                <EditableText
-                  tKey="attorney2Title"
-                  as="span"
-                  className="partner-ethos__badge partner-ethos__badge--right"
-                />
-              </div>
-            </FadeInSection>
-          </div>
-
-          {/* Partner 3 — image left, text right */}
-          <div className="partner-ethos__row">
-            <FadeInSection variant="fade-left" className="partner-ethos__image-col">
-              <div className="partner-ethos__image-wrapper">
-                <img
-                  src={partnerCryptoAvif}
-                  alt={t('attorney3Name')}
-                  className="partner-ethos__image"
-                />
-                <div className="partner-ethos__image-overlay" />
-                <EditableText
-                  tKey="attorney3Title"
-                  as="span"
-                  className="partner-ethos__badge partner-ethos__badge--left"
-                />
-              </div>
-            </FadeInSection>
-
-            <FadeInSection variant="fade-right" delay={0.15} className="partner-ethos__text-col glass">
-              <EditableText tKey="attorney3Name" as="h3" className="partner-ethos__name" />
-              <p className="partner-ethos__role">
-                <EditableText tKey="attorney3Spec1" as="span" /> &amp;{' '}
-                <EditableText tKey="attorney3Spec2" as="span" />
-              </p>
-              <div className="partner-ethos__bio">
-                <EditableText tKey="attorney3Bio" as="p" />
-              </div>
-              <div className="partner-ethos__meta">
-                <div className="partner-ethos__meta-item">
-                  <EditableText tKey="teamFocusLabel" as="span" className="partner-ethos__meta-label" />
-                  <EditableText tKey="attorney3Focus" as="span" className="partner-ethos__meta-value" />
-                </div>
-                <div className="partner-ethos__meta-item">
-                  <EditableText tKey="teamOriginLabel" as="span" className="partner-ethos__meta-label" />
-                  <EditableText tKey="attorney3Origin" as="span" className="partner-ethos__meta-value" />
-                </div>
-              </div>
-            </FadeInSection>
-          </div>
-        </div>
+          ))}
+        </StaggerGroup>
       </div>
     </section>
   );

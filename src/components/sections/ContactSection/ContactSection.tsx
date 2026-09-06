@@ -23,7 +23,7 @@ export function ContactSection() {
         </FadeInSection>
 
         <div className="contact-section__grid">
-          <FadeInSection variant="fade-left" className="contact-section__info">
+          <FadeInSection className="contact-section__info">
             <div className="contact-section__details glass">
               <div className="contact-section__detail">
                 <span className="contact-section__detail-icon" aria-hidden="true">&#9906;</span>
@@ -48,7 +48,7 @@ export function ContactSection() {
             </div>
           </FadeInSection>
 
-          <FadeInSection variant="fade-right" delay={0.2} className="contact-section__form">
+          <FadeInSection step={1} className="contact-section__form">
             <ContactForm onSubmit={(data) => console.log('Form submitted:', data)} />
           </FadeInSection>
         </div>

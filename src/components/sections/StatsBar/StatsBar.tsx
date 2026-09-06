@@ -45,16 +45,16 @@ interface StatItemProps {
   valueKey: string;
   labelKey: string;
   trigger: boolean;
-  delay: number;
+  step: number;
 }
 
-function StatItem({ valueKey, labelKey, trigger, delay }: StatItemProps) {
+function StatItem({ valueKey, labelKey, trigger, step }: StatItemProps) {
   const { t } = useTranslation();
   const { target, suffix } = splitStatValue(t(valueKey));
   const count = useCountUp(target ?? 0, 2000, trigger);
 
   return (
-    <FadeInSection variant="fade-up" delay={delay} className="stats-bar__item">
+    <FadeInSection step={step} className="stats-bar__item">
       <span className="stats-bar__value">
         {target === null ? '' : count}{suffix}
       </span>
@@ -70,9 +70,14 @@ export function StatsBar() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // Low threshold, and a rootMargin that arms the counter just before the
+    // band is reached. At 0.3 a fast scroll could cross the band between
+    // callbacks and leave the numerals sitting at zero for the session — the
+    // same failure that the entrance animations were rewritten to avoid, and
+    // the one observer on the page that still has to exist.
     const obs = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold: 0.3 },
+      { threshold: 0.01, rootMargin: '0px 0px -10% 0px' },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -89,7 +94,7 @@ export function StatsBar() {
     <div className="stats-bar glass" ref={ref}>
       <div className="stats-bar__inner">
         {stats.map((s, i) => (
-          <StatItem key={s.labelKey} valueKey={s.valueKey} labelKey={s.labelKey} trigger={visible} delay={i * 0.1} />
+          <StatItem key={s.labelKey} valueKey={s.valueKey} labelKey={s.labelKey} trigger={visible} step={i} />
         ))}
       </div>
     </div>

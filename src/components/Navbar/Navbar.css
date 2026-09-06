@@ -88,7 +88,7 @@
   font-weight: var(--type-caption-weight);
   /* Wider than --type-caption-tracking: uppercase nav labels are tracked out
      well past the reading step. */
-  letter-spacing: var(--type-caps-tracking);
+  letter-spacing: var(--type-caps-tracking-tight);
   text-transform: uppercase;
   color: var(--text);
   text-decoration: none;
@@ -269,7 +269,7 @@
     /* One step up from the desktop nav label: these are touch targets. */
     font-size: var(--type-small-size);
     font-weight: var(--type-caption-weight);
-    letter-spacing: var(--type-caps-tracking);
+    letter-spacing: var(--type-caps-tracking-tight);
     text-transform: uppercase;
     color: var(--text);
     text-decoration: none;

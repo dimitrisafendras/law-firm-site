@@ -85,6 +85,20 @@ export const fonts = {
   sans: "'Jura', sans-serif",
   heading: "'Jura', sans-serif",
   label: "'Jura', sans-serif",
+  /**
+   * The one place a second family earns its keep.
+   *
+   * Jura has no italic. Every italic on this site — partner roles, every
+   * testimonial quote — was a browser-synthesised oblique, which is a slanted
+   * geometric sans and looks exactly as cheap as that sounds at 20px. EB
+   * Garamond ships a true italic *and* Greek, which almost nothing else in
+   * this register does.
+   *
+   * It also earns it structurally: Garamond against Jura is the same collision
+   * the hero is built on — classical stone against digital light — so the
+   * typography stops merely claiming "legacy and innovation" and enacts it.
+   */
+  serif: "'EB Garamond', Georgia, 'Times New Roman', serif",
   mono: 'ui-monospace, Consolas, monospace',
 } as const;
 
@@ -99,9 +113,20 @@ export const fonts = {
  * size but keeps a stray weight or tracking is the usual way a scale rots.
  */
 export const typeScale = {
-  display: { size: '3.5rem', px: 56, weight: 620, lineHeight: '1.02', tracking: '-0.03em' },
+  /**
+   * Inscription size. Section titles live here.
+   *
+   * 40px semibold on a 1440px measure is timid — it reads as a subhead on a
+   * page whose hero is a 95vh statue. At 80px the weight has to come *down*,
+   * not up: Jura's 300 at this size reads as something cut into stone, where
+   * 600 reads as a banner. This is the page's one big hierarchy jump.
+   */
+  displayXl: { size: '5rem', px: 80, weight: 300, lineHeight: '1.0', tracking: '-0.03em' },
+  display: { size: '4.5rem', px: 72, weight: 300, lineHeight: '1.02', tracking: '-0.03em' },
   h1: { size: '2.5rem', px: 40, weight: 600, lineHeight: '1.08', tracking: '-0.025em' },
   h2: { size: '1.75rem', px: 28, weight: 600, lineHeight: '1.15', tracking: '-0.02em' },
+  /** Card titles and the wordmark, which were both sitting here ad hoc. */
+  h4: { size: '1.5rem', px: 24, weight: 500, lineHeight: '1.3', tracking: '-0.01em' },
   h3: { size: '1.25rem', px: 20, weight: 600, lineHeight: '1.25', tracking: '-0.01em' },
   bodyLg: { size: '1.125rem', px: 18, weight: 400, lineHeight: '1.6', tracking: '0' },
   body: { size: '1rem', px: 16, weight: 400, lineHeight: '1.6', tracking: '0' },
@@ -110,13 +135,21 @@ export const typeScale = {
 } as const;
 
 /**
- * Tracking for uppercase micro-labels.
+ * Tracking for uppercase micro-labels — two steps, and only two.
  *
- * The caption step's own 0.01em is tuned for mixed case; uppercase Jura at 12px
- * closes up badly at that value, and every uppercase label on the site had
- * independently invented its own wider tracking. This is that value, once.
+ * The site had independently invented five (0.05, 0.15, 0.2, 0.3 and 0.35em),
+ * which is how a scale rots: each label picked a value that looked right in
+ * isolation. At 11-12px anything past 0.2em reads as gappy rather than as
+ * spaced — "P A R T N E R  E T H O S" stops being a word.
+ *
+ * `tight` is for functional labels that must read fast (nav, form labels, stat
+ * captions). `wide` is for the engraved register — overlines and chapter
+ * markers, where the label is an ornament and slow reading is the point.
  */
-export const capsTracking = '0.05em';
+export const capsTracking = {
+  tight: '0.08em',
+  wide: '0.2em',
+} as const;
 
 /**
  * Text emphasis levels, as opacities applied to `--text`.
@@ -141,12 +174,16 @@ export const fontSizes = {
   body: typeScale.body.size,
   bodyLg: typeScale.bodyLg.size,
   h3: typeScale.h3.size,
+  h4: typeScale.h4.size,
   h2: typeScale.h2.size,
   h1: typeScale.h1.size,
   display: typeScale.display.size,
+  displayXl: typeScale.displayXl.size,
 } as const;
 
 export const weights = {
+  /** Jura's lower half, unused until the inscription sizes needed it. */
+  light: 300,
   regular: 400,
   medium: 500,
   semibold: 600,
@@ -308,6 +345,21 @@ export const elevations = {
   overlay: '0 18px 46px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.35)',
 } as const;
 
+/**
+ * Elevation on marble.
+ *
+ * The dark set above is tuned to separate a surface from a near-black canvas
+ * and is far too heavy for a pale one — a 0.45-alpha drop shadow on #F5F5F5
+ * reads as dirt, not as depth. These are the same four steps at the strengths
+ * a light ground can carry.
+ */
+export const elevationsMarble = {
+  flat: 'none',
+  raised: '0 1px 3px rgba(0, 43, 73, 0.08)',
+  floating: '0 8px 24px rgba(0, 43, 73, 0.1), 0 2px 6px rgba(0, 43, 73, 0.06)',
+  overlay: '0 18px 46px rgba(0, 43, 73, 0.14), 0 4px 10px rgba(0, 43, 73, 0.08)',
+} as const;
+
 // ─── Gradients ───────────────────────────────────────────────────────────────
 
 export const gradients = {
@@ -377,6 +429,23 @@ export const motion = {
     elementTight: '0.09s',
   },
 
+  /**
+   * Section entrances, driven by `animation-timeline: view()` rather than by
+   * an IntersectionObserver.
+   *
+   * `travel` is 24px, not the 40px this site used to run. 40px reads as a
+   * slide — the element arrives from somewhere; 24px reads as a settle, which
+   * is what an entrance should be when it happens twenty times down a page.
+   *
+   * `range` is how far into the element's entry the animation completes: 45%
+   * means it is fully settled well before it reaches the middle of the
+   * viewport, so nothing is still moving while it is being read.
+   */
+  enter: {
+    travel: '24px',
+    range: '45%',
+  },
+
   /** Blur radii for blur-to-sharp materialisation. */
   blur: {
     spawn: '12px',
@@ -384,6 +453,28 @@ export const motion = {
     spawnTight: '8px',
   },
 } as const;
+
+// ─── Decoration ───────────────────────────────────────────────────────────────
+
+/**
+ * The dissolution field — the page's one decorative layer.
+ *
+ * These alphas are deliberately a *range*, not a value: the field's whole idea
+ * is that the cubes have drifted off the statue, so density and opacity fall
+ * away from the top-right. A single alpha would read as evenly-scattered
+ * particles, which is the stock effect this replaces.
+ */
+export const decor = {
+  fieldAlphaStrong: '0.14',
+  fieldAlphaMid: '0.1',
+  fieldAlphaFaint: '0.06',
+} as const;
+
+export const decorVarNames: Record<string, string> = {
+  fieldAlphaStrong: '--field-alpha-strong',
+  fieldAlphaMid: '--field-alpha-mid',
+  fieldAlphaFaint: '--field-alpha-faint',
+};
 
 // ─── Token → CSS variable name mapping ───────────────────────────────────────
 // Single place that defines the CSS custom property name for each token key.
@@ -458,6 +549,7 @@ export const spacingVarNames: Record<string, string> = {
 };
 
 export const weightVarNames: Record<string, string> = {
+  light: '--weight-light',
   regular: '--weight-regular',
   medium: '--weight-medium',
   semibold: '--weight-semibold',
@@ -488,6 +580,7 @@ export const gradientVarNames: Record<string, string> = {
 
 export const fontVarNames: Record<string, string> = {
   sans: '--sans',
+  serif: '--serif',
   heading: '--heading',
   label: '--label',
   mono: '--mono',
@@ -506,6 +599,7 @@ export const theme = {
   glass,
   materials,
   elevations,
+  elevationsMarble,
   typeScale,
   weights,
   capsTracking,
@@ -515,6 +609,7 @@ export const theme = {
   layout,
   transitions,
   motion,
+  decor,
 } as const;
 
 export type Theme = typeof theme;

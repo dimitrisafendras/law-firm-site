@@ -83,7 +83,7 @@
   font-family: var(--label);
   font-size: var(--type-caption-size);
   font-weight: var(--type-caption-weight);
-  letter-spacing: var(--type-caps-tracking);
+  letter-spacing: var(--type-caps-tracking-tight);
   text-transform: uppercase;
   color: var(--text);
   opacity: var(--text-emphasis-muted);

@@ -56,29 +56,40 @@
   position: absolute;
   bottom: -30px;
   right: -30px;
-  width: 420px;
-  height: 420px;
+  width: 520px;
+  height: 520px;
   color: var(--accent);
-  opacity: 0.25;
+  opacity: var(--field-alpha-strong);
   pointer-events: none;
+  /* Faded out toward the card's text rather than cropped at its edge: at 520px
+     the drawing is large enough to read as engraving into the surface, but a
+     hard edge behind body copy reads as a pasted image. The mask puts the line
+     weight where the card is empty and nothing where it is not. */
+  -webkit-mask-image: radial-gradient(75% 75% at 78% 78%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(75% 75% at 78% 78%, #000 0%, transparent 78%);
   transition: opacity 0.6s, transform 0.6s;
 }
 
-/* The material is inlined rather than applied with `.glass`: ::before is
-   already spent on the top accent line, so the class's two light layers have
-   nowhere to live. ::after below carries the illumination; the specular rim is
-   folded into the inset edge. */
+/* The material is inlined rather than applied with `.glass`, for one reason:
+   `.glass > *` sets `position: relative` on every direct child, which would
+   knock this card's absolutely-positioned illustration out of place. Same
+   three layers, same values — just declared here. */
 .practice-domain {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  padding: var(--space-12);
+  /* Tighter vertically than horizontally: the 5-column cards were noticeably
+     taller than their text needed, which is what left the row looking airy in
+     the middle and cramped at the edges. */
+  padding: var(--space-8) var(--space-12);
   border-radius: var(--radius-3xl);
   background-color: var(--glass-tint);
-  /* No backdrop-filter: this card only renders inside a FadeInSection, whose
-     opacity animation is a backdrop root, so the blur would never sample
-     anything during the entrance and switching it on afterwards would visibly
-     shift the card's colour. See the note in src/styles/liquid-glass.css. */
+  /* Lensing is back. FadeInSection animates the surface itself on a view()
+     timeline rather than fading an ancestor, so nothing above this card is a
+     backdrop root and the blur samples the page from the first frame. See
+     src/styles/liquid-glass.css. */
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   box-shadow:
     var(--elev-floating),
     inset 0 0 0 1px var(--glass-edge);
@@ -89,23 +100,16 @@
   }
 }
 
-/* Top accent line */
-.practice-domain::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent), transparent 80%);
-  opacity: 0.4;
-  transition: opacity 0.5s;
-}
+/* Illumination — interior glow. Negative z-index so it sits over the tint but
+   under every child, which keeps the card's own absolutely-positioned
+   decoration (`__bg`) stacked exactly as before.
 
-/* Illumination — interior glow that lenses the backdrop. Negative z-index so
-   it sits over the tint but under every child, which keeps the card's own
-   absolutely-positioned decoration (`__bg`) stacked exactly as before. */
-.practice-domain::after {
+   The 2px accent line that used to sit on ::before is gone: a bright rule
+   across the top edge of a rounded card is the most generic device in this
+   whole genre, and with four cards side by side it read as a toolbar. The
+   card's edge is now drawn by the material's own rim, like every other
+   surface on the site. */
+.practice-domain::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -134,17 +138,15 @@
   }
 
   .practice-domain:hover::before {
-    opacity: 0.8;
-  }
-
-  .practice-domain:hover::after {
     transform: scale(1.08);
     opacity: 1;
   }
 
+  /* The illustration is the card's best asset, so hover is where it steps
+     forward — nearly doubling in presence rather than shifting a hairline. */
   .practice-domain:hover .practice-domain__bg {
-    opacity: 0.4;
-    transform: scale(1.05);
+    opacity: 0.45;
+    transform: scale(1.03);
   }
 
   .practice-domain:hover .practice-domain__icon-bg {
@@ -159,13 +161,13 @@
     background-color: var(--surface);
   }
 
-  .practice-domain::after {
+  .practice-domain::before {
     display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .practice-domain::after {
+  .practice-domain::before {
     transition: none;
   }
 }
@@ -191,7 +193,7 @@
   font-weight: var(--type-caption-weight);
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: var(--type-caps-tracking-wide);
   color: var(--accent);
   display: block;
   margin-bottom: var(--space-8);
@@ -227,7 +229,7 @@
   font-weight: var(--type-caption-weight);
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: var(--type-caps-tracking-tight);
   color: var(--accent);
   text-decoration: none;
   transition: gap 0.3s;

@@ -1,79 +1,56 @@
-/* ─── Scroll-triggered fade animations ─────────────────────────────────────── */
+/* ─── Scroll-driven entrances ──────────────────────────────────────────────
+ *
+ * The resting state is *visible*. Everything below is additive, inside an
+ * `@supports` guard, so a browser without view() timelines — and the
+ * prerendered HTML before any CSS animation starts — shows the settled page.
+ * The old stylesheet did the opposite, parking every wrapper at `opacity: 0`
+ * and relying on JS to release it, which is why a missed observer callback
+ * left content invisible for good.
+ * ────────────────────────────────────────────────────────────────────────── */
 
 .fade-section {
-  opacity: 0;
-  transition-property: opacity, transform;
-  transition-duration: var(--fade-duration, 0.7s);
-  transition-delay: var(--fade-delay, 0s);
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  /* No opacity, no transform, no transition. See above. */
+  --enter-step: 0;
 }
 
-/* Variants — initial state */
-.fade-section--fade-up {
-  transform: translateY(40px);
-}
+@supports (animation-timeline: view()) {
+  .fade-section--rise {
+    animation: fade-section-rise linear both;
+    animation-timeline: view();
 
-.fade-section--fade-left {
-  transform: translateX(-40px);
-}
-
-.fade-section--fade-right {
-  transform: translateX(40px);
-}
-
-.fade-section--scale {
-  transform: scale(0.95);
-}
-
-.fade-section--fade {
-  transform: none;
-}
-
-/* Visible state — shared */
-.fade-section--visible {
-  opacity: 1;
-  transform: none;
-}
-
-/* ─── Stagger Group ────────────────────────────────────────────────────────── */
-
-.stagger-group > .fade-section:nth-child(1) { --fade-delay: 0s; }
-.stagger-group > .fade-section:nth-child(2) { --fade-delay: var(--stagger-interval, 0.12s); }
-.stagger-group > .fade-section:nth-child(3) { --fade-delay: calc(var(--stagger-interval, 0.12s) * 2); }
-.stagger-group > .fade-section:nth-child(4) { --fade-delay: calc(var(--stagger-interval, 0.12s) * 3); }
-.stagger-group > .fade-section:nth-child(5) { --fade-delay: calc(var(--stagger-interval, 0.12s) * 4); }
-.stagger-group > .fade-section:nth-child(6) { --fade-delay: calc(var(--stagger-interval, 0.12s) * 5); }
-
-/* ─── Mobile: soften all animations ───────────────────────────────────────── */
-
-@media (max-width: 1024px) {
-  /*
-   * Scoped off the visible state deliberately. `.fade-section--visible` sets
-   * `transform: none` further up this file at the same specificity, so an
-   * unscoped rule here wins by source order and a *settled* section keeps its
-   * entrance transform for good: the mobile animation never finishes, and —
-   * worse since the glass material landed — the wrapper stays a permanent
-   * backdrop root, so `backdrop-filter` on any surface inside it composites
-   * against nothing and the material degrades to a flat tint.
-   */
-  .fade-section--fade-up:not(.fade-section--visible),
-  .fade-section--fade-left:not(.fade-section--visible),
-  .fade-section--fade-right:not(.fade-section--visible),
-  .fade-section--scale:not(.fade-section--visible) {
-    transform: scale(0.97);
-  }
-
-  .fade-section {
-    transition-duration: 0.5s;
+    /*
+     * Completes at 45% of the element's entry, so it has fully settled well
+     * before it reaches the middle of the viewport — nothing is still moving
+     * while it is being read.
+     *
+     * `--enter-step` shifts a sibling's window later inside its own entry
+     * without delaying it in time; the offset is scroll position, not seconds,
+     * so the stagger reads at any scroll speed and reverses cleanly.
+     */
+    animation-range: entry calc(var(--enter-step) * 8%) entry
+      calc(var(--motion-enter-range) + var(--enter-step) * 8%);
   }
 }
 
-/* ─── Reduce motion ────────────────────────────────────────────────────────── */
+@keyframes fade-section-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-enter-travel));
+  }
+}
+
+/* ─── Stagger group ───────────────────────────────────────────────────────── */
+
+.stagger-group > .fade-section:nth-child(2) { --enter-step: 1; }
+.stagger-group > .fade-section:nth-child(3) { --enter-step: 2; }
+.stagger-group > .fade-section:nth-child(4) { --enter-step: 3; }
+.stagger-group > .fade-section:nth-child(5) { --enter-step: 4; }
+.stagger-group > .fade-section:nth-child(6) { --enter-step: 5; }
+
+/* ─── Reduce motion ───────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-  .fade-section {
-    opacity: 1;
-    transform: none;
-    transition: none;
+  .fade-section--rise {
+    animation: none;
   }
 }

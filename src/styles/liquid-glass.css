@@ -262,30 +262,23 @@
 }
 
 /*
- * A surface that fades in does not lens, and that is a deliberate trade.
+ * Every glass surface lenses now, including the ones that animate in.
  *
- * FadeInSection animates `opacity` on a wrapper, and an ancestor with
- * `opacity < 1` is a backdrop root — so during the entrance a card's
- * `backdrop-filter` has nothing to sample. Whatever switches it on afterwards
- * changes the surface's colour at that moment, because `saturate()` is exactly
- * a colour change. Tweening it in only makes the shift slower, not absent: you
- * cannot have an ancestor-driven fade and live lensing on the same surface.
+ * This used to carry a `backdrop-filter: none` opt-out for anything inside a
+ * `.fade-section`, and the reasoning was sound: an *ancestor* with
+ * `opacity < 1` is a backdrop root, so during a wrapper fade the material had
+ * nothing to sample, and whatever switched lensing on afterwards changed the
+ * surface's colour at that moment — `saturate()` is exactly a colour change.
  *
- * So these surfaces carry no backdrop-filter at all, and look identical from
- * their first frame to their last. Very little is given up — with the accent
- * blooms behind them and a tint that sits lighter than the page, they already
- * read as lifted glass; the blur was contributing almost nothing over this
- * backdrop while costing a compositing layer each.
+ * The escape was to stop fading the ancestor. FadeInSection now animates the
+ * surface *itself* on a view() timeline, and an element's own opacity does not
+ * make it its own backdrop root. The material samples the real page from the
+ * first frame, with saturate live throughout, so there is no switch-on moment
+ * to hide. See src/components/animations/FadeInSection.tsx.
  *
- * Surfaces that never fade in — the nav bar, the hero badge and stat card, the
- * stats band — keep the full material. They sit over real content, they have no
- * entrance to be caught mid-way through, and there the lensing earns its cost.
+ * One surface still cannot lens: the testimonial track is translated, and a
+ * transformed ancestor is a backdrop root no matter what its children do.
  */
-.fade-section .glass,
-.fade-section.glass {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
 
 @media (hover: hover) {
   .glass--interactive:hover::before {

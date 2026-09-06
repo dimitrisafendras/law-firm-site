@@ -13,7 +13,7 @@ export function CtaSection() {
     <section className="cta-section">
       <CircuitLines variant="e" />
       <div className="cta-section__inner">
-        <FadeInSection variant="scale">
+        <FadeInSection>
           <div className="cta-section__card glass">
             <div className="cta-section__glow" />
             <DigitalAcropolis className="cta-section__illustration" />

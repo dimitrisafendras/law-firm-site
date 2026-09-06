@@ -2,22 +2,19 @@
 
 .firm-logo {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   text-decoration: none;
   color: inherit;
 }
 
-.firm-logo__icon {
-  width: 28px;
-  height: 28px;
-  color: var(--accent);
-}
-
-.firm-logo__text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
+/* Height-driven: the wordmark's viewBox is cropped to the drawing, so width
+   follows from the aspect ratio and the mark fills the box it is given. */
+.firm-logo__mark {
+  height: 26px;
+  width: auto;
+  display: block;
 }
 
 .firm-logo__tagline {
@@ -46,10 +43,11 @@
   gap: 10px;
 }
 
-.footer-brand__icon {
-  width: 24px;
-  height: 24px;
-  color: var(--accent);
+/* The footer has more room than the bar, so the same monogram sits larger. */
+.footer-brand__mark {
+  height: 34px;
+  width: auto;
+  display: block;
 }
 
 /*
@@ -121,6 +119,37 @@
       var(--grad-4) 80%,
       var(--grad-5) 100%
     );
+}
+
+/*
+ * Short pages get the ramp at the same *rate*, not the same span.
+ *
+ * The ramp and its blooms are sized as percentages of `.page-ramp`, which is
+ * the whole scrolling page. That is right on the home page, where the element
+ * is ~6,860px tall and the wash unfolds slowly under a reader who is scrolling.
+ * On a detail or auth page the same element is ~995px, so the identical five
+ * stops and four blooms are squeezed into a seventh of the height: the gradient
+ * runs seven times faster and every bloom is a seventh of the size.
+ *
+ * The glass then looks like a different material even though it is not —
+ * measured identical tint, blur, saturate, shadow and radius on both — because
+ * a `backdrop-filter` shows you whatever is behind it, and what is behind it is
+ * a much steeper gradient crossed by much smaller blooms.
+ *
+ * Sizing the layers to the viewport instead of the element fixes the rate: a
+ * short page now shows a slice of the same wash at the same scale as the home
+ * page's opening screen, rather than the entire wash in miniature. `100vh` per
+ * layer with the ramp repeating means a page a little taller than the fold
+ * continues the wash rather than restarting it mid-screen.
+ */
+.page-ramp--short {
+  background-size:
+    100% 100vh,
+    100% 100vh,
+    100% 100vh,
+    100% 100vh,
+    100% 100vh;
+  background-repeat: repeat-y;
 }
 
 /*

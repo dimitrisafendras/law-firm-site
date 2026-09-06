@@ -4,7 +4,7 @@ import type en from './en';
 // or a non-string value, is a compile error. Keeps the two locales in lockstep.
 const el = {
   // ─── Navbar ──────────────────────────────────────────────────────────────────
-  firmName: 'NOMOS',
+  firmName: 'VKM',
   firmTagline: 'Νομικές Υπηρεσίες',
   navPractice: 'Τομείς Δικαίου',
   navTeam: 'Η Ομάδα μας',
@@ -170,7 +170,7 @@ const el = {
   testimonialsSubtitle: 'Εμπιστοσύνη από φιλόδοξους επαγγελματίες σε κάθε κλάδο.',
 
   testimonial1Quote:
-    'Η NOMOS καθοδήγησε το Series A μας από term sheet σε κλείσιμο σε 6 εβδομάδες. Η κατανόησή τους του ελληνικού και ευρωπαϊκού πλαισίου μας γλίτωσε μήνες.',
+    'Η VKM καθοδήγησε το Series A μας από term sheet σε κλείσιμο σε 6 εβδομάδες. Η κατανόησή τους του ελληνικού και ευρωπαϊκού πλαισίου μας γλίτωσε μήνες.',
   testimonial1Author: 'Γιάννης Παπαδόπουλος',
   testimonial1Role: 'CEO, Hellas Fintech',
 
@@ -221,7 +221,7 @@ const el = {
   contactSubtitle:
     'Συμφωνία, εγχείρημα ή κανονιστική πλοήγηση \u2014 είμαστε έτοιμοι.',
   contactAddress: 'Λεωφ. Βασιλίσσης Σοφίας 12, Αθήνα 10674, Ελλάδα',
-  contactEmail: 'info@nomos.legal',
+  contactEmail: 'info@vkm.legal',
   contactPromise1Label: 'Χρόνος απόκρισης',
   contactPromise1Value: 'Απαντάμε σε κάθε αίτημα εντός μίας εργάσιμης ημέρας.',
   contactPromise2Label: 'Η πρώτη συζήτηση',
@@ -255,7 +255,7 @@ const el = {
   // Athens Bar Association number and VAT number before launch.
   footerBarRegistration: 'Δικηγορικός Σύλλογος Αθηνών — εκκρεμεί εγγραφή',
   footerVat: 'ΑΦΜ σε εκκρεμότητα',
-  footerCopyright: '\u00A9 2026 NOMOS Νομικές Υπηρεσίες. Με επιφύλαξη παντός δικαιώματος. Αθήνα, Ελλάδα.',
+  footerCopyright: '\u00A9 2026 VKM Νομικές Υπηρεσίες. Με επιφύλαξη παντός δικαιώματος. Αθήνα, Ελλάδα.',
 
   // ─── Design System page ──────────────────────────────────────────────────────
   designSystem: 'Σύστημα Σχεδιασμού',

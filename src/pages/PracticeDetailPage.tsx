@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import type { JSX } from 'react';
 import { useTranslation } from '@/i18n';
 import { Navbar, Footer, Container, EditableText, AuthNavControl } from '@/components';
-import { ScaleOfJustice } from '@/assets/illustrations';
+import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '@/components/CircuitField/CircuitField';
 import type { PracticeArea } from '@/components/sections/PracticeGrid/practiceAreas';
 import './PracticeDetailPage.css';
@@ -47,12 +47,9 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
     <>
       <Navbar
         logo={
-          <a href="#" className="firm-logo">
-            <ScaleOfJustice className="firm-logo__icon" />
-            <span className="firm-logo__text">
-              <EditableText tKey="firmName" as="span" />
-              <EditableText tKey="firmTagline" as="span" className="firm-logo__tagline" />
-            </span>
+          <a href="#" className="firm-logo" aria-label={t('firmName')}>
+            <VkmLogo className="firm-logo__mark" />
+            <span className="firm-logo__tagline">{t('firmTagline')}</span>
           </a>
         }
         links={[
@@ -64,7 +61,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
         cta={<AuthNavControl />}
       />
 
-      <main className="practice-page page-ramp">
+      <main className="practice-page page-ramp page-ramp--short">
         <CircuitField />
 
         <Container className="practice-page__inner">
@@ -127,8 +124,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
       <Footer
         logo={
           <div className="footer-brand">
-            <ScaleOfJustice className="footer-brand__icon" />
-            <EditableText tKey="firmName" as="span" />
+            <VkmLogo className="footer-brand__mark" title={t('firmName')} />
           </div>
         }
         columns={[]}

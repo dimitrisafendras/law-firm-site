@@ -523,6 +523,45 @@ export const decor = {
   domainArtHover: '0.85',
 } as const;
 
+/*
+ * Brand — VKM Legal.
+ *
+ * Taken from the supplied wordmark (vkm-23-keyline-interlock.svg), which is
+ * built for print: navy and sky letters carrying a white keyline, on white.
+ *
+ * `navy` is therefore unusable as a letter fill here — #002B49 on this site's
+ * #0F1A2E ground measures about 1.3:1, which is not a colour, it is a hole.
+ * What survives the move to a dark ground is the *construction*: two weights of
+ * blue with the middle letter picked out, and a keyline holding the glyphs
+ * apart. So `navyOnDark` is the same hue lifted to carry on the ramp, `sky` is
+ * kept exactly as drawn because it already works, and the keyline inverts from
+ * white to a dark rule that reads as the interlock rather than as an outline.
+ *
+ * The print values are kept under their own names so the original artwork can
+ * still be reproduced (a light-background export, a letterhead) without
+ * re-deriving them from the SVG.
+ */
+export const brand = {
+  /** As drawn, for light grounds. */
+  navy: '#002B49',
+  /** As drawn — already legible on the dark ramp, so it moves across unchanged. */
+  sky: '#89CFF0',
+  /** The wordmark's LEGAL rule. */
+  teal: '#1A6B8A',
+  /** The letter fill actually used on this site's dark ground. */
+  navyOnDark: '#7FA8CC',
+  /** The keyline, inverted for a dark ground. */
+  keyline: '#0B1524',
+} as const;
+
+export const brandVarNames: Record<string, string> = {
+  navy: '--brand-navy',
+  sky: '--brand-sky',
+  teal: '--brand-teal',
+  navyOnDark: '--brand-navy-on-dark',
+  keyline: '--brand-keyline',
+};
+
 export const decorVarNames: Record<string, string> = {
   fieldAlphaStrong: '--field-alpha-strong',
   fieldAlphaMid: '--field-alpha-mid',

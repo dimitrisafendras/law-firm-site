@@ -1,6 +1,6 @@
 const en = {
   // ─── Navbar ──────────────────────────────────────────────────────────────────
-  firmName: 'NOMOS',
+  firmName: 'VKM',
   firmTagline: 'Legal & Advisory',
   navPractice: 'Practice Areas',
   navTeam: 'Our Team',
@@ -166,7 +166,7 @@ const en = {
   testimonialsSubtitle: 'Trusted by ambitious professionals across industries.',
 
   testimonial1Quote:
-    'NOMOS guided our Series A from term sheet to close in 6 weeks. Their understanding of both Greek and EU venture frameworks saved us months of back-and-forth.',
+    'VKM guided our Series A from term sheet to close in 6 weeks. Their understanding of both Greek and EU venture frameworks saved us months of back-and-forth.',
   testimonial1Author: 'Yiannis Papadopoulos',
   testimonial1Role: 'CEO, Hellas Fintech',
 
@@ -217,7 +217,7 @@ const en = {
   contactSubtitle:
     'Closing a deal, launching a venture, or navigating regulation \u2014 we\u2019re ready.',
   contactAddress: '12 Vasilissis Sofias Avenue, Athens 10674, Greece',
-  contactEmail: 'info@nomos.legal',
+  contactEmail: 'info@vkm.legal',
   contactPromise1Label: 'Response time',
   contactPromise1Value: 'We reply to every enquiry within one business day.',
   contactPromise2Label: 'The first conversation',
@@ -251,7 +251,7 @@ const en = {
   // Athens Bar Association number and VAT number before launch.
   footerBarRegistration: 'Athens Bar Association — registration pending',
   footerVat: 'VAT number pending',
-  footerCopyright: '\u00A9 2026 NOMOS Legal & Advisory. All rights reserved. Athens, Greece.',
+  footerCopyright: '\u00A9 2026 VKM Legal & Advisory. All rights reserved. Athens, Greece.',
 
   // ─── Design System page ──────────────────────────────────────────────────────
   designSystem: 'Design System',

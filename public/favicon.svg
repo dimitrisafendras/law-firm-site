@@ -1,14 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <!-- NOMOS brand mark: scale of justice (matches ScaleOfJustice in src/assets/illustrations.tsx) -->
-  <rect width="48" height="48" rx="10" fill="#111317"/>
-  <g transform="translate(6.5,5.5) scale(0.73)" stroke="#BCE8FF" fill="none">
-    <line x1="24" y1="6" x2="24" y2="42" stroke-width="2.5" stroke-linecap="round"/>
-    <circle cx="24" cy="6" r="3" stroke-width="2"/>
-    <line x1="6" y1="16" x2="42" y2="16" stroke-width="2.5" stroke-linecap="round"/>
-    <path d="M6 16L2 28H18L14 16" stroke-width="1.5" stroke-linejoin="round"/>
-    <path d="M2 28C2 30 6 32 10 32C14 32 18 30 18 28" stroke-width="1.5"/>
-    <path d="M34 16L30 28H46L42 16" stroke-width="1.5" stroke-linejoin="round"/>
-    <path d="M30 28C30 30 34 32 38 32C42 32 46 30 46 28" stroke-width="1.5"/>
-    <rect x="14" y="42" width="20" height="3" rx="1.5" stroke-width="1.5"/>
+  <!--
+    VKM monogram (mirrors VkmMark in src/assets/VkmLogo.tsx).
+
+    Literal values, not var(--brand-*): a favicon is fetched as a standalone
+    document, so it never sees the app's stylesheet and any custom property
+    would resolve to nothing. These are the same values tokens.ts holds — if the
+    brand colours move there, they have to be copied here by hand.
+
+    LEGAL is dropped: at 16px its 9px tracking closes into a smudge.
+
+    The font is a generic stack for the same reason — the site's webfonts are
+    not loaded in this context, so this asks for whatever sans the platform has
+    rather than pretending otherwise.
+  -->
+  <rect width="48" height="48" rx="10" fill="#0B1524"/>
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+     font-size="19" font-weight="600" text-anchor="middle" dominant-baseline="central">
+    <text x="11" y="25" fill="#7FA8CC">V</text>
+    <text x="24" y="25" fill="#89CFF0">K</text>
+    <text x="38" y="25" fill="#7FA8CC">M</text>
   </g>
 </svg>

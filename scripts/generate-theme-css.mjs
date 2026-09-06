@@ -27,6 +27,7 @@ import {
   spacing,
   elevations,
   decor,
+  brand,
   motion,
   transitions,
   typeScale,
@@ -45,6 +46,7 @@ import {
   layoutVarNames,
   textEmphasisVarNames,
   decorVarNames,
+  brandVarNames,
 } from '../src/theme/tokens.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -99,6 +101,7 @@ function buildVarBlock(colorTokens, fontTokens, glassTokens, gradientTokens) {
     // fallback and editing the token changed nothing.
     `  --transition: ${transitions.default};`,
     ...mapVars(decor, decorVarNames),
+    ...mapVars(brand, brandVarNames),
     ...typeVars(),
   ].join('\n');
 }

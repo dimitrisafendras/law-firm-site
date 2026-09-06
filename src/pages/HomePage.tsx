@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from '@/i18n';
 import { Navbar, Footer, Button, EditableText, AuthNavControl } from '@/components';
-import { ScaleOfJustice } from '@/assets/illustrations';
+import { VkmLogo } from '@/assets/VkmLogo';
 import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
 import { StatsBar } from '@/components/sections/StatsBar/StatsBar';
 import { PracticeGrid } from '@/components/sections/PracticeGrid/PracticeGrid';
@@ -77,12 +77,9 @@ export default function HomePage() {
       <Navbar
         deferCta
         logo={
-          <a href="#" className="firm-logo">
-            <ScaleOfJustice className="firm-logo__icon" />
-            <span className="firm-logo__text">
-              <EditableText tKey="firmName" as="span" />
-              <EditableText tKey="firmTagline" as="span" className="firm-logo__tagline" />
-            </span>
+          <a href="#" className="firm-logo" aria-label={t('firmName')}>
+            <VkmLogo className="firm-logo__mark" />
+            <EditableText tKey="firmTagline" as="span" className="firm-logo__tagline" />
           </a>
         }
         links={[
@@ -116,8 +113,7 @@ export default function HomePage() {
       <Footer
         logo={
           <div className="footer-brand">
-            <ScaleOfJustice className="footer-brand__icon" />
-            <EditableText tKey="firmName" as="span" />
+            <VkmLogo className="footer-brand__mark" title={t('firmName')} />
           </div>
         }
         columns={[

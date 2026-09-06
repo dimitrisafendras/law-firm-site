@@ -65,7 +65,10 @@
 }
 
 .testimonial-card__quote {
-  font-family: var(--heading);
+  /* Real italic, not a synthesised slant of Jura. Matches the testimonial
+     stage on the home page; this component now lives only in the design
+     system showcase, and the two must not drift. */
+  font-family: var(--serif);
   font-size: var(--type-body-lg-size);
   font-style: italic;
   line-height: var(--type-body-lg-leading);

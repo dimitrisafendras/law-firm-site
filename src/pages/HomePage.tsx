@@ -8,6 +8,7 @@ import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
 import { NetworkMap } from '@/components/sections/NetworkMap/NetworkMap';
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection/TestimonialsSection';
 import { ContactSection } from '@/components/sections/ContactSection/ContactSection';
+import { DissolutionField } from '@/components/DissolutionField';
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -44,6 +45,7 @@ export default function HomePage() {
       />
 
       <main className="page-ramp">
+        <DissolutionField />
         <HeroSection />
         <StatsBar />
         <PracticeGrid />
@@ -88,6 +90,13 @@ export default function HomePage() {
             ],
           },
         ]}
+        meta={
+          <>
+            <EditableText tKey="contactAddress" as="span" />
+            <EditableText tKey="footerBarRegistration" as="span" />
+            <EditableText tKey="footerVat" as="span" />
+          </>
+        }
         bottom={<EditableText tKey="footerCopyright" as="p" />}
       />
     </>

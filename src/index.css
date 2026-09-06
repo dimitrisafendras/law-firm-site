@@ -4,9 +4,8 @@
    the browser from fetching subsets it doesn't need. font-display: swap avoids
    invisible text while a face loads. */
 
-/* Jura — the single family for headings, body, and labels (latin + latin-ext +
-   greek for EL). Variable weight 300–700. Jura has no italic face; italics are
-   synthesized (font-synthesis: style below) so quotes keep their slant. */
+/* Jura — headings, body and labels (latin + latin-ext + greek for EL).
+   Variable weight 300–700, upright only: Jura ships no italic face. */
 @font-face {
   font-family: 'Jura';
   font-style: normal;
@@ -32,6 +31,38 @@
   unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
 }
 
+/* EB Garamond, italic only — the one place a second family is loaded.
+   Only the italic is fetched, and only where an italic is actually set
+   (testimonial quotes, partner roles): those were the two places the browser
+   was synthesising an oblique out of a geometric sans, which is what a
+   synthesised italic of Jura looks like. Variable weight 400–500, same three
+   subsets as Jura so Greek quotes are covered. ~156KB across all three, and a
+   visitor who never reaches a quote fetches none of them. */
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: italic;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/fonts/eb-garamond-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: italic;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/fonts/eb-garamond-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: italic;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/fonts/eb-garamond-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
 /* Base styles — CSS variable declarations are generated from src/theme/tokens.ts */
 
 *,
@@ -54,9 +85,11 @@
   color-scheme: dark;
   color: var(--text);
   background: transparent;
-  /* style-only synthesis: Jura ships no italic face, so let the browser slant
-     it for quotes; weight synthesis stays off (real 300–700 variable weights) */
-  font-synthesis: style;
+  /* Synthesis fully off. Every italic on the site is now set in EB Garamond,
+     which has a real one; leaving style synthesis on would let any *other*
+     italic silently fall back to a slanted Jura, which is the thing this was
+     meant to fix. */
+  font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

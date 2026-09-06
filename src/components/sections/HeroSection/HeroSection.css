@@ -4,7 +4,15 @@
   display: flex;
   align-items: stretch;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--bg) 30%, #0f1a2e 70%, #112240 100%);
+
+  /*
+   * No background. The hero used to paint its own diagonal gradient from two
+   * raw hex values (#0f1a2e, #112240) — a token violation, and the reason the
+   * seam into the stats band read as a change of material rather than as one
+   * continuous page. `.page-ramp` carries the ground for the whole document
+   * now, and the statue plus the scrim below supply all the local depth the
+   * hero needs.
+   */
 
   /* ── Entrance timeline ────────────────────────────────────────────────────
    * Strictly sequential: one element at a time, each at a multiple of the
@@ -17,7 +25,7 @@
    *   5.0        title line 1   (its per-character stagger is this step's pace)
    *   7.5        title line 2
    *  10.0        subtitle       (per-word)
-   *  13.5        stat card
+   *  13.5        call to action
    *  15.5        scroll hint
    */
   --hero-t-scene: 0s;
@@ -25,7 +33,7 @@
   --hero-t-title-1: calc(var(--seq-beat) * 5);
   --hero-t-title-2: calc(var(--seq-beat) * 7.5);
   --hero-t-subtitle: calc(var(--seq-beat) * 10);
-  --hero-t-stat: calc(var(--seq-beat) * 13.5);
+  --hero-t-actions: calc(var(--seq-beat) * 13.5);
   --hero-t-hint: calc(var(--seq-beat) * 15.5);
 
   @media (max-width: 1024px) {
@@ -55,9 +63,12 @@
   --statue-entrance-delay: var(--hero-t-scene);
 
   @media (max-width: 1024px) {
-    height: 80%;
-    left: 25%;
-    right: auto;
+    /* Pushed off the right edge and shortened, so the statue reads as a
+       backdrop the copy sits over rather than as a column competing with it
+       for a 390px screen. */
+    height: 72%;
+    right: -12%;
+    left: auto;
   }
 }
 
@@ -125,6 +136,11 @@
   @media (max-width: 1024px) {
     max-width: 100%;
   }
+}
+
+/* The actions row is sized by its buttons, not by the measure. */
+.hero-section__actions {
+  max-width: none;
 }
 
 
@@ -229,6 +245,15 @@
 }
 
 /* Subtitle */
+/* Greek sets much longer single words than English — "Συμβουλευτική" fits at
+   1440 but has nowhere to break once the title is capped at half the measure,
+   and below ~1150px it would otherwise overflow its column rather than wrap.
+   This is a layout risk from real content, not a preference. */
+.hero-section__title {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
 .hero-section__subtitle {
   font-size: var(--type-body-lg-size);
   font-weight: var(--type-body-lg-weight);
@@ -243,47 +268,54 @@
 
   @media (max-width: 1024px) {
     font-size: var(--type-body-size);
-    max-width: 40%;
+    /* Full measure, over the scrim. The 40% cap existed only because the scrim
+       element was never rendered; with it in place the copy can cross the
+       statue safely and the mobile hero stops being a 150px ribbon of
+       two-word lines. */
+    max-width: 100%;
     text-shadow: 0 1px 12px rgba(0, 0, 0, 0.7);
   }
 }
 
 /* Floating stat card. The material itself comes from `.glass` in the markup —
    only radius, padding and layout belong here. */
-.hero-section__stat-card {
+.hero-section__actions {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-6) var(--space-8);
-  border-radius: var(--radius-2xl);
+  gap: var(--space-8);
   width: fit-content;
   align-self: flex-start;
 
   @media (max-width: 1024px) {
-    display: none;
+    /* Visible on mobile, unlike the stat card it replaces — this is the only
+       call to action above the fold and hiding it on phones was the single
+       largest conversion hole on the page. */
+    gap: var(--space-6);
+    flex-wrap: wrap;
   }
 }
 
-.hero-section__stat-value {
-  font-family: var(--heading);
-  font-size: var(--type-h1-size);
-  /* Deliberately off the h1 step's weight: this is a figure, not a heading, and
-     it reads as the same light numeral treatment as the stats band further down
-     the page. Size is the step's, so the two stay locked together. */
-  font-weight: 500;
-  color: var(--accent);
-  line-height: 1;
+/* Quiet by design: the primary button carries the accent fill, and a second
+   filled button beside it would split the decision in two. */
+.hero-section__secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-tight);
+  color: var(--text);
+  opacity: var(--text-emphasis-secondary);
+  text-decoration: none;
+  transition: opacity 0.3s, gap 0.3s;
 }
 
-.hero-section__stat-label {
-  font-family: var(--label);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: var(--type-caps-tracking-wide);
-  text-transform: uppercase;
-  color: var(--text);
-  opacity: var(--text-emphasis-muted);
+.hero-section__secondary:hover {
+  opacity: 1;
+  gap: var(--space-3);
 }
 
 /* ─── Scroll Hint ─────────────────────────────────────────────────────────── */
@@ -416,8 +448,8 @@
   }
 
   /* Stat card unfurls downward. */
-  .hero-section__stat-card {
-    animation: hero-panel-unfurl var(--dur-spawn-element) var(--ease-spawn) var(--hero-t-stat) backwards;
+  .hero-section__actions {
+    animation: hero-panel-unfurl var(--dur-spawn-element) var(--ease-spawn) var(--hero-t-actions) backwards;
   }
 
   /* Scroll hint arrives last; the idle bounce on the inner svg is untouched. */

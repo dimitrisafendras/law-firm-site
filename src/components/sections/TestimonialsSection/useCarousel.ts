@@ -1,126 +1,67 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-interface UseCarouselOptions {
-  /** Total number of real items */
-  itemCount: number;
-  /** How many items visible at once (desktop) */
-  visibleCount: number;
-  /** Auto-scroll interval in ms */
-  interval?: number;
+interface UseQuoteRotatorOptions {
+  /** Number of quotes to cycle through. */
+  count: number;
+  /** Milliseconds each quote is held before advancing. */
+  dwell?: number;
+}
+
+export interface QuoteRotator {
+  index: number;
+  /** Restarts from 0 when it runs off either end. */
+  next: () => void;
+  prev: () => void;
+  goTo: (index: number) => void;
+  pause: () => void;
+  resume: () => void;
+  /** True while the timer is stopped — the progress rail reads this to hold. */
+  paused: boolean;
 }
 
 /**
- * Infinite carousel hook.
+ * Cycles one quote at a time.
  *
- * Clones the full set of items before and after the real ones so the
- * track can loop without a visible jump.  When a CSS transition ends
- * on a clone boundary we silently teleport to the matching real slide.
+ * This replaces a sliding carousel that tripled its DOM to fake an infinite
+ * track, tracked a separate real and virtual index, and disabled transitions
+ * on clone jumps. That machinery existed to make a three-across row loop
+ * seamlessly — and the three-across row was the thing worth removing, so the
+ * machinery went with it.
+ *
+ * One index over one array. Everything else is a cross-fade in CSS.
  */
-export function useCarousel({
-  itemCount,
-  visibleCount,
-  interval = 4000,
-}: UseCarouselOptions) {
-  const totalSlides = itemCount * 3; // [clone-set] [real-set] [clone-set]
-  const startIndex = itemCount; // first real slide
+export function useCarousel({ count, dwell = 8000 }: UseQuoteRotatorOptions): QuoteRotator {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
 
-  const [current, setCurrent] = useState(startIndex);
-  const [isTransitioning, setIsTransitioning] = useState(true);
-  const [isPaused, setIsPaused] = useState(false);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
-
-  /* Centre offset: the centred card is the middle of the visible window */
-  const centerOffset = Math.floor(visibleCount / 2);
-
-  /** Fold an arbitrary index back onto the real set. */
-  const normalize = useCallback(
-    (index: number) => startIndex + ((((index - startIndex) % itemCount) + itemCount) % itemCount),
-    [itemCount, startIndex],
+  // Depends on `count` alone, so it is stable between renders unless the quote
+  // list actually changes — the interval effect below can take it as a
+  // dependency without re-subscribing (and so restarting the dwell) on a tick.
+  const wrap = useCallback(
+    (n: number) => (count <= 0 ? 0 : ((n % count) + count) % count),
+    [count],
   );
 
-  const goTo = useCallback(
-    (index: number, animate = true) => {
-      /*
-       * The seamless wrap below is driven by `transitionend`, which is not
-       * guaranteed to fire: the section carries `content-visibility: auto`, so
-       * while it is off-screen the browser skips rendering and runs no
-       * transition at all, and a backgrounded tab does the same. Autoplay keeps
-       * counting regardless, so without this guard the index walks past the
-       * cloned range and the track translates into empty space — the carousel
-       * goes blank and never recovers.
-       *
-       * Anything that far out of range is resynced without animation; there is
-       * nothing on screen to animate from.
-       */
-      if (index >= startIndex + itemCount * 2 || index < startIndex - itemCount) {
-        setIsTransitioning(false);
-        setCurrent(normalize(index));
-        return;
-      }
-      setIsTransitioning(animate);
-      setCurrent(index);
-    },
-    [itemCount, normalize, startIndex],
-  );
+  const next = useCallback(() => setIndex((i) => wrap(i + 1)), [wrap]);
+  const prev = useCallback(() => setIndex((i) => wrap(i - 1)), [wrap]);
+  const goTo = useCallback((n: number) => setIndex(wrap(n)), [wrap]);
 
-  const next = useCallback(() => goTo(current + 1), [current, goTo]);
-  const prev = useCallback(() => goTo(current - 1), [current, goTo]);
-  const goToReal = useCallback((realIndex: number) => goTo(startIndex + realIndex), [startIndex, goTo]);
+  const pause = useCallback(() => setPaused(true), []);
+  const resume = useCallback(() => setPaused(false), []);
 
-  /* After a CSS transition ends, check if we need to teleport */
   useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
+    if (paused || count <= 1) return;
+    const id = window.setInterval(() => setIndex((i) => wrap(i + 1)), dwell);
+    return () => window.clearInterval(id);
+  }, [paused, dwell, count, wrap]);
 
-    const onEnd = (e: TransitionEvent) => {
-      /* Only react to the track's own transform transition, not children */
-      if (e.target !== track || e.propertyName !== 'transform') return;
+  /*
+   * The copy is admin-editable, so the quote list can get shorter while the
+   * rotator is part-way through it. Clamped on read rather than corrected in an
+   * effect: an effect would render one frame pointing past the end of the
+   * array first, and then render again to fix it.
+   */
+  const safeIndex = count > 0 ? wrap(index) : 0;
 
-      if (current >= startIndex + itemCount) {
-        /* Went past the last real slide — jump to corresponding real */
-        setIsTransitioning(false);
-        setCurrent(startIndex + (current - startIndex - itemCount));
-      } else if (current < startIndex) {
-        setIsTransitioning(false);
-        setCurrent(startIndex + (current - startIndex + itemCount));
-      }
-    };
-
-    track.addEventListener('transitionend', onEnd);
-    return () => track.removeEventListener('transitionend', onEnd);
-  }, [current, itemCount, startIndex]);
-
-  /* Auto-scroll */
-  useEffect(() => {
-    if (isPaused) return;
-    timerRef.current = setInterval(next, interval);
-    return () => clearInterval(timerRef.current);
-  }, [isPaused, next, interval]);
-
-  const pause = useCallback(() => setIsPaused(true), []);
-  const resume = useCallback(() => setIsPaused(false), []);
-
-  /* Build the translate value */
-  const slideWidthPercent = 100 / visibleCount;
-  const translateX = -(current - centerOffset) * slideWidthPercent;
-
-  const trackStyle: React.CSSProperties = {
-    transform: `translateX(${translateX}%)`,
-    transition: isTransitioning ? 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
-  };
-
-  return {
-    trackRef,
-    trackStyle,
-    totalSlides,
-    itemCount,
-    currentIndex: current,
-    realIndex: ((current - startIndex) % itemCount + itemCount) % itemCount,
-    next,
-    prev,
-    goToReal,
-    pause,
-    resume,
-  };
+  return { index: safeIndex, next, prev, goTo, pause, resume, paused };
 }

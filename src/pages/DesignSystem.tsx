@@ -1,5 +1,6 @@
 import { useTranslation } from '@/i18n';
-import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, elevations, typeScale, breakpoints, layout, transitions, colorVarNames } from '../theme';
+import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, elevations, elevationsMarble, typeScale, capsTracking, breakpoints, layout, transitions, colorVarNames } from '../theme';
+import { DissolutionField } from '../components/DissolutionField';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import { SpawnText } from '../components/animations/SpawnText';
 import { EditableSpawnText } from '../components/animations/EditableSpawnText';
@@ -624,6 +625,50 @@ export default function DesignSystem() {
               <span style={{ fontFamily: 'var(--mono)', fontSize: '13px' }}>{key}</span>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Marble — the second material */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '12px' }}>{t('dsMarbleTitle')}</h2>
+        <p style={{ maxWidth: '70ch', marginBottom: '32px', opacity: 0.75 }}>{t('dsMarbleBody')}</p>
+
+        <div data-material="marble" style={{ padding: '32px', borderRadius: radii['2xl'], background: 'var(--grad-1)' }}>
+          <h3 style={{ fontFamily: 'var(--heading)', fontSize: typeScale.h2.size, fontWeight: typeScale.h2.weight, color: 'var(--text-h)', textShadow: '0 1px 0 rgb(255 255 255 / 60%)', margin: '0 0 8px' }}>
+            {t('dsMarbleSampleName')}
+          </h3>
+          <p style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: typeScale.bodyLg.size, color: 'var(--text)', opacity: 0.7, margin: '0 0 24px' }}>
+            {t('dsMarbleSampleRole')}
+          </p>
+          <div className="glass" style={{ padding: '16px', borderRadius: radii.xl, color: 'var(--text)' }}>
+            {t('dsMarbleGlassNote')}
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginTop: '32px' }}>
+          <TokenTable title={t('dsMarbleElevation')} tokens={elevationsMarble} />
+          <TokenTable title={t('dsCapsTracking')} tokens={capsTracking} />
+        </div>
+      </section>
+
+      {/* Real italic */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '12px' }}>{t('dsItalicTitle')}</h2>
+        <p style={{ maxWidth: '70ch', marginBottom: '24px', opacity: 0.75 }}>{t('dsItalicBody')}</p>
+        <p style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: typeScale.h2.size, lineHeight: 1.35, color: 'var(--text-h)', margin: 0 }}>
+          {t('pangram')}
+        </p>
+      </section>
+
+      {/* Dissolution field */}
+      <section style={sectionStyle}>
+        <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '12px' }}>{t('dsFieldTitle')}</h2>
+        <p style={{ maxWidth: '70ch', marginBottom: '24px', opacity: 0.75 }}>{t('dsFieldBody')}</p>
+        {/* Scoped preview: the real layer is `position: fixed` behind the whole
+            page, so it is shown here inside a clipped, relatively-positioned
+            box rather than escaping to cover the showcase. */}
+        <div style={{ position: 'relative', height: '260px', overflow: 'hidden', borderRadius: radii['2xl'], background: 'var(--grad-3)' }}>
+          <DissolutionField />
         </div>
       </section>
 

@@ -2,7 +2,6 @@ import { useTranslation } from '@/i18n';
 import { ContactForm } from '@/components/ContactForm';
 import { EditableText } from '@/components';
 import { FadeInSection } from '@/components/animations/FadeInSection';
-import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import './ContactSection.css';
 
@@ -11,11 +10,9 @@ export function ContactSection() {
 
   return (
     <section id="contact" className="contact-section">
-      <CircuitLines variant="b" />
       <div className="contact-section__inner">
         <FadeInSection>
           <SectionHeader
-            overlineKey="contactOverline"
             titleKey="contactTitle"
             subtitleKey="contactSubtitle"
             labelKey="chapterContact"
@@ -24,7 +21,15 @@ export function ContactSection() {
 
         <div className="contact-section__grid">
           <FadeInSection className="contact-section__info">
-            <div className="contact-section__details glass">
+            {/*
+              No glass card. The details are three short lines, and wrapping
+              them in a panel left a ~200px surface floating at the top of a
+              ~700px column with nothing under it — the emptiest place on the
+              page. Set directly on the ground, at a size that can hold the
+              column on its own, they read as the address block on a letterhead
+              rather than as a widget that failed to fill its slot.
+            */}
+            <div className="contact-section__details">
               <div className="contact-section__detail">
                 <span className="contact-section__detail-icon" aria-hidden="true">&#9906;</span>
                 <EditableText tKey="contactAddress" as="span" />

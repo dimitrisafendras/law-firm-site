@@ -1,6 +1,6 @@
 import { useTranslation } from '@/i18n';
 import { EditableSpawnText } from '@/components/animations/EditableSpawnText';
-import { EditableText } from '@/components';
+import { EditableText, Button } from '@/components';
 import { DigitalStatue } from '@/components/DigitalStatue/DigitalStatue';
 import './HeroSection.css';
 
@@ -15,6 +15,16 @@ export function HeroSection() {
       <div className="hero-section__bg">
         <DigitalStatue />
       </div>
+
+      {/*
+        The scrim. `.hero-section__bg-fade` has been fully specified in the
+        stylesheet — including a four-stop mobile gradient — since the hero was
+        written, and no element ever rendered it. That omission is why the
+        mobile subtitle was capped at 40% width: with nothing darkening the
+        statue there was no safe place for text to overlap it, so the copy was
+        squeezed into a 150px column beside it instead.
+      */}
+      <div className="hero-section__bg-fade" aria-hidden="true" />
 
       {/* Digital circuit lines — traced in left→right, then junctions bloom */}
       <svg className="hero-section__lines" fill="none" aria-hidden="true">
@@ -70,9 +80,24 @@ export function HeroSection() {
           <EditableSpawnText tKey="heroSubtitle" mode="word" as="span" />
         </p>
 
-        <div className="hero-section__stat-card glass">
-          <EditableText tKey="statYearsValue" as="span" className="hero-section__stat-value" />
-          <EditableText tKey="statYears" as="span" className="hero-section__stat-label" />
+        {/*
+          The hero's one call to action, on the beat the stat card used to
+          occupy. That card showed "30+ / YEARS COMBINED EXPERIENCE" and the
+          stats band repeated it verbatim 300px below — at 1440x900 both were
+          visible in a single viewport. The band owns the numbers now, and the
+          only conversion element above the fold is no longer the nav pill.
+        */}
+        <div className="hero-section__actions">
+          <Button
+            onClick={() =>
+              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
+            }
+          >
+            {t('navCta')}
+          </Button>
+          <a className="hero-section__secondary" href="#team">
+            {t('heroSecondaryCta')} <span aria-hidden="true">&darr;</span>
+          </a>
         </div>
       </div>
 

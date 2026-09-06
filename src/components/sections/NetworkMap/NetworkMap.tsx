@@ -1,9 +1,6 @@
 import { useTranslation } from '@/i18n';
 import { EditableText } from '@/components';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
-import worldMapImg from '@/assets/images/world-map.jpg';
-import worldMapAvif from '@/assets/images/world-map.avif';
-import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import './NetworkMap.css';
 
@@ -31,30 +28,48 @@ const nodes = [
   },
 ] as const;
 
+/**
+ * Presence — a photographic band with the locations as glass over it.
+ *
+ * This was a dotted world map with a single pin on Athens, beside three cards
+ * stretched to the map's height and about 40% empty as a result. The map was
+ * the most template-derived element on the page and it contradicted its own
+ * headline: a world map illustrating two offices ten kilometres apart.
+ *
+ * The band is the site's lensing showcase. The one place the glass material
+ * has ever unambiguously worked is the mobile menu over the statue, where real
+ * blur and saturation turn marble and cyan into colour; everywhere else it
+ * floats over a flat dark ramp with nothing to concentrate. Here the cards sit
+ * on a photograph, which is the condition the material was designed for.
+ *
+ * PLACEHOLDER: the band renders a solid tonal ground until the client supplies
+ * photography — Athens from Lycabettus, the Piraeus container terminal. Set it
+ * on `--band-image` in NetworkMap.css; nothing else needs to change.
+ */
 export function NetworkMap() {
   const { t } = useTranslation();
 
   return (
     <section className="network-map">
-      <CircuitLines variant="f" />
       <div className="network-map__inner">
         <FadeInSection>
           <SectionHeader
-            overlineKey="networkOverline"
             titleKey="networkTitle"
             subtitleKey="networkSubtitle"
             labelKey="chapterNetwork"
           />
         </FadeInSection>
+      </div>
 
-        <div className="network-map__grid">
-          <StaggerGroup className="network-map__cards" interval={0.15}>
+      <div className="network-map__band">
+        <div className="network-map__band-inner">
+          <StaggerGroup className="network-map__cards">
             {nodes.map(({ key, code, labelKey, cityKey, items }) => (
               // Card nested inside the fade wrapper: .network-map__card has its
-              // own hover `transition`, which would override the fade's
-              // opacity/transform transition if both classes shared one element.
-              <FadeInSection key={key} variant="fade-up">
-                <div className="network-map__card glass glass--interactive">
+              // own hover `transition`, which would override the wrapper's
+              // entrance animation if both lived on one element.
+              <FadeInSection key={key}>
+                <div className="network-map__card glass glass--interactive" data-variant="clear">
                   <span className="network-map__card-code" aria-hidden="true">{code}</span>
                   <EditableText tKey={labelKey} as="span" className="network-map__card-label" />
                   <EditableText tKey={cityKey} as="h3" className="network-map__card-city" />
@@ -70,33 +85,6 @@ export function NetworkMap() {
               </FadeInSection>
             ))}
           </StaggerGroup>
-
-          <FadeInSection variant="fade-right" delay={0.2} className="network-map__map-col">
-            <div className="network-map__map">
-              <picture>
-                <source type="image/avif" srcSet={worldMapAvif} />
-                <img
-                  src={worldMapImg}
-                  alt=""
-                  className="network-map__map-img"
-                  width={512}
-                  height={512}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </picture>
-              <div className="network-map__map-glow" />
-              <div className="network-map__pin">
-                <EditableText tKey="networkPinLabel" as="span" className="network-map__pin-label" />
-                <svg className="network-map__pin-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path fill="var(--accent)" d="M256,0C160.798,0,83.644,77.155,83.644,172.356c0,97.162,48.158,117.862,101.386,182.495
-                    C248.696,432.161,256,512,256,512s7.304-79.839,70.97-157.148c53.228-64.634,101.386-85.334,101.386-182.495
-                    C428.356,77.155,351.202,0,256,0z M256,231.921c-32.897,0-59.564-26.668-59.564-59.564s26.668-59.564,59.564-59.564
-                    c32.896,0,59.564,26.668,59.564,59.564S288.896,231.921,256,231.921z"/>
-                </svg>
-              </div>
-            </div>
-          </FadeInSection>
         </div>
       </div>
     </section>

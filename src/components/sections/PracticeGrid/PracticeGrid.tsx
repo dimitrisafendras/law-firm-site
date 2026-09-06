@@ -12,7 +12,6 @@ import {
   MaritimeBg,
   CryptoBg,
 } from '@/assets/domainBackgrounds';
-import { CircuitLines } from '@/components/CircuitLines/CircuitLines';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import { EditableText } from '@/components';
 import './PracticeGrid.css';
@@ -36,11 +35,9 @@ export function PracticeGrid() {
 
   return (
     <section id="practice" className="practice-section">
-      <CircuitLines variant="a" />
       <div className="practice-section__inner">
         <FadeInSection>
           <SectionHeader
-            overlineKey="practiceOverline"
             titleKey="practiceTitle"
             subtitleKey="practiceSubtitle"
             labelKey="chapterExpertise"

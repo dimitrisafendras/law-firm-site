@@ -17,7 +17,7 @@ const en = {
   heroSubtitle:
     'A new-generation legal practice combining deep expertise in real estate, startup funding, maritime, and cryptocurrency law. Built for ambitious professionals navigating tomorrow\u2019s challenges.',
   heroCta: 'Establish Protocol',
-  heroSecondaryCta: 'View Intelligence',
+  heroSecondaryCta: 'Meet the partners',
 
   // ─── Practice Areas ──────────────────────────────────────────────────────────
   practiceOverline: 'Practice Areas',
@@ -196,6 +196,10 @@ const en = {
   footerPrivacy: 'Privacy Policy',
   footerLinkedIn: 'LinkedIn',
   footerEmail: 'Email',
+  // PLACEHOLDER: the firm is not yet registered. Replace both with the real
+  // Athens Bar Association number and VAT number before launch.
+  footerBarRegistration: 'Athens Bar Association — registration pending',
+  footerVat: 'VAT number pending',
   footerCopyright: '\u00A9 2026 NOMOS Legal & Advisory. All rights reserved. Athens, Greece.',
 
   // ─── Design System page ──────────────────────────────────────────────────────
@@ -207,6 +211,17 @@ const en = {
   dark: 'Dark',
   colors: 'Colors',
   typography: 'Typography',
+  dsMarbleTitle: 'Marble — the second material',
+  dsMarbleBody: 'Not a light theme: the site has no theme switch. Marble is an opaque pale surface a section opts into with data-material="marble", emitted from the colors.light tokens. It exists so an 8,600px page has one tonal landmark, and so greyscale portraits can read as museum rather than as a team page.',
+  dsMarbleSampleName: 'Engraved name',
+  dsMarbleSampleRole: 'Real Estate & Startup Funding',
+  dsMarbleGlassNote: 'Glass inside marble takes the light glass values automatically — nothing here sets a light colour by hand.',
+  dsMarbleElevation: 'Marble elevation',
+  dsCapsTracking: 'Caps tracking',
+  dsItalicTitle: 'Real italic',
+  dsItalicBody: 'Jura ships no italic face, so every italic on the site used to be a browser-synthesised oblique — a slanted geometric sans. EB Garamond italic is loaded for the two places an italic is actually set: testimonial quotes and partner roles. Font synthesis is off, so nothing can silently fall back to a slant.',
+  dsFieldTitle: 'Dissolution field',
+  dsFieldBody: 'One fixed layer behind the whole page, replacing six per-section circuit-line SVGs. Density and opacity are highest at the top right, where the statue stands, and fall away toward the bottom left — the cubes have drifted off it. Placement is seeded, not random, so the prerendered and hydrated markup match.',
   pangram: 'The quick brown fox jumps over the lazy dog',
   fontSizes: 'Font Sizes',
   lineHeights: 'Line Heights',

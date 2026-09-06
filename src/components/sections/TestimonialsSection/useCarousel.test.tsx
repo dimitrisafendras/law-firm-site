@@ -1,204 +1,93 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useCarousel } from './useCarousel';
 
-type CarouselOpts = Parameters<typeof useCarousel>[0];
-
 /**
- * renderHook leaves trackRef.current null, so the transitionend listener never
- * binds. Attach a real (detached) element to the ref; the listener re-binds on
- * the next state change (the effect deps include `current`), which the teleport
- * tests trigger with a next()/prev() before dispatching. dispatchEvent works on
- * detached elements, so there's no need to touch document.body.
+ * The hook that replaced the sliding carousel.
+ *
+ * Most of what the old suite covered — clone offsets, transition suppression
+ * on the wrap jump, the real-vs-virtual index pair — described machinery that
+ * no longer exists. What survives is the behaviour a reader can observe: the
+ * quote advances on its own, wraps at both ends, stops when asked, and never
+ * points past the end of the list.
  */
-function renderCarouselWithTrack(opts: CarouselOpts) {
-  const view = renderHook(() => useCarousel(opts));
-  const track = document.createElement('div');
-  view.result.current.trackRef.current = track;
-  return { result: view.result, track };
-}
-
-/** Fire a transform transitionend on the track, as the browser would. */
-function fireTransformEnd(track: HTMLElement) {
-  const ev = new Event('transitionend');
-  Object.defineProperty(ev, 'propertyName', { value: 'transform' });
-  act(() => {
-    track.dispatchEvent(ev);
-  });
-}
-
 describe('useCarousel', () => {
-  describe('runaway index guard', () => {
-    /*
-     * The seamless wrap runs on `transitionend`, which does not fire while the
-     * section is unpainted (`content-visibility: auto`) or the tab is
-     * backgrounded — but autoplay keeps advancing. Before the guard, the index
-     * walked past the cloned range and the track translated into empty space,
-     * leaving the carousel permanently blank.
-     */
-    it('resyncs onto the real set when advanced without any transitionend', () => {
-      const itemCount = 6;
-      const { result } = renderHook(() =>
-        useCarousel({ itemCount, visibleCount: 3 }),
-      );
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
 
-      // Twenty-odd advances with no transition ever completing.
-      for (let i = 0; i < 25; i += 1) {
-        act(() => result.current.next());
-      }
-
-      const { currentIndex, realIndex } = result.current;
-      expect(currentIndex).toBeGreaterThanOrEqual(0);
-      expect(currentIndex).toBeLessThan(itemCount * 3);
-      expect(realIndex).toBeGreaterThanOrEqual(0);
-      expect(realIndex).toBeLessThan(itemCount);
-    });
-
-    it('resyncs when rewound the same way', () => {
-      const itemCount = 6;
-      const { result } = renderHook(() =>
-        useCarousel({ itemCount, visibleCount: 3 }),
-      );
-
-      for (let i = 0; i < 25; i += 1) {
-        act(() => result.current.prev());
-      }
-
-      expect(result.current.currentIndex).toBeGreaterThanOrEqual(0);
-      expect(result.current.currentIndex).toBeLessThan(itemCount * 3);
-    });
+  it('starts on the first quote', () => {
+    const { result } = renderHook(() => useCarousel({ count: 3 }));
+    expect(result.current.index).toBe(0);
+    expect(result.current.paused).toBe(false);
   });
 
-  describe('initial state', () => {
-    it('starts on the first real slide with three cloned sets', () => {
-      const { result } = renderHook(() =>
-        useCarousel({ itemCount: 3, visibleCount: 1 }),
-      );
-      // [clone-set][real-set][clone-set] => 3 * itemCount
-      expect(result.current.totalSlides).toBe(9);
-      // startIndex === itemCount, i.e. the first real slide
-      expect(result.current.currentIndex).toBe(3);
-      expect(result.current.realIndex).toBe(0);
-    });
+  it('advances once per dwell', () => {
+    const { result } = renderHook(() => useCarousel({ count: 3, dwell: 1000 }));
+
+    act(() => vi.advanceTimersByTime(1000));
+    expect(result.current.index).toBe(1);
+
+    act(() => vi.advanceTimersByTime(1000));
+    expect(result.current.index).toBe(2);
   });
 
-  describe('next / prev', () => {
-    it('next advances the raw index and maps realIndex within the real set', () => {
-      const { result } = renderHook(() =>
-        useCarousel({ itemCount: 3, visibleCount: 1 }),
-      );
+  it('wraps forward past the last quote', () => {
+    const { result } = renderHook(() => useCarousel({ count: 3, dwell: 1000 }));
 
-      act(() => result.current.next());
-      expect(result.current.currentIndex).toBe(4);
-      expect(result.current.realIndex).toBe(1);
-
-      act(() => result.current.next());
-      expect(result.current.currentIndex).toBe(5);
-      expect(result.current.realIndex).toBe(2);
-
-      // Stepping onto the leading clone of the *next* set wraps realIndex to 0
-      act(() => result.current.next());
-      expect(result.current.currentIndex).toBe(6);
-      expect(result.current.realIndex).toBe(0);
-    });
-
-    it('prev decrements and realIndex wraps correctly onto trailing clones', () => {
-      const { result } = renderHook(() =>
-        useCarousel({ itemCount: 3, visibleCount: 1 }),
-      );
-
-      act(() => result.current.prev());
-      // current 3 -> 2 (a trailing clone); realIndex ((2-3)%3+3)%3 === 2
-      expect(result.current.currentIndex).toBe(2);
-      expect(result.current.realIndex).toBe(2);
-    });
-
-    it('goToReal jumps to a specific real slide', () => {
-      const { result } = renderHook(() =>
-        useCarousel({ itemCount: 4, visibleCount: 1 }),
-      );
-      act(() => result.current.goToReal(2));
-      expect(result.current.currentIndex).toBe(4 + 2); // startIndex + realIndex
-      expect(result.current.realIndex).toBe(2);
-    });
+    act(() => vi.advanceTimersByTime(3000));
+    expect(result.current.index).toBe(0);
   });
 
-  describe('teleport on clone boundary (transitionend)', () => {
-    it('teleports forward without animation after passing the last real slide', () => {
-      const { result, track } = renderCarouselWithTrack({ itemCount: 3, visibleCount: 1 });
+  it('wraps backward past the first quote', () => {
+    const { result } = renderHook(() => useCarousel({ count: 3 }));
 
-      // Advance to the first leading clone of the next set: current === 6
-      act(() => result.current.next());
-      act(() => result.current.next());
-      act(() => result.current.next());
-      expect(result.current.currentIndex).toBe(6);
-
-      fireTransformEnd(track);
-
-      // Jumped back to the matching real slide, transition disabled for the jump
-      expect(result.current.currentIndex).toBe(3);
-      expect(result.current.realIndex).toBe(0);
-      expect(result.current.trackStyle.transition).toBe('none');
-    });
-
-    it('teleports backward without animation after passing the first real slide', () => {
-      const { result, track } = renderCarouselWithTrack({ itemCount: 3, visibleCount: 1 });
-
-      // Step onto a trailing clone: current === 2 (< startIndex)
-      act(() => result.current.prev());
-      expect(result.current.currentIndex).toBe(2);
-
-      fireTransformEnd(track);
-
-      // startIndex + (2 - startIndex + itemCount) === 3 + 2 === 5
-      expect(result.current.currentIndex).toBe(5);
-      expect(result.current.realIndex).toBe(2);
-      expect(result.current.trackStyle.transition).toBe('none');
-    });
-
-    it('does not teleport for non-transform transitions', () => {
-      const { result, track } = renderCarouselWithTrack({ itemCount: 3, visibleCount: 1 });
-      act(() => result.current.next());
-      act(() => result.current.next());
-      act(() => result.current.next());
-      expect(result.current.currentIndex).toBe(6);
-
-      const ev = new Event('transitionend');
-      Object.defineProperty(ev, 'propertyName', { value: 'opacity' });
-      act(() => {
-        track.dispatchEvent(ev);
-      });
-
-      // Unchanged — the handler ignores non-transform property transitions
-      expect(result.current.currentIndex).toBe(6);
-    });
+    act(() => result.current.prev());
+    expect(result.current.index).toBe(2);
   });
 
-  describe('autoplay with pause / resume', () => {
-    beforeEach(() => vi.useFakeTimers());
-    afterEach(() => vi.useRealTimers());
+  it('holds while paused and continues on resume', () => {
+    const { result } = renderHook(() => useCarousel({ count: 3, dwell: 1000 }));
 
-    it('advances on each interval and honours pause / resume', () => {
-      const { result } = renderHook(() =>
-        useCarousel({ itemCount: 3, visibleCount: 1, interval: 1000 }),
-      );
-      expect(result.current.currentIndex).toBe(3);
+    act(() => result.current.pause());
+    act(() => vi.advanceTimersByTime(5000));
+    expect(result.current.index).toBe(0);
+    expect(result.current.paused).toBe(true);
 
-      act(() => vi.advanceTimersByTime(1000));
-      expect(result.current.currentIndex).toBe(4);
+    act(() => result.current.resume());
+    act(() => vi.advanceTimersByTime(1000));
+    expect(result.current.index).toBe(1);
+  });
 
-      act(() => vi.advanceTimersByTime(1000));
-      expect(result.current.currentIndex).toBe(5);
+  it('clamps an out-of-range goTo instead of pointing past the end', () => {
+    const { result } = renderHook(() => useCarousel({ count: 3 }));
 
-      // Paused: elapsed time must not advance the carousel
-      act(() => result.current.pause());
-      act(() => vi.advanceTimersByTime(5000));
-      expect(result.current.currentIndex).toBe(5);
+    act(() => result.current.goTo(7));
+    expect(result.current.index).toBe(1);
 
-      // Resumed: ticking continues from where it left off
-      act(() => result.current.resume());
-      act(() => vi.advanceTimersByTime(1000));
-      expect(result.current.currentIndex).toBe(6);
+    act(() => result.current.goTo(-1));
+    expect(result.current.index).toBe(2);
+  });
+
+  it('does not run a timer for a single quote', () => {
+    const { result } = renderHook(() => useCarousel({ count: 1, dwell: 1000 }));
+
+    act(() => vi.advanceTimersByTime(10_000));
+    expect(result.current.index).toBe(0);
+  });
+
+  it('never points past the end when the list shrinks under it', () => {
+    // The copy is admin-editable, so the quote list can get shorter while the
+    // rotator is part-way through it. What matters is that the index it hands
+    // back is always a real position in the current list.
+    const { result, rerender } = renderHook(({ count }) => useCarousel({ count }), {
+      initialProps: { count: 6 },
     });
+
+    act(() => result.current.goTo(5));
+    expect(result.current.index).toBe(5);
+
+    rerender({ count: 2 });
+    expect(result.current.index).toBeLessThan(2);
+    expect(result.current.index).toBeGreaterThanOrEqual(0);
   });
 });

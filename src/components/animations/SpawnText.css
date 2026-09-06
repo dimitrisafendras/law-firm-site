@@ -100,3 +100,37 @@
     filter: blur(0) brightness(1);
   }
 }
+
+/* ─── Scroll-linked variant ────────────────────────────────────────────────
+ *
+ * The hero's spawn fires once on page load, which is right for a hero and
+ * useless for a title 4,000px down the page — by the time it is read the
+ * animation has long since finished playing to nobody.
+ *
+ * Same reveal, driven by `animation-timeline: view()` instead. Because a view
+ * timeline ignores `animation-delay`, the per-unit stagger becomes a shift in
+ * `animation-range` — each unit completes a little later in the title's own
+ * entry, which reads the same and, unlike a delay, stays tied to scroll
+ * position rather than to the clock.
+ *
+ * Outside `@supports` these units keep the base rules, which are already the
+ * final state: visible, sharp, un-transformed.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .spawn-text--scroll .spawn-text__unit {
+      animation-name: spawn-unit;
+      animation-duration: auto;
+      animation-delay: 0s;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry calc(var(--spawn-index, 0) * 1.5%) entry
+        calc(38% + var(--spawn-index, 0) * 1.5%);
+    }
+
+    .spawn-text--scroll.spawn-text--gradient .spawn-text__unit {
+      animation-name: spawn-unit-bloom;
+    }
+  }
+}

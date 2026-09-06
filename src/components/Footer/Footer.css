@@ -15,24 +15,53 @@
   }
 }
 
+/*
+ * The brand column is given a real share of the row rather than being pinned
+ * hard left against link columns pinned hard right. That layout left roughly
+ * 750px of nothing between the two, which is the widest empty space on the
+ * page and reads as a missing column rather than as breathing room.
+ */
 .footer__inner {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-12);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-24);
   max-width: var(--layout-max-width);
   margin: 0 auto;
 
   @media (max-width: 1024px) {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     gap: var(--space-8);
   }
 }
 
+.footer__brand-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 34ch;
+}
+
 .footer__brand {
   font-family: var(--heading);
-  font-size: 24px;
-  font-weight: 500;
+  /* Was a raw 24px — the size the h4 step was added for. */
+  font-size: var(--type-h4-size);
+  font-weight: var(--type-h4-weight);
+  line-height: var(--type-h4-leading);
+  letter-spacing: var(--type-h4-tracking);
   color: var(--text-h);
+}
+
+/* Registration details. A law firm's footer is a credibility signal, and an
+   empty one is a missed one. */
+.footer__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--type-small-size);
+  line-height: var(--type-small-leading);
+  color: var(--text);
+  opacity: var(--text-emphasis-muted);
+  margin: 0;
 }
 
 .footer__columns {

@@ -255,12 +255,68 @@
  * `overflow: hidden` is the backstop, not the plan. Nothing should reach it;
  * it is here so that a future card with an un-shrinkable minimum is a crop
  * rather than a section overlapping the one below it.
+ *
+ * ── 900px, and why the promise was being broken at 700 ──────────────────────
+ *
+ * The floor used to be 700px, and at 700-900px the gate was promising something
+ * that was not true: every composition in this sequence was measured and tuned
+ * against a 907px screen (see the fit budgets in ContactSection.css and
+ * TestimonialsSection.css — "at the reference viewport that screen is 907px"),
+ * and none of them fits in 709.
+ *
+ * 709 is not a hypothetical. It is a 1920x1080 monitor at Windows' 125-150%
+ * display scaling, which is the default on most 1080p laptops: at 130% the CSS
+ * viewport is 1478x709 — nine pixels past the old gate, and the worst place on
+ * the axis to land. Measured there, with the hard height applied:
+ *
+ *      contact    the band wants 820px and gets 709. The 111px that fell off
+ *                 the bottom included the whole submit button (y=740), so the
+ *                 form could not be sent at all.
+ *      partners   each bio wants 475px in a 364px box — 111px of copy gone,
+ *                 and the scroll cue stranded at y=757.
+ *      practice   16px off the bottom of every card.
+ *
+ * So the floor moves to where the promise is actually kept. Between 700 and
+ * 900 the band below takes over, and `overflow: hidden` goes with the hard
+ * height rather than outliving it — a backstop for content that cannot fit is
+ * the wrong instrument when the height is no longer claiming that it does.
  */
-@media (min-width: 1280px) and (min-height: 700px) {
+@media (min-width: 1280px) and (min-height: 900px) {
   .page-ramp--screens > header,
   .page-ramp--screens > section {
     height: 100svh;
     overflow: hidden;
+  }
+}
+
+/*
+ * The short-screen band: a screen is still the floor, but never the ceiling.
+ *
+ * `min-height`, and everything the comment above says against it is still
+ * true — a floor gives the flex chains underneath nothing to divide, so the
+ * partner row and the practice bento take their natural height rather than
+ * their share of a screen. That is the trade, taken deliberately: a section
+ * that runs 200px past the fold costs a reader two turns of the wheel, and a
+ * section that clips costs them the submit button. Growing is the failure mode
+ * to have.
+ *
+ * The floor is what keeps the sequence reading as a sequence. Without it the
+ * three sections that *do* fit would collapse to their content height and the
+ * page would lose its rhythm on exactly the screens that still have room for
+ * it; with it, testimonials and the hero are one screen apiece here just as
+ * they are on a tall monitor, and only the two that need more take more.
+ *
+ * No `overflow` at all. The sections that outgrow the floor are meant to be
+ * read past it, and a clip is what this band exists to remove.
+ *
+ * The upper bound is `899.98px` rather than `899px` because a viewport height
+ * is not an integer — a scaled display lands on fractions like 899.5, and
+ * `max-height: 899px` would leave it in neither band.
+ */
+@media (min-width: 1280px) and (min-height: 700px) and (max-height: 899.98px) {
+  .page-ramp--screens > header,
+  .page-ramp--screens > section {
+    min-height: 100svh;
   }
 }
 
@@ -273,7 +329,7 @@
  * containing it, and the floor wins over the height. Releasing it lets the
  * screen's own height be the only one that counts.
  */
-@media (min-width: 1280px) and (min-height: 700px) {
+@media (min-width: 1280px) and (min-height: 900px) {
   .page-ramp--screens > .hero-section {
     min-height: 0;
   }
@@ -293,6 +349,16 @@
  * exactly right now, because that is what a section measures. `auto` keeps the
  * last real measurement once the section has been rendered once; the value is
  * the estimate used before that ever happens.
+ *
+ * Still gated at 700 rather than following the hard height up to 900, because
+ * in the short band this is an *estimate* and not a claim: a section there is
+ * at least a screen and sometimes more, so one viewport is the floor of the
+ * right answer instead of the answer. Letting the rule lapse was tried and is
+ * strictly worse — a skipped section with no reservation at all reports zero,
+ * which is wrong by a whole screen rather than by the overshoot, and it is the
+ * case HomePage's hash-scroll retry exists to survive. The leading `auto`
+ * replaces the estimate with the real height the first time the section is
+ * rendered either way.
  */
 @media (min-width: 1280px) and (min-height: 700px) {
   .page-ramp--screens > section {

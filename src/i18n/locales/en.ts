@@ -190,7 +190,6 @@ const en = {
   teamViewProfile: 'View profile',
 
   // ─── Partner detail page (#partner/<n>) ─────────────────────────────────────
-  partnerProfileLabel: 'Partner Profile',
   partnerBackToTeam: 'All partners',
   partnerAboutLabel: 'About',
   partnerSpecialtiesLabel: 'Specialisations',

@@ -194,7 +194,6 @@ const el = {
   teamViewProfile: 'Δείτε το προφίλ',
 
   // ─── Σελίδα εταίρου (#partner/<n>) ──────────────────────────────────────────
-  partnerProfileLabel: 'Προφίλ Εταίρου',
   partnerBackToTeam: 'Όλοι οι εταίροι',
   partnerAboutLabel: 'Βιογραφικό',
   partnerSpecialtiesLabel: 'Εξειδικεύσεις',

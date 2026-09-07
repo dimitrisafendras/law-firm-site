@@ -419,14 +419,18 @@
   white-space: nowrap;
 }
 
-@media (hover: hover) {
-  .practice-page__cta:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--on-accent);
-    transform: translateY(-2px);
-  }
-}
+/*
+ * No hover rule here any more. This used to fill the ghost CTA with `--accent`
+ * and lift it 2px, which made sense while the resting state was accent-on-
+ * transparent. The button is `btn--primary` now, so the fill and the text
+ * colour ARE its resting state and the rule had nothing left to say except the
+ * translate — and `.btn` does not transition `transform`, so those 2px landed
+ * in a single frame. That is the reported jump: not a lift, a jump.
+ *
+ * `.btn--primary:hover` already carries the response (a brightness step, and a
+ * shadow where the pointer can hover), and both are in `.btn`'s transition
+ * list.
+ */
 
 /* At the narrow end the two-column identity is a column: `auto` beside `1fr`
    stops being a spare margin and becomes a second measure competing with the
@@ -838,9 +842,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* The CTA is not listed, and needs no entry: it has no transform left to
+     silence, and the transitions it inherits from `.btn` are colour, shadow,
+     filter and opacity — paint rather than motion, which this preference does
+     not ask to be removed. */
   .practice-page__back,
-  .practice-page__back > span[aria-hidden],
-  .practice-page__cta {
+  .practice-page__back > span[aria-hidden] {
     transition: none;
   }
 
@@ -848,7 +855,4 @@
     transform: none;
   }
 
-  .practice-page__cta:hover {
-    transform: none;
-  }
 }

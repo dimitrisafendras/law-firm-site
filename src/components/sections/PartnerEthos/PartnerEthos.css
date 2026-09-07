@@ -224,7 +224,28 @@
   position: absolute;
   inset: auto 0 0;
   height: 40%;
-  background: linear-gradient(180deg, transparent, rgb(0 0 0 / 55%));
+  /*
+   * Deeper in the last third than it used to be, because the badge above it
+   * stopped carrying its own plate.
+   *
+   * It was `transparent -> 55%` across the whole band. The badge sits 16px off
+   * the bottom edge, about 89% of the way down the scrim, where that ramp had
+   * reached roughly 49% — enough to settle the portrait into the card, not
+   * enough to make a 12px label legible over a light garment. Over a white
+   * shirt collar it composited to about rgb(130, 130, 130), and `--accent`
+   * against that measures 2.95:1 where 4.5:1 is required.
+   *
+   * Holding 55% to 70% and then running to 82% leaves the part of the scrim
+   * that is doing the *settling* exactly as it was, and deepens only the strip
+   * the label occupies: about 72% alpha under the badge, which puts the same
+   * white collar at rgb(71, 71, 71) and the label at 7.1:1.
+   */
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgb(0 0 0 / 55%) 70%,
+    rgb(0 0 0 / 82%) 100%
+  );
   pointer-events: none;
   transition:
     height 0.45s var(--ease-settle),
@@ -258,14 +279,26 @@
   z-index: 1;
   font-family: var(--label);
   font-size: var(--type-caption-size);
-  font-weight: var(--type-caption-weight);
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-tight);
-  color: var(--on-accent);
-  background: var(--accent);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
+  /*
+   * `--accent` as type, not `--on-accent` on an `--accent` fill.
+   *
+   * This was a capsule, and the fill was carrying the contrast: the badge sits
+   * on a photograph, and a solid ground makes the text's legibility
+   * independent of whatever is behind it. Taking the fill away hands that job
+   * to the scrim below, which is why that gradient had to deepen in the same
+   * change — see the note on `.partner-ethos__portrait::after`. Measured
+   * against the old scrim, this colour over a white shirt collar came to
+   * 2.95:1, under the 4.5:1 a 12px label needs.
+   *
+   * The weight goes up a step with the fill gone. A capsule is found by its
+   * shape; loose type on a photograph is found by its ink, and `caption`'s 500
+   * was calibrated for text that had a plate under it.
+   */
+  font-weight: var(--weight-semibold);
+  color: var(--accent);
 }
 
 /* ─── Text ─────────────────────────────────────────────────────────────────── */

@@ -233,15 +233,6 @@
    so it reads as more of the same glass gathering at the foot in both themes —
    and over a photograph it has to be a tint rather than a wash, because the
    values underneath it are what the labels have to stay legible against. */
-/* The pairs' own list, carrying the column the foot used to be. The foot is
-   now the caption as a whole: prose, then the pairs. */
-.partner-page__plate-meta {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  margin: 0;
-}
-
 .partner-page__plate > .partner-page__plate-foot {
   position: absolute;
   inset: auto 0 0 0;
@@ -424,31 +415,6 @@
 
 /* The same real italic the card uses — Jura has no italic of its own, so this
    has to be the serif rather than a synthesised oblique. */
-/*
- * The specialties, captioning the portrait.
- *
- * They were a masthead line under the name. On the plate they lead the caption
- * the focus/origin pairs finish, which is why they keep the serif italic — the
- * pairs are the label register, and the contrast between prose and label is
- * what stops the foot reading as three undifferentiated rows.
- *
- * `--type-body-size`, one step down from the `body-lg` the masthead gave them:
- * the plate is ~346px wide against the identity's ~770px, and at 18px the
- * longest Greek pairing wrapped to three lines inside a box that is already 37%
- * of the portrait before this line joined it.
- *
- * No `grid-column` any more — it is not a grid item here, it is the first child
- * of the foot's flex column.
- */
-.partner-page__role {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--type-body-size);
-  line-height: var(--type-body-leading);
-  color: var(--accent);
-  margin: 0;
-}
-
 /*
  * Layout only. The look is `btn btn--primary btn--lg` in the markup — the
  * button component's own classes, on an anchor, because `#contact` is a

@@ -118,43 +118,37 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
               </picture>
 
               {/* Captions the portrait rather than interrupting the identity.
-                  A `div` wrapping a `dl` now, not a `dl` itself: the
-                  specialties line joined the caption and is prose, not one of
-                  the label/value pairs, and a `p` is not a permitted child of
-                  `dl`. The pairs keep their own list. */}
-              <div className="partner-page__plate-foot">
-                <p className="partner-page__role">
-                  <EditableText tKey={`attorney${n}Spec1`} as="span" /> &amp;{' '}
-                  <EditableText tKey={`attorney${n}Spec2`} as="span" />
-                </p>
-
-                <dl className="partner-page__plate-meta">
-                  <div className="partner-page__meta-item">
-                    <EditableText
-                      tKey="teamFocusLabel"
-                      as="dt"
-                      className="partner-page__meta-label"
-                    />
-                    <EditableText
-                      tKey={`attorney${n}Focus`}
-                      as="dd"
-                      className="partner-page__meta-value"
-                    />
-                  </div>
-                  <div className="partner-page__meta-item">
-                    <EditableText
-                      tKey="teamOriginLabel"
-                      as="dt"
-                      className="partner-page__meta-label"
-                    />
-                    <EditableText
-                      tKey={`attorney${n}Origin`}
-                      as="dd"
-                      className="partner-page__meta-value"
-                    />
-                  </div>
-                </dl>
-              </div>
+                  A `dl` again: the specialties are a label/value pair now like
+                  the focus beside them, so there is no prose left needing a
+                  wrapper that a `dl` would not accept as a child. */}
+              <dl className="partner-page__plate-foot">
+                <div className="partner-page__meta-item">
+                  <EditableText
+                    tKey="partnerSpecialtiesLabel"
+                    as="dt"
+                    className="partner-page__meta-label"
+                  />
+                  {/* Two keys in one value, so the `dd` is composed here rather
+                      than being a single `EditableText` — each specialism stays
+                      separately editable. */}
+                  <dd className="partner-page__meta-value">
+                    <EditableText tKey={`attorney${n}Spec1`} as="span" /> &amp;{' '}
+                    <EditableText tKey={`attorney${n}Spec2`} as="span" />
+                  </dd>
+                </div>
+                <div className="partner-page__meta-item">
+                  <EditableText
+                    tKey="teamFocusLabel"
+                    as="dt"
+                    className="partner-page__meta-label"
+                  />
+                  <EditableText
+                    tKey={`attorney${n}Focus`}
+                    as="dd"
+                    className="partner-page__meta-value"
+                  />
+                </div>
+              </dl>
             </Card>
 
             <div className="partner-page__identity">

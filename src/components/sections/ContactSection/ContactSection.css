@@ -481,6 +481,32 @@
     padding-inline: var(--space-8);
   }
 
+  /*
+   * The navbar clearance, and it is only needed here.
+   *
+   * `--space-8` of top padding is not the header's distance from the top of the
+   * screen — the band's `margin-block: auto` is, and it supplies whatever the
+   * composition does not use. At the 907px reference that arithmetic works out:
+   * (907 - 820) / 2 = 43px of auto margin on top of the 32, which puts the
+   * title at 75px and clears the 65px fixed navbar by ten.
+   *
+   * On a short screen the free space is negative, the auto margin resolves to
+   * zero as designed, and the 32px is suddenly the whole clearance — so the
+   * title sat *under* the navbar, overlapped by 33px. Measured at 1478x709:
+   * "Find Us in Athens" started at y=32 with the bar's bottom edge at y=65.
+   *
+   * `--space-24` rather than a value derived from the bar, because 96px is
+   * where every other section on this page starts its header (their own
+   * `padding-block-start`), so the sequence keeps one header baseline instead
+   * of this screen inventing a second one that happens to clear a navbar. It
+   * costs 64px of height, which is only spendable because this band no longer
+   * clips — above 900px the auto margin is still doing the job and this rule
+   * stays out of it.
+   */
+  @media (min-width: 1280px) and (min-height: 700px) and (max-height: 899.98px) {
+    padding-block-start: var(--space-24);
+  }
+
   @media (max-width: 1024px) {
     padding: var(--space-12) var(--space-4) var(--space-16);
     gap: var(--space-12);

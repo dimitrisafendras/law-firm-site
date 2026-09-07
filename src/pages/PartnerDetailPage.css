@@ -140,21 +140,6 @@
   }
 }
 
-.partner-page__overline {
-  font-family: var(--label);
-  /* One step up from `caption` — see the note on the practice page's twin. On a
-     masthead carrying a 53-69px name, 12px reads as a footnote. */
-  font-size: var(--type-small-size);
-  /* Semibold to match `__back` across the rail: the two are one line of
-     furniture at opposite ends of it, and 500 against 600 read as a mistake at
-     this size rather than as a hierarchy. */
-  font-weight: var(--weight-semibold);
-  line-height: var(--type-small-leading);
-  text-transform: uppercase;
-  letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent-text);
-}
-
 /* ─── Stage ────────────────────────────────────────────────────────────────── */
 
 /* Three columns and two rows; PracticeDetailPage.css explains the ratio. The
@@ -248,6 +233,15 @@
    so it reads as more of the same glass gathering at the foot in both themes —
    and over a photograph it has to be a tint rather than a wash, because the
    values underneath it are what the labels have to stay legible against. */
+/* The pairs' own list, carrying the column the foot used to be. The foot is
+   now the caption as a whole: prose, then the pairs. */
+.partner-page__plate-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+}
+
 .partner-page__plate > .partner-page__plate-foot {
   position: absolute;
   inset: auto 0 0 0;
@@ -353,7 +347,6 @@
    margin; both are wrong for a name sitting above a role line, so the step is
    restated one down and the margin removed. */
 .partner-page__name {
-  grid-column: 1;
   font-family: var(--heading);
   font-size: var(--type-h1-size);
   font-weight: var(--type-h1-weight);
@@ -364,31 +357,94 @@
 }
 
 /* The rank, as a filled pill on the name's line. */
-.partner-page__title {
-  grid-column: 2;
-  justify-self: end;
+/*
+ * The rank, as an honorific on the name — under the name's right end, where a
+ * designation sits against the thing it qualifies rather than competing with it
+ * for the same line.
+ *
+ * It began as a solid `--accent` capsule here, and two things were wrong with
+ * that: it set a rank in the loudest treatment the palette has, which is the
+ * register reserved for the thing you are meant to *do*; and once the
+ * consultation CTA became a real primary button the masthead carried two
+ * identical accent capsules a row apart, only one of them a control. A pill is
+ * an affordance and this is a fact.
+ *
+ * `--accent` is the baby blue this palette actually renders — #BCE8FF, the
+ * dark theme's step of the brand's #89CFF0 (`--secondary`, if the deeper one is
+ * wanted). Colour is doing the work a fill used to: hue and the label register
+ * are what keep this from reading as a second heading now that it has a line of
+ * its own.
+ *
+ * The label register, not the serif the `__role` line beneath uses — a rank is
+ * a designation and the specialties are prose, and setting them the same way
+ * flattened the two into one three-line block.
+ */
+.partner-page__honorific {
   font-family: var(--label);
-  font-size: var(--type-caption-size);
-  font-weight: var(--type-caption-weight);
-  line-height: var(--type-caption-leading);
+  font-size: var(--type-small-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--type-small-leading);
   text-transform: uppercase;
-  letter-spacing: var(--type-caps-tracking-tight);
-  color: var(--on-accent);
-  background: var(--accent);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
-  margin: 0;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--accent);
   white-space: nowrap;
+  align-self: flex-end;
+}
+
+/*
+ * The name's block: the name, and its designation under the name's right end.
+ * This is the grid item, so it carries the `1 / -1` the name used to.
+ *
+ * A column with a stretched name and the rank at `flex-end` — rather than a
+ * two-column grid — because the name's width is what the rank should sit
+ * against, and the name's width is its content. Stretching the name and
+ * pushing only the rank to the far edge keeps the two associated at any name
+ * length instead of stranding the rank across a gap on the short ones.
+ */
+.partner-page__namerow {
+  grid-column: 1 / -1;
+  /*
+   * `fit-content`, and this is the whole reason the rank lands where it should.
+   *
+   * The row spans the identity (`1 / -1`), which is the full width of the
+   * masthead — so `align-self: flex-end` on the rank sent it to the far right
+   * of the PAGE, a hundred-odd pixels of empty space away from the name it
+   * belongs to. Shrinking the row to its content makes the name's own width the
+   * box the rank aligns inside, so "flex-end" means the name's right edge.
+   *
+   * `max-width: 100%` so the longest name still wraps inside the column rather
+   * than pushing the row past it.
+   */
+  width: fit-content;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 /* The same real italic the card uses — Jura has no italic of its own, so this
    has to be the serif rather than a synthesised oblique. */
+/*
+ * The specialties, captioning the portrait.
+ *
+ * They were a masthead line under the name. On the plate they lead the caption
+ * the focus/origin pairs finish, which is why they keep the serif italic — the
+ * pairs are the label register, and the contrast between prose and label is
+ * what stops the foot reading as three undifferentiated rows.
+ *
+ * `--type-body-size`, one step down from the `body-lg` the masthead gave them:
+ * the plate is ~346px wide against the identity's ~770px, and at 18px the
+ * longest Greek pairing wrapped to three lines inside a box that is already 37%
+ * of the portrait before this line joined it.
+ *
+ * No `grid-column` any more — it is not a grid item here, it is the first child
+ * of the foot's flex column.
+ */
 .partner-page__role {
-  grid-column: 1;
   font-family: var(--serif);
   font-style: italic;
-  font-size: var(--type-body-lg-size);
-  line-height: var(--type-body-lg-leading);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-leading);
   color: var(--accent);
   margin: 0;
 }
@@ -417,14 +473,18 @@
   white-space: nowrap;
 }
 
-@media (hover: hover) {
-  .partner-page__cta:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--on-accent);
-    transform: translateY(-2px);
-  }
-}
+/*
+ * No hover rule here any more. This used to fill the ghost CTA with `--accent`
+ * and lift it 2px, which made sense while the resting state was accent-on-
+ * transparent. The button is `btn--primary` now, so the fill and the text
+ * colour ARE its resting state and the rule had nothing left to say except the
+ * translate — and `.btn` does not transition `transform`, so those 2px landed
+ * in a single frame. That is the reported jump: not a lift, a jump.
+ *
+ * `.btn--primary:hover` already carries the response (a brightness step, and a
+ * shadow where the pointer can hover), and both are in `.btn`'s transition
+ * list.
+ */
 
 /* At the narrow end the chip column becomes a second measure competing with the
    name for ~340px, so everything goes into one column in reading order. */
@@ -434,9 +494,7 @@
     row-gap: var(--space-4);
   }
 
-  .partner-page__name,
-  .partner-page__title,
-  .partner-page__role,
+  .partner-page__namerow,
   .partner-page__cta {
     grid-column: 1;
     justify-self: start;
@@ -788,9 +846,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* The CTA is not listed, and needs no entry: it has no transform left to
+     silence, and the transitions it inherits from `.btn` are colour, shadow,
+     filter and opacity — paint rather than motion, which this preference does
+     not ask to be removed. */
   .partner-page__back,
-  .partner-page__back > span[aria-hidden],
-  .partner-page__cta {
+  .partner-page__back > span[aria-hidden] {
     transition: none;
   }
 
@@ -798,7 +859,4 @@
     transform: none;
   }
 
-  .partner-page__cta:hover {
-    transform: none;
-  }
 }

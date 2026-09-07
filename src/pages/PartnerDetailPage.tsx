@@ -97,11 +97,10 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
               <span aria-hidden="true">&#8592;</span>
               {t('partnerBackToTeam')}
             </a>
-            <EditableText
-              tKey="partnerProfileLabel"
-              as="span"
-              className="partner-page__overline"
-            />
+            {/* The rank rides in the rail with the page's category, the way the
+                practice page's overline carries its domain numeral. It used to
+                be an accent pill beside the name — see the note on
+                `.partner-page__rank`. */}
           </div>
 
           <div className="partner-page__stage">
@@ -119,44 +118,60 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
               </picture>
 
               {/* Captions the portrait rather than interrupting the identity.
-                  A `dl` still, because it is still two label/value pairs — only
-                  the place it sits and the register it is set in changed. */}
-              <dl className="partner-page__plate-foot">
-                <div className="partner-page__meta-item">
-                  <EditableText
-                    tKey="teamFocusLabel"
-                    as="dt"
-                    className="partner-page__meta-label"
-                  />
-                  <EditableText
-                    tKey={`attorney${n}Focus`}
-                    as="dd"
-                    className="partner-page__meta-value"
-                  />
-                </div>
-                <div className="partner-page__meta-item">
-                  <EditableText
-                    tKey="teamOriginLabel"
-                    as="dt"
-                    className="partner-page__meta-label"
-                  />
-                  <EditableText
-                    tKey={`attorney${n}Origin`}
-                    as="dd"
-                    className="partner-page__meta-value"
-                  />
-                </div>
-              </dl>
+                  A `div` wrapping a `dl` now, not a `dl` itself: the
+                  specialties line joined the caption and is prose, not one of
+                  the label/value pairs, and a `p` is not a permitted child of
+                  `dl`. The pairs keep their own list. */}
+              <div className="partner-page__plate-foot">
+                <p className="partner-page__role">
+                  <EditableText tKey={`attorney${n}Spec1`} as="span" /> &amp;{' '}
+                  <EditableText tKey={`attorney${n}Spec2`} as="span" />
+                </p>
+
+                <dl className="partner-page__plate-meta">
+                  <div className="partner-page__meta-item">
+                    <EditableText
+                      tKey="teamFocusLabel"
+                      as="dt"
+                      className="partner-page__meta-label"
+                    />
+                    <EditableText
+                      tKey={`attorney${n}Focus`}
+                      as="dd"
+                      className="partner-page__meta-value"
+                    />
+                  </div>
+                  <div className="partner-page__meta-item">
+                    <EditableText
+                      tKey="teamOriginLabel"
+                      as="dt"
+                      className="partner-page__meta-label"
+                    />
+                    <EditableText
+                      tKey={`attorney${n}Origin`}
+                      as="dd"
+                      className="partner-page__meta-value"
+                    />
+                  </div>
+                </dl>
+              </div>
             </Card>
 
             <div className="partner-page__identity">
-              <EditableText tKey={`attorney${n}Name`} as="h1" className="partner-page__name" />
-              <EditableText tKey={`attorney${n}Title`} as="p" className="partner-page__title" />
-              <p className="partner-page__role">
-                <EditableText tKey={`attorney${n}Spec1`} as="span" /> &amp;{' '}
-                <EditableText tKey={`attorney${n}Spec2`} as="span" />
-              </p>
-
+              {/* The name, then its designation tucked under the name's right
+                  end. It stays OUTSIDE the `h1` on purpose: it would otherwise
+                  join the page's accessible heading, and this page's title is
+                  the name. Source order follows the reading order now that the
+                  rank sits below rather than in front — the heading first, then
+                  what qualifies it. */}
+              <div className="partner-page__namerow">
+                <EditableText tKey={`attorney${n}Name`} as="h1" className="partner-page__name" />
+                <EditableText
+                  tKey={`attorney${n}Title`}
+                  as="span"
+                  className="partner-page__honorific"
+                />
+              </div>
               <a className="btn btn--primary btn--md partner-page__cta" href="#contact">
                 {t('partnerContactCta')}
               </a>

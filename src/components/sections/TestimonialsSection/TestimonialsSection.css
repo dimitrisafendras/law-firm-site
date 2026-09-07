@@ -84,6 +84,35 @@
  * and the rail sits on the bottom edge, spanning the full column. That rule is
  * what bases the composition now that there is no box around it.
  */
+/*
+ * ── The panel is back, as matte ─────────────────────────────────────────────
+ *
+ * The long note above says "No panel", and it was right about the panel it was
+ * removing. Two of its three objections are gone rather than overruled:
+ *
+ *   The alignment.   The old panel was a 1028px box auto-centred in a 1344px
+ *                    inner, so the stage's left edge (x=206) agreed with
+ *                    neither the section title (x=48) nor the chapter marker.
+ *                    This one is `width: 100%` of that same inner, so its edges
+ *                    ARE the header's edges — the one thing that note asked for
+ *                    ("every other screen puts its content on exactly the
+ *                    header's left and right edges").
+ *
+ *   The flat glass.  The old surface could not lens: this section carries
+ *                    `content-visibility: auto`, which makes it a backdrop root
+ *                    with nothing behind it, so `backdrop-filter` sampled empty
+ *                    space and the "glass" rendered as a flat tint. A matte
+ *                    surface is *meant* to be a flat tint, so the defect and
+ *                    the design are now the same thing. Nothing here lenses,
+ *                    and `.glass--matte` is uninteractive, so nothing tries to.
+ *
+ *   The height.      This one still costs. The old panel spent `--space-12`
+ *                    (96px) of block padding out of a ~306px budget; this
+ *                    spends `--space-8` (64px), and the section is no longer
+ *                    hard-clipped below 900px of viewport (App.css) — it grows
+ *                    instead, so the cost is scroll rather than a lost line of
+ *                    the quote.
+ */
 .testimonials-stage {
   display: flex;
   flex-direction: column;
@@ -92,6 +121,9 @@
   margin-top: var(--space-12);
   flex: 1 1 auto;
   min-height: 0;
+
+  padding: var(--space-8);
+  border-radius: var(--radius-3xl);
 
   @media (max-width: 1024px) {
     margin-top: var(--space-8);

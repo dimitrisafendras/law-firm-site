@@ -141,7 +141,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
               />
               <EditableText tKey={`practice${key}Desc`} as="p" className="practice-page__lede" />
 
-              <a className="practice-page__cta" href="#contact">
+              <a className="btn btn--primary btn--md practice-page__cta" href="#contact">
                 {t('practiceContactCta')}
               </a>
             </div>
@@ -149,7 +149,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
             <Card
               as="section"
               lensing={false}
-              className="practice-page__panel practice-page__panel--prose"
+              className="glass--matte practice-page__panel practice-page__panel--prose"
               aria-labelledby={`practice-overview-${slug}`}
             >
               <h2 className="practice-page__panel-title" id={`practice-overview-${slug}`}>
@@ -170,7 +170,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
             <Card
               as="section"
               lensing={false}
-              className="practice-page__panel practice-page__panel--ledger"
+              className="glass--matte practice-page__panel practice-page__panel--ledger"
               aria-labelledby={`practice-services-${slug}`}
             >
               <h2 className="practice-page__panel-title" id={`practice-services-${slug}`}>

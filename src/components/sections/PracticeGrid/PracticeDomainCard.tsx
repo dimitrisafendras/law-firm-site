@@ -46,7 +46,11 @@ export function PracticeDomainCard({
 
   const linked = !canEdit;
 
-  const classes = ['practice-domain', linked ? 'practice-domain--linked' : '']
+  /* `glass--matte` is a material choice, not an interaction one, so it is
+     unconditional: the grid must not put ten lensing surfaces on the page in
+     admin edit mode either. See `.glass--matte` in src/styles/liquid-glass.css
+     for what the material does and why only the hovered card is glass. */
+  const classes = ['practice-domain', 'glass--matte', linked ? 'practice-domain--linked' : '']
     .filter(Boolean)
     .join(' ');
 

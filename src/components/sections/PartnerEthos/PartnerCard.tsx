@@ -49,7 +49,10 @@ export function PartnerCard({ partner, headingLevel: Heading = 'h3' }: PartnerCa
 
   const linked = !canEdit;
 
-  const classes = ['partner-ethos__bust', linked ? 'partner-ethos__bust--linked' : '']
+  /* Matte at rest, glass only under the pointer — see `.glass--matte` in
+     src/styles/liquid-glass.css. Unconditional for the same reason as the
+     practice cards: the material does not depend on the card being a door. */
+  const classes = ['partner-ethos__bust', 'glass--matte', linked ? 'partner-ethos__bust--linked' : '']
     .filter(Boolean)
     .join(' ');
 

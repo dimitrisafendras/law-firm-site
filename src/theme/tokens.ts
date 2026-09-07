@@ -343,6 +343,10 @@ export const glass = {
     edge: 'rgba(255, 255, 255, 0.5)',
     controlEdge: 'rgba(0, 0, 0, 0.42)',
     glow: 'rgba(255, 255, 255, 0.45)',
+    /* The light counterpart of the dark note below: the ramp's own extreme,
+       so a matte card is the page's floor rather than a fourth near-white.
+       Inert while the app renders dark-only. */
+    matte: colors.light.gradStop6,
   },
   /*
    * The dark tint is LIGHTER than the surface it sits on, deliberately — and
@@ -392,6 +396,49 @@ export const glass = {
      */
     controlEdge: 'rgba(255, 255, 255, 0.38)',
     glow: 'rgba(188, 232, 255, 0.24)',
+    /*
+     * The material with the lensing taken out — a dark, opaque card, for a grid
+     * where only the card under the pointer is glass.
+     *
+     * Ten lensing cards in one grid could not coexist: they all sample the same
+     * backdrop through a section that runs a scroll-driven opacity animation,
+     * so re-sampling any one of them corrupted the others on compositor tiles
+     * rather than on card boundaries. A card that does not lens cannot be
+     * corrupted and cannot corrupt, which is why rest is matte now and glass is
+     * the hover state. See `.glass--matte` in src/styles/liquid-glass.css.
+     *
+     * ── Why the ramp's last stop ────────────────────────────────────────────
+     *
+     * Because the site already answered this question once. The contact form's
+     * fields sit on a lit map — the busiest ground on the page — and they take
+     * `background-color: var(--grad-6)` with `border-color: var(--glass-edge)`
+     * (ContactSection.css, and see the note there: "Opaque, not translucent —
+     * the map is meant to be *around* the fields, not inside them"). A matte
+     * card has the same problem and now gives the same answer, so the two read
+     * as one material rather than as two dark surfaces that happen to differ.
+     *
+     * It is also the only defensible pick on the token rule. The stops run
+     * #1B2A44 down to #0D1220 in six steps and these sections sit on --grad-2
+     * and --grad-3, so any hand-named "dark slate" lands within two or three
+     * RGB points of --grad-4 or --grad-5 — a duplicated design value wearing a
+     * new name, which is what that rule exists to prevent.
+     *
+     * And it is the right answer on its own terms: as dark as this page ever
+     * gets, so a resting card is the page's floor and the pointer lifts it into
+     * glass. Against --grad-2 and --grad-3 it is darker in every channel, and
+     * the card's inset rim and drop shadow are what draw its edge — a dark card
+     * on a dark ground reads as a card because of those, not because of its
+     * fill.
+     *
+     * Referenced rather than retyped, so there is exactly one #0D1220 in the
+     * source. Dial it to gradStop5 or gradStop4 if the grid reads too heavy.
+     *
+     * Opaque on purpose. A high-alpha tint would track the ramp automatically,
+     * which sounds better and is not: the point of matte here is that there is
+     * nothing behind the card to see, and the fixed circuit field reading
+     * through ten unblurred cards is exactly the busy-ness the blur was hiding.
+     */
+    matte: colors.dark.gradStop6,
   },
 } as const;
 
@@ -548,6 +595,34 @@ export const decor = {
    */
   domainArt: '0.55',
   domainArtHover: '0.85',
+  /*
+   * The photographs' tone, so they belong to this page.
+   *
+   * The partner portraits are the only chromatic content on the site —
+   * everything else is type, glass and a cold navy ramp — and they used to sit
+   * on a translucent card that carried `saturate(1.8)` over that ramp, which
+   * pulled the surrounding surface toward them. On the matte card there is no
+   * such meeting in the middle: warm studio skin tones now abut #0D1220
+   * directly and read as photographs pasted onto the page rather than as part
+   * of it.
+   *
+   * `grayscale(1)` is the obvious answer and was already tried and rejected
+   * once (see the note above `.partner-ethos__image`) — it spends the page's
+   * only colour to buy a cohesion the layout already provides. This keeps some
+   * of it and moves the rest: saturation down to about a third so skin no
+   * longer competes with the accent, a small negative hue rotation to take the
+   * warmth toward the navy the page is built on, and a touch of contrast to
+   * hold the modelling that desaturating costs.
+   *
+   * A filter STRING rather than three separate numbers, because the chain has
+   * to be applied and replaced as one thing: the hover restates it in full
+   * (`filter` is not additive), and a hover that dropped one term would shift
+   * hue under the pointer.
+   */
+  portraitTone: 'saturate(0.34) hue-rotate(-8deg) contrast(1.06)',
+  /* The same chain, opened up — the card is becoming glass, so the photograph
+     comes back toward its own colour rather than merely brightening. */
+  portraitToneHover: 'saturate(0.62) hue-rotate(-8deg) contrast(1.04) brightness(1.04)',
 } as const;
 
 /*
@@ -608,6 +683,8 @@ export const decorVarNames: Record<string, string> = {
   bloomSoft: '--bloom-soft',
   domainArt: '--domain-art',
   domainArtHover: '--domain-art-hover',
+  portraitTone: '--portrait-tone',
+  portraitToneHover: '--portrait-tone-hover',
 };
 
 // ─── Token → CSS variable name mapping ───────────────────────────────────────
@@ -659,6 +736,7 @@ export const glassVarNames: Record<string, string> = {
   edge: '--glass-edge',
   controlEdge: '--glass-control-edge',
   glow: '--glass-glow',
+  matte: '--glass-matte',
 };
 
 export const radiusVarNames: Record<string, string> = {

@@ -324,32 +324,58 @@
    * The same hover as the partner cards, in this card's own vocabulary.
    *
    * Both cards do one thing now: rise, take the overlay elevation with an
-   * accent rim and an accent halo, and saturate the material further by handing
-   * `backdrop-filter` a new `--glass-saturate` rather than declaring a second
-   * filter. On that shared base each card moves the asset it actually has — the
-   * partner's portrait pushes in, this card's engraved illustration steps
-   * forward — and both finish with the title underlining from the left and the
-   * cue coming up to full and stepping right. Same language, same intensity,
-   * same curve and duration, so the two sections read as one system.
+   * accent rim and an accent halo, and brighten the material. On that shared
+   * base each card moves the asset it actually has — the partner's portrait
+   * pushes in, this card's engraved illustration steps forward — and both
+   * finish with the title underlining from the left and the cue coming up to
+   * full and stepping right. Same language, same intensity, same curve and
+   * duration, so the two sections read as one system.
+   *
+   * Rest, for both, is matte rather than glass — `.glass--matte` in
+   * liquid-glass.css, which is what lets a grid of ten of these carry the
+   * material at all. Hover is where each card becomes glass, so the
+   * brightening below is a saturation the card did not previously have rather
+   * than one it is given more of.
    *
    * The illumination's own hover shift — scale 1.08, opacity to full — is not
    * repeated here: it is `.glass--interactive:hover::before` in
    * liquid-glass.css, and `<Card interactive>` is what asks for it.
    */
   .practice-domain--linked:hover {
-    /* Read back by `.glass`'s backdrop-filter, so the lift comes with a
-       saturation bump rather than a second filter declaration. The heavier tint
-       goes through `--glass-surface-tint` for the same reason: a plain
-       `background-color` here would land at the same specificity as `.glass`
-       but later in the bundle, and would keep the surface translucent after
-       the reduced-transparency fallback had switched the blur off. */
+    /*
+     * Both go through the custom properties rather than through
+     * `backdrop-filter` and `background-color` directly, for the reason the
+     * `.glass` rule gives: a plain `background-color` here would land at the
+     * same specificity but later in the bundle, and would quietly defeat the
+     * reduced-transparency fallback.
+     *
+     * The tint is `--glass-bg-strong`, which overrides the plain
+     * `--glass-tint` that `.glass--matte:hover` restores — equal specificity,
+     * and this sheet loads after the material sheet. That layering is the
+     * intended seam: the modifier says "be glass again", the section says how
+     * strongly.
+     *
+     * The saturation bump is safe here *because* of the matte modifier. It was
+     * removed for one revision: ten `.glass` cards sampling one backdrop,
+     * inside a section running the `page-screen-dim` scroll animation, meant
+     * changing any one card's `backdrop-filter` forced Blink to re-sample the
+     * shared backdrop and tore the artwork in the others on compositor-tile
+     * boundaries. Rest is matte now, so exactly one card lenses at a time and
+     * there is no shared backdrop left to disturb — the value is computed once
+     * as the card becomes glass. See `.glass--matte` in liquid-glass.css.
+     */
     --glass-saturate: 200%;
-    --glass-surface-tint: var(--glass-bg-strong);
+    --glass-hover-tint: var(--glass-bg-strong);
 
     transform: translateY(-6px);
+    /* The rim goes through `--glass-rim` because `.glass--matte` draws it as a
+       real border rather than as an inset shadow — an `inset` here would be
+       covered by the card's own content exactly as the resting rim was. See
+       the note on `.glass--matte` in liquid-glass.css. */
+    --glass-rim: var(--accent-border);
+
     box-shadow:
       var(--elev-overlay),
-      inset 0 0 0 1px var(--accent-border),
       0 0 48px var(--glass-glow);
   }
 

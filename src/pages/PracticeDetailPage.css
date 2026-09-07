@@ -226,9 +226,11 @@
   align-items: center;
   gap: var(--space-2);
   font-family: var(--label);
-  font-size: var(--type-caption-size);
+  /* `small`, not `caption` — see the note on PartnerDetailPage.css's twin.
+     The rail is the page's orientation and had the least ink on it. */
+  font-size: var(--type-small-size);
   font-weight: var(--weight-semibold);
-  line-height: var(--type-caption-leading);
+  line-height: var(--type-small-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
   color: var(--text-h);
@@ -262,9 +264,15 @@
   align-items: center;
   gap: var(--space-3);
   font-family: var(--label);
-  font-size: var(--type-caption-size);
-  font-weight: var(--type-caption-weight);
-  line-height: var(--type-caption-leading);
+  /* One step up from `caption`, which is the navbar-and-meta register: on a
+     masthead this line is the page's category and the only thing orienting the
+     reader above a 53-69px title, and 12px against that is a footnote. `small`
+     keeps it clearly subordinate while making it findable. Its weight comes
+     from `caption` still — this is a size correction, not a promotion. */
+  font-size: var(--type-small-size);
+  /* Semibold to match `__back` at the rail's other end. */
+  font-weight: var(--weight-semibold);
+  line-height: var(--type-small-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
   color: var(--accent-text);
@@ -387,28 +395,28 @@
   max-width: 66ch;
 }
 
+/*
+ * Layout only. The look is `btn btn--primary btn--lg` in the markup — the
+ * button component's own classes, on an anchor, because `#contact` is a
+ * navigation and `.btn` is written element-agnostically (`text-decoration:
+ * none` and `line-height: 1` are there for exactly this).
+ *
+ * It used to restate a whole quiet-CTA treatment here: `--accent-text` on
+ * `--accent-bg`, which is the accent at 0.1 alpha, inside a 1px
+ * `--accent-border`. That is the site's *ghost* register — the same weight as
+ * the back link and the overline it sits between — so the one action on the
+ * page carried no more emphasis than the label above it and was reported as
+ * getting lost. `--accent` as a fill with `--on-accent` type is the primary
+ * register, and `--lg` is the only size that reads as the page's main action
+ * rather than as the navbar's.
+ *
+ * `white-space: nowrap` is kept: this is a two-or-three word label that must
+ * not wrap inside a capsule. Everything else is the component's.
+ */
 .practice-page__cta {
   grid-column: 2;
-  display: inline-flex;
-  align-items: center;
   justify-self: end;
-  padding: var(--space-3) var(--space-6);
-  font-family: var(--label);
-  font-size: var(--type-small-size);
-  font-weight: var(--weight-semibold);
-  line-height: var(--type-small-leading);
-  text-transform: uppercase;
-  letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent-text);
-  background: var(--accent-bg);
-  border: 1px solid var(--accent-border);
-  border-radius: var(--radius-full);
-  text-decoration: none;
   white-space: nowrap;
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    transform 0.3s var(--ease-settle);
 }
 
 @media (hover: hover) {
@@ -632,6 +640,7 @@
  * is no document ending here for 128px to close, only a screen the composition
  * has to sit on, and 128px of it is 128px the panels do not get.
  */
+
 @media (min-width: 1280px) and (min-height: 700px) {
   .practice-page {
     /* `flex: none`, and it is the rule that makes the height stick.

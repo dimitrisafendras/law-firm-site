@@ -197,19 +197,34 @@ describe('TestimonialsSection', () => {
 
   describe('the stage', () => {
     /*
-     * The stage was a glow-variant `Card` and is deliberately not one any more:
-     * this section carries `content-visibility: auto`, which makes it a
-     * backdrop root with nothing behind it, so the material could not lens and
-     * rendered as a flat tint — a rounded box drawn around a quote, spending a
-     * third of the 700px height budget on its own padding. That is a decision a
-     * later refactor could undo by reaching for the nearest surface component
-     * without knowing why it was dropped, which is what this pins.
+     * The stage carries a surface again, and the reason it stopped carrying one
+     * is why this test still exists in a changed form.
+     *
+     * It was a glow-variant `Card`, and that was dropped because this section
+     * carries `content-visibility: auto`, which makes it a backdrop root with
+     * nothing behind it: the material could not lens and rendered as a flat
+     * tint — a rounded box round a quote, spending a third of the 700px height
+     * budget on its own padding.
+     *
+     * A matte surface answers that objection rather than ignoring it. It is
+     * *meant* to be a flat tint, so the thing that made the glass card a defect
+     * is now the design; it does not lens, so it cannot be a backdrop root with
+     * nothing to sample; and it spends `--space-8` rather than `--space-12`.
+     *
+     * So what is pinned is no longer "no surface" but the invariant underneath
+     * it: this stage must never be a LENSING surface. `.glass` on its own is,
+     * `.glass--matte` is not, and `Card` would bring back the elevation and
+     * halo this composition does not want. A later refactor reaching for the
+     * nearest surface component still trips this.
      */
-    it('is the section own column rather than a glass card', () => {
+    it('is never a lensing surface', () => {
       const { container } = renderWithProviders(<TestimonialsSection />);
       const el = stage(container);
       expect(el.classList.contains('card')).toBe(false);
-      expect(el.classList.contains('glass')).toBe(false);
+
+      const lenses =
+        el.classList.contains('glass') && !el.classList.contains('glass--matte');
+      expect(lenses).toBe(false);
     });
 
     /*

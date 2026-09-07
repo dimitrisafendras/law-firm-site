@@ -161,6 +161,25 @@
   overflow: hidden;
   /* Bleeds past the body's side padding to the card's clipped edge. */
   margin: 0 calc(var(--space-8) * -1) var(--space-6);
+
+  /*
+   * The line where the photograph ends and the card's own surface begins.
+   *
+   * `--glass-edge` and 1px, the same hairline the card's rim and the `__meta`
+   * divider use, so the card has one dividing language rather than three. It
+   * belongs on the portrait rather than on the copy below it because the
+   * portrait is the element that bleeds to the card's clipped edges — a rule on
+   * `__body`'s content would stop short of them and read as a short line
+   * floating under the picture.
+   *
+   * A `border-bottom` and not the `::after` scrim's edge: that pseudo-element
+   * is a gradient rising off this box's bottom to keep the badge legible, and
+   * giving it a hard edge would turn a fade into a band. The border sits
+   * outside the padding box this element clips its image to, so the photograph
+   * cannot cover it — the same reason the card's rim had to stop being an inset
+   * shadow.
+   */
+  border-bottom: 1px solid var(--glass-edge);
 }
 
 @media (min-width: 1280px) {
@@ -188,6 +207,11 @@
   object-position: center 20%;
   display: block;
   transform-origin: center 20%;
+
+  /* Toned to the page rather than left at the camera's white balance — see
+     `portraitTone` in tokens.ts for why, and why it is one string. */
+  filter: var(--portrait-tone);
+
   transition:
     transform 0.6s var(--ease-settle),
     filter 0.45s ease;
@@ -400,7 +424,8 @@
  * nudge and a shadow — on a 380px-tall card with a photograph in it, that read
  * as nothing at all. Six things move here, and they move together: the card
  * rises and gains the overlay elevation plus an accent halo, its edge turns
- * accent, the material saturates further, the portrait pushes in and brightens
+ * accent, the material becomes glass — rest is matte, see `.glass--matte` in
+ * liquid-glass.css — the portrait pushes in and brightens
  * under a deeper scrim, an accent rule wipes across the top edge, the name
  * underlines from the left, and the cue brightens and steps right. Every one of
  * them is a property the card already had — none of it is decoration invented
@@ -408,20 +433,39 @@
  */
 @media (hover: hover) {
   .partner-ethos__bust--linked:hover {
-    /* Read back by `.glass`'s backdrop-filter, so the lift comes with a
-       saturation bump rather than a second filter declaration. */
+    /*
+     * Read back by the `backdrop-filter` that `.glass--matte:hover` restores,
+     * so the lift arrives with the material at full saturation rather than
+     * needing a second filter declaration here.
+     *
+     * It is read back there and not from `.glass`, because at rest this card
+     * has no `backdrop-filter` at all: three of these sit in a row, and ten of
+     * their counterparts in the practice grid tore each other's artwork when
+     * they all sampled one backdrop through a section running the
+     * `page-screen-dim` scroll animation. Matte at rest means exactly one card
+     * lenses at a time, which is what makes a saturation this heavy safe to
+     * ask for.
+     */
     --glass-saturate: 200%;
 
     transform: translateY(-6px);
+    /* The rim goes through `--glass-rim` because `.glass--matte` draws it as a
+       real border rather than as an inset shadow — an `inset` here would be
+       covered by the card's own content exactly as the resting rim was. See
+       the note on `.glass--matte` in liquid-glass.css. */
+    --glass-rim: var(--accent-border);
+
     box-shadow:
       var(--elev-overlay),
-      inset 0 0 0 1px var(--accent-border),
       0 0 48px var(--glass-glow);
   }
 
   .partner-ethos__bust--linked:hover .partner-ethos__image {
     transform: scale(1.05);
-    filter: brightness(1.06) saturate(1.08);
+    /* The whole chain, not a brightness on top of it: `filter` replaces rather
+       than composes, so the hue rotation has to be repeated or the portrait
+       would swing warm under the pointer. */
+    filter: var(--portrait-tone-hover);
   }
 
   .partner-ethos__bust--linked:hover .partner-ethos__portrait::after {

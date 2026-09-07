@@ -62,7 +62,7 @@ export function ContactSection() {
 
           <FadeInSection>
             <div className="contact-section__panel">
-              <div className="contact-section__info glass">
+              <div className="contact-section__info glass glass--matte">
                 <EditableText tKey="contactDetailsLabel" as="span" className="contact-section__col-label" />
 
                 {/*

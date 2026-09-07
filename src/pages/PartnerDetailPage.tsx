@@ -105,7 +105,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
           </div>
 
           <div className="partner-page__stage">
-            <Card as="figure" lensing={false} className="partner-page__plate">
+            <Card as="figure" lensing={false} className="glass--matte partner-page__plate">
               <picture>
                 <source type="image/avif" srcSet={avif} />
                 <img
@@ -157,7 +157,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
                 <EditableText tKey={`attorney${n}Spec2`} as="span" />
               </p>
 
-              <a className="partner-page__cta" href="#contact">
+              <a className="btn btn--primary btn--md partner-page__cta" href="#contact">
                 {t('partnerContactCta')}
               </a>
             </div>
@@ -165,7 +165,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
             <Card
               as="section"
               lensing={false}
-              className="partner-page__panel partner-page__panel--prose"
+              className="glass--matte partner-page__panel partner-page__panel--prose"
               aria-labelledby={`partner-about-${n}`}
             >
               <h2 className="partner-page__panel-title" id={`partner-about-${n}`}>
@@ -182,7 +182,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
             <Card
               as="section"
               lensing={false}
-              className="partner-page__panel partner-page__panel--ledger"
+              className="glass--matte partner-page__panel partner-page__panel--ledger"
               aria-labelledby={`partner-specialties-${n}`}
             >
               <h2 className="partner-page__panel-title" id={`partner-specialties-${n}`}>

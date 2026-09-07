@@ -184,7 +184,7 @@ export function TestimonialsSection() {
             were the only parts worth keeping, and none of them needed a card.
           */}
           <div
-            className="testimonials-stage"
+            className="testimonials-stage glass glass--matte"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             role="region"

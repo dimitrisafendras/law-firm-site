@@ -100,9 +100,22 @@
   align-items: center;
   gap: var(--space-2);
   font-family: var(--label);
-  font-size: var(--type-caption-size);
+  /*
+   * `small`, not `caption`, and this is the one place the size correction
+   * belongs — the rail, not the masthead.
+   *
+   * These two labels are the whole of the page's orientation: where you are
+   * ("partner profile") and how you get back ("all partners"). They were set at
+   * 12px in wide-tracked caps, on the page ramp, with the circuit field's grid
+   * lines and nodes crossing behind them — and small caps at wide tracking is
+   * the least dense text on the site, so there is very little ink to find. One
+   * step up is enough to make them read as the page's furniture instead of
+   * disappearing into the ground; the register, the tracking and the colour are
+   * unchanged, so nothing about the rail's quietness is given up.
+   */
+  font-size: var(--type-small-size);
   font-weight: var(--weight-semibold);
-  line-height: var(--type-caption-leading);
+  line-height: var(--type-small-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
   color: var(--text-h);
@@ -129,9 +142,14 @@
 
 .partner-page__overline {
   font-family: var(--label);
-  font-size: var(--type-caption-size);
-  font-weight: var(--type-caption-weight);
-  line-height: var(--type-caption-leading);
+  /* One step up from `caption` — see the note on the practice page's twin. On a
+     masthead carrying a 53-69px name, 12px reads as a footnote. */
+  font-size: var(--type-small-size);
+  /* Semibold to match `__back` across the rail: the two are one line of
+     furniture at opposite ends of it, and 500 against 600 read as a mistake at
+     this size rather than as a hierarchy. */
+  font-weight: var(--weight-semibold);
+  line-height: var(--type-small-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
   color: var(--accent-text);
@@ -210,6 +228,13 @@
   height: 100%;
 }
 
+/* The same tone as the portrait on the home page, so a partner does not change
+   colour temperature when their card is clicked. No hover variant: this plate
+   is not a door. See `portraitTone` in tokens.ts. */
+.partner-page__plate img {
+  filter: var(--portrait-tone);
+}
+
 /* The strip across the plate's foot — the practice page's twin carries that
    domain's mark and numeral, this one captions the portrait. It is the same
    object on both pages: a scrim rising off the bottom edge, a hairline above
@@ -233,7 +258,15 @@
   /* 48px of top padding, not 32: the scrim below has to reach full strength
      *under* the first label rather than at it, and the fade needs the room. */
   padding: var(--space-12) var(--space-4) var(--space-4);
-  border-top: 1px solid var(--glass-edge);
+  /*
+   * No `border-top`. There was a 1px `--glass-edge` hairline here, from when
+   * this strip was a caption bar that needed telling apart from the photograph
+   * above it. It has nothing to do now: the scrim below fades in over the top
+   * quarter of the strip, which is a soft edge by design, and a hard rule
+   * across the portrait cuts the subject in half on the way to announcing a
+   * boundary the gradient already draws. The plate's own matte border frames
+   * the image; this line only ever ran horizontally through the middle of it.
+   */
   /*
    * A scrim on `--surface`, not on the glass tint this used to use.
    *
@@ -360,28 +393,28 @@
   margin: 0;
 }
 
+/*
+ * Layout only. The look is `btn btn--primary btn--lg` in the markup — the
+ * button component's own classes, on an anchor, because `#contact` is a
+ * navigation and `.btn` is written element-agnostically (`text-decoration:
+ * none` and `line-height: 1` are there for exactly this).
+ *
+ * It used to restate a whole quiet-CTA treatment here: `--accent-text` on
+ * `--accent-bg`, which is the accent at 0.1 alpha, inside a 1px
+ * `--accent-border`. That is the site's *ghost* register — the same weight as
+ * the back link and the overline it sits between — so the one action on the
+ * page carried no more emphasis than the label above it and was reported as
+ * getting lost. `--accent` as a fill with `--on-accent` type is the primary
+ * register, and `--lg` is the only size that reads as the page's main action
+ * rather than as the navbar's.
+ *
+ * `white-space: nowrap` is kept: this is a two-or-three word label that must
+ * not wrap inside a capsule. Everything else is the component's.
+ */
 .partner-page__cta {
   grid-column: 2;
-  display: inline-flex;
-  align-items: center;
   justify-self: end;
-  padding: var(--space-3) var(--space-6);
-  font-family: var(--label);
-  font-size: var(--type-small-size);
-  font-weight: var(--weight-semibold);
-  line-height: var(--type-small-leading);
-  text-transform: uppercase;
-  letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent-text);
-  background: var(--accent-bg);
-  border: 1px solid var(--accent-border);
-  border-radius: var(--radius-full);
-  text-decoration: none;
   white-space: nowrap;
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    transform 0.3s var(--ease-settle);
 }
 
 @media (hover: hover) {
@@ -585,6 +618,7 @@
 
 /* The gate, identical to the practice page's — see PracticeDetailPage.css for
    why it is this one and what each rule in it is for. */
+
 @media (min-width: 1280px) and (min-height: 700px) {
   .partner-page {
     /* `flex: none` before `height`, and PracticeDetailPage.css explains why:

@@ -348,6 +348,148 @@
   }
 }
 
+/* ─── Matte ────────────────────────────────────────────────────────────────
+ *
+ * The material at rest, with the lensing taken out — for a grid where only the
+ * card under the pointer is glass.
+ *
+ * ── Why a grid would want this ──────────────────────────────────────────────
+ *
+ * Because ten lensing cards in one grid corrupt each other. They sample one
+ * backdrop, through a section that runs a scroll-driven opacity animation and
+ * is therefore a live composited layer, so handing any one card's
+ * `backdrop-filter` a new value forces Blink to re-sample that shared backdrop
+ * — and the invalidation lands on compositor tiles, not on card boundaries.
+ * Reported and reproduced as hovering Domain II tearing the artwork in Domains
+ * IV, V, VII, IX and X, an arbitrary-looking set precisely because tiles are
+ * not cards. Measured with a real pointer on one card, every other card still
+ * computed its rest `backdrop-filter`, its rest tint and `transform: none`:
+ * nothing leaked, the corruption was the compositor's.
+ *
+ * A card that does not lens can neither be corrupted nor corrupt. One lensing
+ * surface at a time is the fix, and it is a fix by construction rather than by
+ * removing a cue.
+ *
+ * ── How it is built ─────────────────────────────────────────────────────────
+ *
+ * By handing `--glass-surface-tint` a new value rather than declaring
+ * `background-color`, for the reason the `.glass` rule gives: a plain
+ * `background-color` here would land at the same specificity and later in the
+ * bundle, and would quietly defeat the reduced-transparency fallback. Going
+ * through the property keeps `.glass.glass.glass` (0,3,0) winning over this
+ * rule's (0,1,0), so a reader who asked for reduced transparency still gets
+ * `--surface` and not this.
+ *
+ * `--glass-matte` is opaque, so the illumination and the specular highlight
+ * have nothing to lens and would read as gloss painted on a flat card. They go
+ * to `opacity: 0` rather than `display: none` so they can come back on hover
+ * as a fade instead of a pop.
+ *
+ * ── The hover ───────────────────────────────────────────────────────────────
+ *
+ * Restores the whole material: the translucent tint, the blur, both light
+ * layers. `--glass-tint` is the plain one — a section that wants the heavier
+ * tint on hover sets `--glass-surface-tint` in its own sheet, which loads after
+ * this one and wins at equal specificity (PracticeGrid does exactly that).
+ *
+ * `backdrop-filter` is deliberately NOT transitioned — `.glass` never declared
+ * a transition for it and none is added here. Interpolating it would re-sample
+ * the backdrop on every frame of the hover, which is the operation this whole
+ * modifier exists to keep rare. The tint, elevation and halo transitions carry
+ * the motion instead; the blur arrives with them.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.glass--matte {
+  --glass-surface-tint: var(--glass-matte);
+
+  /*
+   * ── The rim is a real border here, not `.glass`'s inset shadow ────────────
+   *
+   * Because an inset box-shadow paints above the background and BELOW the
+   * element's content, and `.glass > *` promotes every direct child to
+   * `z-index: 2`. The partner card's single `__body` wrapper fills the card
+   * with a photograph bleeding to its clipped edges, so the inset rim was
+   * covered along the portrait and visible only along the copy beneath it — a
+   * border round the bottom third of the card and nothing round the rest.
+   * Invisible at `--glass-edge`'s 0.24 alpha; unmistakable the moment the rim
+   * was brightened, and reported as such.
+   *
+   * A `border` is the fix rather than a higher z-index, because `overflow:
+   * hidden` clips descendants to the PADDING box: the border sits outside it
+   * and no child can reach it, whatever its stacking. `box-sizing: border-box`
+   * is global here, so the card does not change size — the photograph is
+   * clipped one pixel further in, which is precisely the intent.
+   *
+   * The `box-shadow` is re-stated without `.glass`'s `inset 0 0 0 1px` for the
+   * same reason a glow variant has to re-state it (see Card.css): a shadow
+   * list cannot be added to or subtracted from. Equal specificity to `.glass`
+   * and later in the file, so this wins on order — which is safe because both
+   * rules live in this sheet, where the two forms of the material are kept in
+   * step by construction.
+   *
+   * `--glass-rim` is the seam for the hover: a section swaps the rim to accent
+   * by setting that property rather than by re-declaring `border-color`, so it
+   * never has to outweigh a selector in this file. Both sections do that, and
+   * both drop the `inset` from their own hover shadow — an accent rim hidden
+   * behind a photograph is the same defect wearing the hover's colour.
+   */
+  border: 1px solid var(--glass-rim, var(--glass-edge));
+  box-shadow: var(--elev-floating);
+
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.glass--matte::before,
+.glass--matte::after {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/*
+ * Gated on `.glass--interactive`, which is what `<Card interactive>` and
+ * `<Card clickable>` add — so becoming glass under the pointer is reserved for
+ * surfaces that are actually a door.
+ *
+ * Without the gate this modifier could not be used on a static surface at all:
+ * a content panel or a figure would flip to glass under the pointer with none
+ * of the choreography that makes that read as a response, because every
+ * section's lift/rim/artwork rule is gated on its own `--linked` class. Same
+ * defect in admin edit mode, where `interactive={linked}` goes false and the
+ * card stops being a door but kept the material change.
+ *
+ * The tint goes through `--glass-hover-tint` rather than being written into
+ * `--glass-surface-tint` here, and that indirection is load-bearing. This
+ * selector is (0,3,0); a section's own hover rule is (0,2,0) and would lose,
+ * so a section could not ask for a heavier tint on hover without inflating its
+ * selector to outweigh a rule in another file. Two different properties do not
+ * compete at all: this rule reads `--glass-hover-tint`, a section sets it, and
+ * the cascade never enters into it. PracticeGrid does exactly that.
+ */
+@media (hover: hover) {
+  .glass--matte.glass--interactive:hover {
+    --glass-surface-tint: var(--glass-hover-tint, var(--glass-tint));
+
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  }
+
+  /*
+   * `1`, not the `0.85` the resting `.glass::before` sets — this has to agree
+   * with `.glass--interactive:hover::before` twenty lines up, which takes the
+   * illumination to full and scales it. Both selectors are (0,2,1)/(0,3,1) and
+   * this one is later, so writing 0.85 here silently cancelled the "opacity to
+   * full" half of that hover and made PracticeGrid's comment about it false.
+   */
+  .glass--matte.glass--interactive:hover::before {
+    opacity: 1;
+  }
+
+  .glass--matte.glass--interactive:hover::after {
+    opacity: 0.9;
+  }
+}
+
 @media (prefers-reduced-transparency: reduce) {
   /*
    * Repeated selector, deliberately. This sheet is imported from main.tsx before
@@ -367,6 +509,23 @@
     backdrop-filter: none;
   }
 
+  /*
+   * The matte hover has to be switched off by name: it restores
+   * `backdrop-filter` at (0,3,0), which outweighs the `.glass` reset above at
+   * (0,1,0), so without this a reader who asked for reduced transparency would
+   * get the blur back under the pointer — on the one surface that had been
+   * honest about not lensing.
+   *
+   * Deliberately one class heavier than the rule it is cancelling, so it wins
+   * on weight rather than on being further down the file. Matching that rule's
+   * selector exactly would tie at (0,3,0) and leave the blur one reorder away
+   * from coming back with no other symptom.
+   */
+  .glass.glass--matte.glass--interactive:hover {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   .glass::before,
   .glass::after {
     display: none;
@@ -374,7 +533,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .glass::before {
+  /*
+   * `.glass--matte::after` is named because the matte modifier gives it a
+   * transition that `.glass::after` never had — without it the specular
+   * highlight kept cross-fading over 400ms while the illumination beside it
+   * snapped, which is the asymmetry this block exists to prevent.
+   */
+  .glass::before,
+  .glass--matte::after {
     transition: none;
   }
 }

@@ -92,12 +92,76 @@
   --statue-entrance-delay: var(--hero-t-scene);
 
   @media (max-width: 1024px) {
-    /* Pushed off the right edge and shortened, so the statue reads as a
-       backdrop the copy sits over rather than as a column competing with it
-       for a 390px screen. */
-    height: 72%;
-    right: -12%;
+    /*
+     * Below the desktop layout the figure stops standing beside the copy and
+     * becomes a vignette in the bottom-right corner. One rule for the whole
+     * branch, because the old one had the copy and the statue competing for
+     * the same pixels at every width under 1024 and no single number fixed it.
+     *
+     * The old rule was `height: 72%` with `right: -12%`, and the trouble is
+     * that this box is sized off the viewport's HEIGHT while a phone is tall
+     * and narrow. Measured at 375x812 that is 585px of figure, which at the
+     * drawing's aspect is 436px wide — wider than the screen — so the statue
+     * landed at x -16..420 and sat dead centre behind the copy. Every line of
+     * the subtitle crossed the torso, the raised arm and the scales. At
+     * 768x1024 the same rule put it at 310..860 against a subtitle running to
+     * 752: 442px of every line drawn over it.
+     *
+     * Squeezing the copy to clear it was tried and is worse — at 768 it left
+     * 30 characters to the line, the "150px ribbon of two-word lines" the
+     * subtitle's own comment below warns about. Moving the figure is the fix;
+     * the copy keeps the full measure.
+     *
+     * 40% of the height puts the figure's top edge below the last line of
+     * copy (measured at 375x812: statue top 487, subtitle bottom 380) and
+     * lands it in the band that used to be empty — on a phone the stretch
+     * between the actions row and the scroll hint was ~200px of nothing.
+     */
+    width: 46%;
+    height: 100%;
+    right: 0;
     left: auto;
+    bottom: 0;
+    /* The drawing is sized off its own height, so at full height it is far
+       wider than the column it now lives in. Cropping is the point: a tall
+       slice of the figure fills the right half, instead of a small whole
+       figure floating in it. */
+    overflow: hidden;
+
+    /*
+     * Crop on the figure. Left to itself the image keeps its natural aspect
+     * and the column shows its leftmost third, which is the sword and the
+     * wireframe rather than the statue — measured, the 606px-wide image sat
+     * in a 173px box showing x 14..187 of it. `object-fit: cover` with the
+     * position past centre puts the torso and the scales in the column.
+     */
+    .digital-statue__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 58% 50%;
+      margin-left: 0;
+
+      /* `cover` cuts a straight vertical edge where the column starts, which
+         reads as a pasted photograph rather than a figure standing on the
+         page. Feathered here on the image rather than on `.hero-section__bg`,
+         because the wrapper's mask belongs to the scroll-exit animation and a
+         second declaration on it would fight that one. */
+      mask-image: linear-gradient(90deg, transparent 0%, #000 20%);
+    }
+
+    /*
+     * The ambient canvases go. They are positioned against the drawing's
+     * natural box, so once `cover` crops it they no longer sit on the figure —
+     * rain and sparkles would fall beside it. They are also the "clutter" half
+     * of the complaint this layout is answering, and at this size they read as
+     * noise rather than atmosphere.
+     */
+    .digital-statue__rain-wrap,
+    .digital-statue__sparkles-wrap,
+    .digital-statue__flame {
+      display: none;
+    }
   }
 }
 
@@ -116,6 +180,12 @@
   @media (max-width: 1024px) {
     width: 100%;
     opacity: 0.5;
+
+    /* On a phone this layer spans the full hero, so at 0.5 it is drawing
+       behind every line of copy as well as behind the figure. Half again. */
+    @media (max-width: 640px) {
+      opacity: 0.26;
+    }
   }
 }
 
@@ -143,6 +213,25 @@
     gap: 18px;
     z-index: 2;
     padding: calc(var(--space-20) + env(safe-area-inset-top, 0px)) calc(var(--space-4) + env(safe-area-inset-right, 0px)) 0 calc(var(--space-4) + env(safe-area-inset-left, 0px));
+
+    /* A half each, side by side: the copy owns the left of the screen and the
+       figure the right (`.hero-section__bg` is `width: 46%`, right-anchored).
+       `margin-right: auto` rather than the `0 auto` above — otherwise a 54%
+       column centres itself in the hero and the copy drifts into the middle
+       with empty ground on its left. */
+    width: 54%;
+    /* `align-self`, not `height: 100%`. The hero is `min-height: 100svh` on
+       this branch and a minimum is not a definite height, so a percentage
+       height on the child resolves to auto and the column stays the height of
+       its copy — measured 453 of 812, with `justify-content: center` having no
+       free space to distribute. Stretching along the flex cross axis is what
+       actually gives the column the hero's height. `border-box` so the
+       --space-20 top padding is inside that height rather than added to it. */
+    box-sizing: border-box;
+    align-self: stretch;
+    margin-right: auto;
+    margin-left: 0;
+    justify-content: center;
   }
 }
 
@@ -185,11 +274,22 @@
 
   @media (max-width: 1024px) {
     z-index: 1;
-    background: linear-gradient(to right, var(--hero-deep) 20%, color-mix(in srgb, var(--hero-deep) 85%, transparent) 40%, color-mix(in srgb, var(--hero-deep) 40%, transparent) 60%, transparent 85%);
-    /* The phone layout stacks the copy down the screen rather than into the
-       left third, so the scrim has to hold much further down and the fade is
-       correspondingly shorter. */
-    mask-image: linear-gradient(180deg, #000 88%, transparent 100%);
+    /*
+     * Horizontal, and solid across the whole copy column rather than ramping
+     * out inside it. The version this replaces reached 40% opacity by 60% of
+     * the width and nothing by 85%, while the copy ran to 359px of a 375px
+     * screen — the right half of every line had no scrim under it, which was
+     * half of the "letters everywhere" problem. Now the copy stops at 54% and
+     * the ground under it holds to exactly there.
+     */
+    background: linear-gradient(
+      90deg,
+      var(--hero-deep) 0%,
+      var(--hero-deep) 54%,
+      color-mix(in srgb, var(--hero-deep) 55%, transparent) 74%,
+      transparent 100%
+    );
+    mask-image: none;
   }
 }
 
@@ -198,6 +298,7 @@
 
   @media (max-width: 1024px) {
     max-width: 100%;
+
   }
 }
 
@@ -241,16 +342,18 @@
   position: relative;
   overflow: hidden;
 
+  /*
+   * Not on the small layout at all.
+   *
+   * It has been in and out of this hero twice. It was hidden when the copy sat
+   * in a narrow column beside the statue, because the label is 39 characters
+   * and wrapped to three lines; it came back when a scrim gave the copy the
+   * full width. Now the hero is split in half and the top half has one job —
+   * headline, sentence, call to action — and a decorative pill above them is
+   * the first thing worth spending to keep that clear.
+   */
   @media (max-width: 1024px) {
-    /*
-     * Visible again. It was hidden because the mobile hero had no room for it:
-     * with the subtitle squeezed into a 150px column beside the statue, a pill
-     * above it would have wrapped to three lines. The scrim gives the copy the
-     * full measure back, so the badge fits — and it is the line that frames
-     * everything under it.
-     */
-    font-size: 11px;
-    padding: var(--space-1) var(--space-3);
+    display: none;
   }
 }
 
@@ -300,6 +403,15 @@
     line-height: var(--type-h1-leading);
     letter-spacing: var(--type-h1-tracking);
     text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
+
+    /* The column is 54% of the screen now, so the headline is set for that and
+       not for the full width. At the h1 size it broke inside words — measured
+       at 375, "Super Prime" wrapped as "Super Pr / ime" across a 171px box. */
+    @media (max-width: 640px) {
+      font-size: var(--type-h3-size);
+      line-height: var(--type-h3-leading);
+      letter-spacing: var(--type-h3-tracking);
+    }
   }
 }
 
@@ -345,6 +457,18 @@
        two-word lines. */
     max-width: 100%;
     text-shadow: 0 1px 12px rgba(0, 0, 0, 0.7);
+
+    /* A measure, not a clearance — the figure is beside the copy, and the
+       column already stops at 54%. Without this the line runs the column's
+       full width: 80 characters at 768, against the 60-75 a reader wants. */
+    max-width: min(100%, 62ch);
+
+    /* One step down in the narrow column: at the body size the subtitle was
+       13 lines of 19 characters, which is a ribbon rather than a paragraph. */
+    @media (max-width: 640px) {
+      font-size: var(--type-caption-size);
+      line-height: var(--type-body-leading);
+    }
   }
 }
 
@@ -363,7 +487,27 @@
        call to action above the fold and hiding it on phones was the single
        largest conversion hole on the page. */
     gap: var(--space-6);
-    flex-wrap: wrap;
+
+    /* Stacked, not wrapped. Side by side, the filled button and the quiet text
+       link share a baseline and read as one row of equal weight; down the page
+       the order carries the hierarchy the fill was already stating. Stretching
+       is the point of `align-items` here — a full-width primary is the phone
+       idiom and it gives the secondary a left edge to line up on.
+
+       The copy needs a little more than its half at 375 — the stacked actions
+       end at 447 against a figure starting at 406 — so the scrim above holds
+       solid to 58% rather than 54%, which is past the secondary link's
+       baseline. Splitting the halves exactly would need the subtitle cut. */
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+
+    /* Full-width primary is a phone idiom and stops being one quickly: at 768
+       `stretch` made the button 736px, a pill the width of the tablet. Above
+       the phone the stacked buttons size to their own content. */
+    @media (max-width: 640px) {
+      align-items: stretch;
+    }
   }
 }
 

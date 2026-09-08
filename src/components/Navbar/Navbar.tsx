@@ -157,8 +157,15 @@ export function Navbar({ logo, links, cta, primaryCta, deferCta = false }: Navba
         </div>
 
         <ul className="navbar__links">
+          {/* Keyed on the label, not the href. Two entries in one nav list may
+              point at the same place: the design-system showcase passes four
+              links that are all href="#", which made React log "two children
+              with the same key" four times per list. Nor is that shape unusual
+              here — HomePage hands Footer four practice-area links that all
+              point at #practice, which is why Footer already keys on its label
+              too. The label is the identity; the href is a destination. */}
           {links.map((link) => (
-            <li key={link.href}>
+            <li key={link.label}>
               <a className="navbar__link" href={link.href}>
                 {link.label}
               </a>
@@ -208,8 +215,10 @@ export function Navbar({ logo, links, cta, primaryCta, deferCta = false }: Navba
       >
         <div className="navbar__mobile-panel">
           <ul className="navbar__mobile-links">
+            {/* Same list, same key — see the note on the desktop list above.
+                This copy is why one duplicate href produced the warning twice. */}
             {links.map((link) => (
-              <li key={link.href}>
+              <li key={link.label}>
                 <a
                   className="navbar__mobile-link"
                   href={link.href}

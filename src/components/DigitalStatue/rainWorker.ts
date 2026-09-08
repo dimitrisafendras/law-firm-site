@@ -37,7 +37,7 @@ function initDrops() {
 
 interface RainInit {
   sprite?: ImageBitmap;
-  /** "r,g,b" triples from the active palette — see sceneColors.ts. */
+  /** "r,g,b" triples, fixed to the statue artwork — see sceneColors.ts. */
   colors?: { head: string; trail: string };
   fontSize?: number;
   trail?: number;

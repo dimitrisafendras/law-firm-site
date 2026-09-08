@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { breakpoints } from '@/theme';
-import { useTheme } from '@/lib/theme';
-import { readSceneColors, type SceneColors } from './sceneColors.ts';
+import { STATUE_COLORS, type SceneColors } from './sceneColors.ts';
 // Responsive statue variants — Vite hashes each import to its own URL, so the
 // srcSet strings below are built from these imported URLs (a single import can't
 // express a multi-file srcset).
@@ -50,10 +49,10 @@ const ANIMATION_CONFIG = {
     spriteSize: 32,
   },
 
-  /* Literal fire, and the only canvas colour in this scene that is NOT brand:
-     the left brazier burns, the right one glows with the palette. Leaving this
-     one alone is what makes that contrast read as deliberate rather than as a
-     palette that failed to apply. */
+  /* The two pans of the scales. The left burns as literal fire, the right in
+     the statue's own cyan — see sceneColors.ts for why neither follows the
+     palette: they hang inches from a photograph whose wireframe is baked cyan,
+     and a khaki flame beside it reads as a bug, not as a theme. */
   flameLeft: {
     wMul: 0.5,
     wMulMobile: 0.4,
@@ -64,7 +63,6 @@ const ANIMATION_CONFIG = {
     colors: { hot: '255,240,200', mid: '255,180,80', outer: '255,120,40' },
   },
 
-  /* Colours come from the active palette at scene start — see sceneColors.ts. */
   flameRight: {
     wMul: 0.5,
     wMulMobile: 0.4,
@@ -72,6 +70,11 @@ const ANIMATION_CONFIG = {
     hMulMobile: 1,
     max: 60,
     maxMobile: 25,
+    colors: {
+      hot: STATUE_COLORS.accentBright,
+      mid: STATUE_COLORS.secondary,
+      outer: STATUE_COLORS.secondary,
+    },
   },
 } as const;
 
@@ -180,18 +183,6 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
   const flameLRef = useRef<HTMLCanvasElement>(null);
   const flameRRef = useRef<HTMLCanvasElement>(null);
 
-  /*
-   * The scene is torn down and rebuilt when the palette changes.
-   *
-   * Its colours live inside pre-rendered ImageBitmaps and inside worker state,
-   * neither of which can be recoloured in place — so the honest way to follow a
-   * palette switch is to terminate the workers and start again. That is exactly
-   * what this effect's cleanup already does on unmount, so keying it on the
-   * palette id costs nothing beyond the restart itself, and a restart is
-   * invisible: the rain and sparkles have no position a viewer is tracking.
-   */
-  const { palette } = useTheme();
-
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -207,11 +198,10 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
     let debounceId: ReturnType<typeof setTimeout> | undefined;
 
     async function start() {
-      // Pre-render sprites on main thread, in the active palette's colours.
-      const sceneColors = readSceneColors();
+      // Pre-render sprites on the main thread, in the statue's own colours.
       const [rainSprite, starSprite] = await Promise.all([
-        createRainSprite(sceneColors),
-        createStarSprite(sceneColors),
+        createRainSprite(STATUE_COLORS),
+        createStarSprite(STATUE_COLORS),
       ]);
       if (cancelled) return;
 
@@ -234,7 +224,7 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
         sprite: rainSprite,
         fontSize: rain.fontSize,
         trail: mobile ? rain.trailMobile : rain.trail,
-        colors: { head: sceneColors.accent, trail: sceneColors.secondary },
+        colors: { head: STATUE_COLORS.accent, trail: STATUE_COLORS.secondary },
       });
 
       // Sparkle body worker
@@ -266,11 +256,7 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
         wMul: mobile ? flameRight.wMulMobile : flameRight.wMul,
         hMul: mobile ? flameRight.hMulMobile : flameRight.hMul,
         max: mobile ? flameRight.maxMobile : flameRight.max,
-        colors: {
-          hot: sceneColors.accentBright,
-          mid: sceneColors.secondary,
-          outer: sceneColors.secondary,
-        },
+        colors: flameRight.colors,
       });
 
       // Visibility observer — pause/resume all workers
@@ -319,26 +305,21 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       intersectionObserver?.disconnect();
       for (const { worker } of entries) worker.terminate();
     };
-  }, [palette.id]);
+  }, []);
 
   return (
     /*
-     * Every <canvas> below is keyed on the palette.
-     *
-     * `transferControlToOffscreen()` can be called ONCE per canvas element, and
-     * the effect above calls it on each of these when it starts. Without the
-     * key React would keep the same five DOM nodes across a palette change, the
-     * second transfer would throw, spawnWorker would swallow it and return
-     * null, and the scene would go permanently dead after the first switch.
-     * Keying them makes React hand the restarted effect five fresh canvases.
-     *
-     * The <picture> is deliberately NOT keyed — re-mounting it would re-decode
-     * a 1400px statue on every palette change and flash the hero.
+     * Note for anyone adding a reason to restart the effect above:
+     * `transferControlToOffscreen()` may be called ONCE per canvas element, so
+     * a re-run against these same five DOM nodes throws, spawnWorker swallows
+     * it, and the scene goes permanently dead. Anything that restarts the scene
+     * has to hand it fresh canvases — a `key` on each of them. The effect runs
+     * once per mount today precisely so it does not need one.
      */
     <div ref={containerRef} className={`digital-statue ${className}`.trim()}>
        {/*Back layer: rain + flames (behind statue)*/}
       <div className="digital-statue__rain-wrap">
-        <canvas key={palette.id} ref={rainRef} className="digital-statue__rain" />
+        <canvas ref={rainRef} className="digital-statue__rain" />
       </div>
 
       <picture>
@@ -357,18 +338,18 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
 
       {/* Front layer: sparkles (on top of statue) */}
       <div className="digital-statue__sparkles-wrap digital-statue__sparkles-body">
-        <canvas key={palette.id} ref={spkBodyRef} className="digital-statue__sparkle-canvas" />
+        <canvas ref={spkBodyRef} className="digital-statue__sparkle-canvas" />
       </div>
       <div className="digital-statue__sparkles-wrap digital-statue__sparkles-scale">
-        <canvas key={palette.id} ref={spkScaleRef} className="digital-statue__sparkle-canvas" />
+        <canvas ref={spkScaleRef} className="digital-statue__sparkle-canvas" />
       </div>
 
       {/* Flames (behind statue, inside back layer z-index) */}
       <div className="digital-statue__flame digital-statue__flame--left">
-        <canvas key={palette.id} ref={flameLRef} className="digital-statue__flame-canvas" />
+        <canvas ref={flameLRef} className="digital-statue__flame-canvas" />
       </div>
       <div className="digital-statue__flame digital-statue__flame--right">
-        <canvas key={palette.id} ref={flameRRef} className="digital-statue__flame-canvas" />
+        <canvas ref={flameRRef} className="digital-statue__flame-canvas" />
       </div>
     </div>
   );

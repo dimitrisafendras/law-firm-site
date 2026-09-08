@@ -642,7 +642,10 @@
 .contact-section__form .input-field,
 .contact-section__form .textarea-field {
   background-color: var(--grad-6);
-  border-color: var(--glass-edge);
+  /* Only the fill is scoped here. The rim stays `--glass-control-edge`, the
+     same as every other field on the site — it is the boundary of a control,
+     which 1.4.11 holds to 3:1, and this rule used to quietly drop it back to
+     the decorative `--glass-edge`. */
 }
 
 /* The labels sit on the map with nothing behind them, so they take the heading

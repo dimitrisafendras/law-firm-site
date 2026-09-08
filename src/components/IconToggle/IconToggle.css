@@ -9,7 +9,7 @@
   /* Round, matching the pill the consultation button sets beside it — a 6px
      corner next to a fully rounded button reads as two different systems. */
   border-radius: var(--radius-full);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-control-edge);
   background: transparent;
   color: var(--text);
   cursor: pointer;

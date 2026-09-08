@@ -37,7 +37,20 @@ gradients and an elevation set — swapped by `<html data-theme="...">`.
 **Writing palette-safe CSS:** `--accent`, `--accent-container` and `--secondary`
 are FILLS and may be pale. Text on the page ground takes `--accent-text`; text
 on an accent fill takes `--on-accent`. Assuming a dark ground (a white asset, a
-fixed light text colour, a black scrim) breaks the five light palettes.
+fixed light text colour, a black scrim) breaks the nine light palettes.
+
+A control's boundary takes `--glass-control-edge`, never `--glass-border` or
+`--glass-edge`. Those two are decorative hairlines — a lit rim, invisible by
+design on the scheme that does not suit them — while `--glass-control-edge` is
+the one tuned to clear WCAG 1.4.11's 3:1 in both schemes. Buttons, icon
+buttons, avatars, inputs, textareas and switch tracks all take it.
+
+**Measuring contrast:** compute it against the pixels actually painted, not
+against the tokens. Anything under the navbar or over the hero sits on a
+`backdrop-filter` that pulls a photograph through the glass, so the modelled
+ground (`--glass-bg` over `--bg`) can be several stops darker than the real
+one. `scripts/` has no harness for this; screenshot the rendered element and
+sample it.
 
 ### How to use the theme
 

@@ -373,7 +373,16 @@ export const glass = {
     tintClear: 'rgba(255, 255, 255, 0.24)',
     highlight: 'rgba(255, 255, 255, 0.7)',
     edge: 'rgba(255, 255, 255, 0.5)',
-    controlEdge: 'rgba(0, 0, 0, 0.42)',
+    /* See the dark set's note. Black rather than white here for the obvious
+       reason: `edge` is a lit rim and cannot be seen on a light ground, so a
+       light palette's control boundary has to be a shadow instead.
+
+       0.42 was measured against the page's own ground. Measured instead
+       against the pixels a control is actually painted over — the navbar's
+       glass with the hero showing through it, the contact fields on the lit
+       map — it fell to 2.98:1 on Papyrus. 0.46 is the lowest step that clears
+       3:1 everywhere those controls appear, across all nine light palettes. */
+    controlEdge: 'rgba(0, 0, 0, 0.46)',
     glow: 'rgba(255, 255, 255, 0.45)',
     /* The `clear` variant's own three. It is thinner glass over busier content,
        so its rim and bloom are roughly 40% of the regular material's — enough
@@ -429,10 +438,23 @@ export const glass = {
      * were effectively invisible, so the control read as one filled bar with no
      * indication that the rest of it could be clicked.
      *
-     * 0.38 measures 3.29:1 over that same ground, which clears the bar with
-     * margin without turning a hairline into a rule.
+     * 0.38 measured 3.29:1 over that same ground.
+     *
+     * ── Why it is now 0.50 ──────────────────────────────────────────────────
+     *
+     * Because "that same ground" was one ground, and this token is the site's
+     * answer for every control boundary. The header's controls — the language
+     * toggle, the palette trigger, the avatar — sit on a bar with no ground of
+     * its own: it floats over the hero and `backdrop-filter` pulls the
+     * photograph up through the glass, which is far lighter than the carousel's
+     * stage. Measured from screenshots of the rendered header, 0.38 came to
+     * 2.41:1 on Serpentine.
+     *
+     * 0.50 is the lowest step that clears 3:1 against every ground these
+     * controls are actually painted on, across all nine dark palettes, and it
+     * only raises the carousel's 3.29:1. Still a hairline; a brighter one.
      */
-    controlEdge: 'rgba(255, 255, 255, 0.38)',
+    controlEdge: 'rgba(255, 255, 255, 0.5)',
     glow: 'rgba(188, 232, 255, 0.24)',
     /* See the light set: the `clear` variant's rim and bloom, at roughly 40% of
        the regular material's. */

@@ -492,8 +492,11 @@ function makeGlass(seed: PaletteSeed, palette: ColorTokens): GlassTokens {
         highlight: alpha(WHITE, 0.5),
         edge: alpha(WHITE, 0.24),
         /* 1.4.11 asks a control's boundary to clear 3:1; `edge` at 0.24 does
-           not, so anything held to that bar takes this instead. */
-        controlEdge: alpha(WHITE, 0.38),
+           not, so anything held to that bar takes this instead. 0.50 rather
+           than the 0.38 this started at — see tokens.ts, which carries the
+           measurements: the header's controls float over the hero and 0.38
+           only reached 2.41:1 there. */
+        controlEdge: alpha(WHITE, 0.5),
         glow: alpha(seed.accent, 0.24),
         highlightClear: alpha(WHITE, 0.18),
         edgeClear: alpha(WHITE, 0.1),
@@ -514,7 +517,10 @@ function makeGlass(seed: PaletteSeed, palette: ColorTokens): GlassTokens {
         tintClear: tint(0.24),
         highlight: alpha(WHITE, 0.7),
         edge: alpha(WHITE, 0.5),
-        controlEdge: alpha(BLACK, 0.42),
+        /* Black, not white: `edge` is a lit rim and vanishes on a light
+           ground. 0.46 rather than 0.42 for the same reason as the dark set
+           above — measured over the grounds these controls actually sit on. */
+        controlEdge: alpha(BLACK, 0.46),
         glow: alpha(WHITE, 0.45),
         highlightClear: alpha(WHITE, 0.35),
         edgeClear: alpha(WHITE, 0.22),

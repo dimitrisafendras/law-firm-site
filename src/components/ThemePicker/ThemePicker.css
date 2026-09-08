@@ -31,7 +31,7 @@
   justify-content: center;
   cursor: pointer;
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-control-edge);
   transition: border-color var(--transition, 0.3s), transform 0.2s;
 }
 

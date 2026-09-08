@@ -57,7 +57,7 @@
   letter-spacing: 0.06em;
   color: var(--text-h);
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-control-edge);
   transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
 }
 
@@ -237,7 +237,7 @@
   height: 18px;
   border-radius: var(--radius-full);
   background: var(--surface-variant);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-control-edge);
   transition: background 0.25s, border-color 0.25s;
 }
 

@@ -55,6 +55,17 @@ measured comfortably against `--bg` and failed where it was actually used.
 `scripts/` has no harness for this — screenshot the rendered element and sample
 the pixels behind the glyphs.
 
+Two traps in doing that, both of which produced confident wrong answers here.
+An element inside the viewport can still be painted over: the header is fixed,
+so anything scrolled under it samples the header's glass instead of its own
+ground and reports as a failure — hit-test before measuring, and treat a
+transparent overlay (the partner card's whole-card click target is an `::after`
+on the name link) as not occluding. And `page.goto()` to a URL that differs
+only by `#hash` is a same-document navigation: it does not reload,
+`ThemeProvider` never re-mounts, and every hash route renders the PREVIOUS
+palette while carrying the current one's name. Force a reload and assert
+`document.documentElement.dataset.theme` is what you asked for.
+
 Two grounds worth naming, because they have caught colours twice: text drawn on
 a scrim over a photograph must follow the SCRIM, which is palette-independent
 (`.partner-ethos__badge` takes `--accent`, the one brand step that is light in

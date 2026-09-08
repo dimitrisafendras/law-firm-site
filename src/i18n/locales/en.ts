@@ -446,6 +446,9 @@ const en = {
   menuOpen: 'Account menu',
   menuEditMode: 'Edit mode',
   menuLanguage: 'Language',
+  menuTheme: 'Theme',
+  themePickerOpen: 'Colour theme',
+  themePickerLegend: 'Colour theme',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────
   chapterTeam: 'Chapter 01 / Team',

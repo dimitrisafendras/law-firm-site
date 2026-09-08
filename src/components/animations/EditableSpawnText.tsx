@@ -46,11 +46,29 @@ export function EditableSpawnText({
     return <EditableText tKey={tKey} as={as} className={className} />;
   }
 
-  // Decorative: one inline-block span per character or word. Every call site
-  // labels the owning element with the same string (see SectionHeader's <h2>
-  // and the hero's <h1>), so hiding the split leaves the real text exposed once
-  // rather than spelled out letter by letter.
+  /*
+   * Decorative split plus a real, hidden copy of the string.
+   *
+   * The split itself must be `aria-hidden`: it is one inline-block box per
+   * character or word, and a browser inserts a separator between non-inline
+   * boxes when it computes an accessible name, so an exposed split announces
+   * as "O u r  E x p e r t i s e".
+   *
+   * Hiding it leaves the element with no text at all, so something has to carry
+   * the string. That used to be an `aria-label` on the owning element at each
+   * call site — which is valid on the hero's `h1` and SectionHeader's `h2`
+   * (headings support naming from author) and PROHIBITED on SectionHeader's
+   * `p` and the testimonial `blockquote`, whose roles do not. On those two the
+   * label was being dropped, so four section subtitles and the rotating quote
+   * were reaching screen readers completely empty.
+   *
+   * A visually-hidden text node has no role restrictions and works the same in
+   * all four places, so the label lives here now and no call site carries one.
+   */
   return (
-    <SpawnText text={t(tKey)} mode={mode} gradient={gradient} className={className} ariaHidden />
+    <>
+      <span className="visually-hidden">{t(tKey)}</span>
+      <SpawnText text={t(tKey)} mode={mode} gradient={gradient} className={className} ariaHidden />
+    </>
   );
 }

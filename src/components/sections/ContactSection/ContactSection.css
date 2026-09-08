@@ -349,7 +349,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent);
+  color: var(--accent-text);
   transition: color 0.3s ease;
 }
 
@@ -380,7 +380,7 @@
 }
 
 .contact-section__pin-button:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: 4px;
 }
 
@@ -660,7 +660,7 @@
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent);
+  color: var(--accent-text);
   /* One step down from --space-6. Both columns carry one of these and they read
      as a pair, so it moves in both places or neither. */
   margin-bottom: var(--space-4);
@@ -696,7 +696,7 @@
 }
 
 .contact-section__detail a {
-  color: var(--accent);
+  color: var(--accent-text);
   text-decoration: none;
   transition: opacity 0.3s;
 }
@@ -707,7 +707,7 @@
 
 .contact-section__detail-icon {
   font-size: 20px;
-  color: var(--accent);
+  color: var(--accent-text);
   flex-shrink: 0;
 }
 
@@ -747,14 +747,14 @@
 @media (hover: hover) {
   .contact-section__copy:hover {
     opacity: 1;
-    color: var(--accent);
+    color: var(--accent-text);
     border-color: var(--accent-border);
     background: var(--accent-bg);
   }
 }
 
 .contact-section__copy:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: 2px;
   opacity: 1;
 }
@@ -763,7 +763,7 @@
    mark the eye has to go looking for. */
 .contact-section__copy[data-state='copied'] {
   opacity: 1;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .contact-section__copy-icon {
@@ -818,7 +818,7 @@
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .contact-section__promise dd {

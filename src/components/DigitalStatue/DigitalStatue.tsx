@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { breakpoints } from '@/theme';
+import { useTheme } from '@/lib/theme';
+import { readSceneColors, type SceneColors } from './sceneColors.ts';
 // Responsive statue variants — Vite hashes each import to its own URL, so the
 // srcSet strings below are built from these imported URLs (a single import can't
 // express a multi-file srcset).
@@ -48,6 +50,10 @@ const ANIMATION_CONFIG = {
     spriteSize: 32,
   },
 
+  /* Literal fire, and the only canvas colour in this scene that is NOT brand:
+     the left brazier burns, the right one glows with the palette. Leaving this
+     one alone is what makes that contrast read as deliberate rather than as a
+     palette that failed to apply. */
   flameLeft: {
     wMul: 0.5,
     wMulMobile: 0.4,
@@ -58,6 +64,7 @@ const ANIMATION_CONFIG = {
     colors: { hot: '255,240,200', mid: '255,180,80', outer: '255,120,40' },
   },
 
+  /* Colours come from the active palette at scene start — see sceneColors.ts. */
   flameRight: {
     wMul: 0.5,
     wMulMobile: 0.4,
@@ -65,7 +72,6 @@ const ANIMATION_CONFIG = {
     hMulMobile: 1,
     max: 60,
     maxMobile: 25,
-    colors: { hot: '220,245,255', mid: '137,207,240', outer: '137,207,240' },
   },
 } as const;
 
@@ -74,7 +80,7 @@ const FONT_SIZE = ANIMATION_CONFIG.rain.fontSize;
 const TRAIL = ANIMATION_CONFIG.rain.trail;
 const CELL = FONT_SIZE + 2;
 
-function createRainSprite(): Promise<ImageBitmap> {
+function createRainSprite(colors: SceneColors): Promise<ImageBitmap> {
   const c = document.createElement('canvas');
   c.width = CELL * 2;
   c.height = CELL * TRAIL;
@@ -84,8 +90,8 @@ function createRainSprite(): Promise<ImageBitmap> {
   for (let j = 0; j < TRAIL; j++) {
     const fade = 1 - j / TRAIL;
     ctx.fillStyle = j === 0
-      ? `rgba(188,232,255,${(0.9 * fade).toFixed(3)})`
-      : `rgba(137,207,240,${(0.7 * fade).toFixed(3)})`;
+      ? `rgba(${colors.accent},${(0.9 * fade).toFixed(3)})`
+      : `rgba(${colors.secondary},${(0.7 * fade).toFixed(3)})`;
     ctx.fillText('0', 0, j * CELL);
     ctx.fillText('1', CELL, j * CELL);
   }
@@ -96,7 +102,7 @@ function createRainSprite(): Promise<ImageBitmap> {
 const STAR_SPRITE_SIZE = ANIMATION_CONFIG.star.spriteSize;
 
 // ── Pre-render star sprite (main thread, once) ───────────────────────────────
-function createStarSprite(): Promise<ImageBitmap> {
+function createStarSprite(colors: SceneColors): Promise<ImageBitmap> {
   const SIZE = STAR_SPRITE_SIZE;
   const c = document.createElement('canvas');
   c.width = SIZE; c.height = SIZE;
@@ -104,9 +110,9 @@ function createStarSprite(): Promise<ImageBitmap> {
   const cx = SIZE / 2, r = SIZE / 2;
 
   ctx.beginPath(); ctx.arc(cx, cx, r, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(188,232,255,0.1)'; ctx.fill();
+  ctx.fillStyle = `rgba(${colors.accent},0.1)`; ctx.fill();
 
-  ctx.fillStyle = 'rgba(220,245,255,0.9)';
+  ctx.fillStyle = `rgba(${colors.accentBright},0.9)`;
   const s = r * 0.25, l = r * 0.9;
   ctx.beginPath(); ctx.moveTo(cx, cx - l); ctx.lineTo(cx + s, cx - s); ctx.lineTo(cx, cx); ctx.lineTo(cx - s, cx - s); ctx.closePath(); ctx.fill();
   ctx.beginPath(); ctx.moveTo(cx, cx + l); ctx.lineTo(cx + s, cx + s); ctx.lineTo(cx, cx); ctx.lineTo(cx - s, cx + s); ctx.closePath(); ctx.fill();
@@ -114,6 +120,8 @@ function createStarSprite(): Promise<ImageBitmap> {
   ctx.beginPath(); ctx.moveTo(cx + l, cx); ctx.lineTo(cx + s, cx - s); ctx.lineTo(cx, cx); ctx.lineTo(cx + s, cx + s); ctx.closePath(); ctx.fill();
 
   ctx.beginPath(); ctx.arc(cx, cx, r * 0.15, 0, Math.PI * 2);
+  // White on purpose in every palette: this is a specular highlight, not a
+  // brand colour — the same call the glass material makes for its `highlight`.
   ctx.fillStyle = 'rgba(255,255,255,1)'; ctx.fill();
 
   return createImageBitmap(c);
@@ -172,6 +180,18 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
   const flameLRef = useRef<HTMLCanvasElement>(null);
   const flameRRef = useRef<HTMLCanvasElement>(null);
 
+  /*
+   * The scene is torn down and rebuilt when the palette changes.
+   *
+   * Its colours live inside pre-rendered ImageBitmaps and inside worker state,
+   * neither of which can be recoloured in place — so the honest way to follow a
+   * palette switch is to terminate the workers and start again. That is exactly
+   * what this effect's cleanup already does on unmount, so keying it on the
+   * palette id costs nothing beyond the restart itself, and a restart is
+   * invisible: the rain and sparkles have no position a viewer is tracking.
+   */
+  const { palette } = useTheme();
+
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -187,8 +207,12 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
     let debounceId: ReturnType<typeof setTimeout> | undefined;
 
     async function start() {
-      // Pre-render sprites on main thread
-      const [rainSprite, starSprite] = await Promise.all([createRainSprite(), createStarSprite()]);
+      // Pre-render sprites on main thread, in the active palette's colours.
+      const sceneColors = readSceneColors();
+      const [rainSprite, starSprite] = await Promise.all([
+        createRainSprite(sceneColors),
+        createStarSprite(sceneColors),
+      ]);
       if (cancelled) return;
 
       const mobile = window.innerWidth <= ANIMATION_CONFIG.mobileBreakpoint;
@@ -204,11 +228,13 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
         if (worker) entries.push({ worker, canvas: canvasEl });
       };
 
-      // Rain worker
+      // Rain worker. `colors` drives only the worker's no-sprite fallback path;
+      // the sprite above already carries them everywhere else.
       add(rainRef.current, RainWorkerUrl, {
         sprite: rainSprite,
         fontSize: rain.fontSize,
         trail: mobile ? rain.trailMobile : rain.trail,
+        colors: { head: sceneColors.accent, trail: sceneColors.secondary },
       });
 
       // Sparkle body worker
@@ -240,7 +266,11 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
         wMul: mobile ? flameRight.wMulMobile : flameRight.wMul,
         hMul: mobile ? flameRight.hMulMobile : flameRight.hMul,
         max: mobile ? flameRight.maxMobile : flameRight.max,
-        colors: flameRight.colors,
+        colors: {
+          hot: sceneColors.accentBright,
+          mid: sceneColors.secondary,
+          outer: sceneColors.secondary,
+        },
       });
 
       // Visibility observer — pause/resume all workers
@@ -289,13 +319,26 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       intersectionObserver?.disconnect();
       for (const { worker } of entries) worker.terminate();
     };
-  }, []);
+  }, [palette.id]);
 
   return (
+    /*
+     * Every <canvas> below is keyed on the palette.
+     *
+     * `transferControlToOffscreen()` can be called ONCE per canvas element, and
+     * the effect above calls it on each of these when it starts. Without the
+     * key React would keep the same five DOM nodes across a palette change, the
+     * second transfer would throw, spawnWorker would swallow it and return
+     * null, and the scene would go permanently dead after the first switch.
+     * Keying them makes React hand the restarted effect five fresh canvases.
+     *
+     * The <picture> is deliberately NOT keyed — re-mounting it would re-decode
+     * a 1400px statue on every palette change and flash the hero.
+     */
     <div ref={containerRef} className={`digital-statue ${className}`.trim()}>
        {/*Back layer: rain + flames (behind statue)*/}
       <div className="digital-statue__rain-wrap">
-        <canvas ref={rainRef} className="digital-statue__rain" />
+        <canvas key={palette.id} ref={rainRef} className="digital-statue__rain" />
       </div>
 
       <picture>
@@ -314,18 +357,18 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
 
       {/* Front layer: sparkles (on top of statue) */}
       <div className="digital-statue__sparkles-wrap digital-statue__sparkles-body">
-        <canvas ref={spkBodyRef} className="digital-statue__sparkle-canvas" />
+        <canvas key={palette.id} ref={spkBodyRef} className="digital-statue__sparkle-canvas" />
       </div>
       <div className="digital-statue__sparkles-wrap digital-statue__sparkles-scale">
-        <canvas ref={spkScaleRef} className="digital-statue__sparkle-canvas" />
+        <canvas key={palette.id} ref={spkScaleRef} className="digital-statue__sparkle-canvas" />
       </div>
 
       {/* Flames (behind statue, inside back layer z-index) */}
       <div className="digital-statue__flame digital-statue__flame--left">
-        <canvas ref={flameLRef} className="digital-statue__flame-canvas" />
+        <canvas key={palette.id} ref={flameLRef} className="digital-statue__flame-canvas" />
       </div>
       <div className="digital-statue__flame digital-statue__flame--right">
-        <canvas ref={flameRRef} className="digital-statue__flame-canvas" />
+        <canvas key={palette.id} ref={flameRRef} className="digital-statue__flame-canvas" />
       </div>
     </div>
   );

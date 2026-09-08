@@ -1,4 +1,3 @@
-import { useTranslation } from '@/i18n';
 import { EditableText } from '../EditableText';
 import { EditableSpawnText } from '../animations/EditableSpawnText';
 import './SectionHeader.css';
@@ -36,8 +35,6 @@ export function SectionHeader({
   subtitleKey,
   labelKey,
 }: SectionHeaderProps) {
-  const { t } = useTranslation();
-
   return (
     <div className={`section-header section-header--${align}`}>
       {overlineKey ? (
@@ -60,16 +57,19 @@ export function SectionHeader({
             generic fade. Scroll-linked here rather than delay-driven, so it
             plays when the title is reached instead of on page load.
 
-            `aria-label` carries the real string. Without it the heading's
-            accessible name is computed from the split's inline-block boxes,
-            which a browser separates — the name came out as "O u r
-            E x p e r t i s e", spelled letter by letter to every screen reader,
-            rotor heading list and braille display. EditableSpawnText hides the
-            split itself, so this label is what remains. Same pattern as the
-            hero's <h1>.
+            No `aria-label` here. The split's inline-block boxes would
+            otherwise be read out letter by letter ("O u r  E x p e r t i s e"),
+            so EditableSpawnText hides them and emits a visually-hidden copy of
+            the real string alongside. That copy is what names the heading and
+            what the subtitle announces.
+
+            It used to be an `aria-label` on each of these two elements. On the
+            `h2` that was valid; on the `p` below it was not — ARIA prohibits
+            naming a paragraph, so the label was dropped and the subtitle
+            reached screen readers empty.
           */}
           {titleKey ? (
-            <h2 className="section-header__title" aria-label={t(titleKey)}>
+            <h2 className="section-header__title">
               <EditableSpawnText tKey={titleKey} className="spawn-text--scroll" />
             </h2>
           ) : (
@@ -77,7 +77,7 @@ export function SectionHeader({
           )}
 
           {subtitleKey ? (
-            <p className="section-header__subtitle" aria-label={t(subtitleKey)}>
+            <p className="section-header__subtitle">
               <EditableSpawnText tKey={subtitleKey} mode="word" className="spawn-text--scroll" />
             </p>
           ) : (

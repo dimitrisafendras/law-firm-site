@@ -7,6 +7,7 @@ import './index.css'
 import './styles/liquid-glass.css'
 import { I18nProvider } from './i18n/I18nProvider'
 import { AuthProvider } from './lib/auth'
+import { ThemeProvider } from './lib/theme'
 import { ContentProvider } from './lib/content'
 import { EditModeProvider } from './lib/edit-mode'
 import App from './App.tsx'
@@ -16,21 +17,25 @@ initAutoHideScrollbar()
 
 const rootEl = document.getElementById('root')!
 
-// Provider order is load-bearing. I18nProvider is outermost because
+// Provider order is load-bearing. ThemeProvider is outermost and depends on
+// nothing — it only mirrors an attribute on <html> — so it can sit above the
+// providers that do have an order between them. I18nProvider is next because
 // ContentProvider merges database overrides into i18next and EditableText reads
 // through t(). AuthProvider precedes EditModeProvider, which derives canEdit
 // from isAdmin.
 const app = (
   <StrictMode>
-    <I18nProvider>
-      <AuthProvider>
-        <ContentProvider>
-          <EditModeProvider>
-            <App />
-          </EditModeProvider>
-        </ContentProvider>
-      </AuthProvider>
-    </I18nProvider>
+    <ThemeProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <ContentProvider>
+            <EditModeProvider>
+              <App />
+            </EditModeProvider>
+          </ContentProvider>
+        </AuthProvider>
+      </I18nProvider>
+    </ThemeProvider>
   </StrictMode>
 )
 

@@ -132,7 +132,7 @@
 }
 
 .testimonials-stage:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: var(--space-2);
 }
 
@@ -386,7 +386,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .testimonials-stage__role {
@@ -445,11 +445,11 @@
 .testimonials-stage__playback:hover {
   background: var(--accent-bg);
   border-color: var(--accent-border);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .testimonials-stage__playback:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: 2px;
 }
 
@@ -492,7 +492,7 @@
 }
 
 .testimonials-stage__rail-segment:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: 2px;
 }
 

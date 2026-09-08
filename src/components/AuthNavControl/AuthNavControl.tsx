@@ -3,6 +3,7 @@ import { useTranslation } from '@/i18n';
 import { useAuth } from '@/lib/auth';
 import { useEditMode } from '@/lib/edit-mode';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
+import { PaletteSwatches, ThemePicker } from '@/components/ThemePicker';
 import './AuthNavControl.css';
 
 /** Two letters from the address: "dimitris.afendras@…" → "DA". */
@@ -16,6 +17,12 @@ function initialsOf(email: string): string {
 /**
  * Navbar identity control: a sign-in link when signed out, an avatar with a
  * settings menu when signed in.
+ *
+ * The palette picker appears in both states, because it is a visitor preference
+ * rather than an account one — but in two different housings. Signed out there
+ * is no menu to put it in, so it gets its own swatch button beside the language
+ * switcher; signed in it would be a second popover hanging off the same corner
+ * as the avatar menu, so it moves inside that menu as a section.
  *
  * Renders nothing while the session resolves, so an authenticated viewer never
  * sees a flash of "Sign In".
@@ -58,6 +65,7 @@ export function AuthNavControl() {
     return (
       <div className="auth-nav auth-nav--anon">
         <LanguageSwitcher />
+        <ThemePicker />
         <a className="auth-nav__signin" href="#login">
           {t('authLogin')}
         </a>
@@ -105,6 +113,16 @@ export function AuthNavControl() {
             <span>{t('menuLanguage')}</span>
             <span className="auth-nav__lang" aria-hidden="true">{otherLanguage}</span>
           </button>
+
+          {/* A radiogroup, not a menuitem: it changes state in place and the
+              menu stays open, so a visitor can see each palette land before
+              settling on one. */}
+          <div className="auth-nav__section-label" aria-hidden="true">
+            {t('menuTheme')}
+          </div>
+          <PaletteSwatches />
+
+          <div className="auth-nav__divider" />
 
           {isAdmin && (
             <>

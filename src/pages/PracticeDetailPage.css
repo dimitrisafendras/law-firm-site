@@ -161,7 +161,7 @@
   transform: translateY(-50%);
   z-index: 0;
   pointer-events: none;
-  color: var(--accent);
+  color: var(--accent-text);
   opacity: 0.14;
 }
 

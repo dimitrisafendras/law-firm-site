@@ -19,13 +19,11 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
-  colors,
   fonts,
-  glass,
-  gradients,
   radii,
   spacing,
   elevations,
+  elevationsLight,
   decor,
   brand,
   motion,
@@ -35,6 +33,7 @@ import {
   layout,
   capsTracking,
   textEmphasis,
+  materials,
   colorVarNames,
   fontVarNames,
   glassVarNames,
@@ -47,7 +46,9 @@ import {
   textEmphasisVarNames,
   decorVarNames,
   brandVarNames,
+  materialVarNames,
 } from '../src/theme/tokens.ts';
+import { palettes, DEFAULT_PALETTE_ID } from '../src/theme/palettes.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outPath = join(__dirname, '..', 'src', 'theme', 'theme.generated.css');
@@ -79,18 +80,24 @@ function typeVars() {
   return lines;
 }
 
-function buildVarBlock(colorTokens, fontTokens, glassTokens, gradientTokens) {
+/**
+ * Everything that does NOT change with the palette: type, space, shape, motion.
+ * Emitted once into bare `:root`, so switching palettes rewrites 45 custom
+ * properties rather than 144.
+ */
+function buildInvariantBlock() {
   return [
-    ...mapVars(colorTokens, colorVarNames),
-    ...mapVars(fontTokens, fontVarNames),
-    ...mapVars(glassTokens, glassVarNames),
-    ...mapVars(gradientTokens, gradientVarNames),
+    ...mapVars(fonts, fontVarNames),
     ...mapVars(radii, radiusVarNames),
     ...mapVars(spacing, spacingVarNames),
-    ...mapVars(elevations, elevationVarNames),
     ...mapVars(weights, weightVarNames),
     ...mapVars(layout, layoutVarNames),
     ...mapVars(textEmphasis, textEmphasisVarNames),
+    // The two material variants. `clear` is thinner glass for bright, busy
+    // grounds; src/styles/liquid-glass.css used to hardcode both its numbers.
+    ...Object.entries(materials).flatMap(([variant, props]) =>
+      mapVars(props, materialVarNames[variant] ?? {}),
+    ),
     `  --type-caps-tracking-tight: ${capsTracking.tight};`,
     `  --type-caps-tracking-wide: ${capsTracking.wide};`,
     `  --motion-enter-travel: ${motion.enter.travel};`,
@@ -106,22 +113,78 @@ function buildVarBlock(colorTokens, fontTokens, glassTokens, gradientTokens) {
   ].join('\n');
 }
 
-// The app renders dark-only (the theme toggle is a decorative no-op), so this
-// reproduces exactly the single :root block the runtime injector emitted,
-// including `color-scheme: dark` and the social-icon filter rule.
-const darkVars = buildVarBlock(colors.dark, fonts, glass.dark, gradients.dark);
+/**
+ * Everything that DOES change: the colours, the glass material, the two
+ * decorative gradients, and the elevation set — a shadow tuned to separate a
+ * card from a near-black canvas reads as soot over a near-white one, so the
+ * scheme picks which of the two sets it gets.
+ */
+function buildPaletteBlock(palette) {
+  return [
+    ...mapVars(palette.colors, colorVarNames),
+    ...mapVars(palette.glass, glassVarNames),
+    ...mapVars(palette.gradients, gradientVarNames),
+    ...mapVars(palette.scheme === 'light' ? elevationsLight : elevations, elevationVarNames),
+    `  color-scheme: ${palette.scheme};`,
+  ].join('\n');
+}
 
-const css = `/* AUTO-GENERATED from src/theme/tokens.ts by scripts/generate-theme-css.mjs.
-   Do not edit by hand — edit tokens.ts and run \`npm run generate:theme\`
-   (runs automatically on predev / prebuild). */
+const defaultPalette = palettes.find((p) => p.id === DEFAULT_PALETTE_ID);
+if (!defaultPalette) {
+  throw new Error(`DEFAULT_PALETTE_ID "${DEFAULT_PALETTE_ID}" is not in the palette registry`);
+}
+
+// The default palette lands in bare `:root` as well as under its own attribute
+// selector, so a document that has never been themed — a prerendered page
+// before the inline theme script runs, or a viewer with JS off — still gets a
+// complete set of custom properties rather than a naked page.
+const paletteBlocks = palettes
+  .map((palette) => `:root[data-theme='${palette.id}'] {\n${buildPaletteBlock(palette)}\n}`)
+  .join('\n');
+
+/*
+ * Two rules that depend on the SCHEME rather than on any one palette's colours,
+ * so they are generated from the registry: add a light palette and both follow
+ * it automatically.
+ *
+ * 1. The social icons are flat black SVGs, inverted to read on a dark ground.
+ *    On a light palette that inversion turns them white on white.
+ *
+ * 2. The wordmark is a supplied `.svg` drawn in white with a pale-blue K, loaded
+ *    through an <img> — so its fills cannot be recoloured from CSS, only
+ *    filtered. On a light ground the white letters vanish entirely. Inverting
+ *    takes the white to near-black; the added hue rotation is what keeps the K
+ *    from inverting to brown, landing it on a dark teal close to the brand's own
+ *    `--brand-teal`. Achromatic pixels are unaffected by the rotation, so the
+ *    letterforms stay neutral. Redrawing the artwork in `currentColor` would be
+ *    better than filtering it, and is a job for whoever owns the brand files.
+ */
+const lightPalettes = palettes.filter((p) => p.scheme === 'light');
+const lightSelector = (suffix) =>
+  lightPalettes.map((p) => `:root[data-theme='${p.id}'] ${suffix}`).join(',\n');
+
+const schemeRules = [
+  '#social .button-icon {',
+  '  filter: invert(1) brightness(2);',
+  '}',
+  `${lightSelector('#social .button-icon')} {\n  filter: none;\n}`,
+  `${lightSelector('.firm-logo__mark')},\n${lightSelector('.footer-brand__mark')} {\n  filter: invert(1) hue-rotate(180deg);\n}`,
+].join('\n');
+
+const css = `/* AUTO-GENERATED from src/theme/tokens.ts + src/theme/palettes.ts by
+   scripts/generate-theme-css.mjs. Do not edit by hand — edit the tokens and run
+   \`npm run generate:theme\` (runs automatically on predev / prebuild).
+
+   ${palettes.length} palettes; "${defaultPalette.id}" is the default and is emitted into bare
+   :root as well as its own block. ThemeProvider (src/lib/theme.tsx) sets
+   <html data-theme="..."> to pick one. */
 :root {
-${darkVars}
-  color-scheme: dark;
+${buildInvariantBlock()}
+${buildPaletteBlock(defaultPalette)}
 }
-#social .button-icon {
-  filter: invert(1) brightness(2);
-}
+${paletteBlocks}
+${schemeRules}
 `;
 
 writeFileSync(outPath, css);
-console.log(`  ok    theme.generated.css  (${css.length} bytes)`);
+console.log(`  ok    theme.generated.css  (${css.length} bytes, ${palettes.length} palettes)`);

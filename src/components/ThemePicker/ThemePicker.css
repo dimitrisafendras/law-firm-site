@@ -1,0 +1,236 @@
+/* ============================================================================
+   Theme picker — the ten palettes.
+
+   Two housings, one grid: `.theme-picker` is the standalone button + popover
+   the header shows signed-out visitors, and `.palette-swatches` is the grid
+   itself, which the signed-in avatar menu embeds directly.
+
+   Every colour here is either a theme token or one of the four `--swatch-*`
+   custom properties the TSX sets per swatch. Those four are the one place in
+   the codebase where a raw palette value legitimately reaches a stylesheet:
+   the control's entire job is to render colours the page is NOT currently
+   wearing, so it cannot read them from `:root`.
+   ============================================================================ */
+
+.theme-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ─── Trigger ────────────────────────────────────────────────────────────── */
+
+/* Sized and shaped to match `.auth-nav__avatar`, which sits beside it. */
+.theme-picker__trigger {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  transition: border-color var(--transition, 0.3s), transform 0.2s;
+}
+
+/* Gated on a real hovering pointer, matching the rest of the site: touch
+   browsers leave :hover latched on the last-tapped element. */
+@media (hover: hover) {
+  .theme-picker__trigger:hover {
+    border-color: var(--accent-border);
+    transform: translateY(-1px);
+  }
+}
+
+.theme-picker__trigger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent-text);
+}
+
+/* The active palette in miniature — the same three bands as a grid swatch, so
+   the button reads as "one of those" before it is ever opened. */
+.theme-picker__chip {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  background: conic-gradient(
+    from 220deg,
+    var(--swatch-ground) 0deg 180deg,
+    var(--swatch-accent) 180deg 290deg,
+    var(--swatch-secondary) 290deg 360deg
+  );
+  box-shadow: inset 0 0 0 1px var(--glass-edge);
+}
+
+/* ─── Popover ────────────────────────────────────────────────────────────── */
+
+/* Opaque for the same reason `.auth-nav__menu` is: this hangs inside the
+   navbar, which becomes a backdrop root once the page is scrolled, so a blur
+   here would sample an empty backdrop and collapse to a flat tint mid-scroll.
+   One opaque surface reads the same in both states. */
+.theme-picker__panel {
+  top: calc(100% + var(--space-3));
+  right: 0;
+  z-index: 200;
+  /* The grid inside is two columns of a nowrap label; without a floor the
+     popover shrink-wraps to the trigger and the columns overprint each other.
+     Matches the account menu, which hosts the same grid. */
+  min-width: 280px;
+  padding: var(--space-3);
+  border-radius: var(--radius-xl);
+  --glass-surface-tint: var(--surface);
+}
+
+/* Stated one step higher than `.glass` so these hold regardless of stylesheet
+   order — same reasoning as `.auth-nav > .auth-nav__menu`. */
+.theme-picker > .theme-picker__panel {
+  position: absolute;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    var(--elev-overlay),
+    inset 0 0 0 1px var(--glass-edge);
+  animation: theme-picker-in 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: top right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-picker > .theme-picker__panel {
+    animation: none;
+  }
+}
+
+@keyframes theme-picker-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+}
+
+/* ─── The grid ───────────────────────────────────────────────────────────── */
+
+/*
+ * Two columns, not ten in a row.
+ *
+ * Each swatch carries its palette's name as visible text — the colour bands
+ * alone are not a usable label for anyone who cannot distinguish Basalt from
+ * Papyrus at 18px — and a name needs horizontal room. Two columns of five fits
+ * the longest label ("Verdigris") without truncation inside a menu that is
+ * already only 232px wide.
+ */
+.palette-swatches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-1);
+}
+
+.palette-swatch {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  transition:
+    background-color var(--transition, 0.3s),
+    border-color var(--transition, 0.3s);
+}
+
+@media (hover: hover) {
+  .palette-swatch:hover {
+    background: var(--surface-container-high);
+  }
+}
+
+/*
+ * An outline, not a border or a ring shadow.
+ *
+ * Arrow keys in this radiogroup move the selection with the focus, so the
+ * focused swatch is ALWAYS also the selected one — and `.is-selected` below is
+ * the same specificity and comes later, so it won the `border-color` every
+ * time. What was left as the focus indicator was the 2px `--accent-bg` shadow,
+ * which is a 10-18% alpha wash: invisible on the five light palettes and weak
+ * on the dark ones. This rule also set `outline: none`, so it had removed the
+ * perfectly good global ring from index.css on the way past.
+ *
+ * `outline` is contested by nothing here and is what every other focusable
+ * thing on the site uses, so the focused swatch now reads the same as the rest.
+ */
+.palette-swatch:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+/* The selected state is carried by the container, not by the chip: tinting the
+   chip would misrepresent the palette it is there to show. */
+.palette-swatch.is-selected {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.palette-swatch__label {
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  letter-spacing: var(--type-caps-tracking-tight);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.palette-swatch.is-selected .palette-swatch__label {
+  color: var(--accent-text);
+}
+
+/* ─── The chip ───────────────────────────────────────────────────────────── */
+
+/*
+ * Three bands rather than one dot: a single accent dot cannot tell Marble from
+ * Papyrus (both warm, both light), and cannot show at all whether a palette is
+ * dark or light — which is the first thing anyone is actually choosing. Ground
+ * takes half the chip, then accent, then secondary.
+ */
+.palette-swatch__chip {
+  flex: none;
+  display: flex;
+  width: 22px;
+  height: 22px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  /* Its own rim, because a near-white ground on a light palette would otherwise
+     have no edge at all against the menu surface. */
+  box-shadow: inset 0 0 0 1px var(--glass-control-edge);
+}
+
+.palette-swatch__band {
+  height: 100%;
+}
+
+.palette-swatch__band--ground {
+  flex: 2;
+  background: var(--swatch-ground);
+}
+
+.palette-swatch__band--accent {
+  flex: 1;
+  background: var(--swatch-accent);
+}
+
+.palette-swatch__band--secondary {
+  flex: 1;
+  background: var(--swatch-secondary);
+}
+
+/* ─── Embedded in the account menu ───────────────────────────────────────── */
+
+/* Inside the avatar menu the grid is a section rather than the whole panel, so
+   it loses the popover's padding and picks up the menu's own item rhythm. */
+.auth-nav__menu .palette-swatches {
+  padding: 0 var(--space-1) var(--space-1);
+}

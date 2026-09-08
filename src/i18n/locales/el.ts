@@ -442,6 +442,9 @@ const el = {
   menuOpen: 'Μενού λογαριασμού',
   menuEditMode: 'Λειτουργία επεξεργασίας',
   menuLanguage: 'Γλώσσα',
+  menuTheme: 'Θέμα',
+  themePickerOpen: 'Χρωματικό θέμα',
+  themePickerLegend: 'Χρωματικό θέμα',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────
   chapterTeam: 'Κεφάλαιο 01 / Ομάδα',

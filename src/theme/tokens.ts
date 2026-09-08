@@ -46,6 +46,7 @@ export const colors = {
     onAccent: '#002B49',
     socialBg: 'rgba(240, 240, 240, 0.5)',
     surfaceContainerLow: '#F0F0F0',
+    surfaceContainerHigh: '#E6E6E6',
     surfaceVariant: 'rgba(255, 255, 255, 0.6)',
     outline: 'rgba(0, 43, 73, 0.15)',
     shadow: 'rgba(0, 0, 0, 0.06) 0 10px 15px -3px, rgba(0, 0, 0, 0.03) 0 4px 6px -2px',
@@ -96,6 +97,16 @@ export const colors = {
     shadow: 'rgba(226, 226, 232, 0.04) 0 0 40px',
   },
 } as const;
+
+/**
+ * The shape a palette must fill.
+ *
+ * Derived from the dark set rather than declared by hand: add a colour to
+ * `colors.dark` and every palette in src/theme/palettes.ts fails to compile
+ * until it supplies one too, which is what stops a new token from silently
+ * rendering the default palette's value under all the others.
+ */
+export type ColorTokens = { -readonly [K in keyof typeof colors.dark]: string };
 
 // ─── Typography ───────────────────────────────────────────────────────────────
 
@@ -343,6 +354,12 @@ export const glass = {
     edge: 'rgba(255, 255, 255, 0.5)',
     controlEdge: 'rgba(0, 0, 0, 0.42)',
     glow: 'rgba(255, 255, 255, 0.45)',
+    /* The `clear` variant's own three. It is thinner glass over busier content,
+       so its rim and bloom are roughly 40% of the regular material's — enough
+       to describe an edge, not enough to compete with what shows through. */
+    highlightClear: 'rgba(255, 255, 255, 0.35)',
+    edgeClear: 'rgba(255, 255, 255, 0.22)',
+    glowClear: 'rgba(255, 255, 255, 0.2)',
     /* The light counterpart of the dark note below: the ramp's own extreme,
        so a matte card is the page's floor rather than a fourth near-white.
        Inert while the app renders dark-only. */
@@ -396,6 +413,11 @@ export const glass = {
      */
     controlEdge: 'rgba(255, 255, 255, 0.38)',
     glow: 'rgba(188, 232, 255, 0.24)',
+    /* See the light set: the `clear` variant's rim and bloom, at roughly 40% of
+       the regular material's. */
+    highlightClear: 'rgba(255, 255, 255, 0.18)',
+    edgeClear: 'rgba(255, 255, 255, 0.1)',
+    glowClear: 'rgba(188, 232, 255, 0.1)',
     /*
      * The material with the lensing taken out — a dark, opaque card, for a grid
      * where only the card under the pointer is glass.
@@ -442,6 +464,8 @@ export const glass = {
   },
 } as const;
 
+export type GlassTokens = { -readonly [K in keyof typeof glass.dark]: string };
+
 /**
  * The two material variants. `clear` is thinner and only belongs over bright,
  * busy content — and needs a scrim there, or light text loses its contrast.
@@ -464,6 +488,21 @@ export const elevations = {
   overlay: '0 18px 46px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.35)',
 } as const;
 
+/**
+ * The same four steps for a light canvas.
+ *
+ * The set above buys separation from a near-black ground with heavy, opaque
+ * shadow; over a near-white one that reads as soot around the card rather than
+ * as depth. These are the same geometry at roughly a third of the alpha, which
+ * is what a shadow on paper looks like.
+ */
+export const elevationsLight = {
+  flat: 'none',
+  raised: '0 2px 8px rgba(0, 0, 0, 0.08)',
+  floating: '0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08)',
+  overlay: '0 18px 46px rgba(0, 0, 0, 0.18), 0 4px 10px rgba(0, 0, 0, 0.1)',
+} as const;
+
 // ─── Gradients ───────────────────────────────────────────────────────────────
 
 export const gradients = {
@@ -476,6 +515,8 @@ export const gradients = {
     glassB: 'linear-gradient(160deg, #0A1628 0%, #0D3B5C 50%, #4A2E10 100%)',
   },
 } as const;
+
+export type GradientTokens = { -readonly [K in keyof typeof gradients.dark]: string };
 
 // ─── Transitions ──────────────────────────────────────────────────────────────
 
@@ -736,7 +777,16 @@ export const glassVarNames: Record<string, string> = {
   edge: '--glass-edge',
   controlEdge: '--glass-control-edge',
   glow: '--glass-glow',
+  highlightClear: '--glass-highlight-clear',
+  edgeClear: '--glass-edge-clear',
+  glowClear: '--glass-glow-clear',
   matte: '--glass-matte',
+};
+
+/** The two material variants, as `--material-<variant>-<property>`. */
+export const materialVarNames: Record<string, Record<string, string>> = {
+  regular: { blur: '--material-regular-blur', saturate: '--material-regular-saturate' },
+  clear: { blur: '--material-clear-blur', saturate: '--material-clear-saturate' },
 };
 
 export const radiusVarNames: Record<string, string> = {

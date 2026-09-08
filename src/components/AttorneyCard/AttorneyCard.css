@@ -48,7 +48,7 @@
 }
 
 .attorney-card__name a:hover {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .attorney-card__title {

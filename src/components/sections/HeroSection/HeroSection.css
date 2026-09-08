@@ -336,7 +336,7 @@
   font-weight: 700;
   letter-spacing: var(--type-caps-tracking-wide);
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   /* Shrink-to-fit as a direct flex child, and contain the entrance sweep. */
   align-self: flex-start;
   position: relative;

@@ -202,7 +202,7 @@
   right: -30px;
   width: 520px;
   height: 520px;
-  color: var(--accent);
+  color: var(--accent-text);
   opacity: var(--domain-art);
   pointer-events: none;
   /* Faded out toward the card's text rather than cropped at its edge: at 520px
@@ -448,7 +448,7 @@
 .practice-domain__icon-large {
   width: 80px;
   height: 80px;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .practice-domain__num {
@@ -458,7 +458,7 @@
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent);
+  color: var(--accent-text);
   display: block;
   margin-bottom: var(--space-8);
 
@@ -672,7 +672,7 @@
   line-height: var(--type-caption-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-tight);
-  color: var(--accent);
+  color: var(--accent-text);
   /* Rests a step down and comes to full on hover, the way the partner card's
      cue does. It cannot brighten by changing colour the way that one does:
      `--accent-text` and `--accent` are the same value in this palette, so a
@@ -721,7 +721,7 @@
   }
 
   .practice-domain:has(.practice-domain__link:focus-visible) {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--accent-text);
     outline-offset: 3px;
   }
 

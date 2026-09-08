@@ -21,7 +21,7 @@
   /* Wider than --type-caption-tracking on purpose: this is an engraved rule
      over the title, not running caption text. */
   letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent);
+  color: var(--accent-text);
   display: block;
   margin-bottom: var(--space-6);
 }
@@ -132,7 +132,7 @@
    * the page. A marker nobody can read is not a quiet marker, it is an absent
    * one.
    */
-  color: var(--accent);
+  color: var(--accent-text);
   white-space: nowrap;
 }
 

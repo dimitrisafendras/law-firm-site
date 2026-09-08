@@ -1,11 +1,11 @@
 /**
- * The site's twelve colour combinations.
+ * The site's sixteen colour combinations — eight schemes, each light and dark.
  *
  * ── Why this file exists ──────────────────────────────────────────────────────
  *
  * `tokens.ts` holds 29 colour keys, 14 glass keys and 2 gradient keys. Typing
- * all 45 out twelve times would be 540 hand-authored values, and the moment one
- * palette gained a key the other eleven would silently keep rendering the last
+ * all 45 out sixteen times would be 720 hand-authored values, and the moment one
+ * palette gained a key the other fifteen would silently keep rendering the last
  * palette's value for it — which is precisely the duplication the project's
  * token rule exists to stop.
  *
@@ -272,6 +272,90 @@ const SEEDS: Record<string, PaletteSeed> = {
     onAccent: '#16233D',
     tintRgb: '255, 255, 255',
   },
+  /*
+   * The green pair. Nothing in the set was green — Verdigris is oxidised
+   * copper, which is a blue-green, and reads as teal beside these. Serpentine
+   * is the yellow-green stone and Celadon its glazed light twin, the same
+   * relationship Lapis and Porcelain have.
+   */
+  serpentine: {
+    label: 'Serpentine',
+    scheme: 'dark',
+    ink: '#E8EEE2',
+    ground: '#101A0E',
+    rampTop: '#1E3019',
+    rampBottom: '#0D160C',
+    accent: '#B6D49A',
+    accentText: '#B6D49A',
+    accentContainer: '#8FB472',
+    secondary: '#8FB472',
+    tertiary: '#D9B36A',
+    error: '#FC8181',
+    onAccent: '#101A0E',
+    tintRgb: '86, 118, 74',
+  },
+  celadon: {
+    label: 'Celadon',
+    scheme: 'light',
+    ink: '#1C2A1E',
+    ground: '#F0F4EC',
+    rampTop: '#FAFCF7',
+    rampBottom: '#E4EBDE',
+    accent: '#A8CBA0',
+    accentText: '#2F6B3D',
+    accentContainer: '#D4E6CE',
+    secondary: '#24512F',
+    tertiary: '#B08A2E',
+    error: '#B02A2A',
+    onAccent: '#1C2A1E',
+    tintRgb: '255, 255, 255',
+  },
+  /*
+   * Ink's light twin, and the only achromatic light palette — every other one
+   * carries a tint. The accent family is grey, so the page's only colour is
+   * whatever a photograph brings, and the gold sits in `tertiary` for the one
+   * or two places that need a spark. Same call Ink makes, inverted.
+   */
+  chalk: {
+    label: 'Chalk',
+    scheme: 'light',
+    ink: '#1A1A18',
+    ground: '#F7F6F3',
+    rampTop: '#FFFFFF',
+    rampBottom: '#EBEAE6',
+    accent: '#B9B7B0',
+    accentText: '#4A4844',
+    accentContainer: '#DEDCD6',
+    secondary: '#383632',
+    tertiary: '#8A6A1F',
+    error: '#B02A2A',
+    onAccent: '#1A1A18',
+    tintRgb: '255, 255, 255',
+  },
+  /*
+   * Papyrus's dark partner, and the only red in the dark set — Basalt is amber
+   * on neutral charcoal, not earth. Umber is the burnt pigment: a red-brown
+   * ground under the same warm clay Papyrus carries, so the two read as one
+   * scheme lit from opposite ends.
+   */
+  umber: {
+    label: 'Umber',
+    scheme: 'dark',
+    ink: '#F2E7E0',
+    ground: '#1A100C',
+    rampTop: '#38211A',
+    rampBottom: '#150D0A',
+    accent: '#E3A882',
+    accentText: '#E3A882',
+    accentContainer: '#C4805C',
+    secondary: '#C4805C',
+    tertiary: '#9CB894',
+    /* Deliberately redder and more saturated than `accent`: on a clay palette
+       an error state has to be tellable from the brand colour. */
+    error: '#FF7B7B',
+    onAccent: '#1A100C',
+    tintRgb: '128, 88, 68',
+  },
   slate: {
     label: 'Slate',
     scheme: 'light',
@@ -414,15 +498,36 @@ export interface Palette {
   id: string;
   label: string;
   scheme: ColorScheme;
+  /**
+   * What the pair is called as one thing.
+   *
+   * The sixteen palettes have proper nouns; the eight SCHEMES did not, and the
+   * picker needs one — it shows a row per scheme with a light and a dark chip
+   * on it, so "Sanctuary" and "Obsidian" have to sit under a shared heading.
+   * Deliberately not either member's name (that would imply one is the real one
+   * and the other a variant) and deliberately in the same mineral register.
+   */
+  family: string;
+  /**
+   * The id of this palette's opposite-scheme twin.
+   *
+   * Every palette has exactly one, and the relation is symmetric — see the
+   * `PAIRS` table and the check below it. This is what makes "each scheme has a
+   * light and a dark version" a property the code holds rather than a claim in
+   * a comment, and it is what lets the picker put a pair on one row.
+   */
+  pair: string;
   colors: ColorTokens;
   glass: GlassTokens;
   gradients: GradientTokens;
 }
 
-function makePalette(id: string, seed: PaletteSeed): Palette {
+function makePalette(id: string, pair: string, family: string, seed: PaletteSeed): Palette {
   const paletteColors = makeColors(seed);
   return {
     id,
+    pair,
+    family,
     label: seed.label,
     scheme: seed.scheme,
     colors: paletteColors,
@@ -432,42 +537,128 @@ function makePalette(id: string, seed: PaletteSeed): Palette {
 }
 
 /**
- * All twelve, in menu order: the two hand-tuned originals first, then the derived
- * ten interleaved dark/light so the picker never shows five of one kind in a
- * row.
+ * The eight schemes, each as a light/dark pair.
  *
- * `obsidian` is the default and the one every existing stylesheet was measured
- * against. It and `sanctuary` are taken verbatim from `tokens.ts` rather than
- * regenerated — see the file header.
+ * A "scheme" here is a colour idea — the brand blue, the monochrome, the green
+ * — and each one exists twice, lit from opposite ends. Listing them as pairs
+ * rather than as sixteen independent palettes is what keeps that true: the
+ * check below fails the build if a pair is one-sided, so a palette added
+ * without a partner cannot ship.
+ *
+ * The order is also the layout. PaletteSwatches runs the grid column-major with
+ * eight rows, so the light column and the dark column land side by side and
+ * row `i` is one pair — Sanctuary opposite Obsidian, Chalk opposite Ink.
+ *
+ * Porphyry and Slate are the loosest pair of the eight: both are cool violets,
+ * but Porphyry leans aubergine-rose and Slate periwinkle-indigo, where the
+ * other seven pairs share a hue outright. Nudging Slate's accent violet-ward
+ * would tighten it at the cost of the set's only neutral cool grey, so it is
+ * left as drawn.
  */
-export const palettes: Palette[] = [
-  {
-    id: 'obsidian',
-    label: 'Obsidian',
-    scheme: 'dark',
-    colors: colors.dark,
-    glass: glass.dark,
-    gradients: gradients.dark,
-  },
-  {
-    id: 'sanctuary',
-    label: 'Sanctuary',
-    scheme: 'light',
-    colors: colors.light,
-    glass: glass.light,
-    gradients: gradients.light,
-  },
-  makePalette('basalt', SEEDS.basalt),
-  makePalette('marble', SEEDS.marble),
-  makePalette('verdigris', SEEDS.verdigris),
-  makePalette('harbour', SEEDS.harbour),
-  makePalette('porphyry', SEEDS.porphyry),
-  makePalette('papyrus', SEEDS.papyrus),
-  makePalette('ink', SEEDS.ink),
-  makePalette('slate', SEEDS.slate),
-  makePalette('lapis', SEEDS.lapis),
-  makePalette('porcelain', SEEDS.porcelain),
+/* Sanctuary and Obsidian are the hand-tuned originals in tokens.ts, kept
+   verbatim rather than regenerated — the dark one especially carries measured
+   decisions (see the notes on `glass.dark.tint`) a generic derivation would
+   flatten. */
+const SANCTUARY: Palette = {
+  id: 'sanctuary',
+  pair: 'obsidian',
+  family: 'Azure',
+  label: 'Sanctuary',
+  scheme: 'light',
+  colors: colors.light,
+  glass: glass.light,
+  gradients: gradients.light,
+};
+
+const OBSIDIAN: Palette = {
+  id: 'obsidian',
+  pair: 'sanctuary',
+  family: 'Azure',
+  label: 'Obsidian',
+  scheme: 'dark',
+  colors: colors.dark,
+  glass: glass.dark,
+  gradients: gradients.dark,
+};
+
+/** Light column, top to bottom. Index `i` pairs with `DARK[i]`. */
+const LIGHT: Palette[] = [
+  SANCTUARY,
+  makePalette('porcelain', 'lapis', 'Ultramarine', SEEDS.porcelain),
+  makePalette('marble', 'basalt', 'Limestone', SEEDS.marble),
+  makePalette('papyrus', 'umber', 'Terracotta', SEEDS.papyrus),
+  makePalette('harbour', 'verdigris', 'Patina', SEEDS.harbour),
+  makePalette('celadon', 'serpentine', 'Verdant', SEEDS.celadon),
+  makePalette('slate', 'porphyry', 'Amethyst', SEEDS.slate),
+  makePalette('chalk', 'ink', 'Graphite', SEEDS.chalk),
 ];
+
+/** Dark column, top to bottom. Index `i` pairs with `LIGHT[i]`. */
+const DARK: Palette[] = [
+  OBSIDIAN,
+  makePalette('lapis', 'porcelain', 'Ultramarine', SEEDS.lapis),
+  makePalette('basalt', 'marble', 'Limestone', SEEDS.basalt),
+  makePalette('umber', 'papyrus', 'Terracotta', SEEDS.umber),
+  makePalette('verdigris', 'harbour', 'Patina', SEEDS.verdigris),
+  makePalette('serpentine', 'celadon', 'Verdant', SEEDS.serpentine),
+  makePalette('porphyry', 'slate', 'Amethyst', SEEDS.porphyry),
+  makePalette('ink', 'chalk', 'Graphite', SEEDS.ink),
+];
+
+export const palettes: Palette[] = [...LIGHT, ...DARK];
+
+/*
+ * The pairing has to be total and symmetric, and the two columns have to be the
+ * same length or the grid stops putting partners on one row. Checked at module
+ * load rather than trusted: all three are easy to break by adding a palette to
+ * one array and forgetting the other, and the failure would otherwise be a
+ * quietly mismatched row in the picker.
+ */
+if (LIGHT.length !== DARK.length) {
+  throw new Error(`palettes: ${LIGHT.length} light vs ${DARK.length} dark — the columns must match`);
+}
+for (const palette of palettes) {
+  const twin = palettes.find((p) => p.id === palette.pair);
+  if (!twin) throw new Error(`palettes: "${palette.id}" pairs with unknown "${palette.pair}"`);
+  if (twin.pair !== palette.id) {
+    throw new Error(`palettes: "${palette.id}" pairs with "${twin.id}", which pairs with "${twin.pair}"`);
+  }
+  if (twin.scheme === palette.scheme) {
+    throw new Error(`palettes: "${palette.id}" and its pair "${twin.id}" are both ${palette.scheme}`);
+  }
+  if (twin.family !== palette.family) {
+    throw new Error(
+      `palettes: "${palette.id}" is family "${palette.family}" but its pair "${twin.id}" is "${twin.family}"`,
+    );
+  }
+}
+
+export interface PalettePair {
+  /** Shared name for the scheme — what the picker's row is labelled with. */
+  family: string;
+  light: Palette;
+  dark: Palette;
+}
+
+/**
+ * The eight schemes, each with both of its palettes.
+ *
+ * This is what the picker renders: one row per scheme, a light chip and a dark
+ * chip on it. Built from the two columns rather than declared separately, so it
+ * cannot drift from `palettes`.
+ */
+export const palettePairs: PalettePair[] = LIGHT.map((light, i) => ({
+  family: light.family,
+  light,
+  dark: DARK[i],
+}));
+
+/**
+ * Every radio in the picker, in the order a reader meets them: light then dark,
+ * scheme by scheme. Row-major, unlike `palettes`, which stays grouped by scheme
+ * for the stylesheet generator.
+ */
+export const paletteRadioOrder: Palette[] = palettePairs.flatMap((p) => [p.light, p.dark]);
 
 /** The palette a first-time visitor gets, and the one emitted into bare `:root`. */
 export const DEFAULT_PALETTE_ID = 'obsidian';
@@ -475,7 +666,13 @@ export const DEFAULT_PALETTE_ID = 'obsidian';
 export const paletteIds: string[] = palettes.map((p) => p.id);
 
 export function paletteById(id: string | null | undefined): Palette {
-  return palettes.find((p) => p.id === id) ?? palettes[0];
+  return (
+    palettes.find((p) => p.id === id) ??
+    // By id, not by index: the registry is grouped light-then-dark now, so
+    // palettes[0] is Sanctuary and an unknown id would silently hand back a
+    // light palette instead of the default.
+    palettes.find((p) => p.id === DEFAULT_PALETTE_ID)!
+  );
 }
 
 export function isPaletteId(id: unknown): id is string {

@@ -15,7 +15,7 @@
    they are light rather than brand.
 
    There is no per-palette block here either. The generator emits one set of
-   `--glass-*` values per palette (twelve of them, see src/theme/palettes.ts) and
+   `--glass-*` values per palette (sixteen of them, see src/theme/palettes.ts) and
    this sheet reads whichever set `<html data-theme>` has selected, so the
    material follows the palette without knowing that palettes exist.
    ============================================================================ */

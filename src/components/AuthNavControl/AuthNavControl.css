@@ -6,19 +6,37 @@
 
 /* ─── Signed out ─────────────────────────────────────────────────────────── */
 
+/* Quieter than a nav link, but by OPACITY on `--text` — not by taking a
+   different colour.
+
+   This used to be `color: var(--secondary)`, which is a fill token: it is
+   mixed to sit under things, not to be read. On the nine dark palettes it put
+   a mid-tone tint on a near-black ground, and once the navbar scrolls into its
+   glass state the ground lightens to the glass plate and the gap closes
+   further — 4.13:1 on Umber and 4.29:1 on Lapis, both under AA for 14px text.
+   Reading as brown-on-brown at those sizes is what it looked like too.
+
+   `--text` at the secondary emphasis step is the de-emphasis the rest of the
+   site uses, and it measures 5.11:1 at worst (Marble on its own ground) and
+   5.28:1 at worst on the glass plate, across all eighteen palettes.
+
+   Hover and focus go back to full opacity rather than to another colour, which
+   also keeps the focus ring at full strength — `opacity` fades the outline
+   along with the text. */
 .auth-nav__signin {
   font-family: var(--sans);
   font-size: var(--type-small-size);
   letter-spacing: 0.04em;
-  color: var(--secondary);
+  color: var(--text);
+  opacity: var(--text-emphasis-secondary);
   text-decoration: none;
   white-space: nowrap;
-  transition: color 0.3s;
+  transition: opacity var(--transition, 0.3s);
 }
 
 .auth-nav__signin:hover,
 .auth-nav__signin:focus-visible {
-  color: var(--text);
+  opacity: 1;
 }
 
 /* ─── Avatar ─────────────────────────────────────────────────────────────── */

@@ -1,7 +1,7 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useId, useMemo } from 'react';
 import type { ReactNode } from 'react';
-import legalWhite from './vkm-legal-white.svg';
-import monogramWhite from './vkm-monogram-white.svg';
+import legalRaw from './vkm-legal-white.svg?raw';
+import monogramRaw from './vkm-monogram-white.svg?raw';
 
 /*
  * VKM Legal — the supplied artwork, as drawn.
@@ -12,21 +12,31 @@ import monogramWhite from './vkm-monogram-white.svg';
  * page load). The two files imported here are those same drawings with nothing
  * changed but the viewBox, cropped to the ink.
  *
- * ─── Why this is an <img> again ──────────────────────────────────────────────
+ * ─── Why this is inline markup, and what keeps it honest ────────────────────
  *
- * These glyphs are outlined `<path>` data. An earlier set was live `<text>`
- * naming no `font-family`, which is a drawing that depends on a font being
- * present wherever it is opened — and an SVG loaded through <img> is an
- * isolated document that gets none of the embedding page's webfonts, so the
- * mark rendered in whatever serif the browser defaulted to. That is what forced
- * the drawing inline into this component: inlining was the only way to get the
- * site's own face into it.
+ * This was an <img> on purpose, and that reasoning is worth keeping in view:
+ * these glyphs are outlined `<path>` data with no font dependency, so there was
+ * nothing to gain from inlining, and one clear thing to lose — markup in the
+ * page is markup page CSS can reach into and repaint, which is how an earlier
+ * revision ended up rendering something that was not the client's logo. An
+ * <img> cannot be reached into.
  *
- * Outlines have no such dependency, so the reason to inline is gone and the
- * reason not to is back: markup in the page is markup page CSS can reach into
- * and repaint, which is how an earlier revision ended up rendering something
- * that was not the client's logo. An <img> cannot be reached into. The file on
- * disk is the artwork, and what ships is what they drew.
+ * What changed is a requirement, not an opinion: the mark has to follow the
+ * palette. The site ships twelve colour schemes, and a flat white drawing is
+ * invisible on the six light ones — the previous answer was to `invert()` the
+ * whole image and rotate its hue, which is not colour management, it is a
+ * guess that happened to land near the brand's teal. And the K, which the
+ * artwork picks out in the brand's blue, could not track the accent at all.
+ * Neither is fixable from outside an <img>.
+ *
+ * So the drawing is inlined, and the protection moves from "unreachable" to
+ * "checked". The .svg files on disk are still the artwork and still the source
+ * of truth — nothing here redraws them. `themed()` below performs exactly two
+ * substitutions, both asserted: the K's fill and the letters' fill become
+ * custom properties, and everything else, geometry and masks included, is
+ * passed through untouched. Replace either file with a drawing whose fills do
+ * not match and the module throws on load rather than quietly shipping a
+ * mis-painted mark.
  *
  * ─── The interlock is a cut, not a line ─────────────────────────────────────
  *
@@ -64,6 +74,78 @@ import monogramWhite from './vkm-monogram-white.svg';
  * close into a single dot at 16px — `public/favicon.svg` is drawn geometry for
  * that reason.
  */
+
+/* The two fills the artwork bakes in, and the tokens that replace them. The K
+   is the single #BCE8FF path; the V, M and LEGAL row are #FFFFFF. */
+const DRAWN_ACCENT = 'fill="#BCE8FF"';
+const DRAWN_INK = 'fill="#FFFFFF"';
+
+interface Artwork {
+  viewBox: string;
+  /** Everything between <svg> and </svg>, with the two fills tokenised. */
+  inner: string;
+}
+
+/**
+ * Swap the artwork's two baked fills for theme tokens. Runs once per file at
+ * module load, not per render.
+ *
+ * The `<defs>` block is passed through verbatim. Its rects and paths are also
+ * pure white and black, but there they are MASK LUMINANCE, not colour — white
+ * keeps a pixel, black cuts it. Tokenising those would turn the interlock cut
+ * into whatever the palette happened to be and dissolve the letterforms.
+ */
+function themed(raw: string, expectedInk: number): Artwork {
+  const shell = /<svg[^>]*viewBox="([^"]+)"[^>]*>([\s\S]*)<\/svg>/.exec(raw);
+  if (!shell) throw new Error('VkmLogo: artwork has no <svg viewBox> shell');
+
+  const [, viewBox, body] = shell;
+  const defsEnd = body.lastIndexOf('</defs>');
+  const defs = defsEnd === -1 ? '' : body.slice(0, defsEnd + '</defs>'.length);
+  const drawing = defsEnd === -1 ? body : body.slice(defsEnd + '</defs>'.length);
+
+  // Assert before substituting: a redrawn file that no longer matches must fail
+  // loudly here rather than render in the wrong colours.
+  const accentCount = drawing.split(DRAWN_ACCENT).length - 1;
+  const inkCount = drawing.split(DRAWN_INK).length - 1;
+  if (accentCount !== 1 || inkCount !== expectedInk) {
+    throw new Error(
+      `VkmLogo: artwork fills changed — expected 1 ${DRAWN_ACCENT} and ${expectedInk} ` +
+        `${DRAWN_INK} outside <defs>, found ${accentCount} and ${inkCount}. ` +
+        'Update DRAWN_ACCENT / DRAWN_INK to match the new drawing.',
+    );
+  }
+
+  const inner =
+    defs +
+    drawing
+      .split(DRAWN_ACCENT)
+      .join('fill="var(--brand-mark-accent)"')
+      .split(DRAWN_INK)
+      .join('fill="var(--brand-mark-ink)"');
+
+  return { viewBox, inner };
+}
+
+const ARTWORK: Record<VkmLogoVariant, Artwork> = {
+  wordmark: themed(legalRaw, 7),
+  monogram: themed(monogramRaw, 2),
+};
+
+/**
+ * Make this instance's mask ids unique.
+ *
+ * Both drawings define masks and reference them by id, and the navbar and the
+ * footer render a mark on the same page — duplicate ids in one document are
+ * invalid and the browser resolves every `url(#id)` to whichever came first.
+ * That was harmless while each drawing lived in its own <img> document and is
+ * not any more.
+ */
+function namespaceIds(inner: string, uid: string): string {
+  return inner
+    .replace(/id="([^"]+)"/g, (_m, id: string) => `id="${id}-${uid}"`)
+    .replace(/url\(#([^)]+)\)/g, (_m, id: string) => `url(#${id}-${uid})`);
+}
 
 export type VkmLogoVariant = 'wordmark' | 'monogram';
 
@@ -103,16 +185,39 @@ interface VkmLogoProps {
   variant?: VkmLogoVariant;
 }
 
+/** The firm name is the only thing ever passed here, but a <title> is markup. */
+function escapeXml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 export function VkmLogo({ className, title, variant }: VkmLogoProps) {
   const inherited = useContext(VariantContext);
-  const monogram = (variant ?? inherited) === 'monogram';
+  const art = ARTWORK[variant ?? inherited];
+
+  // `useId` returns something like ":r3:", and a colon is not valid in the
+  // fragment part of url(#...) without escaping. Strip to a safe alphabet.
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  const markup = useMemo(
+    () => (title ? `<title>${escapeXml(title)}</title>` : '') + namespaceIds(art.inner, uid),
+    [art, title, uid],
+  );
 
   return (
-    <img
-      src={monogram ? monogramWhite : legalWhite}
+    <svg
       className={className}
-      alt={title ?? ''}
-      draggable={false}
+      viewBox={art.viewBox}
+      xmlns="http://www.w3.org/2000/svg"
+      /* Named when the caller gives a name, and removed from the tree when it
+         does not — the navbar anchor carries its own aria-label, and naming the
+         mark as well would announce the firm twice. Matches the `alt={title ??
+         ''}` this replaced. */
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      focusable="false"
+      dangerouslySetInnerHTML={{ __html: markup }}
     />
   );
 }

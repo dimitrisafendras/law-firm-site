@@ -1,11 +1,11 @@
 /**
- * The site's ten colour combinations.
+ * The site's twelve colour combinations.
  *
  * ── Why this file exists ──────────────────────────────────────────────────────
  *
  * `tokens.ts` holds 29 colour keys, 14 glass keys and 2 gradient keys. Typing
- * all 45 out ten times would be 450 hand-authored values, and the moment one
- * palette gained a key the other nine would silently keep rendering the last
+ * all 45 out twelve times would be 540 hand-authored values, and the moment one
+ * palette gained a key the other eleven would silently keep rendering the last
  * palette's value for it — which is precisely the duplication the project's
  * token rule exists to stop.
  *
@@ -222,6 +222,56 @@ const SEEDS: Record<string, PaletteSeed> = {
     onAccent: '#2E241C',
     tintRgb: '255, 255, 255',
   },
+  /*
+   * The blue-and-white pair.
+   *
+   * Lapis lazuli is a deep blue stone shot through with white calcite and
+   * flecks of gold pyrite, and blue-and-white porcelain is its light-ground
+   * twin — the same two colours with the ground and the figure swapped. They
+   * are deliberately a matched set: Lapis puts white on blue, Porcelain puts
+   * blue on white, and both keep the pyrite gold in `tertiary`.
+   *
+   * Lapis is NOT a second Obsidian. Obsidian is a desaturated navy carrying a
+   * soft baby blue; this is a saturated ultramarine carrying near-white, so the
+   * page reads as blue rather than as near-black with a blue cast.
+   */
+  lapis: {
+    label: 'Lapis',
+    scheme: 'dark',
+    ink: '#F2F5FA',
+    ground: '#0A1836',
+    rampTop: '#16305E',
+    rampBottom: '#081328',
+    /* `accent` is the white half of blue-and-white — buttons are white plates
+       with navy type. `accentText` has to be a BLUE, not that same white: it is
+       what paints the wordmark's K, and a near-white K against white letters
+       stops being picked out at all. It is also the focus ring, so it is the
+       lightest blue that still reads as blue on this ground. */
+    accent: '#FFFFFF',
+    accentText: '#A9C8F5',
+    accentContainer: '#D8E6FF',
+    secondary: '#6F9BE0',
+    tertiary: '#E8C46A',
+    error: '#FC8181',
+    onAccent: '#0A1836',
+    tintRgb: '70, 100, 160',
+  },
+  porcelain: {
+    label: 'Porcelain',
+    scheme: 'light',
+    ink: '#16233D',
+    ground: '#F7F9FC',
+    rampTop: '#FFFFFF',
+    rampBottom: '#E9EEF6',
+    accent: '#A8C4EC',
+    accentText: '#1E4E8C',
+    accentContainer: '#D6E3F7',
+    secondary: '#12356B',
+    tertiary: '#B08A2E',
+    error: '#B02A2A',
+    onAccent: '#16233D',
+    tintRgb: '255, 255, 255',
+  },
   slate: {
     label: 'Slate',
     scheme: 'light',
@@ -287,6 +337,11 @@ function makeColors(seed: PaletteSeed): ColorTokens {
     surfaceContainerHigh: lift(0.11),
     surfaceVariant: dark ? alpha(lift(0.16), 0.6) : alpha(WHITE, 0.6),
     outline: alpha(seed.ink, 0.15),
+    /* The wordmark. Dark palettes keep the artwork's drawn white; light ones
+       take the page's own ink so a warm palette gets a warm mark. The K takes
+       the readable brand step, never the fill. */
+    markInk: dark ? WHITE : seed.ink,
+    markAccent: seed.accentText,
     shadow: dark
       ? `${alpha(seed.ink, 0.04)} 0 0 40px`
       : `${alpha(seed.ink, 0.07)} 0 10px 15px -3px, ${alpha(seed.ink, 0.04)} 0 4px 6px -2px`,
@@ -377,8 +432,8 @@ function makePalette(id: string, seed: PaletteSeed): Palette {
 }
 
 /**
- * All ten, in menu order: the two hand-tuned originals first, then the derived
- * eight interleaved dark/light so the picker never shows five of one kind in a
+ * All twelve, in menu order: the two hand-tuned originals first, then the derived
+ * ten interleaved dark/light so the picker never shows five of one kind in a
  * row.
  *
  * `obsidian` is the default and the one every existing stylesheet was measured
@@ -410,6 +465,8 @@ export const palettes: Palette[] = [
   makePalette('papyrus', SEEDS.papyrus),
   makePalette('ink', SEEDS.ink),
   makePalette('slate', SEEDS.slate),
+  makePalette('lapis', SEEDS.lapis),
+  makePalette('porcelain', SEEDS.porcelain),
 ];
 
 /** The palette a first-time visitor gets, and the one emitted into bare `:root`. */

@@ -5,7 +5,7 @@ import { useTheme } from '@/lib/theme';
 import './ThemePicker.css';
 
 /**
- * The ten palettes as a grid of swatches.
+ * The twelve palettes as a grid of swatches.
  *
  * ── Why a radiogroup and not a listbox ───────────────────────────────────────
  *

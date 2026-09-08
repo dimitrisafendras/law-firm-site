@@ -634,6 +634,26 @@ export const motion = {
     range: '45%',
   },
 
+  /**
+   * The state things de-resolve into as they leave: blown out and drained of
+   * colour, as if the render never finished. It is the same value `statue-rise`
+   * in DigitalStatue.css materialises *out of*, so arriving and leaving are the
+   * same gesture run in opposite directions.
+   *
+   * This lived inline in HeroSection.css with a note that it belonged to that
+   * one drawing and should not be hoisted. Three rules use it now — the statue,
+   * the screen dim, and the entrance it mirrors — so it is a scale value.
+   *
+   * `flareMid` is the same flare caught partway, for the keyframe that holds it
+   * back: ramping brightness linearly from the start washes an element out
+   * while it is still mostly there, and landing it late reads as detail being
+   * given up rather than as a light being switched on.
+   */
+  exit: {
+    flare: 'brightness(2.6) saturate(0.25)',
+    flareMid: 'brightness(1.5) saturate(0.6)',
+  },
+
   /** Blur radii for blur-to-sharp materialisation. */
   blur: {
     spawn: '12px',

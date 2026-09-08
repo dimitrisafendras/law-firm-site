@@ -349,6 +349,12 @@ code {
   --stagger-word: 0.025s;
   --stagger-element-tight: 0.09s;
 
+  /* Exits. The blown-out, drained state things de-resolve into as they leave
+     — and the state `statue-rise` materialises out of. `-mid` is the same
+     flare caught partway, for holding it back to the end of the fade. */
+  --x-flare: brightness(2.6) saturate(0.25);
+  --x-flare-mid: brightness(1.5) saturate(0.6);
+
   /* Blur-to-sharp radii */
   --blur-spawn: 12px;
   --blur-spawn-soft: 6px;

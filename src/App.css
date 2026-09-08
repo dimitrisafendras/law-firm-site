@@ -442,9 +442,28 @@
  */
 
 @keyframes page-screen-dim {
-  /* `to` only: the implicit 0% is the element's own computed opacity, so a
-     section that sets one of its own keeps it until the fade starts. */
-  to { opacity: 0; }
+  /*
+   * No `from`. The implicit 0% is the element's own computed opacity and
+   * filter, so a section that sets one of its own keeps it until the fade
+   * starts — which is also why the flare below is written as a whole `filter`
+   * and not as a bare `brightness()`: at 0% there is nothing to add to.
+   */
+
+  /* The flare, held back to the last third so it reads as the screen giving up
+     its detail rather than as a light being switched on. Same gesture as the
+     hero statue's exit — see `hero-statue-deresolve` — because a page whose
+     hero leaves one way and whose screens leave another has two effects in it,
+     not one. What the screens do NOT copy from the statue is its short range
+     or its upward lift; the window note above says why neither survives on a
+     full-height section. */
+  66% {
+    filter: var(--x-flare-mid);
+  }
+
+  to {
+    filter: var(--x-flare);
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

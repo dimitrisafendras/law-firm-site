@@ -772,7 +772,7 @@
      than as a light being turned on. It lands earlier than it used to (45%,
      was 65%) so the whole departure is over sooner. */
   45% {
-    filter: brightness(1.5) saturate(0.6);
+    filter: var(--x-flare-mid);
     opacity: 1;
   }
 
@@ -789,12 +789,11 @@
        the transparent stop on the element's top edge: the sweep has passed the
        crown and nothing is left behind it. */
     mask-position: 0 100%;
-    /* Mirrors the `from` state of `statue-rise` in DigitalStatue.css — the
-       unrendered brightness the statue materialises out of. Kept in step by
-       hand: the value belongs to that one drawing, and hoisting it to :root to
-       share it between two component stylesheets would put a number in the
-       design system that nothing else can use. */
-    filter: brightness(2.6) saturate(0.25);
+    /* The same state `statue-rise` in DigitalStatue.css materialises out of,
+       and the one every screen below the hero dims into. It used to be kept in
+       step by hand, on the grounds that the value belonged to this one drawing;
+       three rules share it now, so it is a token. */
+    filter: var(--x-flare);
     opacity: 0;
     /* A little faster than the page, so the last of it lifts away rather than
        being carried off. Percentage of the element's own height. */

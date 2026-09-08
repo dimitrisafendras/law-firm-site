@@ -158,7 +158,9 @@
     opacity: 0;
     clip-path: inset(100% 0 0 0);
     transform: translate3d(0, 4%, 0);
-    filter: brightness(2.6) saturate(0.25);
+    /* The unrendered state — shared with every exit on the page, so arriving
+       here and leaving are the same gesture in opposite directions. */
+    filter: var(--x-flare);
   }
   55% {
     opacity: 1;

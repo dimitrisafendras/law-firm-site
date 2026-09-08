@@ -47,6 +47,9 @@ export const colors = {
     socialBg: 'rgba(240, 240, 240, 0.5)',
     surfaceContainerLow: '#F0F0F0',
     surfaceContainerHigh: '#E6E6E6',
+    /* The wordmark's two inks — see `markInk` in colors.dark. */
+    markInk: '#002B49',
+    markAccent: '#1A6B8A',
     surfaceVariant: 'rgba(255, 255, 255, 0.6)',
     outline: 'rgba(0, 43, 73, 0.15)',
     shadow: 'rgba(0, 0, 0, 0.06) 0 10px 15px -3px, rgba(0, 0, 0, 0.03) 0 4px 6px -2px',
@@ -92,6 +95,24 @@ export const colors = {
     socialBg: 'rgba(26, 28, 32, 0.5)',
     surfaceContainerLow: '#1A1C20',
     surfaceContainerHigh: '#282A2E',
+    /*
+     * The wordmark's two inks.
+     *
+     * The supplied artwork draws the V, M and LEGAL rule in white and picks the
+     * K out in #BCE8FF. Those were baked into the .svg files, which were loaded
+     * through an <img> — so the mark could not follow the palette, and light
+     * themes had to invert the whole image and rotate its hue to get anything
+     * legible. VkmLogo inlines the artwork now and swaps these two fills for
+     * these tokens instead.
+     *
+     * Dark palettes keep the drawn white; light ones take the page's own ink,
+     * so a warm palette gets a warm wordmark rather than a cold navy one. The
+     * K takes `accentText` rather than `accent` because it must read as a
+     * letter, not as a fill — on Obsidian the two are the same #BCE8FF the
+     * artwork was drawn with, so the default mark is unchanged.
+     */
+    markInk: '#FFFFFF',
+    markAccent: '#BCE8FF',
     surfaceVariant: 'rgba(51, 53, 57, 0.6)',
     outline: 'rgba(64, 72, 77, 0.15)',
     shadow: 'rgba(226, 226, 232, 0.04) 0 0 40px',
@@ -750,6 +771,8 @@ export const colorVarNames: Record<string, string> = {
   socialBg: '--social-bg',
   surfaceContainerLow: '--surface-container-low',
   surfaceContainerHigh: '--surface-container-high',
+  markInk: '--brand-mark-ink',
+  markAccent: '--brand-mark-accent',
   surfaceVariant: '--surface-variant',
   outline: '--outline',
   shadow: '--shadow',

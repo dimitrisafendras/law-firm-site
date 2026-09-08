@@ -143,21 +143,18 @@ const paletteBlocks = palettes
   .join('\n');
 
 /*
- * Two rules that depend on the SCHEME rather than on any one palette's colours,
- * so they are generated from the registry: add a light palette and both follow
- * it automatically.
+ * One rule that depends on the SCHEME rather than on any one palette's colours,
+ * so it is generated from the registry: add a light palette and it follows
+ * automatically.
  *
- * 1. The social icons are flat black SVGs, inverted to read on a dark ground.
- *    On a light palette that inversion turns them white on white.
+ * The social icons are flat black SVGs, inverted to read on a dark ground. On a
+ * light palette that inversion turns them white on white.
  *
- * 2. The wordmark is a supplied `.svg` drawn in white with a pale-blue K, loaded
- *    through an <img> — so its fills cannot be recoloured from CSS, only
- *    filtered. On a light ground the white letters vanish entirely. Inverting
- *    takes the white to near-black; the added hue rotation is what keeps the K
- *    from inverting to brown, landing it on a dark teal close to the brand's own
- *    `--brand-teal`. Achromatic pixels are unaffected by the rotation, so the
- *    letterforms stay neutral. Redrawing the artwork in `currentColor` would be
- *    better than filtering it, and is a job for whoever owns the brand files.
+ * The wordmark used to need a second rule here — an `invert() hue-rotate()`
+ * that guessed its way to something legible on a light ground, because it was
+ * an <img> whose fills CSS could not reach. VkmLogo inlines the artwork now and
+ * paints it from `--brand-mark-ink` and `--brand-mark-accent`, which every
+ * palette defines, so there is nothing left to filter.
  */
 const lightPalettes = palettes.filter((p) => p.scheme === 'light');
 const lightSelector = (suffix) =>
@@ -168,7 +165,6 @@ const schemeRules = [
   '  filter: invert(1) brightness(2);',
   '}',
   `${lightSelector('#social .button-icon')} {\n  filter: none;\n}`,
-  `${lightSelector('.firm-logo__mark')},\n${lightSelector('.footer-brand__mark')} {\n  filter: invert(1) hue-rotate(180deg);\n}`,
 ].join('\n');
 
 const css = `/* AUTO-GENERATED from src/theme/tokens.ts + src/theme/palettes.ts by

@@ -728,8 +728,16 @@ export const palettePairs: PalettePair[] = LIGHT.map((light, i) => ({
  */
 export const paletteRadioOrder: Palette[] = palettePairs.flatMap((p) => [p.light, p.dark]);
 
-/** The palette a first-time visitor gets, and the one emitted into bare `:root`. */
-export const DEFAULT_PALETTE_ID = 'obsidian';
+/**
+ * The palette a first-time visitor gets, and the one emitted into bare `:root`.
+ *
+ * Ultramarine dark. `obsidian` held this for as long as it was the only
+ * hand-tuned dark set; the generated Ultramarine reads as the firm's colour
+ * rather than as a neutral with a blue accent on it, so it is the one the site
+ * opens on. Changing this id moves the bare `:root` block in the generated
+ * stylesheet — run `npm run generate:theme` after touching it.
+ */
+export const DEFAULT_PALETTE_ID = 'lapis';
 
 export const paletteIds: string[] = palettes.map((p) => p.id);
 

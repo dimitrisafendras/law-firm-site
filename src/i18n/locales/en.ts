@@ -413,6 +413,10 @@ const en = {
   editCancel: 'Cancel',
   editSaving: 'Saving\u2026',
   editError: 'That change could not be saved. Please try again.',
+  /* Stands in for a line an admin has emptied. Without it the element collapses
+     to nothing and there is no target left to click, so the text cannot be put
+     back from the page — only from the database. */
+  editEmpty: 'Empty \u2014 click to add text',
 
   // ─── Attorney 3 (crypto) ─────────────────────────────────────────────────────
   // PLACEHOLDER NAME — replace with the real partner's details.
@@ -469,7 +473,9 @@ const en = {
   dsSpawnTextNote:
     'Splits an already-translated string into per-character or per-word units for the hero entrance. Reduced motion renders it fully assembled.',
   dsEditableTextNote:
-    'Renders a plain translated string for visitors. Signed in as an admin, it gains an inline edit affordance and writes to site_content.',
+    'Renders a plain translated string for visitors. Signed in as an admin, it gains an inline edit affordance and writes to site_content. '
+    + 'Clearing a field leaves a dashed placeholder in the admin view rather than collapsing the element, so the text can be put back; '
+    + 'visitors still see nothing. It has no fixture here because an empty demo string would fail the locale parity test.',
   dsPartnerCard: 'PartnerCard',
   dsPartnerCardNote:
     'The team section’s card. The whole surface links to that partner’s page at #partner/<n> through a stretched ::after on the name, so the accessible name is the name and nothing is nested inside the link. In admin edit mode the link is dropped and the copy becomes editable instead.',

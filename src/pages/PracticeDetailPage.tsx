@@ -118,7 +118,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
           <div className="practice-page__rail">
             <a className="practice-page__back" href="#practice">
               <span aria-hidden="true">&#8592;</span>
-              {t('practiceBackToAreas')}
+              <EditableText tKey="practiceBackToAreas" as="span" />
             </a>
             {/* The plate's foot used to carry these two — the domain's mark and
                 its number — and the plate is gone. They are information, not
@@ -141,9 +141,12 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
               />
               <EditableText tKey={`practice${key}Desc`} as="p" className="practice-page__lede" />
 
-              <a className="btn btn--primary btn--md practice-page__cta" href="#contact">
-                {t('practiceContactCta')}
-              </a>
+              <EditableText
+                tKey="practiceContactCta"
+                as="a"
+                className="btn btn--primary btn--md practice-page__cta"
+                elementProps={{ href: '#contact' }}
+              />
             </div>
 
             <Card
@@ -152,9 +155,12 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
               className="glass--matte practice-page__panel practice-page__panel--prose"
               aria-labelledby={`practice-overview-${slug}`}
             >
-              <h2 className="practice-page__panel-title" id={`practice-overview-${slug}`}>
-                {t('practiceOverviewLabel')}
-              </h2>
+              <EditableText
+                tKey="practiceOverviewLabel"
+                as="h2"
+                className="practice-page__panel-title"
+                elementProps={{ id: `practice-overview-${slug}` }}
+              />
               {/* The scrolling region is this wrapper and never the Card: the
                   Card is the material, and a scrollbar on it would drag the
                   glass's own light layers off the top of the surface. */}
@@ -173,9 +179,12 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
               className="glass--matte practice-page__panel practice-page__panel--ledger"
               aria-labelledby={`practice-services-${slug}`}
             >
-              <h2 className="practice-page__panel-title" id={`practice-services-${slug}`}>
-                {t('practiceServicesLabel')}
-              </h2>
+              <EditableText
+                tKey="practiceServicesLabel"
+                as="h2"
+                className="practice-page__panel-title"
+                elementProps={{ id: `practice-services-${slug}` }}
+              />
               <div className="practice-page__panel-body">
                 <ul className="practice-page__ledger">
                   {([1, 2, 3, 4, 5] as const).map((slot) => (

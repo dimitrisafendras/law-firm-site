@@ -95,7 +95,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
           <div className="partner-page__rail">
             <a className="partner-page__back" href="#team">
               <span aria-hidden="true">&#8592;</span>
-              {t('partnerBackToTeam')}
+              <EditableText tKey="partnerBackToTeam" as="span" />
             </a>
             {/* The rank rides in the rail with the page's category, the way the
                 practice page's overline carries its domain numeral. It used to
@@ -166,9 +166,12 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
                   className="partner-page__honorific"
                 />
               </div>
-              <a className="btn btn--primary btn--md partner-page__cta" href="#contact">
-                {t('partnerContactCta')}
-              </a>
+              <EditableText
+                tKey="partnerContactCta"
+                as="a"
+                className="btn btn--primary btn--md partner-page__cta"
+                elementProps={{ href: '#contact' }}
+              />
             </div>
 
             <Card
@@ -177,9 +180,12 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
               className="glass--matte partner-page__panel partner-page__panel--prose"
               aria-labelledby={`partner-about-${n}`}
             >
-              <h2 className="partner-page__panel-title" id={`partner-about-${n}`}>
-                {t('partnerAboutLabel')}
-              </h2>
+              <EditableText
+                tKey="partnerAboutLabel"
+                as="h2"
+                className="partner-page__panel-title"
+                elementProps={{ id: `partner-about-${n}` }}
+              />
               {/* The scrolling region is this wrapper and never the Card: the
                   Card is the material, and a scrollbar on it would drag the
                   glass's own light layers off the top of the surface. */}
@@ -194,9 +200,12 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
               className="glass--matte partner-page__panel partner-page__panel--ledger"
               aria-labelledby={`partner-specialties-${n}`}
             >
-              <h2 className="partner-page__panel-title" id={`partner-specialties-${n}`}>
-                {t('partnerSpecialtiesLabel')}
-              </h2>
+              <EditableText
+                tKey="partnerSpecialtiesLabel"
+                as="h2"
+                className="partner-page__panel-title"
+                elementProps={{ id: `partner-specialties-${n}` }}
+              />
               <div className="partner-page__panel-body">
                 <ul className="partner-page__ledger">
                   {([1, 2, 3] as const).map((slot) => (

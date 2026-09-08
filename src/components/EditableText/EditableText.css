@@ -16,6 +16,37 @@
   box-shadow: 0 0 0 1px var(--accent-border);
 }
 
+/*
+ * An emptied field, which would otherwise be a zero-size box with nothing to
+ * click. The placeholder gives it back a target; these two rules give the
+ * target a size and make it read as a gap to fill rather than as copy.
+ *
+ * The dotted underline is dropped in favour of a full dashed box: an underline
+ * under a placeholder reads as text that is really there.
+ */
+.editable-text--empty {
+  text-decoration: none;
+  outline: 1px dashed var(--glass-control-edge);
+  outline-offset: 2px;
+}
+
+.editable-text__placeholder {
+  /* Not `inherit`: the placeholder sits inside display copy, and at the hero
+     title's size it would be an announcement rather than a hint. */
+  display: inline-block;
+  min-width: 12ch;
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: normal;
+  text-transform: none;
+  color: var(--text);
+  /* The site's own quietest legible step, not a hand-picked opacity — it is the
+     lowest value that still clears AA at this size. */
+  opacity: var(--text-emphasis-muted);
+}
+
 .editable-text--editing {
   cursor: auto;
   text-decoration: none;

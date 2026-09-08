@@ -110,6 +110,19 @@ export function EditableText({ tKey, as = 'span', className, elementProps }: Edi
 
   const multiline = value.includes('\n');
 
+  /*
+   * An admin who clears a field would otherwise have no way to fill it again.
+   * The element renders its value and nothing else, so an empty string collapses
+   * it to a zero-size box: no text, no padding, nothing to click or tab to, and
+   * the copy can only be restored from the database. It happened on the hero's
+   * second title line in production.
+   *
+   * The placeholder exists only on this branch, which `canEdit` already guards,
+   * so a visitor still gets the bare empty tag — an emptied line stays empty on
+   * the public site, which is what emptying it meant.
+   */
+  const isEmpty = value.trim() === '';
+
   const handleDisplayKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
@@ -164,7 +177,7 @@ export function EditableText({ tKey, as = 'span', className, elementProps }: Edi
 
   return (
     <Tag
-      className={`editable-text ${className ?? ''}`.trim()}
+      className={`editable-text ${isEmpty ? 'editable-text--empty ' : ''}${className ?? ''}`.trim()}
       {...elementProps}
       role="button"
       tabIndex={0}
@@ -174,7 +187,7 @@ export function EditableText({ tKey, as = 'span', className, elementProps }: Edi
       }}
       onKeyDown={handleDisplayKeyDown}
     >
-      {value}
+      {isEmpty ? <span className="editable-text__placeholder">{t('editEmpty')}</span> : value}
       {status}
     </Tag>
   );

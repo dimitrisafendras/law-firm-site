@@ -240,6 +240,14 @@
    * the label occupies: about 72% alpha under the badge, which puts the same
    * white collar at rgb(71, 71, 71) and the label at 7.1:1.
    */
+  /*
+   * Black in every palette, on purpose, and it is the badge above that has to
+   * follow IT rather than the other way round — see the note there. A pale
+   * version of this was tried: on the light palettes it has to reach nearly
+   * full opacity before it can lift a dark suit far enough for dark type to
+   * read on it, and a scrim at full opacity is not a scrim, it is a bar
+   * across the bottom of the photograph.
+   */
   background: linear-gradient(
     180deg,
     transparent 0%,
@@ -298,7 +306,27 @@
    * was calibrated for text that had a plate under it.
    */
   font-weight: var(--weight-semibold);
-  color: var(--accent-text);
+
+  /*
+   * ── The one place a FILL is the right colour for type ───────────────────
+   *
+   * Everywhere else on this site, `--accent` is a fill and `--accent-text` is
+   * the step of the brand you are allowed to read — because everywhere else
+   * the ground is the page. Here it is not: it is a photograph under a scrim
+   * we paint ourselves, black in every palette. What that ground needs is a
+   * LIGHT colour, and on a light palette `--accent-text` is dark by
+   * definition. It measured 1.02:1 on Chalk and 1.20:1 on Harbour — the label
+   * was, in the literal sense, invisible.
+   *
+   * `--accent` is the one brand step that is light in both schemes: bright on
+   * the dark palettes and pale on the light ones, because that is what a fill
+   * has to be to carry `--on-accent`. Over the worst ground this scrim can
+   * produce — a white shirt collar at about rgb(71, 71, 71) — it measures
+   * 4.47:1 at its weakest (Papyrus) and 9.29:1 at its strongest; over the
+   * portraits actually shipped, all of them dark, the measured figures run
+   * from 8.85:1 up.
+   */
+  color: var(--accent);
 }
 
 /* ─── Text ─────────────────────────────────────────────────────────────────── */

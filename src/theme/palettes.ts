@@ -92,7 +92,24 @@ export interface PaletteSeed {
   rampBottom: string;
   /** The brand fill — buttons, chips, the bright end of the accent family. */
   accent: string;
-  /** The brand colour that is legible *as text* on `ground`. Often ≠ accent. */
+  /**
+   * The brand colour that is legible *as text*. Often ≠ accent.
+   *
+   * "Legible" is not measured against `ground` alone, which is what these
+   * values were first picked against and why five of them had to be re-picked.
+   * The site puts accent type on three grounds, and `ground` is the kindest of
+   * them: the hero paints its copy on `heroDeep`, up to 20% darker on a light
+   * palette; and a `.glass` card lit by the page ramp's accent blooms is
+   * lighter than `ground` on a dark one — brightest of all on Lapis, whose
+   * accent is literally white. Measured over what is actually painted rather
+   * than over the token, Marble came to 4.38:1 on the hero and Lapis to 4.11:1
+   * on the auth card.
+   *
+   * So a new seed's `accentText` has to clear 4.5:1 against all three. There
+   * is no assertion for it here because the third ground cannot be computed
+   * from a palette — it depends on what the blur samples — so it is measured
+   * from screenshots. See CLAUDE.md.
+   */
   accentText: string;
   /** A calmer accent fill for large areas. */
   accentContainer: string;
@@ -182,7 +199,7 @@ const SEEDS: Record<string, PaletteSeed> = {
     rampTop: '#FBF9F4',
     rampBottom: '#ECE7DC',
     accent: '#D9BE73',
-    accentText: '#7A5C18',
+    accentText: '#5F4813',
     accentContainer: '#EFE2BC',
     secondary: '#3E4A57',
     tertiary: '#4E7FA8',
@@ -214,7 +231,7 @@ const SEEDS: Record<string, PaletteSeed> = {
     rampTop: '#FCF9F3',
     rampBottom: '#EDE5D8',
     accent: '#E0A882',
-    accentText: '#8A4A2A',
+    accentText: '#713C22',
     accentContainer: '#F3D9C6',
     secondary: '#5C3A28',
     tertiary: '#6E8B6B',
@@ -248,7 +265,7 @@ const SEEDS: Record<string, PaletteSeed> = {
        stops being picked out at all. It is also the focus ring, so it is the
        lightest blue that still reads as blue on this ground. */
     accent: '#FFFFFF',
-    accentText: '#A9C8F5',
+    accentText: '#BCD5F8',
     accentContainer: '#D8E6FF',
     secondary: '#6F9BE0',
     tertiary: '#E8C46A',
@@ -302,7 +319,7 @@ const SEEDS: Record<string, PaletteSeed> = {
     rampTop: '#FAFCF7',
     rampBottom: '#E4EBDE',
     accent: '#A8CBA0',
-    accentText: '#2F6B3D',
+    accentText: '#275A33',
     accentContainer: '#D4E6CE',
     secondary: '#24512F',
     tertiary: '#B08A2E',
@@ -344,7 +361,7 @@ const SEEDS: Record<string, PaletteSeed> = {
     rampTop: '#FBFBF3',
     rampBottom: '#E8E8D6',
     accent: '#C7C888',
-    accentText: '#5A5C1E',
+    accentText: '#4F511A',
     accentContainer: '#E2E2BC',
     secondary: '#3E4020',
     tertiary: '#9C6B3E',
@@ -388,7 +405,7 @@ const SEEDS: Record<string, PaletteSeed> = {
     rampTop: '#38211A',
     rampBottom: '#150D0A',
     accent: '#E3A882',
-    accentText: '#E3A882',
+    accentText: '#EBB794',
     accentContainer: '#C4805C',
     secondary: '#C4805C',
     tertiary: '#9CB894',

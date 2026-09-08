@@ -86,15 +86,28 @@
   }
 }
 
-/* Secondary */
+/* Secondary — an outline button, so the outline is the whole component.
+ *
+ * It drew that outline in `--accent-border`, which is `--accent` at half
+ * alpha. On the nine light palettes `--accent` is a pale fill by design, and
+ * half of a pale fill over a near-white page is nothing: measured from the
+ * rendered auth pages, the border came to 1.25:1 where 1.4.11 asks a control's
+ * boundary for 3:1. With a transparent background and a `--text` label, the
+ * button read as a line of text.
+ *
+ * `--accent-text` is the same brand family chosen for legibility rather than
+ * for filling — the one accent step guaranteed to be readable on the page
+ * ground — so the outline keeps its accent identity and clears the bar.
+ * Hover used to move the border to `--accent`, which took a control that was
+ * finally visible and made it pale again; it now deepens the fill instead. */
 .btn--secondary {
   background: transparent;
   color: var(--text);
-  border: 1px solid var(--accent-border);
+  border: 1px solid var(--accent-text);
 }
 
 .btn--secondary:hover:not(:disabled) {
-  border-color: var(--accent);
+  background: var(--accent-bg);
   color: var(--accent-text);
 }
 

@@ -46,11 +46,21 @@ the one tuned to clear WCAG 1.4.11's 3:1 in both schemes. Buttons, icon
 buttons, avatars, inputs, textareas and switch tracks all take it.
 
 **Measuring contrast:** compute it against the pixels actually painted, not
-against the tokens. Anything under the navbar or over the hero sits on a
-`backdrop-filter` that pulls a photograph through the glass, so the modelled
-ground (`--glass-bg` over `--bg`) can be several stops darker than the real
-one. `scripts/` has no harness for this; screenshot the rendered element and
-sample it.
+against the tokens. `--bg` is the kindest ground on the site and almost nothing
+important sits on it. The hero paints its copy on `--hero-deep`; a `.glass`
+card is lit by the page ramp's accent blooms and comes out lighter than `--bg`
+on the dark palettes; the navbar and the contact fields pull a photograph up
+through a `backdrop-filter`. Every one of those has produced a token that
+measured comfortably against `--bg` and failed where it was actually used.
+`scripts/` has no harness for this — screenshot the rendered element and sample
+the pixels behind the glyphs.
+
+Two grounds worth naming, because they have caught colours twice: text drawn on
+a scrim over a photograph must follow the SCRIM, which is palette-independent
+(`.partner-ethos__badge` takes `--accent`, the one brand step that is light in
+both schemes, because `--accent-text` is dark on a light palette and the scrim
+is black on all of them); and a new palette's `accentText` has to clear 4.5:1
+against `--hero-deep` and against a bloom-lit glass card, not just `--bg`.
 
 ### How to use the theme
 

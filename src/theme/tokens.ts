@@ -36,7 +36,7 @@ export const colors = {
     border: 'rgba(0, 43, 73, 0.15)',
     codeBg: '#F0F0F0',
     accent: '#89CFF0',
-    accentText: '#1A6B8A',
+    accentText: '#186379',
     accentBg: 'rgba(137, 207, 240, 0.15)',
     accentBorder: 'rgba(137, 207, 240, 0.5)',
     accentContainer: '#BCE8FF',
@@ -49,7 +49,7 @@ export const colors = {
     surfaceContainerHigh: '#E6E6E6',
     /* The wordmark's two inks — see `markInk` in colors.dark. */
     markInk: '#002B49',
-    markAccent: '#1A6B8A',
+    markAccent: '#186379',
     surfaceVariant: 'rgba(255, 255, 255, 0.6)',
     outline: 'rgba(0, 43, 73, 0.15)',
     shadow: 'rgba(0, 0, 0, 0.06) 0 10px 15px -3px, rgba(0, 0, 0, 0.03) 0 4px 6px -2px',

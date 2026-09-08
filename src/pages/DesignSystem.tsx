@@ -5,6 +5,9 @@ import { brand, brandVarNames } from '../theme/tokens';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '../components/CircuitField';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
+import { PaletteSwatches, ThemePicker } from '../components/ThemePicker';
+import { palettes } from '../theme';
+import { useTheme } from '@/lib/theme';
 import { SpawnText } from '../components/animations/SpawnText';
 import { EditableSpawnText } from '../components/animations/EditableSpawnText';
 import { PartnerCard } from '../components/sections/PartnerEthos/PartnerCard';
@@ -140,6 +143,23 @@ const showcaseBox: React.CSSProperties = {
   marginBottom: '24px',
 };
 
+/**
+ * The label as it appears ON one of the decorative gradient washes.
+ *
+ * It used to be `{ ...showcaseLabel, color: '#fff' }`. That was safe while the
+ * site had one palette whose `--gradient-glass-a` was near-black; across ten it
+ * is not — Marble's and Slate's washes are mid-toned, and white on them is
+ * unreadable. An opaque chip in the palette's own surface/text pair reads on
+ * any wash, and adds no token the theme does not already define.
+ */
+const showcaseLabelOnWash: React.CSSProperties = {
+  background: 'var(--surface)',
+  color: 'var(--text)',
+  padding: 'var(--space-1) var(--space-2)',
+  borderRadius: 'var(--radius-sm)',
+  alignSelf: 'flex-start',
+};
+
 const showcaseLabel: React.CSSProperties = {
   fontFamily: 'var(--label)',
   fontSize: '11px',
@@ -228,6 +248,7 @@ function TokenTable({ title, tokens }: { title: string; tokens: Record<string, s
 
 export default function DesignSystem() {
   const { t } = useTranslation();
+  const { palette: activePalette } = useTheme();
 
   return (
     <main style={{ maxWidth: '1120px', margin: '0 auto', padding: '48px 32px', textAlign: 'left' }}>
@@ -255,6 +276,69 @@ export default function DesignSystem() {
       <section style={sectionStyle}>
         <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '32px' }}>{t('components')}</h2>
 
+        {/* Palettes — the whole point of the theme layer, so it leads. */}
+        <div style={showcaseBox}>
+          <span style={showcaseLabel}>Theme Picker — trigger &amp; popover</span>
+          <p style={{ marginBottom: '16px', color: 'var(--text)', opacity: 'var(--text-emphasis-secondary)' }}>
+            The form signed-out visitors get in the header. Signed-in visitors
+            get the same grid embedded in the account menu instead.
+          </p>
+          <ThemePicker />
+        </div>
+
+        <div style={showcaseBox}>
+          <span style={showcaseLabel}>Palette Swatches — {palettes.length} palettes</span>
+          <p style={{ marginBottom: '16px', color: 'var(--text)', opacity: 'var(--text-emphasis-secondary)' }}>
+            Live. Picking one re-themes this page and the whole site — every
+            surface below re-paints from the same {palettes.length} sets of
+            custom properties. Current: <strong>{activePalette.label}</strong>.
+          </p>
+          <PaletteSwatches />
+        </div>
+
+        <div style={showcaseBox}>
+          <span style={showcaseLabel}>Palette Reference</span>
+          <div style={{ display: 'grid', gap: '8px' }}>
+            {palettes.map((palette) => (
+              <div
+                key={palette.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '8px',
+                  borderRadius: 'var(--radius-md)',
+                  background: palette.id === activePalette.id ? 'var(--accent-bg)' : 'transparent',
+                }}
+              >
+                <span style={{ minWidth: '96px', fontFamily: 'var(--label)', fontSize: 'var(--type-caption-size)', textTransform: 'uppercase', letterSpacing: 'var(--type-caps-tracking-tight)' }}>
+                  {palette.label}
+                </span>
+                <span style={{ minWidth: '44px', fontFamily: 'var(--mono)', fontSize: 'var(--type-caption-size)', opacity: 'var(--text-emphasis-muted)' }}>
+                  {palette.scheme}
+                </span>
+                {/* The five roles that decide how a palette reads. Raw values
+                    are legitimate here for the same reason they are in the
+                    swatch component: this documents palettes the page is not
+                    currently wearing, so it cannot read them from :root. */}
+                {(['background', 'surface', 'text', 'accent', 'secondary'] as const).map((role) => (
+                  <span
+                    key={role}
+                    title={`${role}: ${palette.colors[role]}`}
+                    style={{
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: 'var(--radius-sm)',
+                      background: palette.colors[role],
+                      boxShadow: 'inset 0 0 0 1px var(--glass-control-edge)',
+                    }}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Button */}
         <div style={showcaseBox}>
           <span style={showcaseLabel}>Button</span>
@@ -274,7 +358,7 @@ export default function DesignSystem() {
           ...showcaseBox,
           background: 'var(--gradient-glass-a)',
         }}>
-          <span style={{ ...showcaseLabel, color: '#fff' }}>Button — Glass on Gradient</span>
+          <span style={{ ...showcaseLabel, ...showcaseLabelOnWash }}>Button — Glass on Gradient</span>
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
             <Button variant="glass" size="sm">Glass SM</Button>
             <Button variant="glass">Glass MD</Button>
@@ -371,7 +455,7 @@ export default function DesignSystem() {
           padding: 0,
           overflow: 'hidden',
         }}>
-          <div style={{ padding: '16px 32px 0' }}><span style={{ ...showcaseLabel, color: '#fff' }}>Card — Glass Variants</span></div>
+          <div style={{ padding: '16px 32px 0' }}><span style={{ ...showcaseLabel, ...showcaseLabelOnWash }}>Card — Glass Variants</span></div>
           <div style={{ padding: '16px 32px 32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
             <Card>
               <CardHeader><Heading level={3} className="glass-demo-heading">Default Card</Heading></CardHeader>

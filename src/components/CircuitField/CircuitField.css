@@ -12,7 +12,7 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .circuit-field svg {

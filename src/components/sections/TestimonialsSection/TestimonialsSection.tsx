@@ -92,8 +92,6 @@ const testimonials: Testimonial[] = [
  * nothing else; the sizer's copies are inert, hidden and only ever measured.
  */
 function QuoteFigure({ item, live = false }: { item: Testimonial; live?: boolean }) {
-  const { t } = useTranslation();
-
   return (
     <figure className={`testimonials-stage__quote ${live ? 'testimonials-stage__quote--live' : ''}`}>
       {/*
@@ -104,13 +102,13 @@ function QuoteFigure({ item, live = false }: { item: Testimonial; live?: boolean
         200 animated spans for copy that is read as sentences, and the stagger
         would run past the dwell.
 
-        `aria-label` on the blockquote is not optional. SpawnText emits one
-        `inline-block` span per unit, and a browser inserts a separator between
-        non-inline boxes when it computes an accessible name — so the split is
-        hidden and this label is what the live region announces. Same contract
-        as SectionHeader's h2.
+        The quote's accessible text comes from the visually-hidden copy
+        EditableSpawnText renders beside the split — see the note there. It was
+        an `aria-label` on this blockquote, which ARIA prohibits (a blockquote
+        cannot be named by the author), so the live region was announcing
+        nothing at all. Same contract as SectionHeader.
       */}
-      <blockquote className="testimonials-stage__text" aria-label={t(item.quoteKey)}>
+      <blockquote className="testimonials-stage__text">
         <EditableSpawnText tKey={item.quoteKey} mode="word" />
       </blockquote>
       <figcaption className="testimonials-stage__attribution">

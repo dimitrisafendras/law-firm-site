@@ -377,7 +377,7 @@
   line-height: var(--type-small-leading);
   text-transform: uppercase;
   letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent);
+  color: var(--accent-text);
   white-space: nowrap;
   align-self: flex-end;
 }

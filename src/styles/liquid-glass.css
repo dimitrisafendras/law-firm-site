@@ -14,8 +14,10 @@
    rather than the reference blue. Highlight and edge stay white alphas, because
    they are light rather than brand.
 
-   The app renders dark-only, so there is no light-theme block here — the theme
-   generator emits the dark values into :root and the material reads them.
+   There is no per-palette block here either. The generator emits one set of
+   `--glass-*` values per palette (ten of them, see src/theme/palettes.ts) and
+   this sheet reads whichever set `<html data-theme>` has selected, so the
+   material follows the palette without knowing that palettes exist.
    ============================================================================ */
 
 .ds-glass {
@@ -45,12 +47,12 @@
 /* Clear — thinner and more transparent. Only over bright, busy content, and it
    needs a scrim there or light text loses its contrast. */
 .ds-glass[data-variant='clear'] {
-  --ds-glass-blur: 14px;
-  --ds-glass-saturate: 150%;
+  --ds-glass-blur: var(--material-clear-blur);
+  --ds-glass-saturate: var(--material-clear-saturate);
   --ds-glass-tint: var(--glass-tint-clear);
-  --ds-glass-highlight: rgba(255, 255, 255, 0.18);
-  --ds-glass-edge: rgba(255, 255, 255, 0.1);
-  --ds-glass-glow: rgba(188, 232, 255, 0.1);
+  --ds-glass-highlight: var(--glass-highlight-clear);
+  --ds-glass-edge: var(--glass-edge-clear);
+  --ds-glass-glow: var(--glass-glow-clear);
 }
 
 /* Accent-tinted glass — near-solid, so text on it holds contrast no matter how
@@ -290,19 +292,19 @@
    `--glass-surface-tint`, and the highlight, edge and glow feed `::after`,
    the inset rim and `::before` respectively.
 
-   The literals are the same four alphas the component form uses twenty lines
-   up. They stay in this file — the material sheet is where the two forms of one
-   material are kept in step, and none of them is a value the theme tokenises.
+   All six now come from the theme rather than from literals in this file. The
+   glow especially had to: it was a fixed baby-blue alpha, so on any palette but
+   the default a clear surface bloomed in the old brand's colour.
 
    The reduced-transparency fallback still wins: `.glass.glass.glass` is (0,3,0)
    against this rule's (0,1,1), so a clear surface goes opaque with the rest. */
 .glass[data-variant='clear'] {
   --glass-surface-tint: var(--glass-tint-clear);
-  --glass-blur: 14px;
-  --glass-saturate: 150%;
-  --glass-highlight: rgba(255, 255, 255, 0.18);
-  --glass-edge: rgba(255, 255, 255, 0.1);
-  --glass-glow: rgba(188, 232, 255, 0.1);
+  --glass-blur: var(--material-clear-blur);
+  --glass-saturate: var(--material-clear-saturate);
+  --glass-highlight: var(--glass-highlight-clear);
+  --glass-edge: var(--glass-edge-clear);
+  --glass-glow: var(--glass-glow-clear);
 }
 
 /* The pseudo-element form of the lensing opt-out documented beside its

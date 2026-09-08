@@ -7,6 +7,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="VKM Legal & Advisory — super prime legal counsel in Athens. Real estate, startup & venture capital, maritime, and cryptocurrency law for ambitious clients." />
     <meta name="theme-color" content="#111317" />
+
+    <!--
+      Palette, applied before the first paint.
+
+      The stylesheet paints the default (Obsidian) from bare :root, so a visitor
+      who chose a light palette would otherwise see a flash of near-black before
+      React boots and ThemeProvider stamps the attribute. This runs in <head>,
+      ahead of the stylesheet, and costs one localStorage read.
+
+      The key is duplicated from THEME_STORAGE_KEY in src/lib/theme/context.ts —
+      an inline script cannot import it. The id is pattern-checked rather than
+      matched against the registry (also unimportable here); an id that survives
+      the check but is not a real palette simply matches no block, and the page
+      falls back to the :root default.
+    -->
+    <script>
+      (function () {
+        try {
+          var id = localStorage.getItem('law-firm-site:palette');
+          if (id && /^[a-z][a-z0-9-]{0,31}$/.test(id)) {
+            document.documentElement.setAttribute('data-theme', id);
+          }
+        } catch (e) {
+          /* Private window with site data blocked. Default palette it is. */
+        }
+      })();
+    </script>
     <link rel="canonical" href="https://dimitrisafendras.github.io/law-firm-site/" />
 
     <!-- Open Graph / social sharing -->

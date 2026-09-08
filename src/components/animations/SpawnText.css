@@ -29,9 +29,22 @@
  * per-unit opacity/filter (the child paints transparent text, so the parent's
  * clipped background ignores the child's effects). Interpolating a solid colour
  * along the same accent ramp gives the identical read and stays animatable.
+ *
+ * ── Why accent-TEXT and secondary, not accent and accent-container ──────────
+ *
+ * Both ends of this ramp are read as text on the page ground, so both have to
+ * be legible there. `--accent` and `--accent-container` are FILLS: on the five
+ * light palettes they are pale by design, and the hero's second title line
+ * rendered at about 1.8:1 — a 72px headline nobody could read.
+ *
+ * `--accent-text` and `--secondary` are the same two steps of the brand chosen
+ * for legibility instead. In the default palette they hold exactly the values
+ * the fills do (#BCE8FF and #89CFF0), so the dark themes render identically to
+ * before; on the light ones the ramp runs between two colours that both clear
+ * AA against the ground.
  */
 .spawn-text--gradient .spawn-text__unit {
-  color: color-mix(in oklab, var(--accent) calc(var(--spawn-t, 0) * 100%), var(--accent-container));
+  color: color-mix(in oklab, var(--accent-text) calc(var(--spawn-t, 0) * 100%), var(--secondary));
 }
 
 @media (prefers-reduced-motion: no-preference) {

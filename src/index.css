@@ -219,11 +219,43 @@ body {
   background: var(--bg);
 }
 
+/* The ring is `--accent-text`, not `--accent`.
+   1.4.11 asks a focus indicator to clear 3:1 against what surrounds it, and
+   `--accent` is a FILL — on the five light palettes it is a pale blue, gold or
+   sand that measures 1.57-1.98:1 against the page ground, i.e. an invisible
+   focus ring for every keyboard user on half the themes. `--accent-text` is
+   the brand step picked for legibility on the ground and clears 3:1 in all
+   ten (5.5-14.3:1). Every other focus indicator in the app follows this. */
 a:focus-visible,
 button:focus-visible,
 [role="button"]:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: 2px;
+}
+
+/* ─── Visually hidden ─────────────────────────────────────────────────────────
+   Text for assistive technology only: removed from the visual layout but left
+   in the accessibility tree, which `display: none` and `visibility: hidden`
+   both destroy.
+
+   This is the supported way to give an element accessible text when ARIA will
+   not let you name it. `aria-label` is only honoured on roles that support
+   naming from author — a `p` (role=paragraph) and a `blockquote` are both
+   *prohibited* from carrying one, so a label there is silently dropped and the
+   element announces as empty. A real, hidden text node has no such restriction.
+
+   See EditableSpawnText, whose per-character split is `aria-hidden` and which
+   pairs it with one of these. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Headings take whole steps of the scale — size, weight, leading and tracking

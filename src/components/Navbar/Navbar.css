@@ -135,7 +135,7 @@
 }
 
 .navbar__link:hover {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* Lays out the primary button and the persistent controls as one row. It used
@@ -324,7 +324,7 @@
   }
 
   .navbar__mobile-link:hover {
-    color: var(--accent);
+    color: var(--accent-text);
   }
 
   .navbar__mobile-cta {

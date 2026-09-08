@@ -1,92 +1,145 @@
-/* Body variants */
+/* ============================================================================
+   Text and Heading — the type scale, as components.
+
+   Every rule here takes a WHOLE step of the scale: size, weight, leading and
+   tracking together. Taking the size and leaving the rest is how a scale rots,
+   and it is what this file used to do — it carried nine hardcoded pixel sizes
+   (18/20/15/13/56/36/24/20) and its own line-heights and tracking in px, a
+   second scale running in parallel with the one in tokens.ts and drifting from
+   it.
+
+   Where a variant needed a smaller value on a phone it now takes the step BELOW
+   it rather than an invented number, which is the same thing the bare `h1`/`h2`
+   rules in src/index.css do — so `<Heading level={2}>` and a plain `<h2>` are
+   finally the same size.
+
+   ── The one confusing pair ──────────────────────────────────────────────────
+
+   `--type-h4-*` is LARGER than `--type-h3-*` (24 vs 20). That inversion is in
+   the scale itself, where h4 is documented as the card-title step; the partner
+   and practice cards already consume it that way. Heading levels here follow
+   size, not the token's name, so level 3 takes h4 and level 4 takes h3.
+   ============================================================================ */
+
+/* ─── Body variants ──────────────────────────────────────────────────────── */
+
 .text--body {
-  font-size: 18px;
-  line-height: 145%;
+  font-size: var(--type-body-lg-size);
+  font-weight: var(--type-body-lg-weight);
+  line-height: var(--type-body-lg-leading);
+  letter-spacing: var(--type-body-lg-tracking);
   color: var(--text);
 
   @media (max-width: 1024px) {
-    font-size: 16px;
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-leading);
+    letter-spacing: var(--type-body-tracking);
   }
 }
 
+/* Introductory copy — one step above body, which on this scale is the h3 step.
+   It is a size, not a heading: the weight stays at body's. */
 .text--lead {
-  font-size: 20px;
-  line-height: 145%;
+  font-size: var(--type-h3-size);
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-lg-leading);
+  letter-spacing: var(--type-body-tracking);
   color: var(--text);
 
   @media (max-width: 1024px) {
-    font-size: 18px;
+    font-size: var(--type-body-lg-size);
   }
 }
 
 .text--small {
-  font-size: 15px;
-  line-height: 135%;
+  font-size: var(--type-small-size);
+  font-weight: var(--type-small-weight);
+  line-height: var(--type-small-leading);
+  letter-spacing: var(--type-small-tracking);
   color: var(--text);
 }
 
-.text--label {
+/* ─── Micro-labels ───────────────────────────────────────────────────────── */
+
+/* Both take the caption step and the tight caps tracking — the scale's two
+   answers for uppercase text at this size. They differ only in colour. */
+.text--label,
+.text--overline {
   font-family: var(--label);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.18px;
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  letter-spacing: var(--type-caps-tracking-tight);
   text-transform: uppercase;
+}
+
+.text--label {
   color: var(--text);
 }
 
 .text--overline {
-  font-family: var(--label);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.18px;
-  text-transform: uppercase;
   color: var(--accent-text);
 }
 
-/* Headings */
+/* ─── Headings ───────────────────────────────────────────────────────────── */
+
 .heading {
   font-family: var(--heading);
-  font-weight: 500;
   color: var(--text-h);
   margin: 0;
 }
 
+/* Matches the bare `h1` in src/index.css: the display step, dropping to h1 on a
+   phone where 72px would take four lines. */
 .heading--1 {
-  font-size: 56px;
-  line-height: 118%;
-  letter-spacing: -1.68px;
+  font-size: var(--type-display-size);
+  font-weight: var(--type-display-weight);
+  line-height: var(--type-display-leading);
+  letter-spacing: var(--type-display-tracking);
 
   @media (max-width: 1024px) {
-    font-size: 36px;
+    font-size: var(--type-h1-size);
+    font-weight: var(--type-h1-weight);
+    line-height: var(--type-h1-leading);
+    letter-spacing: var(--type-h1-tracking);
   }
 }
 
 .heading--2 {
-  font-size: 36px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
+  font-size: var(--type-h2-size);
+  font-weight: var(--type-h2-weight);
+  line-height: var(--type-h2-leading);
+  letter-spacing: var(--type-h2-tracking);
 
   @media (max-width: 1024px) {
-    font-size: 24px;
+    font-size: var(--type-h3-size);
+    line-height: var(--type-h3-leading);
+    letter-spacing: var(--type-h3-tracking);
   }
 }
 
+/* See the note at the top: h4 is the larger step. */
 .heading--3 {
-  font-size: 24px;
-  line-height: 135%;
-  letter-spacing: -0.24px;
+  font-size: var(--type-h4-size);
+  font-weight: var(--type-h4-weight);
+  line-height: var(--type-h4-leading);
+  letter-spacing: var(--type-h4-tracking);
 
   @media (max-width: 1024px) {
-    font-size: 20px;
+    font-size: var(--type-h3-size);
+    line-height: var(--type-h3-leading);
+    letter-spacing: var(--type-h3-tracking);
   }
 }
 
 .heading--4 {
-  font-size: 20px;
-  line-height: 135%;
-  letter-spacing: -0.24px;
+  font-size: var(--type-h3-size);
+  font-weight: var(--type-h3-weight);
+  line-height: var(--type-h3-leading);
+  letter-spacing: var(--type-h3-tracking);
 
   @media (max-width: 1024px) {
-    font-size: 18px;
+    font-size: var(--type-body-lg-size);
+    line-height: var(--type-body-lg-leading);
   }
 }

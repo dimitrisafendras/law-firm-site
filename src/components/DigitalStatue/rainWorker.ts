@@ -21,6 +21,12 @@ let endCol = 0, maxRow = 0;
 let drops: { y: number; speed: number; chars: string[] }[] = [];
 let spriteSheet: ImageBitmap | null = null;
 
+/* Only the no-sprite fallback below reads these — the sprite sheet is rendered
+   on the main thread and already carries the palette's colours. The defaults
+   are the default palette's accent and secondary, for the case where a worker
+   somehow starts before its init message names them. */
+let colors = { head: '188,232,255', trail: '137,207,240' };
+
 function initDrops() {
   drops = Array.from({ length: Math.max(1, endCol) }, () => ({
     y: Math.random() * (maxRow + TRAIL) - TRAIL,
@@ -31,6 +37,8 @@ function initDrops() {
 
 interface RainInit {
   sprite?: ImageBitmap;
+  /** "r,g,b" triples from the active palette — see sceneColors.ts. */
+  colors?: { head: string; trail: string };
   fontSize?: number;
   trail?: number;
 }
@@ -38,6 +46,7 @@ interface RainInit {
 registerEffectWorker<RainInit>({
   init(data, env) {
     if (data.sprite) spriteSheet = data.sprite;
+    if (data.colors) colors = data.colors;
     if (data.fontSize) { FONT_SIZE = data.fontSize; CELL = FONT_SIZE + 2; }
     if (data.trail) { TRAIL = data.trail; computeAlphas(); }
     endCol = Math.floor(env.width / FONT_SIZE);
@@ -91,8 +100,8 @@ registerEffectWorker<RainInit>({
 
           const fade = 1 - j / TRAIL;
           ctx.fillStyle = j === 0
-            ? `rgba(188,232,255,${(0.9 * fade).toFixed(3)})`
-            : `rgba(137,207,240,${(0.7 * fade).toFixed(3)})`;
+            ? `rgba(${colors.head},${(0.9 * fade).toFixed(3)})`
+            : `rgba(${colors.trail},${(0.7 * fade).toFixed(3)})`;
           ctx.fillText(drop.chars[j], x, yPx);
         }
 

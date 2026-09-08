@@ -55,13 +55,13 @@
 
 .auth-nav__avatar:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent-text);
 }
 
 /* An admin reads as privileged at a glance, without a text badge crowding
    the navbar. */
 .auth-nav__avatar--admin {
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: var(--accent-border);
   box-shadow: 0 0 14px -4px var(--accent);
 }
@@ -74,7 +74,10 @@
   top: calc(100% + var(--space-3));
   right: 0;
   z-index: 200;
-  min-width: 232px;
+  /* Wide enough for the palette grid's two columns at its longest label
+     ("Verdigris"). It was 232px when the menu held nothing but single-line
+     items. */
+  min-width: 280px;
   padding: var(--space-2);
   border-radius: var(--radius-xl);
   /* Opaque rather than the material's translucent tint, because this menu can
@@ -147,7 +150,22 @@
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
+}
+
+/* Section heading inside the menu — quieter than an item, since it labels a
+   group rather than being one. Matches `.auth-nav__role`'s register. */
+.auth-nav__section-label {
+  padding: var(--space-2) var(--space-2) var(--space-1);
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  letter-spacing: var(--type-caps-tracking-wide);
+  text-transform: uppercase;
+  color: var(--text);
+  /* `--text-emphasis-*` are opacities, not colours — the muted step is the
+     project's AA floor for micro-labels. */
+  opacity: var(--text-emphasis-muted);
 }
 
 .auth-nav__divider {
@@ -218,7 +236,7 @@
 
 .auth-nav__switch.is-on {
   background: var(--accent-bg);
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .auth-nav__switch.is-on .auth-nav__switch-thumb {
@@ -245,7 +263,7 @@
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: var(--accent);
+  color: var(--accent-text);
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-sm);
   padding: var(--space-1) var(--space-2);

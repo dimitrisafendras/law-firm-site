@@ -7,7 +7,7 @@
  * take `var(--accent)` — `fillStyle` wants a concrete colour string. So these
  * five effects used to carry `rgba(188,232,255, …)` and `rgba(137,207,240, …)`
  * as literals: the dark palette's accent and secondary, hand-copied into three
- * files. With sixteen palettes on the site that stops being a style violation and
+ * files. With eighteen palettes on the site that stops being a style violation and
  * starts being a bug — the rain would still fall baby-blue over Papyrus.
  *
  * The custom properties are resolved once per scene start (and again whenever

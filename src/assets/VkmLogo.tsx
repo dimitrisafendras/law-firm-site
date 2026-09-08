@@ -22,8 +22,8 @@ import monogramRaw from './vkm-monogram-white.svg?raw';
  * <img> cannot be reached into.
  *
  * What changed is a requirement, not an opinion: the mark has to follow the
- * palette. The site ships sixteen colour schemes, and a flat white drawing is
- * invisible on the eight light ones — the previous answer was to `invert()` the
+ * palette. The site ships eighteen colour schemes, and a flat white drawing is
+ * invisible on the nine light ones — the previous answer was to `invert()` the
  * whole image and rotate its hue, which is not colour management, it is a
  * guess that happened to land near the brand's teal. And the K, which the
  * artwork picks out in the brand's blue, could not track the accent at all.

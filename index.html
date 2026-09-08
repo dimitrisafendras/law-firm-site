@@ -32,6 +32,26 @@
         } catch (e) {
           /* Private window with site data blocked. Default palette it is. */
         }
+
+        /*
+          Reloading the page puts you back at the hero, not wherever you had
+          scrolled to. The browser's own restore fights everything this page
+          does on arrival — the hero's entrance choreography plays to nobody,
+          and the scroll-driven exits start mid-flight — and it restores a
+          position the URL does not describe, so the same address gives two
+          different first screens.
+
+          It has to be set here rather than in main.tsx: the restore happens
+          before a deferred module script gets a turn.
+
+          An explicit `#section` in the URL is untouched by this — that is a
+          fragment navigation, not a restore, and the browser still honours it
+          (as does HomePage's own align effect). Back and forward lose their
+          restored offsets too, which is the reason src/utils/sectionAnchor.ts
+          exists: it stamps the section you were reading onto the history entry
+          before you leave it, so returning lands you there by anchor.
+        */
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
       })();
     </script>
     <link rel="canonical" href="https://dimitrisafendras.github.io/law-firm-site/" />

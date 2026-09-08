@@ -12,8 +12,10 @@ import { ContentProvider } from './lib/content'
 import { EditModeProvider } from './lib/edit-mode'
 import App from './App.tsx'
 import { initAutoHideScrollbar } from './utils/autoHideScrollbar'
+import { initSectionAnchor } from './utils/sectionAnchor'
 
 initAutoHideScrollbar()
+initSectionAnchor()
 
 const rootEl = document.getElementById('root')!
 

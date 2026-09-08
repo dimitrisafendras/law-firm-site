@@ -1,5 +1,5 @@
 /* ============================================================================
-   Theme picker — the ten palettes.
+   Theme picker — sixteen palettes, eight light/dark pairs.
 
    Two housings, one grid: `.theme-picker` is the standalone button + popover
    the header shows signed-out visitors, and `.palette-swatches` is the grid
@@ -112,69 +112,42 @@
 /* ─── The grid ───────────────────────────────────────────────────────────── */
 
 /*
- * Two columns, not ten in a row.
+ * One row per scheme: two chips, then the scheme's name.
  *
- * Each swatch carries its palette's name as visible text — the colour bands
- * alone are not a usable label for anyone who cannot distinguish Basalt from
- * Papyrus at 18px — and a name needs horizontal room. Two columns of five fits
- * the longest label ("Verdigris") without truncation inside a menu that is
- * already only 232px wide.
+ * The chips lead because they are what is being compared — a reader scanning
+ * for "the green one" is scanning colour, not text, and putting the swatches in
+ * a single left-hand column lets the eye run straight down them. The name
+ * follows as confirmation.
  */
 .palette-swatches {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-1);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.palette-swatch {
+.palette-row {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2);
-  border: 1px solid transparent;
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
-  background: none;
-  cursor: pointer;
-  text-align: left;
-  color: var(--text);
-  transition:
-    background-color var(--transition, 0.3s),
-    border-color var(--transition, 0.3s);
+  transition: background-color var(--transition, 0.3s);
 }
 
-@media (hover: hover) {
-  .palette-swatch:hover {
-    background: var(--surface-container-high);
-  }
-}
-
-/*
- * An outline, not a border or a ring shadow.
- *
- * Arrow keys in this radiogroup move the selection with the focus, so the
- * focused swatch is ALWAYS also the selected one — and `.is-selected` below is
- * the same specificity and comes later, so it won the `border-color` every
- * time. What was left as the focus indicator was the 2px `--accent-bg` shadow,
- * which is a 10-18% alpha wash: invisible on the five light palettes and weak
- * on the dark ones. This rule also set `outline: none`, so it had removed the
- * perfectly good global ring from index.css on the way past.
- *
- * `outline` is contested by nothing here and is what every other focusable
- * thing on the site uses, so the focused swatch now reads the same as the rest.
- */
-.palette-swatch:focus-visible {
-  outline: 2px solid var(--accent-text);
-  outline-offset: 2px;
-}
-
-/* The selected state is carried by the container, not by the chip: tinting the
-   chip would misrepresent the palette it is there to show. */
-.palette-swatch.is-selected {
+/* The row carrying the active palette is marked, not just the chip — at 22px a
+   single selected chip is easy to lose, and the row tells you which SCHEME you
+   are on even when the two chips look alike. */
+.palette-row.is-active {
   background: var(--accent-bg);
-  border-color: var(--accent-border);
 }
 
-.palette-swatch__label {
+.palette-row__chips {
+  display: flex;
+  flex: none;
+  gap: var(--space-1);
+}
+
+.palette-row__family {
   font-family: var(--label);
   font-size: var(--type-caption-size);
   font-weight: var(--type-caption-weight);
@@ -182,47 +155,85 @@
   letter-spacing: var(--type-caps-tracking-tight);
   text-transform: uppercase;
   white-space: nowrap;
+  color: var(--text);
 }
 
-.palette-swatch.is-selected .palette-swatch__label {
+.palette-row.is-active .palette-row__family {
   color: var(--accent-text);
 }
 
-/* ─── The chip ───────────────────────────────────────────────────────────── */
+/* ─── The chips ──────────────────────────────────────────────────────────── */
 
 /*
  * Three bands rather than one dot: a single accent dot cannot tell Marble from
- * Papyrus (both warm, both light), and cannot show at all whether a palette is
- * dark or light — which is the first thing anyone is actually choosing. Ground
- * takes half the chip, then accent, then secondary.
+ * Papyrus (both warm, both light), and cannot show whether a palette is dark or
+ * light — which, in a row that offers both, is the whole decision. Ground takes
+ * half the chip, then accent, then secondary.
  */
-.palette-swatch__chip {
+.palette-chip {
   flex: none;
-  display: flex;
-  width: 22px;
+  width: 26px;
   height: 22px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  cursor: pointer;
+  transition: border-color var(--transition, 0.3s), transform 0.15s;
+}
+
+@media (hover: hover) {
+  .palette-chip:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/*
+ * An outline, not a border or a ring shadow.
+ *
+ * Arrow keys move the selection with the focus, so the focused chip is ALWAYS
+ * also the selected one — anything the selected state also sets would win at
+ * equal specificity and swallow the focus indicator. `outline` is contested by
+ * nothing here and is what every other focusable thing on the site uses.
+ */
+.palette-chip:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+/* The selected chip is ringed rather than tinted: tinting it would misrepresent
+   the palette it exists to show. */
+.palette-chip.is-selected {
+  border-color: var(--accent-text);
+  box-shadow: 0 0 0 1px var(--accent-text);
+}
+
+.palette-chip__bands {
+  display: flex;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
-  border-radius: var(--radius-full);
+  border-radius: calc(var(--radius-sm) - 1px);
   /* Its own rim, because a near-white ground on a light palette would otherwise
      have no edge at all against the menu surface. */
   box-shadow: inset 0 0 0 1px var(--glass-control-edge);
 }
 
-.palette-swatch__band {
+.palette-chip__band {
   height: 100%;
 }
 
-.palette-swatch__band--ground {
+.palette-chip__band--ground {
   flex: 2;
   background: var(--swatch-ground);
 }
 
-.palette-swatch__band--accent {
+.palette-chip__band--accent {
   flex: 1;
   background: var(--swatch-accent);
 }
 
-.palette-swatch__band--secondary {
+.palette-chip__band--secondary {
   flex: 1;
   background: var(--swatch-secondary);
 }

@@ -668,8 +668,29 @@ export const motion = {
      */
     range: 'exit 0% exit 34%',
 
-    /** Upward drift, as a percentage of the element's own height: it leaves a
-     *  little faster than the page carries it away. */
+    /**
+     * The window for a whole screen, which is the full exit and cannot be
+     * anything less. At `exit p` an element still occupies the top `(1 - p)` of
+     * the viewport, so an erasure that finishes at p leaves exactly `(1 - p)`
+     * of bare ground above the incoming screen — at 34% that is two-thirds of
+     * the window, sitting directly over the next section's heading. Landing on
+     * 100% puts the last of the element's opacity on its last visible pixel.
+     *
+     * The de-resolve is still plainly visible at this length: the stencil's
+     * soft edge is half an element tall, so the top ~450px of what is left is
+     * always mid-dissolve as it approaches the top of the screen.
+     */
+    rangeScreen: 'exit 0% exit 100%',
+
+    /**
+     * Upward drift, as a percentage of the element's own height: it leaves a
+     * little faster than the page carries it away.
+     *
+     * Layers only — never a whole screen. A screen's bottom edge is still on
+     * screen for most of its exit (at exit 50% it sits at mid-viewport), so
+     * lifting it opens a band of bare ramp between it and the section below,
+     * right where the eye is watching the next heading arrive.
+     */
     lift: '-6%',
   },
 

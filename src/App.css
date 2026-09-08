@@ -396,18 +396,27 @@
  *
  * ── The window ──────────────────────────────────────────────────────────────
  *
- * 15% to 100%, and the far end is the load-bearing one. Anything that finishes
+ * 0% to 100%, and the far end is the load-bearing one. Anything that finishes
  * early leaves a blank band: at `exit p` the element still occupies the top
- * `(1 - p)` of the screen, so a fade completing at 50% would hand the reader
- * half a screen of nothing above the incoming section. Landing on 100% means
- * the last pixel of opacity goes with the last pixel of the element. The 15%
- * of lead-in is there so a small scroll — a nudge, a trackpad twitch — does not
- * visibly dim a section the reader is still reading.
+ * `(1 - p)` of the screen, so a fade completing at 50% hands the reader half a
+ * screen of nothing above the incoming section. This has been measured the
+ * wrong way round: the window was briefly the hero statue's `exit 0% exit 34%`,
+ * and two-thirds of a viewport went empty directly over the next section's
+ * heading. Landing on 100% means the last pixel of opacity goes with the last
+ * pixel of the element.
  *
- * Opacity only. A translate was the obvious companion (it would mirror
- * FadeInSection's entrance, which rises 24px) and it is wrong at this scale:
- * a section transformed upward stops meeting the section below it, and the two
- * overlap along an edge that is not where either of them is laid out.
+ * The near end used to be 15%, a lead-in so that a nudge of the wheel would not
+ * visibly dim a section still being read. The stencil makes it unnecessary: the
+ * first thing a base-upward sweep erases is the part that has already left the
+ * top of the screen, so the opening of the range is invisible by construction.
+ *
+ * No translate on a screen. It was the obvious companion — it would mirror
+ * FadeInSection's entrance, which rises 24px, and the hero's own exit lifts its
+ * statue by 6% — and it is wrong at this scale: a section transformed upward
+ * stops meeting the section below it, opening a band of bare ramp along the
+ * seam. The bottom edge is still on screen for most of the exit (at `exit 50%`
+ * it is at mid-viewport), so that band is not hidden — it lands exactly where
+ * the next heading is arriving.
  *
  * ── The last section is exempt, and this is not tidiness ────────────────────
  *
@@ -440,6 +449,62 @@
  * it — those are read top to bottom as ordinary documents, and dimming their
  * body as it scrolled would be a bug, not an effect.
  */
+
+/*
+ * The screen-sized variant of `deresolve` below. Same gesture — a stencil that
+ * slides, the flare held back, the element blowing out and draining as it goes
+ * — with three differences, all of which come from this one running on a whole
+ * screen rather than on a decorative layer inside one.
+ *
+ * ── The sweep runs the other way ────────────────────────────────────────────
+ *
+ * `deresolve` erases base-upward, which is right for the statue: its plinth is
+ * the dullest part of the drawing and the last of it to leave, so erasing from
+ * the bottom takes the plinth first. Run on a screen the same direction erases
+ * precisely the part still being looked at. The arithmetic is exact and worth
+ * keeping: at `exit p` the element's top `p` has gone past the top of the
+ * screen and what remains visible is its bottom `(1 - p)`; a base-upward sweep
+ * driven by the same `p` has its front at element fraction `p` too, so the
+ * erased region and the visible region are the same region. Measured at
+ * scrollY 1440 — #team at opacity 0.73 with 360px of itself still in the
+ * viewport, and all 360px of it blank.
+ *
+ * So this stencil is inverted (transparent leading, opaque trailing) and slides
+ * from `100%` to `0%`. Its front tracks the top edge of the screen from above:
+ * what it erases has already left, and the soft half-element edge trailing it
+ * puts the visible remainder into a dissolve as it approaches the top edge.
+ *
+ * ── No transform ────────────────────────────────────────────────────────────
+ *
+ * A screen's bottom edge is on screen for most of its exit — at `exit 50%` it
+ * sits at mid-viewport — so lifting it opens a band of bare ramp between it and
+ * the section below, exactly where the eye is watching the next heading arrive.
+ *
+ * ── Opacity lands on `to` ───────────────────────────────────────────────────
+ *
+ * The 80% clear in `deresolve` stops a ghost of the plinth being drawn for the
+ * tail of its range. On a screen that same stop blanks the element while it
+ * still occupies the top fifth of the viewport.
+ */
+@keyframes deresolve-screen {
+  from {
+    /* Opaque: the stencil's solid half covers the element. */
+    mask-position: 0 100%;
+  }
+
+  45% {
+    filter: var(--x-flare-mid);
+    opacity: 1;
+  }
+
+  to {
+    /* Slid the full 1.5 element-heights the other way, which lands the opaque
+       stop below the element's bottom edge — nothing left anywhere. */
+    mask-position: 0 0%;
+    filter: var(--x-flare);
+    opacity: 0;
+  }
+}
 
 @keyframes deresolve {
   /*
@@ -505,13 +570,16 @@
        * start value for half the range and then snaps. `mask-position` is a
        * <position>, so it interpolates.
        *
-       * Geometry: the stencil is 2.5 element-heights tall and opaque for its
-       * first 40% — exactly one element height — then fades to nothing by 60%,
-       * a soft edge half an element tall. At `0 0%` the opaque band covers the
-       * element and the mask is a no-op; at `0 100%` it has slid up by 1.5
-       * element-heights, landing the transparent stop on the top edge, so the
-       * screen dissolves from its base upward. `no-repeat` is load-bearing —
-       * the default tiles the opaque band straight back over the element.
+       * Geometry: the stencil is 2.5 element-heights tall, transparent for its
+       * first 40% — exactly one element height — then solid from 60%, with a
+       * soft edge half an element tall between them. It is the inverse of the
+       * statue's and it slides the opposite way: at `0 100%` the solid half
+       * covers the element and the mask is a no-op, and at `0 0%` the element
+       * sits entirely in the transparent half. In between, the soft edge sits
+       * just below the top of the screen, so the screen dissolves into the edge
+       * it is leaving through rather than from its base up — see the keyframes
+       * for why that direction is not a preference. `no-repeat` is load-bearing;
+       * the default tiles the solid band straight back over the element.
        *
        * Declared inside this block, not in the base rule, so a reduced-motion
        * reader and a browser without view() timelines carry no mask at all.
@@ -521,22 +589,26 @@
        * `content-visibility: auto` forms a backdrop root too, and #team,
        * #practice and #testimonials all carry it. Nothing changes for them.
        */
-      mask-image: linear-gradient(180deg, #000 40%, transparent 60%);
+      mask-image: linear-gradient(180deg, transparent 40%, #000 60%);
       mask-size: 100% 250%;
       mask-repeat: no-repeat;
-      animation: deresolve linear both;
+      mask-position: 0 100%;
+      animation: deresolve-screen linear both;
       animation-timeline: view();
       /*
-       * `--x-range` is `exit 0% exit 34%` — the hero's, adopted here on an
-       * explicit call to make every screen leave the way the hero does. It
-       * overrides the window argued for in the note above (15% to 100%), and
-       * that note's objection still stands and is now a known cost: at exit 34%
-       * a screen still occupies the top two-thirds of the viewport, so those
-       * two-thirds go empty while the incoming screen is a third of the way in.
-       * The bottom-up sweep softens it — the visible remainder is the last part
-       * erased — but it does not remove it.
+       * The far end is the load-bearing one, and it has to be 100%. At `exit p`
+       * the element still occupies the top `(1 - p)` of the viewport, so any
+       * window that closes early hands the reader exactly that much bare ground
+       * above the incoming screen. The hero's `exit 0% exit 34%` was tried here
+       * and it is two-thirds of a screen of nothing, sitting over the next
+       * section's heading.
+       *
+       * The near end is 0% rather than the 15% of lead-in this rule used to
+       * carry. The lead-in existed to keep a nudge of the wheel from visibly
+       * dimming a section still being read; the stencil makes it unnecessary,
+       * because the first thing it erases is the part that has already left.
        */
-      animation-range: var(--x-range);
+      animation-range: var(--x-range-screen);
     }
   }
 }

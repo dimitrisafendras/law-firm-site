@@ -24,6 +24,29 @@
  * figure sitting even slightly differently inside its frame would put the fire
  * beside the pan instead of in it.
  *
+ * ── The IMAGE is not chosen here; the stylesheet chooses it ──────────────────
+ *
+ * This module decides only what the canvas layers are painted in. Which file
+ * the hero shows is a `background-image` swapped by `[data-theme]`, emitted per
+ * palette by scripts/generate-theme-css.mjs from the same
+ * `LIMESTONE_STATUE_FAMILIES` list this reads.
+ *
+ * That split is deliberate and was arrived at the hard way. Choosing the image
+ * in React puts a palette-dependent `srcSet` in the tree, and ThemeProvider's
+ * invariant is that nothing about the palette does — the prerendered HTML has
+ * to be palette-agnostic. React 19 resolves the resulting hydration mismatch by
+ * keeping the SERVER's `src`, silently: the built page showed a cyan statue
+ * under `data-theme="olivine"` with no warning of any kind. Working around it
+ * meant rendering the prerendered artwork first and swapping after hydration,
+ * which made ten of the eighteen palettes fetch an image they never displayed.
+ *
+ * In CSS none of that exists. The palette is an attribute on <html> before the
+ * first paint, exactly one of the two images is ever requested, and there is no
+ * React state involved at all.
+ *
+ * The scene colours can stay here because they are read inside an effect, after
+ * mount — they never appear in rendered markup, so they cannot mismatch.
+ *
  * ── Keyed by family, not by palette id ───────────────────────────────────────
  *
  * A scheme's light and dark halves are one design and always take the same
@@ -32,77 +55,22 @@
  * falls back to the cyan statue rather than to nothing.
  */
 
-import { DEFAULT_PALETTE_ID, paletteById, type Palette } from '@/theme';
+import { LIMESTONE_STATUE_FAMILIES, type Palette } from '@/theme';
 import { LIMESTONE_COLORS, STATUE_COLORS, type SceneColors } from './sceneColors.ts';
 
-import statue700Avif from '@/assets/images/hero-statue-700.avif';
-import statue1050Avif from '@/assets/images/hero-statue-1050.avif';
-import statue1400Avif from '@/assets/images/hero-statue-1400.avif';
-import statue700Webp from '@/assets/images/hero-statue-700.webp';
-import statue1050Webp from '@/assets/images/hero-statue-1050.webp';
-import statue1400Webp from '@/assets/images/hero-statue-1400.webp';
-
-import lime700Avif from '@/assets/images/hero-statue-limestone-700.avif';
-import lime1050Avif from '@/assets/images/hero-statue-limestone-1050.avif';
-import lime1400Avif from '@/assets/images/hero-statue-limestone-1400.avif';
-import lime700Webp from '@/assets/images/hero-statue-limestone-700.webp';
-import lime1050Webp from '@/assets/images/hero-statue-limestone-1050.webp';
-import lime1400Webp from '@/assets/images/hero-statue-limestone-1400.webp';
-
 export interface StatueArtwork {
-  /** For debugging and for the design-system page's label. */
+  /** Which drawing is on screen. Only used to key the canvases. */
   id: 'cyan' | 'limestone';
-  avifSrcSet: string;
-  webpSrcSet: string;
-  /** The `src` fallback for browsers that take neither `<source>`. */
-  fallback: string;
   /** What the rain, sparkles and cool flame are painted in. */
   colors: SceneColors;
 }
 
-const CYAN: StatueArtwork = {
-  id: 'cyan',
-  avifSrcSet: `${statue700Avif} 700w, ${statue1050Avif} 1050w, ${statue1400Avif} 1400w`,
-  webpSrcSet: `${statue700Webp} 700w, ${statue1050Webp} 1050w, ${statue1400Webp} 1400w`,
-  fallback: statue1400Webp,
-  colors: STATUE_COLORS,
-};
+const CYAN: StatueArtwork = { id: 'cyan', colors: STATUE_COLORS };
+const LIMESTONE: StatueArtwork = { id: 'limestone', colors: LIMESTONE_COLORS };
 
-const LIMESTONE: StatueArtwork = {
-  id: 'limestone',
-  avifSrcSet: `${lime700Avif} 700w, ${lime1050Avif} 1050w, ${lime1400Avif} 1400w`,
-  webpSrcSet: `${lime700Webp} 700w, ${lime1050Webp} 1050w, ${lime1400Webp} 1400w`,
-  fallback: lime1400Webp,
-  colors: LIMESTONE_COLORS,
-};
-
-/**
- * The families whose accent is warm or green, and which therefore read wrong
- * beside a cyan wireframe. Everything absent from this list — Ultramarine,
- * Amethyst, Graphite — keeps the cyan statue.
- */
-const LIMESTONE_FAMILIES = new Set([
-  'Limestone', // marble / basalt      — gold #D9BE73 / amber #FFC98A
-  'Terracotta', // papyrus / umber      — #E0A882 / #E3A882
-  'Patina', // harbour / verdigris  — #7FC5D8 / #7FD8C4
-  'Verdant', // celadon / serpentine — #A8CBA0 / #B6D49A
-  'Olive', // peridot / olivine    — #C7C888 / #D2CE84
-]);
+const FAMILIES = new Set(LIMESTONE_STATUE_FAMILIES);
 
 export function artworkFor(palette: Palette): StatueArtwork {
-  return LIMESTONE_FAMILIES.has(palette.family) ? LIMESTONE : CYAN;
+  return FAMILIES.has(palette.family) ? LIMESTONE : CYAN;
 }
 
-/**
- * The artwork baked into the prerendered HTML.
- *
- * `scripts/prerender.mjs` renders one document for every reader, and
- * ThemeProvider resolves to `DEFAULT_PALETTE_ID` when there is no `window` — so
- * whatever that palette's artwork is, it is the one in the shipped markup. The
- * hero renders THIS on its first client pass, whatever the reader's palette,
- * and swaps in a layout effect; see the note in DigitalStatue.tsx.
- *
- * Derived rather than written down as `CYAN`, so that changing the default
- * palette to a warm one cannot silently put the wrong artwork here.
- */
-export const PRERENDERED_ARTWORK: StatueArtwork = artworkFor(paletteById(DEFAULT_PALETTE_ID));

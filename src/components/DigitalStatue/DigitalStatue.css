@@ -23,14 +23,34 @@
   height: 100%;
 }
 
-/* Statue image */
+/*
+ * Statue image.
+ *
+ * A div carrying a `background-image`, not an `<img>`: the file is chosen by
+ * the palette, and the palette lives in CSS (see statueArtwork.ts, and the
+ * generated stylesheet for the swap itself).
+ *
+ * `aspect-ratio` is doing the job the `<img>`'s intrinsic dimensions used to.
+ * The layout gives this element a height and asks it for a width — `height:
+ * 100%; width: auto` — and `auto` on a div with no content resolves to zero.
+ * The ratio is the artwork's own 1400x1875, which both drawings share.
+ *
+ * `contain` rather than `cover`, because `<img>` had no `object-fit` and so
+ * behaved as `fill` against a box already sized to the image's ratio; `contain`
+ * is that same result and stays correct if the ratio ever drifts. `no-repeat`
+ * is load-bearing: the default would tile the figure.
+ */
 .digital-statue__img {
   position: relative;
   z-index: 1;
   height: 100%;
   width: auto;
+  aspect-ratio: 1400 / 1875;
   display: block;
   margin-left: -8%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 /* Sparkle wrappers — on top of statue */

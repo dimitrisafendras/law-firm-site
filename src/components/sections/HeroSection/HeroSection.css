@@ -143,8 +143,14 @@
     .digital-statue__img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      object-position: 58% 50%;
+      /* The drawing is a background now, not an `<img>` — see the note on the
+         base rule in DigitalStatue.css. `object-fit`/`object-position` have no
+         effect on a background; these two are their exact equivalents, and
+         `aspect-ratio` has to be released or it would fight the explicit width
+         and height this branch sets. */
+      aspect-ratio: auto;
+      background-size: cover;
+      background-position: 58% 50%;
       margin-left: 0;
 
       /* `cover` cuts a straight vertical edge where the column starts, which

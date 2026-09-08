@@ -729,6 +729,28 @@ export const palettePairs: PalettePair[] = LIGHT.map((light, i) => ({
 export const paletteRadioOrder: Palette[] = palettePairs.flatMap((p) => [p.light, p.dark]);
 
 /**
+ * The scheme families that wear the LIMESTONE hero statue rather than the cyan
+ * one — the warm and green accents, which read wrong beside a cyan wireframe.
+ *
+ * It lives here, in the palette registry, because two consumers need it and
+ * neither can import the other's module: the React side
+ * (`components/DigitalStatue/statueArtwork.ts`, which also imports image
+ * assets) and `scripts/generate-theme-css.mjs`, which runs in bare node and
+ * would choke on those imports.
+ *
+ * Keyed by family, so a scheme's light and dark halves cannot disagree and a
+ * new palette in an existing family is covered the day it lands. A family
+ * absent from this list gets the cyan statue.
+ */
+export const LIMESTONE_STATUE_FAMILIES: readonly string[] = [
+  'Limestone',
+  'Terracotta',
+  'Patina',
+  'Verdant',
+  'Olive',
+];
+
+/**
  * The palette a first-time visitor gets, and the one emitted into bare `:root`.
  *
  * Ultramarine dark. `obsidian` held this for as long as it was the only

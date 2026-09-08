@@ -1,10 +1,10 @@
-import { useEffect, useRef, useSyncExternalStore } from 'react';
+import { useEffect, useRef } from 'react';
 import { breakpoints } from '@/theme';
 import { useTheme } from '@/lib/theme';
 import { type SceneColors } from './sceneColors.ts';
-// Which statue, and what the scene is painted in, both come from here — the
-// srcSets included, since a single import cannot express a multi-file srcset.
-import { artworkFor, PRERENDERED_ARTWORK } from './statueArtwork.ts';
+// What the scene is painted in. Which image the hero shows is decided in CSS,
+// not here — see the note in statueArtwork.ts.
+import { artworkFor } from './statueArtwork.ts';
 import RainWorkerUrl from './rainWorker.ts?worker&url';
 import SparkleWorkerUrl from './sparkleWorker.ts?worker&url';
 import FlameWorkerUrl from './flameWorker.ts?worker&url';
@@ -164,58 +164,24 @@ function spawnWorker(
   }
 }
 
-// ── Responsive statue sources ────────────────────────────────────────────────
-// Honest heuristic: the statue is sized by HEIGHT (CSS `height:100%; width:auto`
-// inside .hero-section__bg), so its rendered *width* isn't a clean function of
-// viewport width. In practice it lands near 45vw on desktop (~684px on a ~1520px
-// viewport) and close to full width on the ≤1024px mobile layout. This `sizes`
-// approximation drives the srcset picker toward the right variant at up to
-// ~2 DPR (desktop) / ~3 DPR (mobile).
-const STATUE_SIZES = '(max-width: 1024px) 90vw, 45vw';
-
-/** Nothing to subscribe to: "have we hydrated yet" changes exactly once, and
- *  React drives that changeover itself. */
-const subscribeNever = () => () => {};
-
 interface DigitalStatueProps { className?: string }
 
 export function DigitalStatue({ className = '' }: DigitalStatueProps) {
   /*
-   * The palette picks the artwork, and the artwork carries both its srcSets and
-   * the colours everything else in the scene is painted in. `artworkFor` returns
-   * one of two module constants, so this is referentially stable and the scene
-   * is rebuilt only when the reader actually crosses between a warm/green
-   * palette and a blue/pink/neutral one.
+   * The palette picks what the canvas layers are painted in. It does NOT pick
+   * the image here — that is a `background-image` the generated stylesheet
+   * swaps on `[data-theme]`, so exactly one of the two files is ever requested
+   * and the prerendered markup stays palette-agnostic. statueArtwork.ts has the
+   * full account of why the image cannot be chosen in React.
    *
-   * ── Why the first render is not the reader's artwork ───────────────────────
-   *
-   * ThemeProvider's own note states the invariant this has to respect: nothing
-   * about the palette passes through the React tree, so the prerendered HTML is
-   * palette-agnostic and there is no themed markup to mismatch during
-   * hydration. A `srcSet` chosen from the palette breaks that, and React 19
-   * does not resolve the mismatch the hopeful way — measured on a real
-   * production build: with `data-theme="olivine"` and everything else correct,
-   * the page went on showing the CYAN statue, because hydration keeps the
-   * server's `src`/`srcSet` rather than re-setting it and forcing a second
-   * download. No warning, no error; it simply does not apply.
-   *
-   * So the hydrating render deliberately reproduces the server's markup and the
-   * real artwork lands on the re-render straight after. `useSyncExternalStore`
-   * is how that is said properly: its server snapshot is what hydration uses,
-   * its client snapshot is what every render after that uses, and React makes
-   * the changeover itself. The obvious `useState(false)` plus an effect says the
-   * same thing less well — it is a setState in an effect, which the lint rules
-   * reject, and it schedules the swap a beat later than this does.
-   *
-   * The cost is honest and small: a reader on one of the ten warm/green
-   * palettes has already had the prerendered AVIF (57KB at 700w) pulled by the
-   * preload scanner before the swap. Avoiding that would mean shipping no
-   * statue in the HTML at all, which costs every reader the head start on the
-   * page's LCP image to save ten of eighteen a single request.
+   * These colours are only ever read inside the effect below, after mount, so
+   * they never reach rendered markup and cannot mismatch during hydration.
+   * `artworkFor` returns one of two module constants, so this is referentially
+   * stable and the scene is rebuilt only when the reader actually crosses
+   * between a warm/green palette and a blue/pink/neutral one.
    */
   const { palette } = useTheme();
-  const hydrated = useSyncExternalStore(subscribeNever, () => true, () => false);
-  const artwork = hydrated ? artworkFor(palette) : PRERENDERED_ARTWORK;
+  const artwork = artworkFor(palette);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const rainRef = useRef<HTMLCanvasElement>(null);
@@ -373,20 +339,25 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
         <canvas key={artwork.id} ref={rainRef} className="digital-statue__rain" />
       </div>
 
-      <picture>
-        <source type="image/avif" srcSet={artwork.avifSrcSet} sizes={STATUE_SIZES} />
-        <source type="image/webp" srcSet={artwork.webpSrcSet} sizes={STATUE_SIZES} />
-        <img
-          key={artwork.id}
-          src={artwork.fallback}
-          alt=""
-          className="digital-statue__img"
-          width={1400}
-          height={1875}
-          fetchPriority="high"
-          decoding="async"
-        />
-      </picture>
+      {/*
+        * A div, not an <img>, because the file is chosen by the palette and the
+        * palette is a CSS attribute — see statueArtwork.ts. The drawing is
+        * decorative (the <img> it replaces carried `alt=""`), so nothing is
+        * owed to assistive tech here.
+        *
+        * The trade, stated plainly: an <img> in the HTML is found by the
+        * preload scanner immediately, whereas a background image waits for the
+        * stylesheet and for layout, so the hero's LCP candidate is discovered
+        * later. A `<link rel="preload">` cannot buy that back — there are two
+        * artworks and the head does not know which one this reader gets, so
+        * preloading either would hand ten of eighteen palettes a second useless
+        * request, which is the exact cost this change removed.
+        *
+        * The resolution ladder also changes hands: `<img srcset>` picked by
+        * rendered width via `sizes`, `image-set()` picks by device pixel ratio.
+        * The generated stylesheet maps 700=1x / 1050=1.5x / 1400=2x.
+        */}
+      <div key={artwork.id} className="digital-statue__img" role="presentation" />
 
       {/* Front layer: sparkles (on top of statue) */}
       <div className="digital-statue__sparkles-wrap digital-statue__sparkles-body">

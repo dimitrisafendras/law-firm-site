@@ -58,6 +58,27 @@ dark halves of a scheme are one design and always agree:
 A new family falls back to cyan. Each artwork carries its own `SceneColors`, so
 the rain and the cool flame follow the statue automatically.
 
+**The image is chosen in CSS, the scene colours in React, and that split is not
+negotiable.** The generator emits the `background-image` swap per palette from
+`LIMESTONE_STATUE_FAMILIES` in `palettes.ts` (which is why that list lives in the
+palette registry — `generate-theme-css.mjs` runs in bare node and cannot import
+a module that imports images). Choosing the image in React instead puts a
+palette-dependent `srcSet` in the tree, and ThemeProvider's invariant is that
+nothing about the palette does. It was tried and it shipped broken: React 19
+resolves that hydration mismatch by keeping the SERVER's `src`, with no warning
+of any kind, so the built page showed a cyan statue under `data-theme="olivine"`
+while every other signal said otherwise. Working around it in React meant
+rendering the prerendered artwork first and swapping after hydration, which
+measured at **three requests and 516KB** on a limestone palette against 63KB for
+the CSS version — the `<img src>` fallback got fetched too. The cost of CSS is
+~9ms later discovery, and the statue stops being an LCP candidate (the hero
+subtitle becomes it). Scene colours are safe in React because they are read
+inside an effect and never reach rendered markup.
+
+Relative `url()` cannot go in a custom property — lightningcss rejects it,
+because it would resolve from wherever the `var()` is used. The `image-set()`
+goes directly in the two rules.
+
 Two things a third artwork has to honour. It must be **framed identically** —
 the flame and sparkle canvases are positioned against the scale pans and the
 body, so compare alpha bounding boxes before trusting a new render (the two

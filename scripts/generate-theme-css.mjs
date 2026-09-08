@@ -48,7 +48,7 @@ import {
   brandVarNames,
   materialVarNames,
 } from '../src/theme/tokens.ts';
-import { palettes, DEFAULT_PALETTE_ID } from '../src/theme/palettes.ts';
+import { palettes, DEFAULT_PALETTE_ID, LIMESTONE_STATUE_FAMILIES } from '../src/theme/palettes.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outPath = join(__dirname, '..', 'src', 'theme', 'theme.generated.css');
@@ -160,11 +160,81 @@ const lightPalettes = palettes.filter((p) => p.scheme === 'light');
 const lightSelector = (suffix) =>
   lightPalettes.map((p) => `:root[data-theme='${p.id}'] ${suffix}`).join(',\n');
 
+/** Every palette in a family that wears the limestone statue. */
+const limestonePalettes = palettes.filter((p) => LIMESTONE_STATUE_FAMILIES.includes(p.family));
+const limestoneSelector = (suffix) =>
+  limestonePalettes.map((p) => `:root[data-theme='${p.id}'] ${suffix}`).join(',\n');
+
+/*
+ * ── The hero statue ──────────────────────────────────────────────────────────
+ *
+ * Two artworks, one per group of families, and the palette picks between them
+ * in CSS rather than in React. That is not a style preference — it is the
+ * invariant ThemeProvider is built on: nothing about the palette passes through
+ * the React tree, so the prerendered HTML stays palette-agnostic. A
+ * palette-chosen `srcSet` broke it once and shipped, because React 19 resolves
+ * that hydration mismatch by keeping the SERVER's `src`: the built page showed
+ * a cyan statue under `data-theme="olivine"`, silently.
+ *
+ * Doing it here also means the browser fetches exactly one of the two. The
+ * React version had to render the prerendered artwork first and swap after
+ * hydration, so ten of the eighteen palettes pulled an image they never showed.
+ *
+ * The `url()`s are relative to the generated stylesheet and are rewritten and
+ * hashed by Vite's CSS pipeline, the same as any other asset reference. They sit
+ * directly in the two rules and NOT behind a custom property, which was the
+ * first shape tried: lightningcss rejects it outright, because a relative url()
+ * in a custom property resolves from wherever the `var()` is used rather than
+ * from where it was declared, so the path is ambiguous by construction.
+ *
+ * Only the matching rule's image is ever requested — a browser fetches the
+ * background of a rule it applies, not of every rule it parsed.
+ *
+ * `image-set()` selects by resolution, where the old `<img srcset>` selected by
+ * rendered width via `sizes`. The ladder is mapped 700=1x / 1050=1.5x /
+ * 1400=2x, and the plain `url()` before each `image-set()` is the fallback for
+ * anything that does not understand the function.
+ */
+const STATUE_WIDTHS = [
+  [700, '1x'],
+  [1050, '1.5x'],
+  [1400, '2x'],
+];
+
+const statueImageSet = (base) => {
+  const entry = (w, ext, type, dpr) =>
+    `    url('../assets/images/${base}-${w}.${ext}') type('image/${type}') ${dpr}`;
+  const entries = [
+    ...STATUE_WIDTHS.map(([w, dpr]) => entry(w, 'avif', 'avif', dpr)),
+    ...STATUE_WIDTHS.map(([w, dpr]) => entry(w, 'webp', 'webp', dpr)),
+  ];
+  return `image-set(\n${entries.join(',\n')}\n  )`;
+};
+
+const statueBackground = (base) =>
+  [
+    // Fallback first, for anything that does not understand `image-set()`.
+    `  background-image: url('../assets/images/${base}-1400.webp');`,
+    `  background-image: ${statueImageSet(base)};`,
+  ].join('\n');
+
+const statueRules = [
+  '.digital-statue__img {',
+  statueBackground('hero-statue'),
+  '}',
+  '',
+  `${limestoneSelector('.digital-statue__img')} {`,
+  statueBackground('hero-statue-limestone'),
+  '}',
+].join('\n');
+
 const schemeRules = [
   '#social .button-icon {',
   '  filter: invert(1) brightness(2);',
   '}',
   `${lightSelector('#social .button-icon')} {\n  filter: none;\n}`,
+  '',
+  statueRules,
 ].join('\n');
 
 const css = `/* AUTO-GENERATED from src/theme/tokens.ts + src/theme/palettes.ts by

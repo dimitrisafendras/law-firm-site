@@ -72,6 +72,21 @@ async function loadStatueSource() {
 }
 
 /**
+ * The limestone statue's master, whose only copy is the on-disk WebP.
+ *
+ * The cyan statue can reach back to a 3584px PNG in git history; this one was
+ * delivered as a 3584px PNG too, but committing 10.5MB of it to carry a 1400px
+ * render is not worth the clone. The 1400px q92 WebP written here IS the master
+ * — every variant below is downscaled from it, and 1400 is the widest the site
+ * ever asks for.
+ */
+async function loadLimestoneSource() {
+  const diskPath = join(imagesDir, 'hero-statue-limestone.webp');
+  const buffer = await readFile(diskPath);
+  return { buffer, origin: 'on-disk hero-statue-limestone.webp (1400px master)' };
+}
+
+/**
  * Encode `buffer` to a file at `outName`, optionally resized to `width`.
  * @returns {Promise<number>} bytes written
  */
@@ -92,9 +107,9 @@ async function encode(buffer, outName, { width, format, options }) {
 // ── Statue: multi-width AVIF + WebP ──────────────────────────────────────────
 // Widths cover the ~684px desktop display up to ~2 DPR and the near-full-width
 // mobile display up to ~3 DPR.
-async function buildStatue() {
-  const { buffer, origin } = await loadStatueSource();
-  console.log(`  statue source: ${origin}`);
+async function buildStatue(loadSource = loadStatueSource, base = 'hero-statue') {
+  const { buffer, origin } = await loadSource();
+  console.log(`  ${base} source: ${origin}`);
 
   const widths = [700, 1050, 1400];
   const webpQ = { quality: 78 };
@@ -102,12 +117,12 @@ async function buildStatue() {
 
   for (const w of widths) {
     // WebP first — it is the fallback we measure AVIF against.
-    const webpName = `hero-statue-${w}.webp`;
+    const webpName = `${base}-${w}.webp`;
     const webpBytes = await encode(buffer, webpName, { width: w, format: 'webp', options: webpQ });
     table.push({ file: webpName, bytes: webpBytes });
 
     // AVIF — keep only if meaningfully smaller than the WebP at the same width.
-    const avifName = `hero-statue-${w}.avif`;
+    const avifName = `${base}-${w}.avif`;
     const avifBytes = await encode(buffer, avifName, { width: w, format: 'avif', options: avifQ });
     if (avifBytes >= webpBytes) {
       await unlink(join(imagesDir, avifName));
@@ -146,6 +161,10 @@ async function buildSingle(baseName, avifOptions) {
 
 async function run() {
   await buildStatue();
+  // The second artwork. Same widths, same quality ladder, same everything —
+  // the two are interchangeable by construction, which is what lets the hero
+  // swap between them per palette.
+  await buildStatue(loadLimestoneSource, 'hero-statue-limestone');
   await buildSingle('partner-male', { quality: 55, effort: 6 });
   await buildSingle('partner-female', { quality: 55, effort: 6 });
 

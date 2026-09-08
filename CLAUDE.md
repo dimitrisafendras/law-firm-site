@@ -37,6 +37,37 @@ gradients and an elevation set — swapped by `<html data-theme="...">`.
 - `ThemeProvider` (`src/lib/theme/`) mirrors the choice into React and
   localStorage; an inline script in `index.html` applies it before first paint.
 
+### The hero statue
+
+The hero is a photograph, and everything the scene paints over it — the falling
+text, the sparkles, the fire in the two scale pans — is keyed to the wireframe
+colour baked into that photograph, NOT to the palette
+(`src/components/DigitalStatue/sceneColors.ts` has the full argument). A canvas
+layer that follows the theme while the image under it cannot is not themed, it
+is mismatched: the fire once burned khaki two inches from a cyan statue on every
+palette that is not blue.
+
+So there are two artworks, and the palette picks between them
+(`statueArtwork.ts`), keyed by `Palette.family` rather than by id — the light and
+dark halves of a scheme are one design and always agree:
+
+- **cyan** (`hero-statue-*`) — Ultramarine, Amethyst, Graphite.
+- **limestone** (`hero-statue-limestone-*`) — Limestone, Terracotta, Patina,
+  Verdant, Olive. Its wireframe is warm gold.
+
+A new family falls back to cyan. Each artwork carries its own `SceneColors`, so
+the rain and the cool flame follow the statue automatically.
+
+Two things a third artwork has to honour. It must be **framed identically** —
+the flame and sparkle canvases are positioned against the scale pans and the
+body, so compare alpha bounding boxes before trusting a new render (the two
+shipped agree to four decimal places). And its `SceneColors` should take the new
+wireframe's hue but hold the existing set's LIGHTNESS profile: the lightness is
+what makes the rain read as glowing rather than as drawn, and getting it wrong
+burns out the light palettes or disappears on the dark ones. Add the master to
+`src/assets/images/` and a `buildStatue()` call in `scripts/optimize-images.mjs`;
+the widths and quality ladder are shared.
+
 **Writing palette-safe CSS:** `--accent`, `--accent-container` and `--secondary`
 are FILLS and may be pale. Text on the page ground takes `--accent-text`; text
 on an accent fill takes `--on-accent`. Assuming a dark ground (a white asset, a

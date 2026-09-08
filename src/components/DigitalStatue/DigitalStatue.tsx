@@ -1,15 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { breakpoints } from '@/theme';
-import { STATUE_COLORS, type SceneColors } from './sceneColors.ts';
-// Responsive statue variants — Vite hashes each import to its own URL, so the
-// srcSet strings below are built from these imported URLs (a single import can't
-// express a multi-file srcset).
-import statue700Avif from '@/assets/images/hero-statue-700.avif';
-import statue1050Avif from '@/assets/images/hero-statue-1050.avif';
-import statue1400Avif from '@/assets/images/hero-statue-1400.avif';
-import statue700Webp from '@/assets/images/hero-statue-700.webp';
-import statue1050Webp from '@/assets/images/hero-statue-1050.webp';
-import statue1400Webp from '@/assets/images/hero-statue-1400.webp';
+import { useTheme } from '@/lib/theme';
+import { type SceneColors } from './sceneColors.ts';
+// Which statue, and what the scene is painted in, both come from here — the
+// srcSets included, since a single import cannot express a multi-file srcset.
+import { artworkFor, PRERENDERED_ARTWORK } from './statueArtwork.ts';
 import RainWorkerUrl from './rainWorker.ts?worker&url';
 import SparkleWorkerUrl from './sparkleWorker.ts?worker&url';
 import FlameWorkerUrl from './flameWorker.ts?worker&url';
@@ -50,9 +45,11 @@ const ANIMATION_CONFIG = {
   },
 
   /* The two pans of the scales. The left burns as literal fire, the right in
-     the statue's own cyan — see sceneColors.ts for why neither follows the
-     palette: they hang inches from a photograph whose wireframe is baked cyan,
-     and a khaki flame beside it reads as a bug, not as a theme. */
+     the statue's own wireframe colour — see sceneColors.ts for why neither
+     follows the palette: they hang inches from a photograph whose wireframe is
+     baked into the file, and a khaki flame beside a cyan statue reads as a bug,
+     not as a theme. What DOES vary is which photograph is hanging there; see
+     statueArtwork.ts. */
   flameLeft: {
     wMul: 0.5,
     wMulMobile: 0.4,
@@ -63,6 +60,9 @@ const ANIMATION_CONFIG = {
     colors: { hot: '255,240,200', mid: '255,180,80', outer: '255,120,40' },
   },
 
+  /* No `colors` here, unlike flameLeft: the cool pan burns in the STATUE's
+     colour, and which statue that is now depends on the palette. Built from
+     `artwork.colors` in `start()` instead. */
   flameRight: {
     wMul: 0.5,
     wMulMobile: 0.4,
@@ -70,13 +70,15 @@ const ANIMATION_CONFIG = {
     hMulMobile: 1,
     max: 60,
     maxMobile: 25,
-    colors: {
-      hot: STATUE_COLORS.accentBright,
-      mid: STATUE_COLORS.secondary,
-      outer: STATUE_COLORS.secondary,
-    },
   },
 } as const;
+
+/** The cool pan's fire, in whichever artwork's wireframe is on screen. */
+const coolFlameColors = (c: SceneColors) => ({
+  hot: c.accentBright,
+  mid: c.secondary,
+  outer: c.secondary,
+});
 
 // ── Pre-render rain sprite sheet (main thread, once) ─────────────────────────
 const FONT_SIZE = ANIMATION_CONFIG.rain.fontSize;
@@ -163,8 +165,6 @@ function spawnWorker(
 }
 
 // ── Responsive statue sources ────────────────────────────────────────────────
-const STATUE_AVIF_SRCSET = `${statue700Avif} 700w, ${statue1050Avif} 1050w, ${statue1400Avif} 1400w`;
-const STATUE_WEBP_SRCSET = `${statue700Webp} 700w, ${statue1050Webp} 1050w, ${statue1400Webp} 1400w`;
 // Honest heuristic: the statue is sized by HEIGHT (CSS `height:100%; width:auto`
 // inside .hero-section__bg), so its rendered *width* isn't a clean function of
 // viewport width. In practice it lands near 45vw on desktop (~684px on a ~1520px
@@ -173,9 +173,50 @@ const STATUE_WEBP_SRCSET = `${statue700Webp} 700w, ${statue1050Webp} 1050w, ${st
 // ~2 DPR (desktop) / ~3 DPR (mobile).
 const STATUE_SIZES = '(max-width: 1024px) 90vw, 45vw';
 
+/** Nothing to subscribe to: "have we hydrated yet" changes exactly once, and
+ *  React drives that changeover itself. */
+const subscribeNever = () => () => {};
+
 interface DigitalStatueProps { className?: string }
 
 export function DigitalStatue({ className = '' }: DigitalStatueProps) {
+  /*
+   * The palette picks the artwork, and the artwork carries both its srcSets and
+   * the colours everything else in the scene is painted in. `artworkFor` returns
+   * one of two module constants, so this is referentially stable and the scene
+   * is rebuilt only when the reader actually crosses between a warm/green
+   * palette and a blue/pink/neutral one.
+   *
+   * ── Why the first render is not the reader's artwork ───────────────────────
+   *
+   * ThemeProvider's own note states the invariant this has to respect: nothing
+   * about the palette passes through the React tree, so the prerendered HTML is
+   * palette-agnostic and there is no themed markup to mismatch during
+   * hydration. A `srcSet` chosen from the palette breaks that, and React 19
+   * does not resolve the mismatch the hopeful way — measured on a real
+   * production build: with `data-theme="olivine"` and everything else correct,
+   * the page went on showing the CYAN statue, because hydration keeps the
+   * server's `src`/`srcSet` rather than re-setting it and forcing a second
+   * download. No warning, no error; it simply does not apply.
+   *
+   * So the hydrating render deliberately reproduces the server's markup and the
+   * real artwork lands on the re-render straight after. `useSyncExternalStore`
+   * is how that is said properly: its server snapshot is what hydration uses,
+   * its client snapshot is what every render after that uses, and React makes
+   * the changeover itself. The obvious `useState(false)` plus an effect says the
+   * same thing less well — it is a setState in an effect, which the lint rules
+   * reject, and it schedules the swap a beat later than this does.
+   *
+   * The cost is honest and small: a reader on one of the ten warm/green
+   * palettes has already had the prerendered AVIF (57KB at 700w) pulled by the
+   * preload scanner before the swap. Avoiding that would mean shipping no
+   * statue in the HTML at all, which costs every reader the head start on the
+   * page's LCP image to save ten of eighteen a single request.
+   */
+  const { palette } = useTheme();
+  const hydrated = useSyncExternalStore(subscribeNever, () => true, () => false);
+  const artwork = hydrated ? artworkFor(palette) : PRERENDERED_ARTWORK;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const rainRef = useRef<HTMLCanvasElement>(null);
   const spkBodyRef = useRef<HTMLCanvasElement>(null);
@@ -200,8 +241,8 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
     async function start() {
       // Pre-render sprites on the main thread, in the statue's own colours.
       const [rainSprite, starSprite] = await Promise.all([
-        createRainSprite(STATUE_COLORS),
-        createStarSprite(STATUE_COLORS),
+        createRainSprite(artwork.colors),
+        createStarSprite(artwork.colors),
       ]);
       if (cancelled) return;
 
@@ -224,7 +265,7 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
         sprite: rainSprite,
         fontSize: rain.fontSize,
         trail: mobile ? rain.trailMobile : rain.trail,
-        colors: { head: STATUE_COLORS.accent, trail: STATUE_COLORS.secondary },
+        colors: { head: artwork.colors.accent, trail: artwork.colors.secondary },
       });
 
       // Sparkle body worker
@@ -256,7 +297,7 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
         wMul: mobile ? flameRight.wMulMobile : flameRight.wMul,
         hMul: mobile ? flameRight.hMulMobile : flameRight.hMul,
         max: mobile ? flameRight.maxMobile : flameRight.max,
-        colors: flameRight.colors,
+        colors: coolFlameColors(artwork.colors),
       });
 
       // Visibility observer — pause/resume all workers
@@ -305,28 +346,39 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       intersectionObserver?.disconnect();
       for (const { worker } of entries) worker.terminate();
     };
-  }, []);
+    /*
+     * Re-runs when the artwork changes, which is the one thing that must tear
+     * the scene down and rebuild it: the sprites are pre-rendered in the
+     * artwork's colours and the flame workers are handed theirs at spawn. The
+     * canvases below carry `key={artwork.id}` so this gets fresh elements —
+     * see the note on the returned markup for why that is not optional.
+     */
+  }, [artwork]);
 
   return (
     /*
-     * Note for anyone adding a reason to restart the effect above:
-     * `transferControlToOffscreen()` may be called ONCE per canvas element, so
-     * a re-run against these same five DOM nodes throws, spawnWorker swallows
-     * it, and the scene goes permanently dead. Anything that restarts the scene
-     * has to hand it fresh canvases — a `key` on each of them. The effect runs
-     * once per mount today precisely so it does not need one.
+     * `transferControlToOffscreen()` may be called ONCE per canvas element, so a
+     * re-run of the effect against the same five DOM nodes throws, spawnWorker
+     * swallows it, and the scene goes permanently dead. That used to be a note
+     * warning the next person; it is now load-bearing, because the effect DOES
+     * re-run — on a palette change that crosses between the two artworks.
+     *
+     * `key={artwork.id}` is what makes that safe: React discards the old canvas
+     * and mounts a new one, so the re-run gets an untransferred element. The
+     * outgoing workers are terminated by the effect's own cleanup.
      */
     <div ref={containerRef} className={`digital-statue ${className}`.trim()}>
        {/*Back layer: rain + flames (behind statue)*/}
       <div className="digital-statue__rain-wrap">
-        <canvas ref={rainRef} className="digital-statue__rain" />
+        <canvas key={artwork.id} ref={rainRef} className="digital-statue__rain" />
       </div>
 
       <picture>
-        <source type="image/avif" srcSet={STATUE_AVIF_SRCSET} sizes={STATUE_SIZES} />
-        <source type="image/webp" srcSet={STATUE_WEBP_SRCSET} sizes={STATUE_SIZES} />
+        <source type="image/avif" srcSet={artwork.avifSrcSet} sizes={STATUE_SIZES} />
+        <source type="image/webp" srcSet={artwork.webpSrcSet} sizes={STATUE_SIZES} />
         <img
-          src={statue1400Webp}
+          key={artwork.id}
+          src={artwork.fallback}
           alt=""
           className="digital-statue__img"
           width={1400}
@@ -338,18 +390,18 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
 
       {/* Front layer: sparkles (on top of statue) */}
       <div className="digital-statue__sparkles-wrap digital-statue__sparkles-body">
-        <canvas ref={spkBodyRef} className="digital-statue__sparkle-canvas" />
+        <canvas key={artwork.id} ref={spkBodyRef} className="digital-statue__sparkle-canvas" />
       </div>
       <div className="digital-statue__sparkles-wrap digital-statue__sparkles-scale">
-        <canvas ref={spkScaleRef} className="digital-statue__sparkle-canvas" />
+        <canvas key={artwork.id} ref={spkScaleRef} className="digital-statue__sparkle-canvas" />
       </div>
 
       {/* Flames (behind statue, inside back layer z-index) */}
       <div className="digital-statue__flame digital-statue__flame--left">
-        <canvas ref={flameLRef} className="digital-statue__flame-canvas" />
+        <canvas key={artwork.id} ref={flameLRef} className="digital-statue__flame-canvas" />
       </div>
       <div className="digital-statue__flame digital-statue__flame--right">
-        <canvas ref={flameRRef} className="digital-statue__flame-canvas" />
+        <canvas key={artwork.id} ref={flameRRef} className="digital-statue__flame-canvas" />
       </div>
     </div>
   );

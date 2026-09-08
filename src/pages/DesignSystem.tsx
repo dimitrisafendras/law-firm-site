@@ -566,7 +566,11 @@ export default function DesignSystem() {
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
               gap: '32px',
-              alignItems: 'start',
+              // Cards in a set are one height — see the Card Sets note in
+              // CLAUDE.md. `start` here showed the three partners at three
+              // different heights, which is not how the site renders them.
+              gridAutoRows: '1fr',
+              alignItems: 'stretch',
             }}
           >
             {partners.map((partner) => (
@@ -587,7 +591,8 @@ export default function DesignSystem() {
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
               gap: '24px',
-              alignItems: 'start',
+              gridAutoRows: '1fr',
+              alignItems: 'stretch',
             }}
           >
             {showcasedPracticeAreas.map((area) => (

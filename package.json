@@ -15,6 +15,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint .",
     "audit:contrast": "node scripts/contrast-audit.mjs",
+    "audit:cards": "node scripts/card-height-audit.mjs",
     "preview": "vite preview",
     "optimize:images": "node scripts/optimize-images.mjs"
   },

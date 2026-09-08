@@ -77,21 +77,42 @@
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    grid-template-rows: none;
     gap: var(--space-8);
-    align-items: start;
+    /*
+     * Stacked, and still all one height. `align-items: start` here used to let
+     * each card size to its own biography, which is the reasonable-looking
+     * answer and the wrong one: three cards down a column with three different
+     * heights read as three different components, and the Greek copy — which
+     * wraps to more lines than the English — made the difference up to 152px at
+     * 375. `grid-auto-rows: 1fr` sizes every row to the tallest, so the set
+     * stays a set. The portrait absorbs the slack, the same way it does in the
+     * three-across row.
+     */
+    grid-template-rows: none;
+    grid-auto-rows: 1fr;
+    align-items: stretch;
   }
 }
 
-@media (min-width: 1280px) {
-  .partner-ethos__plinth > .fade-section {
-    display: grid;
-    min-height: 0;
-  }
+/*
+ * The fade wrapper is the grid item and the card sits inside it, so stretching
+ * the row is only half the job — `display: grid` on the wrapper is what passes
+ * the height down to the card. Without it the wrapper stretches and the card
+ * sizes to its own content.
+ *
+ * This was scoped to `min-width: 1280px`, which is why the row was exact at the
+ * widest sizes and drifted below them. Measured on production before the fix:
+ * 0px of spread from 1280 up, and 5-163px between 1024 and 1280 — the Greek
+ * biographies wrap to more lines, so they showed it worst, but English drifted
+ * by up to 56px at 1152 on its own.
+ */
+.partner-ethos__plinth > .fade-section {
+  display: grid;
+  min-height: 0;
+}
 
-  .partner-ethos__plinth > .fade-section > .partner-ethos__bust {
-    min-height: 0;
-  }
+.partner-ethos__plinth > .fade-section > .partner-ethos__bust {
+  min-height: 0;
 }
 
 /*

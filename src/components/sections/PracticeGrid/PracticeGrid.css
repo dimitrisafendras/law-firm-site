@@ -101,6 +101,17 @@
   flex: 1 1 auto;
   min-height: 0;
 
+  /*
+   * Every row the same height, at every width — see the note on
+   * `> .fade-section` below for why the two-column and single-column branches
+   * used to drift and the ten-across one never did.
+   *
+   * `1fr` on an auto-height grid does not mean "a share of nothing": it sizes
+   * every row to the tallest one, which is exactly the rule. Inert at 1280 and
+   * up, where `grid-template-rows` already names both rows explicitly.
+   */
+  grid-auto-rows: 1fr;
+
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
     display: grid;
@@ -178,19 +189,31 @@
   .practice-bento > :nth-child(10) { grid-column: 34 / 41; }
 }
 
-/* The fade wrapper is the grid item; let the card inside stretch to fill it
-   so both cards in a row stay equal height. `min-height: 0` for the same
-   reason as above — a grid item's automatic minimum is its content, and
-   without this the row refuses to shrink to its `1fr` share. */
+/*
+ * The fade wrapper is the grid item, and the card is inside it — so the row
+ * stretching the wrapper is only half the job. `display: grid` on the wrapper
+ * is what passes that height down; without it the wrapper stretches and the
+ * card sizes to its own content, which is uneven cards inside a perfectly even
+ * grid.
+ *
+ * This used to be scoped to `min-width: 1280px`, and that is why the bento was
+ * flawless at the ten-across size and drifted everywhere below it. Measured on
+ * production before the fix: 0px of spread from 1280 up in both locales, and
+ * 25-50px between 1024 and 1280 — worse in Greek, whose descriptions wrap to
+ * more lines, but present in English too. The equalisation was never
+ * language-specific; the gate was.
+ *
+ * `min-height: 0` on both, for the usual reason: a grid item's automatic
+ * minimum is its content, so without it a row refuses to shrink to its share
+ * and the cap above stops capping.
+ */
 .practice-bento > .fade-section {
   display: grid;
   min-height: 0;
 }
 
-@media (min-width: 1280px) {
-  .practice-bento > .fade-section > .practice-domain {
-    min-height: 0;
-  }
+.practice-bento > .fade-section > .practice-domain {
+  min-height: 0;
 }
 
 /* ─── Domain Card ──────────────────────────────────────────────────────────── */
@@ -260,6 +283,21 @@
    fading an ancestor, so nothing above this card is a backdrop root and the
    blur samples the page from the first frame. See src/styles/liquid-glass.css. */
 .practice-domain {
+  /*
+   * A column, so the cue can sit on the floor of the card rather than wherever
+   * the description happened to stop. Equal card heights alone do not make ten
+   * cards read as a set: with the cue following the copy, a three-line Greek
+   * description and a four-line one put their "explore" links 26px apart inside
+   * boxes that are exactly the same size, and the eye reads the difference as
+   * the boxes being wrong.
+   *
+   * `min-height: 0` for the flexible middle below, and the absolutely
+   * positioned background is untouched — an abspos child is not a flex item.
+   */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
   /* Tighter vertically than horizontally: the 5-column cards were noticeably
      taller than their text needed, which is what left the row looking airy in
      the middle and cramped at the edges. */
@@ -663,6 +701,14 @@
  * here for the eye — a card with no visible verb reads as a panel, not a door.
  */
 .practice-domain__cue {
+  /* On the floor of the card. `auto` rather than pinning it absolutely: the
+     description above still owns the space it needs, and the slack lands
+     between them instead of under the cue. */
+  margin-top: auto;
+  /* `inline-flex` would shrink-wrap and then be stretched to the column's full
+     width by the flex parent's default `align-items: stretch`, which puts the
+     arrow at the far edge of the card. `align-self` keeps the old width. */
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: var(--space-4);

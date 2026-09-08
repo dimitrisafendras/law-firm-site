@@ -57,7 +57,11 @@
    */
   --hero-x-hint: exit 0% exit 15%;
   --hero-x-copy: exit 5% exit 50%;
-  --hero-x-statue: exit 0% exit 62%;
+  /* Was `exit 0% exit 62%`. The figure outstayed its welcome: at 62% the
+     plinth was still on screen while the section below was arriving, and the
+     base is the last part of a bottom-anchored figure to leave — so it was the
+     thing the eye was left with, going down and coming back up. */
+  --hero-x-statue: exit 0% exit 34%;
   --hero-x-grid: exit 35% exit 100%;
 
   /* The per-character stagger has to come down with the beat: at the old
@@ -762,13 +766,22 @@
     filter: brightness(1) saturate(1);
   }
 
-  /* The flare is held back to the last third. Ramping brightness linearly
-     alongside the erasure washed the figure out while most of it was still
-     standing there; arriving late, it reads as the stone giving up its last
-     detail rather than as a light being turned on. */
-  65% {
+  /* The flare is still held back rather than ramped linearly from the start —
+     ramping washed the figure out while most of it was still standing there,
+     and arriving late it reads as the stone giving up its last detail rather
+     than as a light being turned on. It lands earlier than it used to (45%,
+     was 65%) so the whole departure is over sooner. */
+  45% {
     filter: brightness(1.5) saturate(0.6);
     opacity: 1;
+  }
+
+  /* Gone before the range ends, deliberately. Letting opacity reach zero only
+     at the final stop left the faintest ghost of the plinth being drawn for
+     the last stretch of the exit; the hold from here to `to` is what
+     guarantees there is nothing left to notice. */
+  80% {
+    opacity: 0;
   }
 
   to {

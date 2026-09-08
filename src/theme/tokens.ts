@@ -652,6 +652,25 @@ export const motion = {
   exit: {
     flare: 'brightness(2.6) saturate(0.25)',
     flareMid: 'brightness(1.5) saturate(0.6)',
+
+    /**
+     * How far into an element's exit the de-resolve finishes. A third of a
+     * screen, which is short: the alternative — fading across the whole exit —
+     * leaves the least interesting part of a composition as the last thing
+     * still being drawn, because whatever is anchored to the bottom of a screen
+     * is the last of it to leave.
+     *
+     * Known cost, accepted: at `exit 34%` an element still occupies the top
+     * two-thirds of the viewport, so those two-thirds are empty while the
+     * incoming screen is only a third of the way in. See the window note in
+     * App.css, which argues the other way — the short range is a deliberate
+     * override of it, so that every screen leaves the way the hero does.
+     */
+    range: 'exit 0% exit 34%',
+
+    /** Upward drift, as a percentage of the element's own height: it leaves a
+     *  little faster than the page carries it away. */
+    lift: '-6%',
   },
 
   /** Blur radii for blur-to-sharp materialisation. */

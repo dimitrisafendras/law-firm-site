@@ -357,7 +357,7 @@
      *
      * The saturation bump is safe here *because* of the matte modifier. It was
      * removed for one revision: ten `.glass` cards sampling one backdrop,
-     * inside a section running the `page-screen-dim` scroll animation, meant
+     * inside a section running the `deresolve` scroll animation, meant
      * changing any one card's `backdrop-filter` forced Blink to re-sample the
      * shared backdrop and tore the artwork in the others on compositor-tile
      * boundaries. Rest is matte now, so exactly one card lenses at a time and

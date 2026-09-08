@@ -60,8 +60,9 @@
   /* Was `exit 0% exit 62%`. The figure outstayed its welcome: at 62% the
      plinth was still on screen while the section below was arriving, and the
      base is the last part of a bottom-anchored figure to leave — so it was the
-     thing the eye was left with, going down and coming back up. */
-  --hero-x-statue: exit 0% exit 34%;
+     thing the eye was left with, going down and coming back up. Now the
+     page-wide exit window, shared with every screen below the hero. */
+  --hero-x-statue: var(--x-range);
   --hero-x-grid: exit 35% exit 100%;
 
   /* The per-character stagger has to come down with the beat: at the old
@@ -758,48 +759,11 @@
   }
 }
 
-@keyframes hero-statue-deresolve {
-  from {
-    /* Resting position: the mask's opaque band covers the element exactly, so
-       nothing is masked at scrollY 0. See the geometry note on the rule. */
-    mask-position: 0 0%;
-    filter: brightness(1) saturate(1);
-  }
-
-  /* The flare is still held back rather than ramped linearly from the start —
-     ramping washed the figure out while most of it was still standing there,
-     and arriving late it reads as the stone giving up its last detail rather
-     than as a light being turned on. It lands earlier than it used to (45%,
-     was 65%) so the whole departure is over sooner. */
-  45% {
-    filter: var(--x-flare-mid);
-    opacity: 1;
-  }
-
-  /* Gone before the range ends, deliberately. Letting opacity reach zero only
-     at the final stop left the faintest ghost of the plinth being drawn for
-     the last stretch of the exit; the hold from here to `to` is what
-     guarantees there is nothing left to notice. */
-  80% {
-    opacity: 0;
-  }
-
-  to {
-    /* The mask has travelled its full 1.5x-element-height offset, which puts
-       the transparent stop on the element's top edge: the sweep has passed the
-       crown and nothing is left behind it. */
-    mask-position: 0 100%;
-    /* The same state `statue-rise` in DigitalStatue.css materialises out of,
-       and the one every screen below the hero dims into. It used to be kept in
-       step by hand, on the grounds that the value belonged to this one drawing;
-       three rules share it now, so it is a token. */
-    filter: var(--x-flare);
-    opacity: 0;
-    /* A little faster than the page, so the last of it lifts away rather than
-       being carried off. Percentage of the element's own height. */
-    transform: translate3d(0, -6%, 0);
-  }
-}
+/*
+ * `hero-statue-deresolve` used to live here. It is now `deresolve` in App.css:
+ * every screen on the page leaves the same way, so the keyframes are app-level
+ * and neither side can drift. The statue's own timing sits on the rule below.
+ */
 
 @keyframes hero-grid-dim {
   /* `to` only, deliberately. The implicit 0% is the layer's own computed
@@ -878,7 +842,7 @@
       mask-image: linear-gradient(180deg, #000 40%, transparent 60%);
       mask-size: 100% 250%;
       mask-repeat: no-repeat;
-      animation: hero-statue-deresolve linear both;
+      animation: deresolve linear both;
       animation-timeline: --hero-exit;
       animation-range: var(--hero-x-statue);
     }

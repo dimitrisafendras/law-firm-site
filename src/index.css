@@ -354,6 +354,8 @@ code {
      flare caught partway, for holding it back to the end of the fade. */
   --x-flare: brightness(2.6) saturate(0.25);
   --x-flare-mid: brightness(1.5) saturate(0.6);
+  --x-range: exit 0% exit 34%;
+  --x-lift: -6%;
 
   /* Blur-to-sharp radii */
   --blur-spawn: 12px;

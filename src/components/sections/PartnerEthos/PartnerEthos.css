@@ -503,7 +503,7 @@
      * has no `backdrop-filter` at all: three of these sit in a row, and ten of
      * their counterparts in the practice grid tore each other's artwork when
      * they all sampled one backdrop through a section running the
-     * `page-screen-dim` scroll animation. Matte at rest means exactly one card
+     * `deresolve` scroll animation. Matte at rest means exactly one card
      * lenses at a time, which is what makes a saturation this heavy safe to
      * ask for.
      */

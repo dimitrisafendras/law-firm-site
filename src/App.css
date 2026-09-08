@@ -441,28 +441,52 @@
  * body as it scrolled would be a bug, not an effect.
  */
 
-@keyframes page-screen-dim {
+@keyframes deresolve {
   /*
-   * No `from`. The implicit 0% is the element's own computed opacity and
-   * filter, so a section that sets one of its own keeps it until the fade
-   * starts — which is also why the flare below is written as a whole `filter`
-   * and not as a bare `brightness()`: at 0% there is nothing to add to.
+   * The one exit on this site. The hero statue used to own it under the name
+   * `hero-statue-deresolve` and every screen below it did a plain opacity fade
+   * instead — two effects on one page. It is defined here, at app level rather
+   * than in a component, precisely so the two cannot drift apart again;
+   * HeroSection.css consumes it by name.
+   *
+   * `from` is explicit only for the mask. Opacity and filter are left out of it
+   * on purpose: their implicit 0% is the element's own computed value, so a
+   * screen that sets an opacity or a filter of its own keeps it until the exit
+   * starts. That is also why the flare is written as a whole `filter` and not
+   * as a bare `brightness()` — at the implicit 0% there is nothing to add to.
    */
+  from {
+    /* Resting position: the stencil's opaque band covers the element exactly,
+       so nothing is masked before the exit begins. Geometry is explained on
+       the rule that declares the mask. */
+    mask-position: 0 0%;
+  }
 
-  /* The flare, held back to the last third so it reads as the screen giving up
-     its detail rather than as a light being switched on. Same gesture as the
-     hero statue's exit — see `hero-statue-deresolve` — because a page whose
-     hero leaves one way and whose screens leave another has two effects in it,
-     not one. What the screens do NOT copy from the statue is its short range
-     or its upward lift; the window note above says why neither survives on a
-     full-height section. */
-  66% {
+  /* The flare is held back rather than ramped from the start — ramping washes
+     an element out while it is still mostly there, whereas landing it late
+     reads as detail being given up rather than as a light switched on. */
+  45% {
     filter: var(--x-flare-mid);
+    opacity: 1;
+  }
+
+  /* Gone before the range ends, and the hold from here to `to` is the point:
+     letting opacity reach zero only at the final stop leaves the faintest
+     ghost of the element's base still being drawn for the last stretch. */
+  80% {
+    opacity: 0;
   }
 
   to {
+    /* The stencil has travelled its full 1.5x-element-height offset, which puts
+       the transparent stop on the element's top edge: the sweep has passed the
+       top and nothing is left behind it. */
+    mask-position: 0 100%;
+    /* The state `statue-rise` in DigitalStatue.css materialises *out of*, so
+       arriving and leaving are one gesture run in opposite directions. */
     filter: var(--x-flare);
     opacity: 0;
+    transform: translate3d(0, var(--x-lift), 0);
   }
 }
 
@@ -474,9 +498,45 @@
   @supports (animation-timeline: view()) {
     .page-ramp--screens > header,
     .page-ramp--screens > section:not(:last-of-type) {
-      animation: page-screen-dim linear both;
+      /*
+       * The erasure is a stencil that SLIDES, not a gradient whose stops move.
+       * Animating the stops silently does not work: Chrome interpolates
+       * `mask-image` between two gradients discretely, so the mask sits at its
+       * start value for half the range and then snaps. `mask-position` is a
+       * <position>, so it interpolates.
+       *
+       * Geometry: the stencil is 2.5 element-heights tall and opaque for its
+       * first 40% — exactly one element height — then fades to nothing by 60%,
+       * a soft edge half an element tall. At `0 0%` the opaque band covers the
+       * element and the mask is a no-op; at `0 100%` it has slid up by 1.5
+       * element-heights, landing the transparent stop on the top edge, so the
+       * screen dissolves from its base upward. `no-repeat` is load-bearing —
+       * the default tiles the opaque band straight back over the element.
+       *
+       * Declared inside this block, not in the base rule, so a reduced-motion
+       * reader and a browser without view() timelines carry no mask at all.
+       *
+       * The mask makes each screen a backdrop root, which would matter for the
+       * glass inside them except that three of the four already are one:
+       * `content-visibility: auto` forms a backdrop root too, and #team,
+       * #practice and #testimonials all carry it. Nothing changes for them.
+       */
+      mask-image: linear-gradient(180deg, #000 40%, transparent 60%);
+      mask-size: 100% 250%;
+      mask-repeat: no-repeat;
+      animation: deresolve linear both;
       animation-timeline: view();
-      animation-range: exit 15% exit 100%;
+      /*
+       * `--x-range` is `exit 0% exit 34%` — the hero's, adopted here on an
+       * explicit call to make every screen leave the way the hero does. It
+       * overrides the window argued for in the note above (15% to 100%), and
+       * that note's objection still stands and is now a known cost: at exit 34%
+       * a screen still occupies the top two-thirds of the viewport, so those
+       * two-thirds go empty while the incoming screen is a third of the way in.
+       * The bottom-up sweep softens it — the visible remainder is the last part
+       * erased — but it does not remove it.
+       */
+      animation-range: var(--x-range);
     }
   }
 }

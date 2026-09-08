@@ -12,10 +12,11 @@
     "postbuild": "node scripts/prerender.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint .",
+    "audit:contrast": "node scripts/contrast-audit.mjs",
     "preview": "vite preview",
-    "optimize:images": "node scripts/optimize-images.mjs",
-    "test:coverage": "vitest run --coverage"
+    "optimize:images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@emnapi/core": "^1.9.2",
@@ -43,6 +44,7 @@
     "globals": "^17.4.0",
     "jsdom": "^29.1.1",
     "lightningcss": "^1.32.0",
+    "playwright": "^1.63.0",
     "sharp": "^0.34.5",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",

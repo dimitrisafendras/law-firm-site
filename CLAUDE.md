@@ -52,19 +52,27 @@ card is lit by the page ramp's accent blooms and comes out lighter than `--bg`
 on the dark palettes; the navbar and the contact fields pull a photograph up
 through a `backdrop-filter`. Every one of those has produced a token that
 measured comfortably against `--bg` and failed where it was actually used.
-`scripts/` has no harness for this — screenshot the rendered element and sample
-the pixels behind the glyphs.
+`npm run audit:contrast` does this — it drives a real browser over every
+palette, screenshots what renders, and samples the pixels behind each glyph.
+It needs a dev server running, takes `--mobile`, `--palettes=`, `--routes=`,
+and exits non-zero on a failure. Run it after touching a colour token.
 
-Two traps in doing that, both of which produced confident wrong answers here.
-An element inside the viewport can still be painted over: the header is fixed,
-so anything scrolled under it samples the header's glass instead of its own
-ground and reports as a failure — hit-test before measuring, and treat a
-transparent overlay (the partner card's whole-card click target is an `::after`
-on the name link) as not occluding. And `page.goto()` to a URL that differs
-only by `#hash` is a same-document navigation: it does not reload,
-`ThemeProvider` never re-mounts, and every hash route renders the PREVIOUS
-palette while carrying the current one's name. Force a reload and assert
-`document.documentElement.dataset.theme` is what you asked for.
+Three traps in measuring this way, all of which produced confident wrong
+answers before the script handled them (it does; this is here so nobody
+re-derives them by hand).
+
+1. An element inside the viewport can still be painted over. The header is
+   fixed, so anything scrolled under it samples the header's glass instead of
+   its own ground and reports as a failure. Hit-test first — and treat a
+   transparent overlay as not occluding, or the partner card's whole-card
+   click target hides a real failure underneath it.
+2. `page.goto()` to a URL differing only by `#hash` is a same-document
+   navigation: it does not reload, `ThemeProvider` never re-mounts, and every
+   hash route renders the PREVIOUS palette under the current one's name. Force
+   a reload and assert `document.documentElement.dataset.theme`.
+3. Sections fade in on scroll. An element caught mid-animation is not a
+   contrast failure — WCAG judges the resting state — so skip anything whose
+   effective opacity is not 1 rather than measuring it faded.
 
 Two grounds worth naming, because they have caught colours twice: text drawn on
 a scrim over a photograph must follow the SCRIM, which is palette-independent

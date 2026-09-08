@@ -7,16 +7,16 @@ import { useTheme } from '@/lib/theme';
 import './ThemePicker.css';
 
 /**
- * The sixteen palettes as eight scheme rows, each with a light and a dark chip.
+ * The eighteen palettes as nine scheme rows, each with a light and a dark chip.
  *
  * ── Why a row per scheme rather than a swatch per palette ────────────────────
  *
- * Every palette has an opposite-scheme twin, and laying the sixteen out as one
- * flat list hides that: it reads as sixteen unrelated choices, and the fact
+ * Every palette has an opposite-scheme twin, and laying the eighteen out as one
+ * flat list hides that: it reads as eighteen unrelated choices, and the fact
  * that Sanctuary IS Obsidian in daylight has to be inferred from where the two
  * happen to sit. A row names the scheme once and puts its two versions side by
  * side, so choosing is two small decisions — which scheme, then how light —
- * rather than one decision among sixteen.
+ * rather than one decision among eighteen.
  *
  * ── Why a radiogroup and not a listbox ───────────────────────────────────────
  *
@@ -29,7 +29,7 @@ import './ThemePicker.css';
  *
  * The row's visible text is the scheme's family name ("Azure"), and each chip
  * is named by its palette's proper noun ("Sanctuary", "Obsidian") — unique
- * across all sixteen, so "Obsidian, radio, 2 of 16" is unambiguous without the
+ * across all eighteen, so "Obsidian, radio, 2 of 18" is unambiguous without the
  * row heading having to be read too. The colour bands are decorative.
  */
 export function PaletteSwatches({ className = '' }: { className?: string }) {
@@ -43,7 +43,7 @@ export function PaletteSwatches({ className = '' }: { className?: string }) {
    * focus without selecting would leave the group's checked state and the
    * user's focus disagreeing, and there is no commit step to reconcile them.
    *
-   * The grid is eight rows of two and `paletteRadioOrder` is in that same
+   * The grid is nine rows of two and `paletteRadioOrder` is in that same
    * reading order, so left/right are ±1 (flip this scheme between its light and
    * dark) and up/down are ±2 (same side, previous or next scheme). Home/End
    * jump to the ends. Everything wraps, so the group is always traversable.

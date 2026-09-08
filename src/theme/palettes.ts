@@ -1,11 +1,11 @@
 /**
- * The site's sixteen colour combinations — eight schemes, each light and dark.
+ * The site's eighteen colour combinations — nine schemes, each light and dark.
  *
  * ── Why this file exists ──────────────────────────────────────────────────────
  *
  * `tokens.ts` holds 29 colour keys, 14 glass keys and 2 gradient keys. Typing
- * all 45 out sixteen times would be 720 hand-authored values, and the moment one
- * palette gained a key the other fifteen would silently keep rendering the last
+ * all 45 out eighteen times would be 810 hand-authored values, and the moment one
+ * palette gained a key the other seventeen would silently keep rendering the last
  * palette's value for it — which is precisely the duplication the project's
  * token rule exists to stop.
  *
@@ -311,6 +311,48 @@ const SEEDS: Record<string, PaletteSeed> = {
     tintRgb: '255, 255, 255',
   },
   /*
+   * The olive pair — the gem and the rock of the same mineral, which is also
+   * the light and the dark of the same colour.
+   *
+   * Distinct from Verdant, which sits next to it in the picker precisely so the
+   * two can be told apart: Serpentine and Celadon are a fresh, slightly cool
+   * green, where these are drab and yellow — khaki over an olive-black ground,
+   * with a tan rather than a brass spark. Put them side by side and the
+   * difference is hue, not lightness.
+   */
+  olivine: {
+    label: 'Olivine',
+    scheme: 'dark',
+    ink: '#EDEBDC',
+    ground: '#16170D',
+    rampTop: '#2C2E16',
+    rampBottom: '#12130B',
+    accent: '#D2CE84',
+    accentText: '#D2CE84',
+    accentContainer: '#A8A45C',
+    secondary: '#A8A45C',
+    tertiary: '#C9A87A',
+    error: '#FC8181',
+    onAccent: '#16170D',
+    tintRgb: '104, 106, 66',
+  },
+  peridot: {
+    label: 'Peridot',
+    scheme: 'light',
+    ink: '#26281A',
+    ground: '#F3F3E7',
+    rampTop: '#FBFBF3',
+    rampBottom: '#E8E8D6',
+    accent: '#C7C888',
+    accentText: '#5A5C1E',
+    accentContainer: '#E2E2BC',
+    secondary: '#3E4020',
+    tertiary: '#9C6B3E',
+    error: '#B02A2A',
+    onAccent: '#26281A',
+    tintRgb: '255, 255, 255',
+  },
+  /*
    * Ink's light twin, and the only achromatic light palette — every other one
    * carries a tint. The accent family is grey, so the page's only colour is
    * whatever a photograph brings, and the gold sits in `tertiary` for the one
@@ -501,7 +543,7 @@ export interface Palette {
   /**
    * What the pair is called as one thing.
    *
-   * The sixteen palettes have proper nouns; the eight SCHEMES did not, and the
+   * The eighteen palettes have proper nouns; the nine SCHEMES did not, and the
    * picker needs one — it shows a row per scheme with a light and a dark chip
    * on it, so "Sanctuary" and "Obsidian" have to sit under a shared heading.
    * Deliberately not either member's name (that would imply one is the real one
@@ -537,21 +579,22 @@ function makePalette(id: string, pair: string, family: string, seed: PaletteSeed
 }
 
 /**
- * The eight schemes, each as a light/dark pair.
+ * The nine schemes, each as a light/dark pair.
  *
  * A "scheme" here is a colour idea — the brand blue, the monochrome, the green
  * — and each one exists twice, lit from opposite ends. Listing them as pairs
- * rather than as sixteen independent palettes is what keeps that true: the
+ * rather than as eighteen independent palettes is what keeps that true: the
  * check below fails the build if a pair is one-sided, so a palette added
  * without a partner cannot ship.
  *
- * The order is also the layout. PaletteSwatches runs the grid column-major with
- * eight rows, so the light column and the dark column land side by side and
- * row `i` is one pair — Sanctuary opposite Obsidian, Chalk opposite Ink.
+ * The order is also the layout: PaletteSwatches renders a row per pair, so
+ * `LIGHT[i]` and `DARK[i]` are the two chips on row `i`. Verdant and Olive are
+ * adjacent on purpose — they are the two greens, and neighbouring rows are the
+ * only place a reader can actually compare them.
  *
- * Porphyry and Slate are the loosest pair of the eight: both are cool violets,
+ * Porphyry and Slate are the loosest pair of the nine: both are cool violets,
  * but Porphyry leans aubergine-rose and Slate periwinkle-indigo, where the
- * other seven pairs share a hue outright. Nudging Slate's accent violet-ward
+ * other eight pairs share a hue outright. Nudging Slate's accent violet-ward
  * would tighten it at the cost of the set's only neutral cool grey, so it is
  * left as drawn.
  */
@@ -589,6 +632,7 @@ const LIGHT: Palette[] = [
   makePalette('papyrus', 'umber', 'Terracotta', SEEDS.papyrus),
   makePalette('harbour', 'verdigris', 'Patina', SEEDS.harbour),
   makePalette('celadon', 'serpentine', 'Verdant', SEEDS.celadon),
+  makePalette('peridot', 'olivine', 'Olive', SEEDS.peridot),
   makePalette('slate', 'porphyry', 'Amethyst', SEEDS.slate),
   makePalette('chalk', 'ink', 'Graphite', SEEDS.chalk),
 ];
@@ -601,6 +645,7 @@ const DARK: Palette[] = [
   makePalette('umber', 'papyrus', 'Terracotta', SEEDS.umber),
   makePalette('verdigris', 'harbour', 'Patina', SEEDS.verdigris),
   makePalette('serpentine', 'celadon', 'Verdant', SEEDS.serpentine),
+  makePalette('olivine', 'peridot', 'Olive', SEEDS.olivine),
   makePalette('porphyry', 'slate', 'Amethyst', SEEDS.porphyry),
   makePalette('ink', 'chalk', 'Graphite', SEEDS.ink),
 ];

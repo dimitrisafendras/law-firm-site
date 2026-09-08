@@ -12,10 +12,10 @@ import { colorVarNames, glassVarNames, gradientVarNames } from './tokens';
  * to break — it is easy to add a seed to one column and forget the other.
  */
 describe('palettes', () => {
-  it('ships eight schemes, each as a light and a dark', () => {
-    expect(palettes).toHaveLength(16);
-    expect(palettes.filter((p) => p.scheme === 'light')).toHaveLength(8);
-    expect(palettes.filter((p) => p.scheme === 'dark')).toHaveLength(8);
+  it('ships nine schemes, each as a light and a dark', () => {
+    expect(palettes).toHaveLength(18);
+    expect(palettes.filter((p) => p.scheme === 'light')).toHaveLength(9);
+    expect(palettes.filter((p) => p.scheme === 'dark')).toHaveLength(9);
   });
 
   it('pairs every palette with exactly one opposite-scheme twin', () => {
@@ -29,8 +29,8 @@ describe('palettes', () => {
     }
   });
 
-  it('exposes eight pairs, each a light and a dark of one family', () => {
-    expect(palettePairs).toHaveLength(8);
+  it('exposes nine pairs, each a light and a dark of one family', () => {
+    expect(palettePairs).toHaveLength(9);
     for (const pair of palettePairs) {
       expect(pair.light.scheme).toBe('light');
       expect(pair.dark.scheme).toBe('dark');
@@ -38,13 +38,13 @@ describe('palettes', () => {
       expect(pair.light.family).toBe(pair.family);
       expect(pair.dark.family).toBe(pair.family);
     }
-    expect(new Set(palettePairs.map((p) => p.family)).size).toBe(8);
+    expect(new Set(palettePairs.map((p) => p.family)).size).toBe(9);
   });
 
   it('orders the radios the way the picker reads: light then dark, row by row', () => {
     // The arrow-key maths depends on this exactly: ±1 flips a scheme between
     // light and dark, ±2 moves to the next scheme on the same side.
-    expect(paletteRadioOrder).toHaveLength(16);
+    expect(paletteRadioOrder).toHaveLength(18);
     paletteRadioOrder.forEach((palette, i) => {
       expect(palette.scheme).toBe(i % 2 === 0 ? 'light' : 'dark');
     });

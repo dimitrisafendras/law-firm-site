@@ -539,6 +539,14 @@
   transition: opacity 0.3s, gap 0.3s;
 }
 
+/* The down-arrow the markup used to carry as an `aria-hidden` span. Generated
+   content is not content, so it stays decorative, and moving it here is what
+   frees the anchor to be the editable element itself. */
+.hero-section__secondary::after {
+  content: ' ↓';
+  display: inline-block;
+}
+
 .hero-section__secondary:hover {
   opacity: 1;
   gap: var(--space-3);

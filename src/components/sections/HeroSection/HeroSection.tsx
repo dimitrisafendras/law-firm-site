@@ -1,6 +1,6 @@
 import { useTranslation } from '@/i18n';
 import { EditableSpawnText } from '@/components/animations/EditableSpawnText';
-import { EditableText, Button } from '@/components';
+import { EditableText } from '@/components';
 import { DigitalStatue } from '@/components/DigitalStatue/DigitalStatue';
 import './HeroSection.css';
 
@@ -92,16 +92,33 @@ export function HeroSection() {
           only conversion element above the fold is no longer the nav pill.
         */}
         <div className="hero-section__actions">
-          <Button
-            onClick={() =>
-              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
-            }
-          >
-            {t('navCta')}
-          </Button>
-          <a className="hero-section__secondary" href="#team">
-            {t('heroSecondaryCta')} <span aria-hidden="true">&darr;</span>
-          </a>
+          {/*
+            * An anchor wearing the button's classes rather than a `<Button>`
+            * with an onClick, and that is what makes the label editable: an
+            * EditableText can BE an anchor (`as="a"`), but it cannot be the
+            * inside of a `<button>` — a textarea may not nest there, and
+            * `elementProps` takes strings, so the handler could not survive
+            * the move either.
+            *
+            * Nothing is lost by dropping the handler. The root sets
+            * `scroll-behavior: smooth`, so `#contact` scrolls exactly as
+            * `scrollIntoView({ behavior: 'smooth' })` did, and every other
+            * navigation on this page is already a plain hash anchor.
+            */}
+          <EditableText
+            tKey="navCta"
+            as="a"
+            className="btn btn--primary btn--md"
+            elementProps={{ href: '#contact' }}
+          />
+          {/* The arrow is a `::after` now, for the reason the detail pages'
+              back links give: `as="a"` renders no children. */}
+          <EditableText
+            tKey="heroSecondaryCta"
+            as="a"
+            className="hero-section__secondary"
+            elementProps={{ href: '#team' }}
+          />
         </div>
       </div>
 

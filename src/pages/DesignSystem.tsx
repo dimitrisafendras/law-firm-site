@@ -6,7 +6,8 @@ import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '../components/CircuitField';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import { PaletteSwatches, ThemePicker } from '../components/ThemePicker';
-import { palettes } from '../theme';
+import { ModeOptions, ModePicker, StatueOptions, StatuePicker } from '../components/LookPicker';
+import { palettes, modes, statues } from '../theme';
 import { useTheme } from '@/lib/theme';
 import { SpawnText } from '../components/animations/SpawnText';
 import { EditableSpawnText } from '../components/animations/EditableSpawnText';
@@ -294,6 +295,35 @@ export default function DesignSystem() {
             custom properties. Current: <strong>{activePalette.label}</strong>.
           </p>
           <PaletteSwatches />
+        </div>
+
+        <div style={showcaseBox}>
+          <span style={showcaseLabel}>Look Picker — mode trigger &amp; popover</span>
+          <p style={{ marginBottom: '16px', color: 'var(--text)', opacity: 'var(--text-emphasis-secondary)' }}>
+            Digital or classic. Same two housings as the theme picker: this
+            standalone trigger for signed-out visitors, the radiogroup below
+            embedded in the account menu for signed-in ones.
+          </p>
+          <ModePicker />
+        </div>
+
+        <div style={showcaseBox}>
+          <span style={showcaseLabel}>Mode Options — {modes.length} looks</span>
+          <ModeOptions />
+        </div>
+
+        <div style={showcaseBox}>
+          <span style={showcaseLabel}>Statue Picker — trigger &amp; popover</span>
+          <p style={{ marginBottom: '16px', color: 'var(--text)', opacity: 'var(--text-emphasis-secondary)' }}>
+            Pin a specific hero artwork, or leave it on &quot;Follow the
+            theme&quot; and let the palette family and the look decide.
+          </p>
+          <StatuePicker />
+        </div>
+
+        <div style={showcaseBox}>
+          <span style={showcaseLabel}>Statue Options — {statues.length + 1} choices</span>
+          <StatueOptions />
         </div>
 
         <div style={showcaseBox}>

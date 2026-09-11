@@ -702,6 +702,95 @@ export const motion = {
   },
 } as const;
 
+// ─── The classic look ────────────────────────────────────────────────────────
+
+/**
+ * What changes when the page stops being digital.
+ *
+ * The classic look (`<html data-mode="classic">`, see src/theme/modes.ts) is
+ * the same page in a different register: the marble figure made whole, a
+ * Garamond in place of the geometric sans, cut corners in place of poured ones,
+ * entrances that rise through light instead of resolving out of blur, and a
+ * meander frieze where the circuit field was. The palette is untouched — every
+ * one of the eighteen wears both looks — and so is the glass material.
+ *
+ * These are the token OVERRIDES the look applies, emitted by the generator as
+ * one `:root[data-mode='classic']` block. They are grouped by the token map
+ * they override, so a value here is always a value that exists in the scale
+ * above; the look never invents a new token, it re-points an existing one.
+ *
+ * Typographic notes. Garamond has no 300, so the inscription sizes come up to
+ * 400 and their tracking relaxes — a Garamond at -0.03em sets like a headline
+ * squeezed for a newspaper. Its x-height is small, so the three reading steps
+ * gain a sixteenth of a rem each; the heading steps do not, because their
+ * size relationship is what the scale is. Uppercase labels track wider still:
+ * an inscription is read letter by letter.
+ */
+export const classic = {
+  fonts: {
+    sans: fonts.serif,
+    heading: fonts.serif,
+    label: fonts.serif,
+  },
+  /**
+   * Cut, not poured. `full` stays: a pill is a pill in either look, and the
+   * header's round controls have nothing to gain from becoming octagons.
+   */
+  radii: {
+    sm: '2px',
+    md: '3px',
+    lg: '4px',
+    xl: '5px',
+    '2xl': '6px',
+    '3xl': '8px',
+  },
+  /** Partial steps: only the properties that move. */
+  type: {
+    displayXl: { weight: 400, tracking: '-0.012em' },
+    display: { weight: 400, tracking: '-0.012em' },
+    h1: { weight: 500, tracking: '-0.008em' },
+    h2: { weight: 500, tracking: '-0.004em' },
+    h4: { weight: 500, tracking: '0' },
+    h3: { weight: 600, tracking: '0' },
+    bodyLg: { size: '1.1875rem' },
+    body: { size: '1.0625rem' },
+    small: { size: '0.9375rem' },
+    caption: { size: '0.8125rem' },
+  },
+  capsTracking: {
+    tight: '0.1em',
+    wide: '0.26em',
+  },
+  /**
+   * Motion. The digital look's blur-to-sharp is a render resolving; here
+   * nothing is rendered, so the blur radii go to zero and the entrance is a
+   * plain rise. The exit "flare" — blown out and drained — becomes a warming:
+   * stone catching late sun rather than a render giving up.
+   */
+  motion: {
+    blurSpawn: '0px',
+    blurSpawnSoft: '0px',
+    blurSpawnTight: '0px',
+    flare: 'brightness(1.14) sepia(0.4) saturate(0.85)',
+    flareMid: 'brightness(1.06) sepia(0.2) saturate(0.95)',
+    /** Slower and rounder than expo-out: a settle, not a snap. */
+    easeSpawn: 'cubic-bezier(0.3, 0.05, 0.2, 1)',
+    /** The classic sequence breathes: one and a half times the digital beat. */
+    seqBeat: '0.6s',
+  },
+  /**
+   * The portraits go toward marble rather than toward the navy: most of the
+   * colour out, a little warmth back in, so the photographs sit with the
+   * statue instead of with the screen.
+   */
+  decor: {
+    portraitTone: 'grayscale(0.6) sepia(0.28) contrast(1.05)',
+    portraitToneHover: 'grayscale(0.3) sepia(0.18) contrast(1.03) brightness(1.04)',
+    /** The domain line-art is Greek already; it can afford to read a little more. */
+    domainArt: '0.65',
+  },
+} as const;
+
 // ─── Decoration ───────────────────────────────────────────────────────────────
 
 /**

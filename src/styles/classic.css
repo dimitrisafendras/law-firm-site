@@ -1,0 +1,526 @@
+/* ============================================================================
+   The classic look.
+
+   `src/theme/modes.ts` states the design intent; `src/theme/tokens.ts` carries
+   everything a TOKEN can carry (the families, the cut corners, the relaxed
+   tracking, the sepia flare, the marble portrait tone), emitted into
+   `:root[data-mode='classic']` by scripts/generate-theme-css.mjs. This sheet is
+   for what a token cannot say: which layers paint, what shape an ornament is,
+   and how a thing arrives.
+
+   ── Three rules this file keeps ───────────────────────────────────────────────
+
+   1. Everything is scoped to `[data-mode='classic']`. The digital look is bare
+      `:root` and is never touched, so it stays pixel-identical with this sheet
+      loaded — both looks are always in the DOM and CSS decides which one paints
+      (the prerendered markup has to be mode-agnostic; see modes.ts).
+
+   2. No raw design values that a token already holds. `--radius-sm` is already
+      2px here, `--type-caps-tracking-tight` already 0.1em, `--seq-beat` already
+      0.6s — a literal written beside any of them would drift the first time the
+      token moved. Where a value is genuinely local (an ornament's geometry, a
+      decorative alpha) it is written out, the same way every other stylesheet on
+      the site does.
+
+   3. Specificity, not source order. main.tsx imports this sheet before App and
+      therefore before every component stylesheet, so an override here that ties
+      on specificity LOSES. `[data-mode='classic']` buys one class's worth of
+      weight, which clears a plain component rule; the two places where the rule
+      being overridden is already two or three classes deep are called out where
+      they occur.
+
+   ── Contrast ─────────────────────────────────────────────────────────────────
+
+   Nine of the eighteen palettes are light. Nothing here assumes a dark ground:
+   text takes `--accent-text` (never `--accent`, which is a fill and is pale on
+   the light nine), ornament takes the same, and the one place a fixed colour is
+   used is the hero haze, which is decoration painted behind a photograph.
+   ============================================================================ */
+
+
+/* ─── The two decorative layers ──────────────────────────────────────────────
+ *
+ * CircuitField and ClassicField are both rendered on every page load, and both
+ * are inert until the mode picks one. That is the cheapest correct arrangement:
+ * a `display: none` subtree is skipped at layout and paint, and choosing in
+ * React would put the mode into prerendered markup, which React 19 then resolves
+ * in the server's favour without a word (the long version is in
+ * statueArtwork.ts).
+ *
+ * The default (`display: none` on the classic layers) is deliberately NOT in
+ * ClassicField.css or HeroSection.css: both sides of the switch live here, in
+ * one place, so neither can be changed without the other being read.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+.classic-field,
+.hero-section__classic {
+  display: none;
+}
+
+[data-mode='classic'] .classic-field {
+  display: block;
+}
+
+[data-mode='classic'] .circuit-field {
+  display: none;
+}
+
+
+/* ─── What the digital look draws, and the classic one does not ───────────────
+ *
+ * Not "toned down" — gone. The classic look is the same page with the collision
+ * resolved in favour of the stone, and a faint circuit trace behind a marble
+ * frieze reads as a leftover rather than as restraint.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+[data-mode='classic'] .hero-section__lines,
+[data-mode='classic'] .digital-statue__rain-wrap,
+[data-mode='classic'] .digital-statue__sparkles-wrap,
+[data-mode='classic'] .hero-section__badge-dot {
+  display: none;
+}
+
+/*
+ * The second title line stops blooming.
+ *
+ * `spawn-unit-bloom` is `spawn-unit` plus a `brightness(2.2)` that settles to 1
+ * — an accent glow burning off as the character sharpens, which is the digital
+ * look's whole gesture in miniature. In a Garamond it reads as a rendering
+ * artefact. The plain `spawn-unit` keeps the rise and the fade; the blur is
+ * already 0 here, because `--blur-spawn*` are tokens and the classic set zeroes
+ * them.
+ *
+ * Two selectors because the scroll-linked variant re-declares the name at
+ * (0,3,0) from a stylesheet that loads AFTER this one — a single
+ * `[data-mode='classic'] .spawn-text--gradient .spawn-text__unit` ties it and
+ * loses on order. The second selector is (0,4,0) and does not.
+ */
+[data-mode='classic'] .spawn-text--gradient .spawn-text__unit,
+[data-mode='classic'] .spawn-text--scroll.spawn-text--gradient .spawn-text__unit {
+  animation-name: spawn-unit;
+}
+
+
+/* ─── Hero: the shaft of light ────────────────────────────────────────────────
+ *
+ * The layer that replaces the circuit grid. A warm haze behind the figure's
+ * raised arm and the scales, and dust turning slowly in it. Both are decoration
+ * over a photograph, so they sit at the grid's z-index — under the statue, over
+ * the ground.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+[data-mode='classic'] .hero-section__classic {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* The brass in the scale pans, which is the only warm note the classic render
+     carries. `--tertiary` is a fill and never text, which is what this is. */
+  color: var(--tertiary);
+}
+
+.hero-section__classic-haze,
+.hero-section__classic-motes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/*
+ * Placed against the drawing, not against the hero: the figure is anchored at
+ * `right: 8%` and 95% of the hero's height, so its raised arm and the scale
+ * beam sit a little right of three quarters across and about a quarter down.
+ * The haze is centred there and dies well before it reaches the copy column.
+ */
+[data-mode='classic'] .hero-section__classic-haze {
+  background: radial-gradient(
+    ellipse 42% 38% at 76% 26%,
+    color-mix(in oklab, var(--tertiary) 20%, transparent) 0%,
+    color-mix(in oklab, var(--tertiary) 7%, transparent) 45%,
+    transparent 72%
+  );
+}
+
+/*
+ * The resting state is the visible one, as everywhere else on this site: a
+ * reader who asked for reduced motion sees the dust hanging still rather than
+ * an empty hero, and the global kill-switch in index.css collapses the drift
+ * below without taking the motes with it.
+ */
+[data-mode='classic'] .hero-section__classic-motes circle {
+  opacity: 0.26;
+}
+
+@keyframes classic-mote-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 0.55;
+  }
+  to {
+    /* Up and a little sideways — dust in a draught, not bubbles. */
+    transform: translate3d(var(--mote-drift), calc(var(--mote-rise) * -1), 0);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-mode='classic'] .hero-section__classic-motes circle {
+    animation: classic-mote-drift var(--mote-dur) linear var(--mote-lag) infinite;
+  }
+}
+
+/*
+ * Fourteen loops between 18s and 40s, none of them a multiple of another, and
+ * every delay negative so the layer is already in motion at first paint instead
+ * of all fourteen motes fading up together. The rise distances differ as well:
+ * equal travel at unequal speeds still reads as a mechanism.
+ */
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(1)  { --mote-dur: 26s; --mote-lag: -3s;  --mote-rise: 118px; --mote-drift: 5px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(2)  { --mote-dur: 34s; --mote-lag: -17s; --mote-rise: 152px; --mote-drift: -7px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(3)  { --mote-dur: 21s; --mote-lag: -9s;  --mote-rise: 96px;  --mote-drift: 3px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(4)  { --mote-dur: 39s; --mote-lag: -25s; --mote-rise: 174px; --mote-drift: 9px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(5)  { --mote-dur: 18s; --mote-lag: -6s;  --mote-rise: 88px;  --mote-drift: -4px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(6)  { --mote-dur: 31s; --mote-lag: -13s; --mote-rise: 140px; --mote-drift: 6px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(7)  { --mote-dur: 23s; --mote-lag: -20s; --mote-rise: 106px; --mote-drift: -6px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(8)  { --mote-dur: 37s; --mote-lag: -2s;  --mote-rise: 164px; --mote-drift: 4px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(9)  { --mote-dur: 19s; --mote-lag: -11s; --mote-rise: 92px;  --mote-drift: 8px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(10) { --mote-dur: 29s; --mote-lag: -23s; --mote-rise: 132px; --mote-drift: -5px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(11) { --mote-dur: 40s; --mote-lag: -8s;  --mote-rise: 180px; --mote-drift: 7px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(12) { --mote-dur: 22s; --mote-lag: -15s; --mote-rise: 100px; --mote-drift: -3px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(13) { --mote-dur: 33s; --mote-lag: -28s; --mote-rise: 146px; --mote-drift: 5px; }
+[data-mode='classic'] .hero-section__classic-motes circle:nth-child(14) { --mote-dur: 27s; --mote-lag: -5s;  --mote-rise: 124px; --mote-drift: -8px; }
+
+@media (max-width: 1024px) {
+  /* The figure is a cropped vignette in the corner at this width and the copy
+     has the rest of the screen. Dust drifting across the headline is clutter,
+     which is the same call HeroSection.css makes about the ambient canvases. */
+  [data-mode='classic'] .hero-section__classic-motes {
+    display: none;
+  }
+}
+
+
+/* ─── Hero: the overline becomes an inscription ───────────────────────────────
+ *
+ * No pill. A capsule of blurred glass around 39 uppercase characters is a badge,
+ * and a badge is a product-page gesture; the classic look sets the same words as
+ * a line cut into the page, with a rule either side.
+ *
+ * The material is unwound to nothing rather than softened — tint, blur,
+ * elevation, rim and radius all go, including the hand-written recipe's
+ * `prefers-reduced-transparency` fallback, which sets `background-color` at
+ * (0,1,0) from a sheet that loads after this one. (0,2,0) here clears it.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+[data-mode='classic'] .hero-section__badge {
+  padding: 0;
+  border-radius: 0;
+  background-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  /* The hairlines are flex items of this box (a flex container's own
+     pseudo-elements are), so the existing gap does the spacing. One step wider
+     than the pill's, because a rule needs more air than a dot did. */
+  gap: var(--space-3);
+}
+
+/*
+ * Two hairlines, one free and one reclaimed.
+ *
+ * `::after` is the entrance scan line — a travelling accent gradient declared
+ * inside `prefers-reduced-motion: no-preference`, which means it does not exist
+ * at all for a reader who asked for less motion. Every property it sets is
+ * re-declared here, unconditionally and at (0,2,1) against its (0,1,1), so the
+ * two hairlines are identical in both motion preferences and in both looks.
+ */
+[data-mode='classic'] .hero-section__badge::before,
+[data-mode='classic'] .hero-section__badge::after {
+  content: '';
+  position: static;
+  flex: 0 0 auto;
+  align-self: center;
+  width: 32px;
+  height: 1px;
+  background: var(--accent-text);
+  opacity: 1;
+  animation: none;
+  pointer-events: none;
+}
+
+
+/* ─── Hero: the figure rises rather than resolves ─────────────────────────────
+ *
+ * `statue-rise` wipes a clip-path up the figure and flares it through
+ * `--x-flare` — the drawing assembling itself out of an unrendered state. The
+ * classic render is a whole marble figure and has no unrendered state to come
+ * from, so it simply rises into the light: opacity and a small lift, over half
+ * again as long, on the rounder classic easing. Both timings are tokens.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+@keyframes classic-statue-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 2%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-mode='classic'] .digital-statue {
+    animation: classic-statue-rise calc(var(--dur-materialize) * 1.6)
+      var(--ease-spawn) var(--statue-entrance-delay, 0s) backwards;
+  }
+}
+
+
+/* ─── Hero: sunlight on the brass ─────────────────────────────────────────────
+ *
+ * The scale pans keep their boxes and lose their canvases. Those boxes are
+ * hand-positioned against the pans in the photograph, so they are exactly the
+ * right two rectangles to light — what changes is that they hold a slow warm
+ * glow instead of fire.
+ *
+ * The canvases are hidden rather than removed because DigitalStatue still
+ * renders them; it is the WORKERS that the classic look does not pay for, and
+ * the effect returns before spawning any (see DigitalStatue.tsx).
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+[data-mode='classic'] .digital-statue__flame-canvas {
+  display: none;
+}
+
+[data-mode='classic'] .digital-statue__flame {
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    color-mix(in oklab, var(--tertiary) 55%, transparent) 0%,
+    color-mix(in oklab, var(--tertiary) 18%, transparent) 45%,
+    transparent 72%
+  );
+  /* Resting value, and the one a reduced-motion reader keeps: it sits between
+     the two ends of the breath below, so nothing appears or disappears when the
+     animation is collapsed. */
+  opacity: 0.55;
+}
+
+@keyframes classic-brass-glow {
+  from { opacity: 0.36; }
+  to { opacity: 0.82; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /*
+   * Replaces `statue-ambient-ignite` on these two boxes — they no longer have a
+   * scene to ignite, and the figure they hang on is already fading up under
+   * them. (0,2,0) against the ignite rule's (0,1,0).
+   */
+  [data-mode='classic'] .digital-statue__flame {
+    animation: classic-brass-glow 6s ease-in-out infinite alternate;
+  }
+}
+
+
+/* ─── Hero: the scroll hint ─────────────────────────────────────────────────── */
+
+/* Half again as slow. The digital bounce is a prompt; at this pace it is a
+   breath. Written as a literal for the same reason the 2s it overrides is one —
+   there is no duration token at this scale, these are idle loops rather than
+   transitions. */
+[data-mode='classic'] .hero-section__scroll-hint svg {
+  animation-duration: 3s;
+}
+
+
+/* ─── Section headers ─────────────────────────────────────────────────────────
+ *
+ * The one rule beside the section number becomes two, which is what a classical
+ * rule is: a fillet above a fillet with a hair of air between. `height: 3px`
+ * with a 1px border top and bottom leaves exactly that, because `box-sizing:
+ * border-box` is global here.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+[data-mode='classic'] .section-header__divider {
+  height: 3px;
+  background: none;
+  border-top: 1px solid var(--accent-border);
+  border-bottom: 1px solid var(--accent-border);
+}
+
+/*
+ * Small-caps explicitly OFF on both micro-labels.
+ *
+ * EB Garamond ships real small-cap glyphs, and a browser or a future rule that
+ * turns the feature on over an already-uppercased string renders it at cap
+ * height with small-cap letterforms — a second, wrong casing on top of the one
+ * `text-transform` already applied. These stay plain uppercase, tracked out by
+ * `--type-caps-tracking-wide`, which the classic token set already widens.
+ */
+[data-mode='classic'] .section-header__label,
+[data-mode='classic'] .section-header__overline {
+  font-variant: normal;
+}
+
+/* The mark that says "a section begins here" — the classic answer to the pulsing
+   dot the hero badge just lost. */
+[data-mode='classic'] .section-header__label::before {
+  content: '◆';
+  font-size: var(--type-caption-size);
+  color: var(--accent-text);
+  /* Less than a full space: the label's wide caps tracking already adds air
+     after the glyph. */
+  margin-right: 0.35em;
+}
+
+[data-mode='classic'] .section-header__title {
+  /* Garamond's figures are old-style by design; asking for them explicitly
+     means a section number or a year sits on the baseline the way the rest of
+     the line does rather than standing up as lining caps. */
+  font-variant-numeric: oldstyle-nums;
+  /* A cut inscription is balanced, not ragged. Safe at this length — `balance`
+     is capped at a handful of lines by every engine that implements it. */
+  text-wrap: balance;
+}
+
+
+/* ─── Cards: the inner frame ──────────────────────────────────────────────────
+ *
+ * A classical panel is a field inside a moulding, and this is the cheapest
+ * honest version of one: a hairline set 6px in from the card's own edge.
+ *
+ * `outline`, not an inset `box-shadow`, and that is the whole trick. An inset
+ * shadow paints above the background and BELOW the element's content, and
+ * `.glass > *` promotes every direct child to `z-index: 2` — so on the partner
+ * card, whose single wrapper is a photograph bleeding to the clipped edges, the
+ * frame would appear under the copy and vanish across the portrait. That is the
+ * exact defect `.glass--matte` was reported for and works around with a real
+ * border (see liquid-glass.css). An outline is painted after every descendant of
+ * its own stacking context, and `.glass` is one (`isolation: isolate`), so it
+ * survives the photograph without a z-index anywhere.
+ *
+ * `--glass-edge` at rest: this is the decorative hairline it is named for, not a
+ * control boundary, so `--glass-control-edge` would be the wrong token and 3:1
+ * is not the bar it has to clear.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+[data-mode='classic'] .glass--matte {
+  outline: 1px solid var(--glass-edge);
+  outline-offset: -6px;
+}
+
+@media (hover: hover) {
+  /*
+   * Gated on `.glass--interactive`, which is what `<Card interactive>` and
+   * `<Card clickable>` add — the same gate the material's own hover carries, and
+   * for the reason given there: a static panel lighting up under a passing
+   * pointer promises a door that is not there. The contact panel, the
+   * testimonials stage and the detail pages' prose panels all keep the resting
+   * frame and nothing more.
+   */
+  [data-mode='classic'] .glass--matte.glass--interactive:hover {
+    outline-color: var(--accent-border);
+  }
+}
+
+
+/* ─── Controls ────────────────────────────────────────────────────────────────
+ *
+ * Corners cut rather than poured. `--radius-sm` is 2px in this mode — a chamfer,
+ * not a capsule — and the label is set as an inscription: uppercase, tracked,
+ * and at the weight the button already carried.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+[data-mode='classic'] .btn {
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-tight);
+  font-weight: 600;
+}
+
+/* A gilt rim: one hairline of the button's own foreground, inside the fill.
+   `--on-accent` is the colour paired with the fill, so this is correct on the
+   light palettes as well as the dark — a white rim would not be. */
+[data-mode='classic'] .btn--primary {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--on-accent) 25%, transparent);
+}
+
+@media (hover: hover) {
+  /*
+   * Re-stated on hover, because a `box-shadow` list cannot be added to: the
+   * button's own hover glow replaces the whole list, so the rim has to be
+   * written into it or it would blink off under the pointer. (0,4,0) against
+   * that rule's (0,3,0).
+   */
+  [data-mode='classic'] .btn--primary:hover:not(:disabled) {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklab, var(--on-accent) 25%, transparent),
+      0 4px 16px color-mix(in oklab, var(--accent-container) 30%, transparent);
+  }
+}
+
+/* The nav keeps its uppercase; only the tracking moves, and it moves by itself —
+   `--type-caps-tracking-wide` is already the wider value in this mode. Stated
+   rather than inherited because both links ask for the TIGHT token, which is
+   the reading step and reads cramped in a Garamond at caption size. */
+[data-mode='classic'] .navbar__link,
+[data-mode='classic'] .navbar__mobile-link {
+  letter-spacing: var(--type-caps-tracking-wide);
+}
+
+
+/* ─── Testimonials ────────────────────────────────────────────────────────────
+ *
+ * The opening quotation mark the digital look leaves to the italic alone. Set
+ * upright, because a Garamond's italic quote is a comma on its side and this is
+ * a mark rather than punctuation.
+ *
+ * Absolutely positioned, so it changes no layout at all: the carousel's height
+ * comes from a hidden sizer holding every quote, and a float here would move
+ * that sizer and re-measure the stage. It hangs left and up into the card's own
+ * `--space-8` padding — deliberately not `right: 100%`, which at this size would
+ * put the glyph outside the padding box and `.glass`'s `overflow: hidden` would
+ * cut it in half.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+[data-mode='classic'] .testimonials-stage__text {
+  position: relative;
+}
+
+[data-mode='classic'] .testimonials-stage__text::before {
+  content: '“';
+  position: absolute;
+  left: -0.24em;
+  top: -0.16em;
+  font-family: var(--serif);
+  font-style: normal;
+  font-size: 2.6em;
+  line-height: 1;
+  color: var(--accent-text);
+  /* Low enough that the first line of the quote reads straight through it,
+     which is the point: it is a watermark, not a character. */
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+
+/* ─── Footer ──────────────────────────────────────────────────────────────────
+ *
+ * A double rule closes the page. Three pixels of `double` is the one place CSS
+ * draws the classical two-line fillet natively, and it answers the section
+ * dividers above it.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+[data-mode='classic'] .footer {
+  border-top: 3px double var(--border);
+}

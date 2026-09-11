@@ -19,6 +19,7 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
+  classic,
   fonts,
   radii,
   spacing,
@@ -48,7 +49,8 @@ import {
   brandVarNames,
   materialVarNames,
 } from '../src/theme/tokens.ts';
-import { palettes, DEFAULT_PALETTE_ID, LIMESTONE_STATUE_FAMILIES } from '../src/theme/palettes.ts';
+import { palettes, DEFAULT_PALETTE_ID } from '../src/theme/palettes.ts';
+import { statues, CLASSIC_STATUE_ID, statueForFamily } from '../src/theme/statues.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outPath = join(__dirname, '..', 'src', 'theme', 'theme.generated.css');
@@ -160,15 +162,18 @@ const lightPalettes = palettes.filter((p) => p.scheme === 'light');
 const lightSelector = (suffix) =>
   lightPalettes.map((p) => `:root[data-theme='${p.id}'] ${suffix}`).join(',\n');
 
-/** Every palette in a family that wears the limestone statue. */
-const limestonePalettes = palettes.filter((p) => LIMESTONE_STATUE_FAMILIES.includes(p.family));
-const limestoneSelector = (suffix) =>
-  limestonePalettes.map((p) => `:root[data-theme='${p.id}'] ${suffix}`).join(',\n');
+/**
+ * The statue artworks come from the registry in src/theme/statues.ts — one
+ * entry per render, each naming the palette families that wear it in the
+ * digital look. `families: null` marks the cyan artwork as the remainder.
+ */
+const paletteSelector = (list, suffix) =>
+  list.map((p) => `:root[data-theme='${p.id}'] ${suffix}`).join(',\n');
 
 /*
  * ── The hero statue ──────────────────────────────────────────────────────────
  *
- * Two artworks, one per group of families, and the palette picks between them
+ * One artwork per group of families, and the palette picks between them
  * in CSS rather than in React. That is not a style preference — it is the
  * invariant ThemeProvider is built on: nothing about the palette passes through
  * the React tree, so the prerendered HTML stays palette-agnostic. A
@@ -176,16 +181,16 @@ const limestoneSelector = (suffix) =>
  * that hydration mismatch by keeping the SERVER's `src`: the built page showed
  * a cyan statue under `data-theme="olivine"`, silently.
  *
- * Doing it here also means the browser fetches exactly one of the two. The
+ * Doing it here also means the browser fetches exactly one of them. The
  * React version had to render the prerendered artwork first and swap after
  * hydration, so ten of the eighteen palettes pulled an image they never showed.
  *
  * The `url()`s are relative to the generated stylesheet and are rewritten and
  * hashed by Vite's CSS pipeline, the same as any other asset reference. They sit
- * directly in the two rules and NOT behind a custom property, which was the
- * first shape tried: lightningcss rejects it outright, because a relative url()
- * in a custom property resolves from wherever the `var()` is used rather than
- * from where it was declared, so the path is ambiguous by construction.
+ * directly in the rules and NOT behind a custom property, which was the first
+ * shape tried: lightningcss rejects it outright, because a relative url() in a
+ * custom property resolves from wherever the `var()` is used rather than from
+ * where it was declared, so the path is ambiguous by construction.
  *
  * Only the matching rule's image is ever requested — a browser fetches the
  * background of a rule it applies, not of every rule it parsed.
@@ -218,15 +223,92 @@ const statueBackground = (base) =>
     `  background-image: ${statueImageSet(base)};`,
   ].join('\n');
 
+/*
+ * Rule order IS the precedence, because every selector below is (0,2,1):
+ *
+ *   1. bare `.digital-statue__img`            — the default palette's artwork
+ *   2. `[data-theme]` rules                    — each palette family's artwork
+ *   3. `[data-mode='classic']`                 — the classic look's marble
+ *   4. `[data-statue]` rules                   — a reader's explicit pin
+ *
+ * The bare rule is the DEFAULT palette's artwork, not the cyan one — the same
+ * principle that puts the default palette's variables into bare `:root`. The
+ * pre-paint script in index.html stamps `data-theme` only when a palette is
+ * stored, and the prerendered <html> carries none, so a first-time visitor sits
+ * on the bare rule until React hydrates and stamps the default id. A bare rule
+ * that disagreed with the default palette's rule would show one image and then
+ * swap — the flash and the second fetch that moved this whole decision into CSS
+ * in the first place. Before hydration and after, the default visitor sees one
+ * image.
+ *
+ * The same argument makes the classic-look and pin rules safe: both attributes
+ * are stamped by the same pre-paint script, so the rule that will apply after
+ * hydration is already the one applying before it.
+ */
+const defaultStatue = statueForFamily(defaultPalette.family);
+const wearers = (statue) =>
+  palettes.filter((p) => statueForFamily(p.family).id === statue.id);
+
 const statueRules = [
   '.digital-statue__img {',
-  statueBackground('hero-statue'),
+  statueBackground(defaultStatue.base),
   '}',
+  ...statues
+    .filter((s) => s.id !== defaultStatue.id)
+    .flatMap((s) => {
+      const list = wearers(s);
+      if (list.length === 0) return [];
+      return ['', `${paletteSelector(list, '.digital-statue__img')} {`, statueBackground(s.base), '}'];
+    }),
   '',
-  `${limestoneSelector('.digital-statue__img')} {`,
-  statueBackground('hero-statue-limestone'),
+  `:root[data-mode='classic'] .digital-statue__img {`,
+  statueBackground(statues.find((s) => s.id === CLASSIC_STATUE_ID).base),
   '}',
+  ...statues.flatMap((s) => [
+    '',
+    `:root[data-statue='${s.id}'] .digital-statue__img {`,
+    statueBackground(s.base),
+    '}',
+  ]),
 ].join('\n');
+
+/*
+ * ── The classic look ─────────────────────────────────────────────────────────
+ *
+ * One block of token overrides under `[data-mode='classic']`, from the
+ * `classic` set in tokens.ts. Everything the look changes about type, shape
+ * and motion is a re-pointed token, so the component stylesheets need no
+ * `[data-mode]` selectors of their own for any of it; src/styles/classic.css
+ * carries only what cannot be expressed as a token (which layers show, how
+ * the frieze is drawn, the ornaments).
+ *
+ * `:root[data-mode='classic']` is (0,1,1), so it outweighs both the generated
+ * `:root` blocks and the motion tokens index.css declares on bare `:root`.
+ */
+function buildClassicBlock() {
+  const lines = [
+    ...mapVars(classic.fonts, fontVarNames),
+    ...mapVars(classic.radii, radiusVarNames),
+    `  --type-caps-tracking-tight: ${classic.capsTracking.tight};`,
+    `  --type-caps-tracking-wide: ${classic.capsTracking.wide};`,
+    `  --blur-spawn: ${classic.motion.blurSpawn};`,
+    `  --blur-spawn-soft: ${classic.motion.blurSpawnSoft};`,
+    `  --blur-spawn-tight: ${classic.motion.blurSpawnTight};`,
+    `  --x-flare: ${classic.motion.flare};`,
+    `  --x-flare-mid: ${classic.motion.flareMid};`,
+    `  --ease-spawn: ${classic.motion.easeSpawn};`,
+    `  --seq-beat: ${classic.motion.seqBeat};`,
+    ...mapVars(classic.decor, decorVarNames),
+  ];
+  for (const [name, step] of Object.entries(classic.type)) {
+    const k = name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+    if (step.size) lines.push(`  --type-${k}-size: ${step.size};`);
+    if (step.weight) lines.push(`  --type-${k}-weight: ${step.weight};`);
+    if (step.lineHeight) lines.push(`  --type-${k}-leading: ${step.lineHeight};`);
+    if (step.tracking !== undefined) lines.push(`  --type-${k}-tracking: ${step.tracking};`);
+  }
+  return `:root[data-mode='classic'] {\n${lines.join('\n')}\n}`;
+}
 
 const schemeRules = [
   '#social .button-icon {',
@@ -235,6 +317,8 @@ const schemeRules = [
   `${lightSelector('#social .button-icon')} {\n  filter: none;\n}`,
   '',
   statueRules,
+  '',
+  buildClassicBlock(),
 ].join('\n');
 
 const css = `/* AUTO-GENERATED from src/theme/tokens.ts + src/theme/palettes.ts by

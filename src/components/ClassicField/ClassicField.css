@@ -1,0 +1,50 @@
+/*
+ * Fixed, so the frame stays put while the page scrolls through it — the same
+ * bargain CircuitField makes, and for the same reason: no transform, no scroll
+ * listener, one compositing layer that never repaints.
+ *
+ * It must live *inside* `main.page-ramp`, not behind it: the ramp paints an
+ * opaque gradient, so anything underneath would simply never be seen. Sections
+ * sit above it via their own `position: relative` (see App.css, where this class
+ * is excluded from that rule alongside `.circuit-field`).
+ *
+ * Whether it paints at all is decided in src/styles/classic.css — this layer and
+ * the circuit field are both always in the DOM, and the mode picks between them.
+ * Nothing here sets `display`, so the two rules there never have to outweigh
+ * this file.
+ */
+.classic-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* The one brand step that is legible on the page ground in both schemes.
+     `--accent` is a fill and is pale on the nine light palettes. */
+  color: var(--accent-text);
+}
+
+.classic-field > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  /* Decoration competing with content for a much smaller canvas. Thinned rather
+     than removed, exactly as the circuit field is. */
+  .classic-field {
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 768px) {
+  /*
+   * The columns go before the friezes do. They are 72px each, so on a 390px
+   * screen they claim 37% of the width — at that share they stop framing the
+   * reading column and start crowding it. The friezes cost nothing horizontally
+   * and stay.
+   */
+  .classic-field__column {
+    display: none;
+  }
+}

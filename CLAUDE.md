@@ -37,6 +37,30 @@ gradients and an elevation set — swapped by `<html data-theme="...">`.
 - `ThemeProvider` (`src/lib/theme/`) mirrors the choice into React and
   localStorage; an inline script in `index.html` applies it before first paint.
 
+### Looks
+
+Orthogonal to the palette, the site has two **looks** (`src/theme/modes.ts`),
+switched by `<html data-mode>` exactly the way a palette is: stamped before
+first paint by the same inline script, mirrored by `ThemeProvider`, chosen from
+the header. Every palette wears both.
+
+- **digital** (the default; bare `:root`) — the dissolving figure, the rain,
+  the fire, the circuit field, Jura, poured-glass corners.
+- **classic** — the figure made whole in marble, a Garamond, cut corners, a
+  meander frieze, entrances that rise rather than resolve. The glass material
+  is unchanged and keeps every rule below.
+
+The look is a set of TOKEN OVERRIDES first: the `classic` set in `tokens.ts` is
+emitted by the generator as one `:root[data-mode='classic']` block, so type,
+shape and motion change by re-pointing existing custom properties and the
+component stylesheets need no `[data-mode]` selectors for any of it.
+`src/styles/classic.css` carries only what a token cannot say — which
+decorative layer shows, the ornaments. Both looks are always in the DOM and
+CSS decides what paints; the React tree is mode-agnostic for the same
+hydration reason the statue image is chosen in CSS (below). The one component
+that reads the mode is `DigitalStatue`, inside an effect, so the classic look
+does not pay for five canvas workers it never shows.
+
 ### The hero statue
 
 The hero is a photograph, and everything the scene paints over it — the falling
@@ -47,22 +71,33 @@ layer that follows the theme while the image under it cannot is not themed, it
 is mismatched: the fire once burned khaki two inches from a cyan statue on every
 palette that is not blue.
 
-So there are two artworks, and the palette picks between them
-(`statueArtwork.ts`), keyed by `Palette.family` rather than by id — the light and
-dark halves of a scheme are one design and always agree:
+So there are six artworks, one registry (`src/theme/statues.ts`), and three
+things that can pick between them, in this precedence:
 
-- **cyan** (`hero-statue-*`) — Ultramarine, Amethyst, Graphite.
-- **limestone** (`hero-statue-limestone-*`) — Limestone, Terracotta, Patina,
-  Verdant, Olive. Its wireframe is warm gold.
+1. **The palette's family** (`*_STATUE_FAMILIES` in `palettes.ts`) — the light
+   and dark halves of a scheme are one design and always agree. Ultramarine
+   wears **ultramarine**, Amethyst **white**, Graphite **mono**, the five warm
+   and green families **limestone** (gold wireframe), and any family no list
+   claims — Azure today — wears **cyan**.
+2. **The classic look** wears **classic** (`hero-statue-classic-*`): the same
+   render with the wireframe and the cube debris rebuilt as marble and the
+   wireframe pan replaced by the brass one. Nothing about it is digital.
+3. **A reader's pin** from the header's statue menu (`<html data-statue>`,
+   `law-firm-site:statue`), which outranks both. `auto` is the absence of the
+   attribute. This is what decouples statues from themes: the family lists are
+   the default pairing, not the only one.
 
-A new family falls back to cyan. Each artwork carries its own `SceneColors`, so
-the rain and the cool flame follow the statue automatically.
+Each artwork carries its own `SceneColors` (`statueArtwork.ts`, keyed by statue
+id), so the rain and the cool flame follow whatever statue is showing.
 
 **The image is chosen in CSS, the scene colours in React, and that split is not
-negotiable.** The generator emits the `background-image` swap per palette from
-`LIMESTONE_STATUE_FAMILIES` in `palettes.ts` (which is why that list lives in the
-palette registry — `generate-theme-css.mjs` runs in bare node and cannot import
-a module that imports images). Choosing the image in React instead puts a
+negotiable.** The generator emits the `background-image` swaps — per palette,
+for the classic look, and per pin, in that order, since every selector is
+(0,2,1) and source order is the precedence — from the registry in
+`statues.ts` and the `*_STATUE_FAMILIES` lists in `palettes.ts` (which is why
+those live in the theme registry and import no images —
+`generate-theme-css.mjs` runs in bare node and cannot load a module that
+imports one). Choosing the image in React instead puts a
 palette-dependent `srcSet` in the tree, and ThemeProvider's invariant is that
 nothing about the palette does. It was tried and it shipped broken: React 19
 resolves that hydration mismatch by keeping the SERVER's `src`, with no warning
@@ -87,7 +122,10 @@ wireframe's hue but hold the existing set's LIGHTNESS profile: the lightness is
 what makes the rain read as glowing rather than as drawn, and getting it wrong
 burns out the light palettes or disappears on the dark ones. Add the master to
 `src/assets/images/` and a `buildStatue()` call in `scripts/optimize-images.mjs`;
-the widths and quality ladder are shared.
+the widths and quality ladder are shared. Then register it in `statues.ts`
+with the families that wear it (or `[]` if only a pin or a look ever will), give
+it a `SceneColors` in `statueArtwork.ts`, and a label key in both locales; the
+generator, the statue menu and the scene pick it up from there.
 
 **Writing palette-safe CSS:** `--accent`, `--accent-container` and `--secondary`
 are FILLS and may be pale. Text on the page ground takes `--accent-text`; text

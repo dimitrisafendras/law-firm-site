@@ -614,15 +614,20 @@
 }
 
 /*
- * Every section sits above the circuit field, which is the ramp's first
+ * Every section sits above the decorative field, which is the ramp's first
  * child at z-index 0. They are all `position: relative` already for their own
  * reasons; this only gives them a stacking level, so the field shows through
  * the gaps between them and behind any translucent surface, rather than being
  * painted over.
+ *
+ * Two fields are excluded, not one: the circuit network the digital look wears
+ * and the meander frame the classic look wears are both always in the DOM (the
+ * markup is mode-agnostic — see src/theme/modes.ts), and whichever is painting
+ * has to stay underneath the page.
  */
 .page-ramp > header,
 .page-ramp > section,
-.page-ramp > div:not(.circuit-field) {
+.page-ramp > div:not(.circuit-field):not(.classic-field) {
   position: relative;
   z-index: 1;
 }

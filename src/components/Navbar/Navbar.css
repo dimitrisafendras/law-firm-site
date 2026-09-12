@@ -48,9 +48,33 @@
      was not asked to make. Replace with a token if a 20px step is ever added. */
   padding: 20px var(--space-12);
   transition: padding 0.3s;
+  /*
+   * A floor between the wordmark, the links and the controls. `space-between`
+   * alone gives the three groups whatever is left over, and when that is
+   * nothing they meet: one pixel above the mobile breakpoint the wordmark's
+   * right edge and the first nav label's left edge measured at the same x, and
+   * the classic look, whose labels are ~60px wider, ran the last control off
+   * the bar. A gap cannot be eaten by a long label.
+   */
+  gap: var(--space-6);
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1120px) {
     padding: var(--space-3) var(--space-4);
+  }
+}
+
+/*
+ * The band between the mobile breakpoint and 1280px is the tightest the desktop
+ * header ever is, and it was tuned with Jura's labels. Garamond sets the same
+ * six words ~60px wider (wider caps, and the classic look tracks them out
+ * further still), so the row has to give some room back before the reader gets
+ * to the width where the hamburger takes over. The gutters shrink one step and
+ * the two internal gaps shrink with them; above 1280 nothing changes.
+ */
+@media (min-width: 1121px) and (max-width: 1280px) {
+  .navbar__inner {
+    padding-inline: var(--space-6);
+    gap: var(--space-4);
   }
 }
 
@@ -116,7 +140,11 @@
   margin: 0;
   padding: 0;
 
-  @media (max-width: 1024px) {
+  @media (min-width: 1121px) and (max-width: 1280px) {
+    gap: var(--space-3);
+  }
+
+  @media (max-width: 1120px) {
     display: none;
   }
 }
@@ -129,6 +157,11 @@
      well past the reading step. */
   letter-spacing: var(--type-caps-tracking-tight);
   text-transform: uppercase;
+  /* Two-word labels — Our Team, Practice Areas — wrap the moment the row runs
+     short, and a nav that is one line at one width and two at another reads as
+     broken rather than as responsive. Holding them on one line makes the row's
+     real width honest, which is what the band rule above is sized against. */
+  white-space: nowrap;
   color: var(--text);
   text-decoration: none;
   transition: color var(--transition, 0.3s);
@@ -146,14 +179,39 @@
   align-items: center;
   gap: var(--space-4);
 
-  @media (max-width: 1024px) {
+  @media (min-width: 1121px) and (max-width: 1280px) {
+    gap: var(--space-2);
+  }
+
+  @media (max-width: 1120px) {
     display: none;
   }
 }
 
+/* The controls the header carries grew by two this release — the look menu and
+   the statue menu — and those 92px are most of what stopped the row fitting in
+   the band above. They close up with everything else rather than being dropped:
+   a control a reader cannot reach at 1100px is not a smaller header, it is a
+   missing feature, and this is the only width where either would be. */
+@media (min-width: 1121px) and (max-width: 1280px) {
+  .navbar__cta .auth-nav--anon {
+    gap: var(--space-2);
+  }
+}
+
 /* ─── Mobile navigation ───────────────────────────────────────────────────────
-   Hamburger trigger + slide-down glass overlay. Both are inert above 1024px so
-   the desktop header is pixel-identical to before. */
+   Hamburger trigger + slide-down glass overlay.
+
+   1120px, NOT the site-wide 1024px in tokens.ts → breakpoints.mobile. The
+   header is the widest fixed-width row on the site — a wordmark, four tracked
+   nav labels, a button and five controls, none of which can wrap or ellipsise —
+   and it stopped fitting at 1025px when the look menu and the statue menu
+   joined it. Every other section reflows; this one can only overlap. So the
+   header reaches for the hamburger before the rest of the page reaches for its
+   mobile layout, and the band between the two is a desktop-width page with a
+   collapsed nav, which is ordinary. Below this width the overlay holds
+   everything, so nothing is lost — which is not true of the alternative, where
+   two menus would have had to disappear for a signed-out reader. */
 
 .navbar__toggle {
   display: none;
@@ -173,7 +231,7 @@
   color: var(--text-h);
   cursor: pointer;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1120px) {
     display: inline-flex;
   }
 }
@@ -224,7 +282,7 @@
   display: none;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1120px) {
   .navbar__mobile {
     /* Full-viewport overlay under the fixed header row. `inset: 0` is safe
        again: Navbar.tsx drops `glass` from the header whenever this menu is

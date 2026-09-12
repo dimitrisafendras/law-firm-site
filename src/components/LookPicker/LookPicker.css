@@ -1,0 +1,226 @@
+/* ============================================================================
+   Look picker — the digital/classic mode, and the statue pin.
+
+   Two independent controls sharing one file because they share one shape:
+   `.mode-picker` / `.statue-picker` are the standalone trigger + popover the
+   header shows signed-out visitors (mirroring `.theme-picker` exactly), and
+   `.look-options` is the radiogroup itself, used both inside those popovers
+   and embedded directly in the signed-in account menu.
+
+   Every colour here is a theme token, except the two `--chip-*` custom
+   properties `StatueOptions.tsx` sets per row — those preview an artwork the
+   page is not currently wearing, the same exemption `ThemePicker.css`
+   documents for its `--swatch-*` properties.
+   ============================================================================ */
+
+.mode-picker,
+.statue-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ─── Triggers ───────────────────────────────────────────────────────────── */
+
+/* Sized and shaped to match `.theme-picker__trigger` and `.auth-nav__avatar`,
+   which sit beside these in the signed-out row. */
+.mode-picker__trigger,
+.statue-picker__trigger {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-control-edge);
+  color: var(--text-h);
+  transition: border-color var(--transition, 0.3s), transform 0.2s;
+}
+
+@media (hover: hover) {
+  .mode-picker__trigger:hover,
+  .statue-picker__trigger:hover {
+    border-color: var(--accent-border);
+    transform: translateY(-1px);
+  }
+}
+
+.mode-picker__trigger:focus-visible,
+.statue-picker__trigger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent-text);
+}
+
+.mode-picker__glyph,
+.statue-picker__glyph {
+  display: inline-flex;
+}
+
+/* ─── Popovers ───────────────────────────────────────────────────────────── */
+
+/* Opaque for the same reason `.theme-picker__panel` is: this can hang inside
+   the navbar, which becomes a backdrop root once the page scrolls. */
+.mode-picker__panel,
+.statue-picker__panel {
+  top: calc(100% + var(--space-3));
+  right: 0;
+  z-index: 200;
+  /* A floor under the popover's width, matching `.theme-picker__panel` —
+     without it the panel shrink-wraps to the trigger and the hint text under
+     each label wraps hard. */
+  min-width: 280px;
+  padding: var(--space-3);
+  border-radius: var(--radius-xl);
+  --glass-surface-tint: var(--surface);
+}
+
+/* Stated one step higher than `.glass` so these hold regardless of stylesheet
+   order — same reasoning as `.theme-picker > .theme-picker__panel`. */
+.mode-picker > .mode-picker__panel,
+.statue-picker > .statue-picker__panel {
+  position: absolute;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    var(--elev-overlay),
+    inset 0 0 0 1px var(--glass-edge);
+  animation: look-picker-in 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: top right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mode-picker > .mode-picker__panel,
+  .statue-picker > .statue-picker__panel {
+    animation: none;
+  }
+}
+
+@keyframes look-picker-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+}
+
+/* ─── The radiogroup rows ────────────────────────────────────────────────── */
+
+/*
+ * Shared between `ModeOptions` (two rows) and `StatueOptions` (seven): a
+ * glyph or chip, a label, and — where the mode/registry supplies one — a hint
+ * underneath, in the muted emphasis step used for micro-copy across the site.
+ */
+.look-options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.look-options__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2);
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--transition, 0.3s);
+}
+
+/* The selected row is marked the way `.palette-row.is-active` marks a scheme:
+   a tinted row rather than a tinted glyph alone, which is easy to miss at this
+   size. */
+.look-options__row.is-selected {
+  background: var(--accent-bg);
+}
+
+.look-options__row.is-selected .look-options__glyph,
+.look-options__row.is-selected .look-options__label {
+  color: var(--accent-text);
+}
+
+/*
+ * Roving tabindex means the focused row is always also the selected one (the
+ * same reasoning `.palette-chip:focus-visible` documents), so a negative
+ * offset keeps the ring inside the row rather than fighting the popover's own
+ * edge at `padding: var(--space-2)`.
+ */
+.look-options__row:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: -2px;
+}
+
+.look-options__glyph {
+  flex: none;
+  display: inline-flex;
+  color: var(--text);
+  transition: color var(--transition, 0.3s);
+}
+
+.look-options__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.look-options__label {
+  font-family: var(--sans);
+  font-size: var(--type-small-size);
+  color: var(--text);
+  transition: color var(--transition, 0.3s);
+}
+
+.look-options__hint {
+  font-family: var(--sans);
+  font-size: var(--type-caption-size);
+  color: var(--text);
+  /* `--text-emphasis-*` are opacities, not colours — matches
+     `.auth-nav__section-label`'s register for micro-copy. */
+  opacity: var(--text-emphasis-muted);
+}
+
+/* ─── The statue chip ────────────────────────────────────────────────────── */
+
+/*
+ * Two bands rather than one dot, the same reasoning as `.palette-chip__band`:
+ * the left two-thirds preview the marble tone, the right third the
+ * wireframe/rain colour the artwork is keyed to.
+ *
+ * The `var(--x, var(--token))` fallback is what lets the "auto" row skip the
+ * `--chip-*` custom properties entirely and still render a sensible chip —
+ * `StatueOptions.tsx` only sets them on the six real artworks.
+ */
+.statue-options__chip {
+  flex: none;
+  width: 26px;
+  height: 22px;
+  display: flex;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px var(--glass-control-edge);
+}
+
+.statue-options__chip-stone {
+  flex: 2;
+  background: var(--chip-stone, var(--surface-variant));
+}
+
+.statue-options__chip-mesh {
+  flex: 1;
+  background: var(--chip-mesh, var(--accent));
+}
+
+/* ─── Embedded in the account menu ───────────────────────────────────────── */
+
+/* Inside the avatar menu the radiogroup is a section rather than the whole
+   panel, so it loses the popover's padding — matches `.auth-nav__menu
+   .palette-swatches`. */
+.auth-nav__menu .look-options {
+  padding: 0 var(--space-1) var(--space-1);
+}

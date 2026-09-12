@@ -71,11 +71,15 @@ export function PracticeDomainCard({
 
       <EditableText tKey={`practice${key}Desc`} as="p" className="practice-domain__desc" />
 
-      {linked && (
+      {/* See the twin on PartnerCard: hidden from AT while the card is a door,
+          and editable rather than absent when it is not. */}
+      {linked ? (
         <span className="practice-domain__cue" aria-hidden="true">
           {t('practiceExploreDomain')}
           <span className="practice-domain__cue-arrow">&rarr;</span>
         </span>
+      ) : (
+        <EditableText tKey="practiceExploreDomain" as="span" className="practice-domain__cue" />
       )}
     </Card>
   );

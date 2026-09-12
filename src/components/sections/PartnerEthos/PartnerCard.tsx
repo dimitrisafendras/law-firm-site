@@ -108,11 +108,19 @@ export function PartnerCard({ partner, headingLevel: Heading = 'h3' }: PartnerCa
           </div>
         </dl>
 
-        {linked && (
+        {/* The cue is `aria-hidden` while the card is a door — it says out loud
+            what the heading link already is. In edit mode the card is not a
+            door, so the same copy is rendered as an editable label instead of
+            being dropped: it was the one string on this card that could not be
+            reached by an admin. The arrow goes with the affordance rather than
+            with the words. */}
+        {linked ? (
           <span className="partner-ethos__cue" aria-hidden="true">
             {t('teamViewProfile')}
             <span className="partner-ethos__cue-arrow">&#8594;</span>
           </span>
+        ) : (
+          <EditableText tKey="teamViewProfile" as="span" className="partner-ethos__cue" />
         )}
       </div>
     </Card>

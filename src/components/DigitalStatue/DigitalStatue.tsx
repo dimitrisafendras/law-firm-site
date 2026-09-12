@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { breakpoints } from '@/theme';
+import { breakpoints, resolveStatue } from '@/theme';
 import { useTheme } from '@/lib/theme';
 import { type SceneColors } from './sceneColors.ts';
 // What the scene is painted in. Which image the hero shows is decided in CSS,
@@ -168,20 +168,28 @@ interface DigitalStatueProps { className?: string }
 
 export function DigitalStatue({ className = '' }: DigitalStatueProps) {
   /*
-   * The palette picks what the canvas layers are painted in. It does NOT pick
-   * the image here — that is a `background-image` the generated stylesheet
-   * swaps on `[data-theme]`, so exactly one of the two files is ever requested
-   * and the prerendered markup stays palette-agnostic. statueArtwork.ts has the
-   * full account of why the image cannot be chosen in React.
+   * Which statue is on screen — a reader's pin, else the palette family's —
+   * and what its scene is painted in. It does NOT pick the image here: that is
+   * a `background-image` the generated stylesheet swaps on `[data-theme]` /
+   * `[data-statue]`, so exactly one file is ever requested and the prerendered
+   * markup stays theme-agnostic.
+   * statueArtwork.ts has the full account of why the image cannot be chosen in
+   * React.
    *
-   * These colours are only ever read inside the effect below, after mount, so
-   * they never reach rendered markup and cannot mismatch during hydration.
-   * `artworkFor` returns one of two module constants, so this is referentially
-   * stable and the scene is rebuilt only when the reader actually crosses
-   * between a warm/green palette and a blue/pink/neutral one.
+   * Everything read here is consumed inside the effect below, after mount, or as
+   * a React key — never as rendered markup, so none of it can mismatch during
+   * hydration. A key is identity, not output: it changes which DOM node the
+   * canvas is, and hydration reconciles that without a server/client diff.
+   *
+   * `artworkFor` returns one of five module constants, so `artwork` is
+   * referentially stable and the scene is rebuilt only when the drawing under it
+   * actually changes.
    */
-  const { palette } = useTheme();
-  const artwork = artworkFor(palette);
+  const { palette, mode, statue } = useTheme();
+  const resolved = resolveStatue(palette.family, statue);
+  const artwork = artworkFor(resolved.id);
+  /* The identity of the five canvases — see the note on the returned markup. */
+  const canvasKey = `${artwork.id}-${mode}`;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const rainRef = useRef<HTMLCanvasElement>(null);
@@ -192,6 +200,26 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    /*
+     * The classic look keeps the fire and drops the dissolution.
+     *
+     * Both looks now wear the same photograph — there is no marble render, and
+     * src/theme/statues.ts says why — so the two scale pans hold the same two
+     * flames the digital look gives them, in the same colours: the warm one on
+     * the brass pan, the cool one in whatever wireframe is on screen. That is
+     * not a digital effect, it is the lighting the photograph was composed
+     * with, and sceneColors.ts's rule cuts the other way here. A palette-toned
+     * CSS glow stood in for them while the marble statue existed; over a cyan
+     * wireframe it is the khaki-fire bug in a new place.
+     *
+     * What the classic look does drop is the rain and the two sparkle fields —
+     * the dissolving edge itself. Their canvases are `display: none` in
+     * src/styles/classic.css, and the three workers are not spawned at all, so
+     * the look pays for two OffscreenCanvas transfers rather than five, and for
+     * neither of the sprite sheets those three need.
+     */
+    const dissolving = mode !== 'classic';
 
     const container = containerRef.current;
     if (!container) return;
@@ -206,10 +234,11 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
 
     async function start() {
       // Pre-render sprites on the main thread, in the statue's own colours.
-      const [rainSprite, starSprite] = await Promise.all([
-        createRainSprite(artwork.colors),
-        createStarSprite(artwork.colors),
-      ]);
+      // Only the rain and the sparkles use them, so the classic look builds
+      // neither.
+      const [rainSprite, starSprite] = dissolving
+        ? await Promise.all([createRainSprite(artwork.colors), createStarSprite(artwork.colors)])
+        : [null, null];
       if (cancelled) return;
 
       const mobile = window.innerWidth <= ANIMATION_CONFIG.mobileBreakpoint;
@@ -225,30 +254,32 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
         if (worker) entries.push({ worker, canvas: canvasEl });
       };
 
-      // Rain worker. `colors` drives only the worker's no-sprite fallback path;
-      // the sprite above already carries them everywhere else.
-      add(rainRef.current, RainWorkerUrl, {
-        sprite: rainSprite,
-        fontSize: rain.fontSize,
-        trail: mobile ? rain.trailMobile : rain.trail,
-        colors: { head: artwork.colors.accent, trail: artwork.colors.secondary },
-      });
+      if (dissolving) {
+        // Rain worker. `colors` drives only the worker's no-sprite fallback
+        // path; the sprite above already carries them everywhere else.
+        add(rainRef.current, RainWorkerUrl, {
+          sprite: rainSprite,
+          fontSize: rain.fontSize,
+          trail: mobile ? rain.trailMobile : rain.trail,
+          colors: { head: artwork.colors.accent, trail: artwork.colors.secondary },
+        });
 
-      // Sparkle body worker
-      add(spkBodyRef.current, SparkleWorkerUrl, {
-        sprite: starSprite,
-        count: mobile ? sparkleBody.countMobile : sparkleBody.count,
-        speed: mobile ? sparkleBody.speedMobile : sparkleBody.speed,
-        drawScale: sparkleBody.drawScale,
-      });
+        // Sparkle body worker
+        add(spkBodyRef.current, SparkleWorkerUrl, {
+          sprite: starSprite,
+          count: mobile ? sparkleBody.countMobile : sparkleBody.count,
+          speed: mobile ? sparkleBody.speedMobile : sparkleBody.speed,
+          drawScale: sparkleBody.drawScale,
+        });
 
-      // Sparkle scale worker
-      add(spkScaleRef.current, SparkleWorkerUrl, {
-        sprite: starSprite,
-        count: mobile ? sparkleScale.countMobile : sparkleScale.count,
-        speed: mobile ? sparkleScale.speedMobile : sparkleScale.speed,
-        drawScale: sparkleScale.drawScale,
-      });
+        // Sparkle scale worker
+        add(spkScaleRef.current, SparkleWorkerUrl, {
+          sprite: starSprite,
+          count: mobile ? sparkleScale.countMobile : sparkleScale.count,
+          speed: mobile ? sparkleScale.speedMobile : sparkleScale.speed,
+          drawScale: sparkleScale.drawScale,
+        });
+      }
 
       // Flame left worker
       add(flameLRef.current, FlameWorkerUrl, {
@@ -313,13 +344,15 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
       for (const { worker } of entries) worker.terminate();
     };
     /*
-     * Re-runs when the artwork changes, which is the one thing that must tear
-     * the scene down and rebuild it: the sprites are pre-rendered in the
-     * artwork's colours and the flame workers are handed theirs at spawn. The
-     * canvases below carry `key={artwork.id}` so this gets fresh elements —
-     * see the note on the returned markup for why that is not optional.
+     * Re-runs when the artwork or the mode changes, and both must tear the scene
+     * down and rebuild it: the sprites are pre-rendered in the artwork's colours
+     * and the flame workers are handed theirs at spawn, and crossing into the
+     * classic look has to terminate the three dissolution workers rather than
+     * leave them painting under a `display: none`. The canvases below are keyed
+     * on the same pair, so each re-run gets fresh elements — see the note on the
+     * returned markup for why that is not optional.
      */
-  }, [artwork]);
+  }, [artwork, mode]);
 
   return (
     /*
@@ -327,16 +360,20 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
      * re-run of the effect against the same five DOM nodes throws, spawnWorker
      * swallows it, and the scene goes permanently dead. That used to be a note
      * warning the next person; it is now load-bearing, because the effect DOES
-     * re-run — on a palette change that crosses between the two artworks.
+     * re-run — on a statue change, and on a change of look.
      *
-     * `key={artwork.id}` is what makes that safe: React discards the old canvas
-     * and mounts a new one, so the re-run gets an untransferred element. The
-     * outgoing workers are terminated by the effect's own cleanup.
+     * The key is what makes that safe: React discards the old canvas and mounts
+     * a new one, so the re-run gets an untransferred element. The mode is in the
+     * key as well as the artwork, because digital → classic → digital returns to
+     * the same artwork id and would otherwise hand the second digital pass the
+     * same already-transferred nodes the first one consumed — the two flame
+     * canvases included, since the classic pass transfers those itself. The outgoing
+     * workers are terminated by the effect's own cleanup.
      */
     <div ref={containerRef} className={`digital-statue ${className}`.trim()}>
        {/*Back layer: rain + flames (behind statue)*/}
       <div className="digital-statue__rain-wrap">
-        <canvas key={artwork.id} ref={rainRef} className="digital-statue__rain" />
+        <canvas key={canvasKey} ref={rainRef} className="digital-statue__rain" />
       </div>
 
       {/*
@@ -357,22 +394,22 @@ export function DigitalStatue({ className = '' }: DigitalStatueProps) {
         * rendered width via `sizes`, `image-set()` picks by device pixel ratio.
         * The generated stylesheet maps 700=1x / 1050=1.5x / 1400=2x.
         */}
-      <div key={artwork.id} className="digital-statue__img" role="presentation" />
+      <div key={canvasKey} className="digital-statue__img" role="presentation" />
 
       {/* Front layer: sparkles (on top of statue) */}
       <div className="digital-statue__sparkles-wrap digital-statue__sparkles-body">
-        <canvas key={artwork.id} ref={spkBodyRef} className="digital-statue__sparkle-canvas" />
+        <canvas key={canvasKey} ref={spkBodyRef} className="digital-statue__sparkle-canvas" />
       </div>
       <div className="digital-statue__sparkles-wrap digital-statue__sparkles-scale">
-        <canvas key={artwork.id} ref={spkScaleRef} className="digital-statue__sparkle-canvas" />
+        <canvas key={canvasKey} ref={spkScaleRef} className="digital-statue__sparkle-canvas" />
       </div>
 
       {/* Flames (behind statue, inside back layer z-index) */}
       <div className="digital-statue__flame digital-statue__flame--left">
-        <canvas key={artwork.id} ref={flameLRef} className="digital-statue__flame-canvas" />
+        <canvas key={canvasKey} ref={flameLRef} className="digital-statue__flame-canvas" />
       </div>
       <div className="digital-statue__flame digital-statue__flame--right">
-        <canvas key={artwork.id} ref={flameRRef} className="digital-statue__flame-canvas" />
+        <canvas key={canvasKey} ref={flameRRef} className="digital-statue__flame-canvas" />
       </div>
     </div>
   );

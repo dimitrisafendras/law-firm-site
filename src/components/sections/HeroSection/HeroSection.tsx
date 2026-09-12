@@ -1,8 +1,37 @@
 import { useTranslation } from '@/i18n';
 import { EditableSpawnText } from '@/components/animations/EditableSpawnText';
-import { EditableText, Button } from '@/components';
+import { EditableText } from '@/components';
 import { DigitalStatue } from '@/components/DigitalStatue/DigitalStatue';
 import './HeroSection.css';
+
+/*
+ * Dust in a shaft of light — the classic look's answer to the circuit grid.
+ *
+ * Fourteen motes, hand-placed rather than generated: this component is
+ * prerendered, so the server and the client must emit identical markup, and a
+ * fixed list says that more plainly than a seeded generator would. They cluster
+ * over the right two thirds, where the haze behind the statue puts the light;
+ * nothing drifts through the copy column on the left.
+ *
+ * `r` is in user units, which is CSS pixels here — the layer's SVG carries no
+ * viewBox, so nothing is scaled and a 1.4px mote is 1.4px on every screen.
+ */
+const CLASSIC_MOTES = [
+  { cx: '41%', cy: '82%', r: 1.1 },
+  { cx: '48%', cy: '64%', r: 1.6 },
+  { cx: '53%', cy: '91%', r: 1.3 },
+  { cx: '57%', cy: '38%', r: 1 },
+  { cx: '61%', cy: '73%', r: 1.8 },
+  { cx: '64%', cy: '22%', r: 1.2 },
+  { cx: '68%', cy: '57%', r: 1.4 },
+  { cx: '71%', cy: '86%', r: 1 },
+  { cx: '74%', cy: '31%', r: 1.7 },
+  { cx: '78%', cy: '68%', r: 1.2 },
+  { cx: '82%', cy: '44%', r: 1.5 },
+  { cx: '86%', cy: '79%', r: 1.1 },
+  { cx: '89%', cy: '27%', r: 1.3 },
+  { cx: '93%', cy: '59%', r: 1.6 },
+];
 
 export function HeroSection() {
   const { t } = useTranslation();
@@ -59,6 +88,22 @@ export function HeroSection() {
         </g>
       </svg>
 
+      {/*
+        The same beat in the classic look: no traces, no junctions — a shaft of
+        warm light behind the figure with dust turning slowly in it. Both layers
+        are always rendered and src/styles/classic.css decides which one paints,
+        because the prerendered markup has to be mode-agnostic (see
+        src/theme/modes.ts, and the long version in statueArtwork.ts).
+      */}
+      <div className="hero-section__classic" aria-hidden="true">
+        <div className="hero-section__classic-haze" />
+        <svg className="hero-section__classic-motes" fill="none" focusable="false">
+          {CLASSIC_MOTES.map((mote) => (
+            <circle key={mote.cx} cx={mote.cx} cy={mote.cy} r={mote.r} fill="currentColor" />
+          ))}
+        </svg>
+      </div>
+
       <div className="hero-section__content">
         <span className="hero-section__badge">
           <span className="hero-section__badge-dot" aria-hidden="true" />
@@ -92,16 +137,33 @@ export function HeroSection() {
           only conversion element above the fold is no longer the nav pill.
         */}
         <div className="hero-section__actions">
-          <Button
-            onClick={() =>
-              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
-            }
-          >
-            {t('navCta')}
-          </Button>
-          <a className="hero-section__secondary" href="#team">
-            {t('heroSecondaryCta')} <span aria-hidden="true">&darr;</span>
-          </a>
+          {/*
+            * An anchor wearing the button's classes rather than a `<Button>`
+            * with an onClick, and that is what makes the label editable: an
+            * EditableText can BE an anchor (`as="a"`), but it cannot be the
+            * inside of a `<button>` — a textarea may not nest there, and
+            * `elementProps` takes strings, so the handler could not survive
+            * the move either.
+            *
+            * Nothing is lost by dropping the handler. The root sets
+            * `scroll-behavior: smooth`, so `#contact` scrolls exactly as
+            * `scrollIntoView({ behavior: 'smooth' })` did, and every other
+            * navigation on this page is already a plain hash anchor.
+            */}
+          <EditableText
+            tKey="navCta"
+            as="a"
+            className="btn btn--primary btn--md"
+            elementProps={{ href: '#contact' }}
+          />
+          {/* The arrow is a `::after` now, for the reason the detail pages'
+              back links give: `as="a"` renders no children. */}
+          <EditableText
+            tKey="heroSecondaryCta"
+            as="a"
+            className="hero-section__secondary"
+            elementProps={{ href: '#team' }}
+          />
         </div>
       </div>
 

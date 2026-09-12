@@ -87,6 +87,30 @@ async function loadLimestoneSource() {
 }
 
 /**
+ * The white and monochrome statues - the cyan artwork's 3584px PNG recoloured
+ * (wireframe neutralised to white, scales kept; and a full Rec. 709 grey) and
+ * written as 1400px q92 WebPs, for the same reason the limestone master is
+ * one: 1400 is the widest the site asks for, and a 10MB PNG each is not worth
+ * the clone. As with limestone, the on-disk WebP IS the master.
+ */
+async function loadWhiteSource() {
+  const buffer = await readFile(join(imagesDir, 'hero-statue-white.webp'));
+  return { buffer, origin: 'on-disk hero-statue-white.webp (1400px master)' };
+}
+
+async function loadMonoSource() {
+  const buffer = await readFile(join(imagesDir, 'hero-statue-mono.webp'));
+  return { buffer, origin: 'on-disk hero-statue-mono.webp (1400px master)' };
+}
+
+/** The ultramarine statue: the cyan mesh re-hued to the family's blue. Same
+ *  master arrangement as the other recolours. */
+async function loadUltramarineSource() {
+  const buffer = await readFile(join(imagesDir, 'hero-statue-ultramarine.webp'));
+  return { buffer, origin: 'on-disk hero-statue-ultramarine.webp (1400px master)' };
+}
+
+/**
  * Encode `buffer` to a file at `outName`, optionally resized to `width`.
  * @returns {Promise<number>} bytes written
  */
@@ -165,6 +189,9 @@ async function run() {
   // the two are interchangeable by construction, which is what lets the hero
   // swap between them per palette.
   await buildStatue(loadLimestoneSource, 'hero-statue-limestone');
+  await buildStatue(loadWhiteSource, 'hero-statue-white');
+  await buildStatue(loadMonoSource, 'hero-statue-mono');
+  await buildStatue(loadUltramarineSource, 'hero-statue-ultramarine');
   await buildSingle('partner-male', { quality: 55, effort: 6 });
   await buildSingle('partner-female', { quality: 55, effort: 6 });
 

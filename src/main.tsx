@@ -5,6 +5,10 @@ import { createRoot, hydrateRoot } from 'react-dom/client'
 import './theme/theme.generated.css'
 import './index.css'
 import './styles/liquid-glass.css'
+// The classic look. Loaded after the material and before every component sheet,
+// so its `[data-mode='classic']` rules override by SPECIFICITY rather than by
+// order — see the note at the top of the file.
+import './styles/classic.css'
 import { I18nProvider } from './i18n/I18nProvider'
 import { AuthProvider } from './lib/auth'
 import { ThemeProvider } from './lib/theme'

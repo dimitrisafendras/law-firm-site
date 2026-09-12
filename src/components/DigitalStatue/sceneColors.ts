@@ -67,3 +67,43 @@ export const LIMESTONE_COLORS: SceneColors = {
   secondary: '222,174,115',
   accentBright: '253,241,217',
 };
+
+/**
+ * The two neutral artworks - `hero-statue-white-*` and `hero-statue-mono-*` -
+ * share one set, and that is the limestone rule applied rather than skipped.
+ *
+ * That rule fixes the LIGHTNESS profile, not the artwork's own colour: the
+ * cyan triple sits at HSL lightness 87 / 74 / 93 and the limestone one holds
+ * that profile in a different hue because lightness is what makes the rain
+ * read as glowing. A neutral wireframe has no hue to hold, so the profile at
+ * zero saturation is the whole derivation - 87% of 255 is 222, 74% is 189,
+ * 93% is 237.
+ *
+ * It is one constant and not two because the profile does not depend on how
+ * dark the statue's own wireframe came out: the white artwork's mesh measures
+ * a median of 190 and the mono's 136, and giving each "its own" grey would
+ * have made the mono scene dim exactly where the limestone note says the
+ * scene must not - vanishing on the dark palettes.
+ */
+export const NEUTRAL_COLORS: SceneColors = {
+  accent: '222,222,222',
+  secondary: '189,189,189',
+  accentBright: '237,237,237',
+};
+
+/**
+ * The ultramarine artwork - `hero-statue-ultramarine-*`, the cyan mesh turned
+ * to the Ultramarine family's blue.
+ *
+ * The limestone rule again, with nothing to choose: the artwork's hue is the
+ * family accent's, 215.3deg (porcelain, #A8C4EC), and the cyan set's HSL
+ * saturation AND lightness are held exactly - 100/87, 77/74, 100/93 - so this
+ * is the cyan triple re-hued and no more. It is deliberately not the palette's
+ * own accent tokens: `lapis`'s accent is white plates, and the rain has to be
+ * the wireframe's colour, not the buttons'.
+ */
+export const ULTRAMARINE_COLORS: SceneColors = {
+  accent: '188,216,255',
+  secondary: '137,179,240',
+  accentBright: '220,234,255',
+};

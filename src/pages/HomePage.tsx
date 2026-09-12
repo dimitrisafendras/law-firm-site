@@ -8,6 +8,7 @@ import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection/TestimonialsSection';
 import { ContactSection } from '@/components/sections/ContactSection/ContactSection';
 import { CircuitField } from '@/components/CircuitField';
+import { ClassicField } from '@/components/ClassicField';
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -102,6 +103,10 @@ export default function HomePage() {
           screen at a time. */}
       <main className="page-ramp page-ramp--screens">
         <CircuitField />
+        {/* The classic look's frame. Both decorative layers are always in the
+            DOM and src/styles/classic.css picks the one that paints — the
+            markup has to be mode-agnostic (see src/theme/modes.ts). */}
+        <ClassicField />
         <HeroSection />
         <PartnerEthos />
         <PracticeGrid />

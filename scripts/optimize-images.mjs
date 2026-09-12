@@ -111,19 +111,6 @@ async function loadUltramarineSource() {
 }
 
 /**
- * The classic statue: the figure made whole. The wireframe half and the cube
- * debris are rebuilt as marble from the intact half (silhouette from the mesh,
- * colour diffused in from the stone, grain quilted from the drapery, the
- * wireframe pan replaced by the brass one mirrored across the beam), and the
- * result is written as a 1400px q92 WebP master like the other recolours.
- * This is the classic look's statue (see src/theme/statues.ts).
- */
-async function loadClassicSource() {
-  const buffer = await readFile(join(imagesDir, 'hero-statue-classic.webp'));
-  return { buffer, origin: 'on-disk hero-statue-classic.webp (1400px master)' };
-}
-
-/**
  * Encode `buffer` to a file at `outName`, optionally resized to `width`.
  * @returns {Promise<number>} bytes written
  */
@@ -205,7 +192,6 @@ async function run() {
   await buildStatue(loadWhiteSource, 'hero-statue-white');
   await buildStatue(loadMonoSource, 'hero-statue-mono');
   await buildStatue(loadUltramarineSource, 'hero-statue-ultramarine');
-  await buildStatue(loadClassicSource, 'hero-statue-classic');
   await buildSingle('partner-male', { quality: 55, effort: 6 });
   await buildSingle('partner-female', { quality: 55, effort: 6 });
 

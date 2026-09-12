@@ -79,8 +79,8 @@ describe('StatueOptions', () => {
   it('has exactly one checked radio, defaulting to Follow the theme', () => {
     renderStatue();
     const radios = screen.getAllByRole('radio');
-    // "Follow the theme" plus the six registry artworks.
-    expect(radios).toHaveLength(7);
+    // "Follow the theme" plus the five registry artworks.
+    expect(radios).toHaveLength(6);
     const checked = radios.filter((r) => r.getAttribute('aria-checked') === 'true');
     expect(checked).toHaveLength(1);
     expect(checked[0]).toHaveAccessibleName(/follow the theme/i);
@@ -119,9 +119,10 @@ describe('StatueOptions', () => {
     await user.keyboard('{ArrowDown}');
 
     const radios = screen.getAllByRole('radio');
-    // The second row in registry order is "Cyan".
+    // The second row in registry order is "Ultramarine" — the artwork every
+    // palette wears, and so the one the list leads with.
     expect(radios[1]).toHaveFocus();
-    expect(radios[1]).toHaveAccessibleName(/cyan/i);
+    expect(radios[1]).toHaveAccessibleName(/ultramarine/i);
     expect(radios[1]).toHaveAttribute('aria-checked', 'true');
   });
 });

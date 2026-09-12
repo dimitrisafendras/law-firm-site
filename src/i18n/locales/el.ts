@@ -463,7 +463,6 @@ const el = {
   statueWhite: 'Λευκό',
   statueMono: 'Μονόχρωμο',
   statueLimestone: 'Ασβεστόλιθος',
-  statueClassic: 'Κλασικό μάρμαρο',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────
   chapterTeam: 'Κεφάλαιο 01 / Ομάδα',

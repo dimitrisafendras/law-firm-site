@@ -115,9 +115,11 @@ export function Navbar({ logo, links, cta, primaryCta, deferCta = false }: Navba
 
   // Close if the viewport grows past the mobile breakpoint while open, so the
   // desktop layout is never shown with a locked body / stale open state.
+  // 1121px, matching Navbar.css and NOT breakpoints.mobile — the header
+  // collapses earlier than the rest of the page; the reason is in Navbar.css.
   useEffect(() => {
     if (!open) return;
-    const mq = window.matchMedia('(min-width: 1025px)');
+    const mq = window.matchMedia('(min-width: 1121px)');
     const onChange = () => {
       if (mq.matches) setOpen(false);
     };

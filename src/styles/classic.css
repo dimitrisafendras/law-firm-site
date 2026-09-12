@@ -115,8 +115,8 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  /* The brass in the scale pans, which is the only warm note the classic render
-     carries. `--tertiary` is a fill and never text, which is what this is. */
+  /* The brass in the scale pans, the warm note the haze is lit to answer.
+     `--tertiary` is a fill and never text, which is what this is. */
   color: var(--tertiary);
 }
 
@@ -261,10 +261,12 @@
 /* ─── Hero: the figure rises rather than resolves ─────────────────────────────
  *
  * `statue-rise` wipes a clip-path up the figure and flares it through
- * `--x-flare` — the drawing assembling itself out of an unrendered state. The
- * classic render is a whole marble figure and has no unrendered state to come
- * from, so it simply rises into the light: opacity and a small lift, over half
- * again as long, on the rounder classic easing. Both timings are tokens.
+ * `--x-flare` — the drawing assembling itself out of an unrendered state, which
+ * is the digital look's whole argument in one entrance. The classic look shows
+ * the same photograph and reads it the other way round: not something being
+ * rendered, something being lit. So it simply rises — opacity and a small lift,
+ * over half again as long, on the rounder classic easing. Both timings are
+ * tokens.
  * ──────────────────────────────────────────────────────────────────────────── */
 
 @keyframes classic-statue-rise {
@@ -286,50 +288,23 @@
 }
 
 
-/* ─── Hero: sunlight on the brass ─────────────────────────────────────────────
+/* ─── Hero: the fire in the scale pans stays ──────────────────────────────────
  *
- * The scale pans keep their boxes and lose their canvases. Those boxes are
- * hand-positioned against the pans in the photograph, so they are exactly the
- * right two rectangles to light — what changes is that they hold a slow warm
- * glow instead of fire.
+ * Nothing here, deliberately, and it is worth saying why rather than leaving a
+ * gap.
  *
- * The canvases are hidden rather than removed because DigitalStatue still
- * renders them; it is the WORKERS that the classic look does not pay for, and
- * the effect returns before spawning any (see DigitalStatue.tsx).
+ * The two pans burned as a palette-toned CSS glow while the classic look had a
+ * marble statue of its own. It does not — src/theme/statues.ts has the reason —
+ * so both looks wear the same photograph, and that photograph is lit by two
+ * flames keyed to the wireframe baked into it: warm on the brass pan, the
+ * wireframe's own colour on the other. A `--tertiary` glow in their place
+ * tracked the palette while the image under it could not, which is precisely
+ * the mismatch sceneColors.ts was written about.
+ *
+ * So the flame canvases are left alone and DigitalStatue spawns their two
+ * workers in both looks. What the classic look drops is the dissolution — the
+ * rain and the two sparkle fields, hidden above and never spawned.
  * ──────────────────────────────────────────────────────────────────────────── */
-
-[data-mode='classic'] .digital-statue__flame-canvas {
-  display: none;
-}
-
-[data-mode='classic'] .digital-statue__flame {
-  background: radial-gradient(
-    ellipse at 50% 45%,
-    color-mix(in oklab, var(--tertiary) 55%, transparent) 0%,
-    color-mix(in oklab, var(--tertiary) 18%, transparent) 45%,
-    transparent 72%
-  );
-  /* Resting value, and the one a reduced-motion reader keeps: it sits between
-     the two ends of the breath below, so nothing appears or disappears when the
-     animation is collapsed. */
-  opacity: 0.55;
-}
-
-@keyframes classic-brass-glow {
-  from { opacity: 0.36; }
-  to { opacity: 0.82; }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  /*
-   * Replaces `statue-ambient-ignite` on these two boxes — they no longer have a
-   * scene to ignite, and the figure they hang on is already fading up under
-   * them. (0,2,0) against the ignite rule's (0,1,0).
-   */
-  [data-mode='classic'] .digital-statue__flame {
-    animation: classic-brass-glow 6s ease-in-out infinite alternate;
-  }
-}
 
 
 /* ─── Hero: the scroll hint ─────────────────────────────────────────────────── */

@@ -50,7 +50,7 @@ import {
   materialVarNames,
 } from '../src/theme/tokens.ts';
 import { palettes, DEFAULT_PALETTE_ID } from '../src/theme/palettes.ts';
-import { statues, CLASSIC_STATUE_ID, statueForFamily } from '../src/theme/statues.ts';
+import { statues, statueForFamily } from '../src/theme/statues.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outPath = join(__dirname, '..', 'src', 'theme', 'theme.generated.css');
@@ -260,10 +260,6 @@ const statueRules = [
       if (list.length === 0) return [];
       return ['', `${paletteSelector(list, '.digital-statue__img')} {`, statueBackground(s.base), '}'];
     }),
-  '',
-  `:root[data-mode='classic'] .digital-statue__img {`,
-  statueBackground(statues.find((s) => s.id === CLASSIC_STATUE_ID).base),
-  '}',
   ...statues.flatMap((s) => [
     '',
     `:root[data-statue='${s.id}'] .digital-statue__img {`,

@@ -470,7 +470,6 @@ const en = {
   statueWhite: 'White',
   statueMono: 'Monochrome',
   statueLimestone: 'Limestone',
-  statueClassic: 'Classic marble',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────
   chapterTeam: 'Chapter 01 / Team',

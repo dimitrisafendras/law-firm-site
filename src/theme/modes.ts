@@ -9,13 +9,19 @@
  * collision.
  *
  * ── Classic ───────────────────────────────────────────────────────────────────
- * The same page with the collision resolved in favour of the stone. The figure
- * is whole marble, nothing on the page is drawn as a circuit, the type is a
+ * The same page with the collision resolved in favour of the stone. Nothing is
+ * drawn as a circuit, the rain and the sparkles are gone, the type is a
  * Garamond, corners are cut rather than poured, the decorative layer is a
  * meander frieze and fluted columns rather than traces and nodes, and every
  * entrance is a rise through light rather than a render resolving. The glass
  * material stays — it is the site's material, not the digital look's — and it
  * keeps every rule in CLAUDE.md about how it is used.
+ *
+ * What it does NOT do is change the photograph. There was a marble render of
+ * the hero figure for a while and it is gone; src/theme/statues.ts says why.
+ * Both looks wear the same five artworks and the same two flames in the scale
+ * pans, because those flames are how the photograph is lit, not a digital
+ * effect laid over it.
  *
  * ── How a mode is applied ─────────────────────────────────────────────────────
  * Exactly the way a palette is: an attribute on `<html>` — `data-mode` — that
@@ -26,7 +32,7 @@
  * silently keeps the server's markup. Both looks are therefore always in the
  * DOM, and CSS decides which is visible. The one React-side reader is
  * DigitalStatue, which reads the mode inside an effect (never in render) so
- * that the classic look does not pay for five canvas workers it never shows.
+ * that the classic look spawns two canvas workers rather than five.
  *
  * `digital` is the default and is what bare `:root` renders, so it needs no
  * stylesheet block of its own; `classic` is the override, emitted by

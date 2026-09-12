@@ -4,12 +4,11 @@
  * ── The registry, not a palette map ──────────────────────────────────────────
  *
  * `src/theme/statues.ts` owns WHICH statue is on screen: a reader's pin if there
- * is one, else the classic look's marble figure, else the palette family's
- * artwork. This file owns only what the rain, the sparkles and the cool flame
- * are painted in once that has been decided, and it is keyed on the resolved
- * statue id so that all three of those inputs are already accounted for. It used
- * to key on the palette family itself, which could not express a reader's pin
- * and had no way to say "the look chose this one".
+ * is one, else the palette family's artwork. This file owns only what the rain,
+ * the sparkles and the cool flame are painted in once that has been decided,
+ * and it is keyed on the resolved statue id so that both of those inputs are
+ * already accounted for. It used to key on the palette family itself, which
+ * could not express a reader's pin.
  *
  * ── Why the scene follows the drawing and not the theme ──────────────────────
  *
@@ -22,11 +21,9 @@
  * mismatched, and the fix for a warm palette was never to re-tint the fire but
  * to hand it a statue the fire already matches.
  *
- * So six drawings and five colour sets. `white` and `mono` share one, because
+ * So five drawings and four colour sets. `white` and `mono` share one, because
  * the neutral profile does not depend on which grey the mesh came out (see
- * NEUTRAL_COLORS). `classic` shares the limestone set: that render has no
- * wireframe at all, and its only chroma is the brass of the scales — so if a
- * reader pins it under the digital look, the scene that lights it burns warm.
+ * NEUTRAL_COLORS).
  *
  * ── The artworks are interchangeable by construction ─────────────────────────
  *
@@ -39,8 +36,8 @@
  *
  * ── The IMAGE is not chosen here; the stylesheet chooses it ──────────────────
  *
- * Which file the hero shows is a `background-image` swapped on `[data-theme]`,
- * `[data-mode]` and `[data-statue]`, emitted per palette and per statue by
+ * Which file the hero shows is a `background-image` swapped on `[data-theme]`
+ * and `[data-statue]`, emitted per palette and per statue by
  * scripts/generate-theme-css.mjs — which is also why the family lists live in
  * `palettes.ts` and `statues.ts` rather than here: that script runs in bare node
  * and cannot import a module that imports images.
@@ -54,7 +51,7 @@
  * meant rendering the prerendered artwork first and swapping after hydration,
  * which made most of the palettes fetch an image they never displayed.
  *
- * In CSS none of that exists. The palette and the mode are attributes on <html>
+ * In CSS none of that exists. The palette and the pin are attributes on <html>
  * before the first paint, exactly one image is ever requested, and there is no
  * React state involved at all.
  *
@@ -90,7 +87,6 @@ const ARTWORKS: Record<StatueId, StatueArtwork> = {
   white: { id: 'white', colors: NEUTRAL_COLORS },
   mono: { id: 'mono', colors: NEUTRAL_COLORS },
   limestone: { id: 'limestone', colors: LIMESTONE_COLORS },
-  classic: { id: 'classic', colors: LIMESTONE_COLORS },
 };
 
 /** The scene for a resolved statue — see `resolveStatue` in src/theme/statues.ts. */

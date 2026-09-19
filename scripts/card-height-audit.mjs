@@ -74,7 +74,7 @@ const DEFAULT_TOLERANCE = 1;
 
 function parseArgs(argv) {
   const opts = {
-    url: 'http://localhost:5173/law-firm-site/',
+    url: 'http://localhost:5173/',
     widths: WIDTHS,
     langs: LANGS,
     tolerance: DEFAULT_TOLERANCE,

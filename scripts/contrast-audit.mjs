@@ -73,7 +73,7 @@ const ROOT = path.dirname(fileURLToPath(new URL('.', import.meta.url)));
 
 function parseArgs(argv) {
   const opts = {
-    url: 'http://localhost:5173/law-firm-site/',
+    url: 'http://localhost:5173/',
     routes: ['', '#login', '#signup', '#partner/1', '#practice/corporate'],
     palettes: null, // null = every palette in the generated stylesheet
     viewport: { width: 1728, height: 900 },

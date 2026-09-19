@@ -61,37 +61,44 @@
  * that it falls back to the Chrome installed on the machine (`--channel`).
  */
 
-import { chromium } from 'playwright';
-import sharp from 'sharp';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { chromium } from "playwright";
+import sharp from "sharp";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const ROOT = path.dirname(fileURLToPath(new URL('.', import.meta.url)));
+const ROOT = path.dirname(fileURLToPath(new URL(".", import.meta.url)));
 
 /* ─── Options ─────────────────────────────────────────────────────────────── */
 
 function parseArgs(argv) {
   const opts = {
-    url: 'http://localhost:5173/',
-    routes: ['', '#login', '#signup', '#partner/1', '#practice/corporate'],
+    url: "http://localhost:5173/",
+    routes: ["", "#login", "#signup", "#partner/1", "#practice/corporate"],
     palettes: null, // null = every palette in the generated stylesheet
+    // Which rungs of the light-to-dark ladder to measure. [0] is the shipped
+    // palettes and therefore the default: the other rungs triple the run, and
+    // most changes cannot affect them without affecting rung 0 too.
+    steps: [0],
     viewport: { width: 1728, height: 900 },
     json: null,
     shots: null,
     quiet: false,
   };
   for (const arg of argv) {
-    const [key, value] = arg.replace(/^--/, '').split('=');
-    if (key === 'mobile') opts.viewport = { width: 390, height: 844 };
-    else if (key === 'url') opts.url = value;
-    else if (key === 'routes') opts.routes = value.split(',').map((r) => (r === '/' ? '' : r));
-    else if (key === 'palettes') opts.palettes = value.split(',');
-    else if (key === 'json') opts.json = value;
-    else if (key === 'shots') opts.shots = value;
-    else if (key === 'quiet') opts.quiet = true;
-    else if (key === 'width') opts.viewport.width = Number(value);
-    else if (key === 'height') opts.viewport.height = Number(value);
+    const [key, value] = arg.replace(/^--/, "").split("=");
+    if (key === "mobile") opts.viewport = { width: 390, height: 844 };
+    else if (key === "url") opts.url = value;
+    else if (key === "routes")
+      opts.routes = value.split(",").map((r) => (r === "/" ? "" : r));
+    else if (key === "palettes") opts.palettes = value.split(",");
+    else if (key === "steps") {
+      opts.steps = value === "all" ? [0, 1, 2] : value.split(",").map(Number);
+    } else if (key === "json") opts.json = value;
+    else if (key === "shots") opts.shots = value;
+    else if (key === "quiet") opts.quiet = true;
+    else if (key === "width") opts.viewport.width = Number(value);
+    else if (key === "height") opts.viewport.height = Number(value);
     else throw new Error(`unknown option --${key}`);
   }
   return opts;
@@ -103,14 +110,47 @@ function parseArgs(argv) {
  * stylesheet is regenerated from those seeds anyway, so it cannot drift.
  */
 function palettesFromStylesheet() {
-  const file = path.join(ROOT, 'src/theme/theme.generated.css');
+  const file = path.join(ROOT, "src/theme/theme.generated.css");
   if (!fs.existsSync(file)) {
-    throw new Error(`${file} is missing — run \`npm run generate:theme\` first.`);
+    throw new Error(
+      `${file} is missing — run \`npm run generate:theme\` first.`,
+    );
   }
-  const css = fs.readFileSync(file, 'utf8');
-  const ids = [...css.matchAll(/:root\[data-theme='([a-z0-9-]+)'\]/g)].map((m) => m[1]);
+  const css = fs.readFileSync(file, "utf8");
+  const ids = [...css.matchAll(/:root\[data-theme='([a-z0-9-]+)'\]/g)].map(
+    (m) => m[1],
+  );
   return [...new Set(ids)];
 }
+
+/**
+ * Each palette's scheme, also read from the stylesheet.
+ *
+ * Needed because a ladder rung is addressed by an INDEX that counts from the
+ * dark end, while this script iterates palettes and steps. A dark palette's
+ * step s is rung s; a light palette's step s is rung 5 - s. Getting that
+ * backwards does not throw — it measures the wrong rung and reports it under
+ * the right name — so the assertion after the reload checks `data-step` as
+ * well as `data-theme`.
+ */
+function schemesFromStylesheet() {
+  const css = fs.readFileSync(
+    path.join(ROOT, "src/theme/theme.generated.css"),
+    "utf8",
+  );
+  const out = new Map();
+  const blocks = css.matchAll(
+    /:root\[data-theme='([a-z0-9-]+)'\][^{]*\{([^}]*)\}/g,
+  );
+  for (const [, id, body] of blocks) {
+    const m = body.match(/color-scheme:\s*(light|dark)/);
+    if (m && !out.has(id)) out.set(id, m[1]);
+  }
+  return out;
+}
+
+/** CONTINUUM_LENGTH from src/theme/continuum.ts, which this file cannot import. */
+const LADDER = 6;
 
 /* ─── Colour maths ────────────────────────────────────────────────────────── */
 
@@ -160,18 +200,27 @@ function parseColor(value) {
   const text = String(value).trim();
   const oklab = text.match(/^oklab\(([^)]+)\)/);
   if (oklab) {
-    const [L, a, b] = oklab[1].replace(/\//g, ' ').split(/[\s,]+/).filter(Boolean).map(Number);
+    const [L, a, b] = oklab[1]
+      .replace(/\//g, " ")
+      .split(/[\s,]+/)
+      .filter(Boolean)
+      .map(Number);
     return oklabToSrgb(L, a, b);
   }
   const hex = text.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
   if (hex) {
-    const h = hex[1].length === 3 ? [...hex[1]].map((c) => c + c).join('') : hex[1];
+    const h =
+      hex[1].length === 3 ? [...hex[1]].map((c) => c + c).join("") : hex[1];
     const n = parseInt(h, 16);
     return [(n >> 16) & 255, (n >> 8) & 255, n & 255, 1];
   }
   const rgb = text.match(/^rgba?\(([^)]+)\)/);
   if (rgb) {
-    const p = rgb[1].replace(/\//g, ' ').split(/[\s,]+/).filter(Boolean).map(Number);
+    const p = rgb[1]
+      .replace(/\//g, " ")
+      .split(/[\s,]+/)
+      .filter(Boolean)
+      .map(Number);
     return [p[0], p[1], p[2], p[3] ?? 1];
   }
   return null;
@@ -185,21 +234,38 @@ function parseColor(value) {
  */
 const COLLECT = () => {
   const CONTROLS = [
-    'button', '.btn', 'input', 'textarea', 'select',
-    '.icon-toggle', '.auth-nav__avatar', '.theme-picker__trigger', '.palette-chip',
-    '[role="radio"]', '[role="switch"]', '[role="tab"]',
-  ].join(', ');
+    "button",
+    ".btn",
+    "input",
+    "textarea",
+    "select",
+    ".icon-toggle",
+    ".auth-nav__avatar",
+    ".theme-picker__trigger",
+    ".palette-chip",
+    '[role="radio"]',
+    '[role="switch"]',
+    '[role="tab"]',
+  ].join(", ");
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
   const describe = (el) => {
     const parts = [];
-    for (let n = el; n && n.nodeType === 1 && parts.length < 4; n = n.parentElement) {
-      const cls = String(n.className || '').trim().split(/\s+/)[0];
-      parts.unshift(cls ? `${n.tagName.toLowerCase()}.${cls}` : n.tagName.toLowerCase());
+    for (
+      let n = el;
+      n && n.nodeType === 1 && parts.length < 4;
+      n = n.parentElement
+    ) {
+      const cls = String(n.className || "")
+        .trim()
+        .split(/\s+/)[0];
+      parts.unshift(
+        cls ? `${n.tagName.toLowerCase()}.${cls}` : n.tagName.toLowerCase(),
+      );
     }
-    return parts.join('>');
+    return parts.join(">");
   };
 
   /* An ancestor fading a subtree makes its text unmeasurable, not low-contrast:
@@ -218,17 +284,23 @@ const COLLECT = () => {
   };
 
   const inViewport = (r) =>
-    r.top >= 0 && r.left >= 0 && r.bottom <= vh && r.right <= vw && r.width >= 3 && r.height >= 3;
+    r.top >= 0 &&
+    r.left >= 0 &&
+    r.bottom <= vh &&
+    r.right <= vw &&
+    r.width >= 3 &&
+    r.height >= 3;
 
   /* Does this element paint anything of its own? A transparent wrapper does
      not hide what is under it. */
   const paints = (el) => {
     const s = getComputedStyle(el);
     return (
-      (s.backgroundColor && !/^rgba\(0, 0, 0, 0\)$|^transparent$/.test(s.backgroundColor)) ||
-      s.backgroundImage !== 'none' ||
+      (s.backgroundColor &&
+        !/^rgba\(0, 0, 0, 0\)$|^transparent$/.test(s.backgroundColor)) ||
+      s.backgroundImage !== "none" ||
       Number(s.opacity) < 1 ||
-      s.backdropFilter !== 'none'
+      s.backdropFilter !== "none"
     );
   };
 
@@ -249,9 +321,14 @@ const COLLECT = () => {
          own border box excludes the point came from a pseudo-element — this
          codebase draws overlays and underlines that way — so it tells us
          nothing about whether the host painted here. */
-      for (let n = hit; n && n !== document.body && !n.contains(el); n = n.parentElement) {
+      for (
+        let n = hit;
+        n && n !== document.body && !n.contains(el);
+        n = n.parentElement
+      ) {
         const b = n.getBoundingClientRect();
-        const insideHost = x >= b.left && x <= b.right && y >= b.top && y <= b.bottom;
+        const insideHost =
+          x >= b.left && x <= b.right && y >= b.top && y <= b.bottom;
         if (insideHost && paints(n)) return false;
       }
       return true;
@@ -259,18 +336,20 @@ const COLLECT = () => {
   };
 
   const items = [];
-  for (const el of document.querySelectorAll('body *')) {
+  for (const el of document.querySelectorAll("body *")) {
     const cs = getComputedStyle(el);
-    if (cs.visibility !== 'visible' || cs.display === 'none') continue;
+    if (cs.visibility !== "visible" || cs.display === "none") continue;
     const opacity = effectiveOpacity(el);
     if (opacity < 0.99) continue;
 
     const r = el.getBoundingClientRect();
-    const ownsText = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+    const ownsText = [...el.childNodes].some(
+      (n) => n.nodeType === 3 && n.textContent.trim(),
+    );
 
     if (ownsText && inViewport(r) && unoccluded(el, r)) {
       items.push({
-        kind: 'text',
+        kind: "text",
         path: describe(el),
         text: el.textContent.trim().slice(0, 30),
         color: cs.color,
@@ -285,20 +364,20 @@ const COLLECT = () => {
 
     if (el.matches(CONTROLS)) {
       const width = parseFloat(cs.borderTopWidth);
-      const drawn = width > 0 && cs.borderTopStyle !== 'none';
+      const drawn = width > 0 && cs.borderTopStyle !== "none";
       /* A control as wide as the page is a layout wrapper, not a boundary
          anyone is asked to perceive. */
       const boundary = r.width < vw * 0.9;
       if (drawn && boundary && inViewport(r) && unoccluded(el, r)) {
         items.push({
-          kind: 'border',
+          kind: "border",
           path: describe(el),
           text: el.textContent.trim().slice(0, 24) || el.tagName.toLowerCase(),
           color: cs.borderTopColor,
           opacity,
           fontSize: null,
           fontWeight: cs.fontWeight,
-          clip: 'border-box',
+          clip: "border-box",
           ariaHidden: 0,
           box: [r.x, r.y, r.width, r.height],
         });
@@ -311,8 +390,15 @@ const COLLECT = () => {
 /* ─── Measuring one frame ─────────────────────────────────────────────────── */
 
 async function decode(buffer) {
-  const { data, info } = await sharp(buffer).raw().toBuffer({ resolveWithObject: true });
-  return { data, width: info.width, height: info.height, channels: info.channels };
+  const { data, info } = await sharp(buffer)
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  return {
+    data,
+    width: info.width,
+    height: info.height,
+    channels: info.channels,
+  };
 }
 
 function pixelAt(image, x, y) {
@@ -326,7 +412,7 @@ function percentile(sorted, q) {
 
 /** WCAG's "large text": ≥24px, or ≥18.66px at 700 or heavier. */
 function threshold(item) {
-  if (item.kind === 'border') return 3;
+  if (item.kind === "border") return 3;
   const size = item.fontSize;
   const bold = Number(item.fontWeight) >= 700;
   return size >= 24 || (size >= 18.66 && bold) ? 3 : 4.5;
@@ -338,8 +424,13 @@ function measureFrame(image, frame) {
 
   for (const item of frame.items) {
     const fg = parseColor(item.color);
-    if (!fg || fg[3] < 0.05 || String(item.clip).includes('text')) {
-      unmeasurable.push({ ...frame.meta, path: item.path, text: item.text, color: item.color });
+    if (!fg || fg[3] < 0.05 || String(item.clip).includes("text")) {
+      unmeasurable.push({
+        ...frame.meta,
+        path: item.path,
+        text: item.text,
+        color: item.color,
+      });
       continue;
     }
 
@@ -351,21 +442,36 @@ function measureFrame(image, frame) {
     if (x1 - x0 < 3 || y1 - y0 < 3) continue;
 
     let samples;
-    if (item.kind === 'text') {
+    if (item.kind === "text") {
       const pixels = [];
-      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) pixels.push(pixelAt(image, x, y));
+      for (let y = y0; y < y1; y++)
+        for (let x = x0; x < x1; x++) pixels.push(pixelAt(image, x, y));
       /* Discard the 45% of the box closest to the glyph colour. Text never
          covers more than that at these sizes, so what is left is ground. */
       pixels.sort((a, b) => squaredDistance(a, fg) - squaredDistance(b, fg));
-      const ground = pixels.slice(Math.floor(pixels.length * 0.45)).sort((a, b) => luminance(a) - luminance(b));
-      samples = [percentile(ground, 0.05), percentile(ground, 0.5), percentile(ground, 0.95)];
+      const ground = pixels
+        .slice(Math.floor(pixels.length * 0.45))
+        .sort((a, b) => luminance(a) - luminance(b));
+      samples = [
+        percentile(ground, 0.05),
+        percentile(ground, 0.5),
+        percentile(ground, 0.95),
+      ];
     } else {
       /* A border is measured against what surrounds the control, so sample the
          ring outside its box rather than its own interior. */
       const m = 5;
       const ring = [];
-      for (let y = Math.max(0, y0 - m); y < Math.min(image.height, y1 + m); y++) {
-        for (let x = Math.max(0, x0 - m); x < Math.min(image.width, x1 + m); x++) {
+      for (
+        let y = Math.max(0, y0 - m);
+        y < Math.min(image.height, y1 + m);
+        y++
+      ) {
+        for (
+          let x = Math.max(0, x0 - m);
+          x < Math.min(image.width, x1 + m);
+          x++
+        ) {
           if (x >= x0 && x < x1 && y >= y0 && y < y1) continue;
           ring.push(pixelAt(image, x, y));
         }
@@ -414,10 +520,10 @@ async function launch() {
     /* No downloaded Chromium. The machine almost certainly has Chrome, and for
        a contrast measurement any Blink will do. */
     try {
-      return await chromium.launch({ channel: 'chrome' });
+      return await chromium.launch({ channel: "chrome" });
     } catch {
       throw new Error(
-        'No browser available. Run `npx playwright install chromium`, or install Google Chrome.',
+        "No browser available. Run `npx playwright install chromium`, or install Google Chrome.",
         { cause },
       );
     }
@@ -426,63 +532,99 @@ async function launch() {
 
 async function run(opts) {
   const palettes = opts.palettes ?? palettesFromStylesheet();
-  const base = opts.url.endsWith('/') ? opts.url : `${opts.url}/`;
+  const base = opts.url.endsWith("/") ? opts.url : `${opts.url}/`;
 
   const probe = await fetch(base).catch(() => null);
   if (!probe?.ok) {
-    throw new Error(`Nothing serving ${base}. Start the dev server (\`npm run dev\`) first.`);
+    throw new Error(
+      `Nothing serving ${base}. Start the dev server (\`npm run dev\`) first.`,
+    );
   }
 
   if (opts.shots) fs.mkdirSync(opts.shots, { recursive: true });
 
   const browser = await launch();
-  const page = await browser.newPage({ viewport: opts.viewport, deviceScaleFactor: 1 });
+  const page = await browser.newPage({
+    viewport: opts.viewport,
+    deviceScaleFactor: 1,
+  });
 
   const results = [];
   const unmeasurable = [];
   let frames = 0;
 
   try {
+    const schemes = schemesFromStylesheet();
+
     for (const palette of palettes) {
-      await page.goto(base, { waitUntil: 'networkidle' });
-      await page.evaluate((id) => localStorage.setItem('law-firm-site:palette', id), palette);
+      for (const rungStep of opts.steps) {
+        const scheme = schemes.get(palette) ?? "dark";
+        const rung = scheme === "dark" ? rungStep : LADDER - 1 - rungStep;
 
-      for (const route of opts.routes) {
-        await page.goto(base + route, { waitUntil: 'networkidle' });
-        /* See the header: a hash-only goto does not reload, so without this the
+        await page.goto(base, { waitUntil: "networkidle" });
+        await page.evaluate(
+          ([id, r]) => {
+            localStorage.setItem("law-firm-site:palette", id);
+            localStorage.setItem("law-firm-site:rung", String(r));
+          },
+          [palette, rung],
+        );
+
+        for (const route of opts.routes) {
+          await page.goto(base + route, { waitUntil: "networkidle" });
+          /* See the header: a hash-only goto does not reload, so without this the
            page keeps the previous palette and every row is mislabelled. */
-        await page.reload({ waitUntil: 'networkidle' });
-        await page.waitForTimeout(900);
+          await page.reload({ waitUntil: "networkidle" });
+          await page.waitForTimeout(900);
 
-        const shown = await page.evaluate(() => document.documentElement.dataset.theme);
-        if (shown !== palette) {
-          throw new Error(`asked for palette "${palette}" but the page rendered "${shown}"`);
-        }
-
-        const height = await page.evaluate(() => document.documentElement.scrollHeight);
-        const step = Math.round(opts.viewport.height * 0.85);
-        for (let y = 0, i = 0; y < height && i < 24; y += step, i++) {
-          await page.evaluate((to) => window.scrollTo(0, to), y);
-          await page.waitForTimeout(650);
-
-          const items = await page.evaluate(COLLECT);
-          if (!items.length) continue;
-
-          const buffer = await page.screenshot();
-          if (opts.shots) {
-            const name = `${palette}-${(route || 'home').replace(/[^a-z0-9]/gi, '_')}-${i}.png`;
-            fs.writeFileSync(path.join(opts.shots, name), buffer);
+          const shown = await page.evaluate(() => ({
+            theme: document.documentElement.dataset.theme,
+            step: Number(document.documentElement.dataset.step ?? 0),
+          }));
+          if (shown.theme !== palette || shown.step !== rungStep) {
+            throw new Error(
+              `asked for palette "${palette}" rung ${rung} (step ${rungStep}) but the page rendered ` +
+                `"${shown.theme}" step ${shown.step}`,
+            );
           }
 
-          const image = await decode(buffer);
-          const frame = { items, meta: { palette, route: route || 'home', step: i } };
-          const measured = measureFrame(image, frame);
-          results.push(...measured.results);
-          unmeasurable.push(...measured.unmeasurable);
-          frames++;
-        }
+          const height = await page.evaluate(
+            () => document.documentElement.scrollHeight,
+          );
+          const step = Math.round(opts.viewport.height * 0.85);
+          for (let y = 0, i = 0; y < height && i < 24; y += step, i++) {
+            await page.evaluate((to) => window.scrollTo(0, to), y);
+            await page.waitForTimeout(650);
 
-        if (!opts.quiet) process.stderr.write(`  ${palette} ${route || 'home'}\n`);
+            const items = await page.evaluate(COLLECT);
+            if (!items.length) continue;
+
+            const buffer = await page.screenshot();
+            if (opts.shots) {
+              const name = `${palette}-${(route || "home").replace(/[^a-z0-9]/gi, "_")}-${i}.png`;
+              fs.writeFileSync(path.join(opts.shots, name), buffer);
+            }
+
+            const image = await decode(buffer);
+            const frame = {
+              items,
+              meta: {
+                palette: rungStep ? `${palette}+${rungStep}` : palette,
+                route: route || "home",
+                step: i,
+              },
+            };
+            const measured = measureFrame(image, frame);
+            results.push(...measured.results);
+            unmeasurable.push(...measured.unmeasurable);
+            frames++;
+          }
+
+          if (!opts.quiet) {
+            const label = rungStep ? `${palette} rung${rung}` : palette;
+            process.stderr.write(`  ${label} ${route || "home"}\n`);
+          }
+        }
       }
     }
   } finally {
@@ -504,7 +646,9 @@ function report({ results, unmeasurable, frames, palettes }, opts) {
     if (!held || r.ratio < held.ratio) worstOf.set(key, r);
   }
 
-  const failures = [...worstOf.values()].filter((r) => !r.pass).sort((a, b) => a.ratio - b.ratio);
+  const failures = [...worstOf.values()]
+    .filter((r) => !r.pass)
+    .sort((a, b) => a.ratio - b.ratio);
 
   console.log(
     `\n${results.length} measurements over ${frames} frames, ` +
@@ -514,20 +658,26 @@ function report({ results, unmeasurable, frames, palettes }, opts) {
 
   if (unmeasurable.length) {
     const seen = new Set();
-    console.log('Unmeasurable (transparent colour, or painted through background-clip:text):');
+    console.log(
+      "Unmeasurable (transparent colour, or painted through background-clip:text):",
+    );
     for (const u of unmeasurable) {
       const key = `${u.path}|${u.text}`;
       if (seen.has(key)) continue;
       seen.add(key);
-      console.log(`   ${u.route.padEnd(20)} ${u.path}  ${JSON.stringify(u.text)}`);
+      console.log(
+        `   ${u.route.padEnd(20)} ${u.path}  ${JSON.stringify(u.text)}`,
+      );
     }
     console.log();
   }
 
   if (failures.length) {
-    console.log('ratio  need  route                element                                   text');
+    console.log(
+      "ratio  need  route                element                                   text",
+    );
     for (const r of failures) {
-      const flag = r.ariaHidden ? ' [aria-hidden]' : '';
+      const flag = r.ariaHidden ? " [aria-hidden]" : "";
       console.log(
         `${String(r.ratio).padStart(5)}  ${String(r.need).padStart(4)}  ` +
           `${r.route.padEnd(20)} ${r.path.slice(-40).padEnd(41)} ` +
@@ -536,19 +686,24 @@ function report({ results, unmeasurable, frames, palettes }, opts) {
     }
     console.log();
   } else {
-    const tightest = [...worstOf.values()].sort((a, b) => a.ratio / a.need - b.ratio / b.need).slice(0, 8);
-    console.log('Tightest margins:');
+    const tightest = [...worstOf.values()]
+      .sort((a, b) => a.ratio / a.need - b.ratio / b.need)
+      .slice(0, 8);
+    console.log("Tightest margins:");
     for (const r of tightest) {
       console.log(
         `${String(r.ratio).padStart(6)} / ${r.need}  ${r.route.padEnd(20)} ` +
-          `${r.path.split('>').pop().slice(0, 34).padEnd(36)} ${r.palette}`,
+          `${r.path.split(">").pop().slice(0, 34).padEnd(36)} ${r.palette}`,
       );
     }
     console.log();
   }
 
   if (opts.json) {
-    fs.writeFileSync(opts.json, JSON.stringify({ results, unmeasurable }, null, 1));
+    fs.writeFileSync(
+      opts.json,
+      JSON.stringify({ results, unmeasurable }, null, 1),
+    );
     console.log(`Wrote ${opts.json}\n`);
   }
 

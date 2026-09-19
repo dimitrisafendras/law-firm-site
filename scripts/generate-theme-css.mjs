@@ -50,7 +50,9 @@ import {
   materialVarNames,
 } from '../src/theme/tokens.ts';
 import { palettes, DEFAULT_PALETTE_ID } from '../src/theme/palettes.ts';
+import { CONTINUUM_STEPS, continuumStop } from '../src/theme/continuum.ts';
 import { statues, statueForFamily } from '../src/theme/statues.ts';
+import { fontOptions } from '../src/theme/fonts.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outPath = join(__dirname, '..', 'src', 'theme', 'theme.generated.css');
@@ -142,6 +144,34 @@ if (!defaultPalette) {
 // complete set of custom properties rather than a naked page.
 const paletteBlocks = palettes
   .map((palette) => `:root[data-theme='${palette.id}'] {\n${buildPaletteBlock(palette)}\n}`)
+  .join('\n');
+
+/*
+ * The light-to-dark ladder.
+ *
+ * Each palette gets a block per rung away from it, selected by `data-step`.
+ * Step 0 is the palette itself and is deliberately NOT emitted: it is already
+ * the `[data-theme]` block above, and a duplicate would only be a second place
+ * for it to drift.
+ *
+ * These are real derived palettes, not frames of a crossfade — see the
+ * measurements at the top of src/theme/continuum.ts for why a crossfade has no
+ * readable middle. Emitting them as CSS rather than computing them in React
+ * follows the same rule as the rest of the theme: nothing palette-shaped goes
+ * through the React tree, because React 19 resolves a hydration mismatch by
+ * silently keeping the server's value.
+ *
+ * Specificity: `[data-theme][data-step]` is (0,2,0) against the palette block's
+ * (0,1,0), so a rung wins over its own endpoint whatever the source order.
+ */
+const continuumBlocks = palettes
+  .flatMap((palette) =>
+    Array.from({ length: CONTINUUM_STEPS - 1 }, (_, i) => {
+      const step = i + 1;
+      const rung = continuumStop(palette, step);
+      return `:root[data-theme='${palette.id}'][data-step='${step}'] {\n${buildPaletteBlock(rung)}\n}`;
+    }),
+  )
   .join('\n');
 
 /*
@@ -306,6 +336,26 @@ function buildClassicBlock() {
   return `:root[data-mode='classic'] {\n${lines.join('\n')}\n}`;
 }
 
+/*
+ * ── The font picker ───────────────────────────────────────────────────────────
+ *
+ * One block per entry in src/theme/fonts.ts, each re-pointing only the three
+ * tokens a look already re-points (`--sans`/`--heading`/`--label`). `auto` — the
+ * default — needs no block: ThemeProvider removes `data-font` entirely for it,
+ * so nothing here ever matches and the active look's own block decides.
+ *
+ * Emitted AFTER the classic block on purpose. `:root[data-mode='classic']` and
+ * `:root[data-font='<id>']` are the same shape of selector and so carry equal
+ * specificity; with the font blocks last, an explicit font choice always wins
+ * over the look's default font, in both looks. See fonts.ts for the full
+ * argument.
+ */
+function buildFontBlocks() {
+  return fontOptions
+    .map((option) => `:root[data-font='${option.id}'] {\n${mapVars(option.fonts, fontVarNames).join('\n')}\n}`)
+    .join('\n\n');
+}
+
 const schemeRules = [
   '#social .button-icon {',
   '  filter: invert(1) brightness(2);',
@@ -315,6 +365,8 @@ const schemeRules = [
   statueRules,
   '',
   buildClassicBlock(),
+  '',
+  buildFontBlocks(),
 ].join('\n');
 
 const css = `/* AUTO-GENERATED from src/theme/tokens.ts + src/theme/palettes.ts by
@@ -329,8 +381,12 @@ ${buildInvariantBlock()}
 ${buildPaletteBlock(defaultPalette)}
 }
 ${paletteBlocks}
+${continuumBlocks}
 ${schemeRules}
 `;
 
 writeFileSync(outPath, css);
-console.log(`  ok    theme.generated.css  (${css.length} bytes, ${palettes.length} palettes)`);
+console.log(
+  `  ok    theme.generated.css  (${css.length} bytes, ${palettes.length} palettes, ` +
+    `${palettes.length * (CONTINUUM_STEPS - 1)} continuum rungs)`,
+);

@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from '@/i18n';
 import { useTheme } from '@/lib/theme';
+import { FontPicker } from './FontPicker';
 import { PaletteSwatches } from './PaletteSwatches';
+import { SchemeSlider } from './SchemeSlider';
 import './ThemePicker.css';
 
 /**
@@ -11,6 +13,11 @@ import './ThemePicker.css';
  * menu to hang the control inside. Signed-in visitors get the same
  * `PaletteSwatches` grid embedded directly in that menu instead — one control,
  * two housings, rather than two implementations that can drift apart.
+ *
+ * The panel is the site's whole "Theme" section: the palette grid, the
+ * light-to-dark slider under it, and the typeface radiogroup under that — one
+ * popover rather than a fourth trigger, per the placement note on
+ * `FontPicker`. `AuthNavControl`'s embedded copy renders the same three.
  *
  * The dismissal behaviour deliberately mirrors AuthNavControl's: pointerdown
  * outside closes, Escape closes and returns focus to the trigger.
@@ -73,6 +80,8 @@ export function ThemePicker() {
       {open && (
         <div className="theme-picker__panel glass">
           <PaletteSwatches />
+          <SchemeSlider />
+          <FontPicker />
         </div>
       )}
     </div>

@@ -49,6 +49,25 @@
           if (statue && /^[a-z]{2,16}$/.test(statue) && statue !== 'auto') {
             document.documentElement.setAttribute('data-statue', statue);
           }
+          /* A pinned typeface (FONT_STORAGE_KEY, src/theme/fonts.ts). Same
+             story as the statue: pattern-checked, and an unknown value or
+             "auto" matches no rule, so the active look's own font shows. */
+          var font = localStorage.getItem('law-firm-site:font');
+          if (font && /^[a-z]{2,16}$/.test(font) && font !== 'auto') {
+            document.documentElement.setAttribute('data-font', font);
+          }
+          /* The light-to-dark ladder rung (RUNG_STORAGE_KEY). The palette id
+             above already names which END of the pair the rung belongs to —
+             ThemeProvider keeps the two in step — so all that is needed here is
+             the distance from that end. That is `rungAddress` reduced to one
+             line; the 3 is CONTINUUM_STEPS and the 6 is CONTINUUM_LENGTH, both
+             from src/theme/continuum.ts. Step 0 stamps nothing: the palette's
+             own block is already the right one. */
+          var rung = parseInt(localStorage.getItem('law-firm-site:rung'), 10);
+          if (rung >= 0 && rung < 6) {
+            var step = rung < 3 ? rung : 5 - rung;
+            if (step > 0) document.documentElement.setAttribute('data-step', String(step));
+          }
         } catch (e) {
           /* Private window with site data blocked. Default palette it is. */
         }

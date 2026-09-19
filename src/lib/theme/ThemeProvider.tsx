@@ -1,19 +1,31 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import {
+  CONTINUUM_LENGTH,
   DEFAULT_MODE_ID,
   DEFAULT_PALETTE_ID,
+  FONT_AUTO,
   STATUE_AUTO,
+  fontOptions,
+  isFontChoice,
   isModeId,
   isPaletteId,
   isStatueChoice,
   modes,
   paletteById,
   palettes,
+  rungAddress,
   statues,
 } from '@/theme';
-import type { ModeId, StatueChoice } from '@/theme';
-import { MODE_STORAGE_KEY, STATUE_STORAGE_KEY, ThemeContext, THEME_STORAGE_KEY } from './context';
+import type { FontChoice, ModeId, StatueChoice } from '@/theme';
+import {
+  FONT_STORAGE_KEY,
+  MODE_STORAGE_KEY,
+  RUNG_STORAGE_KEY,
+  STATUE_STORAGE_KEY,
+  ThemeContext,
+  THEME_STORAGE_KEY,
+} from './context';
 import type { ThemeState } from './context';
 
 function readStored(): string {
@@ -52,6 +64,38 @@ function readStoredStatue(): StatueChoice {
   }
 }
 
+function readStoredFont(): FontChoice {
+  if (typeof window === 'undefined') return FONT_AUTO;
+  try {
+    const stored = window.localStorage.getItem(FONT_STORAGE_KEY);
+    return isFontChoice(stored) ? stored : FONT_AUTO;
+  } catch {
+    return FONT_AUTO;
+  }
+}
+
+/**
+ * The rung a palette sits on when nothing has been chosen: its own end of the
+ * ladder. A dark palette is rung 0 and a light one the last rung, so a reader
+ * who never touches the slider gets exactly the palette they picked.
+ */
+function defaultRung(scheme: string): number {
+  return scheme === 'light' ? CONTINUUM_LENGTH - 1 : 0;
+}
+
+function readStoredRung(paletteScheme: string): number {
+  if (typeof window === 'undefined') return defaultRung(paletteScheme);
+  try {
+    const stored = Number.parseInt(window.localStorage.getItem(RUNG_STORAGE_KEY) ?? '', 10);
+    if (!Number.isInteger(stored) || stored < 0 || stored >= CONTINUUM_LENGTH) {
+      return defaultRung(paletteScheme);
+    }
+    return stored;
+  } catch {
+    return defaultRung(paletteScheme);
+  }
+}
+
 /**
  * The palette the site is wearing, the look it is wearing it in, and the
  * statue the reader may have pinned over both.
@@ -86,6 +130,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [id, setId] = useState(readStored);
   const [mode, setModeState] = useState<ModeId>(readStoredMode);
   const [statue, setStatueState] = useState<StatueChoice>(readStoredStatue);
+  const [font, setFontState] = useState<FontChoice>(readStoredFont);
+  // Seeded from the palette that was read above, so the pair (palette, rung) is
+  // consistent on the very first render rather than after a correcting effect.
+  const [rung, setRungState] = useState<number>(() => readStoredRung(paletteById(id).scheme));
 
   const palette = paletteById(id);
 
@@ -93,12 +141,26 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement;
     root.dataset.theme = palette.id;
 
+    // `data-step` is the distance from the palette's own end of the ladder, and
+    // step 0 is the ABSENCE of the attribute: the generator emits no block for
+    // it, because that block is the palette's own.
+    const { step } = rungAddress(rung);
+    if (step === 0) delete root.dataset.step;
+    else root.dataset.step = String(step);
+
     // The browser paints its own chrome — the address bar on mobile, the title
     // bar in an installed PWA — from this, so a palette that does not update it
     // leaves a navy strip above a cream page.
+    // Read back from the cascade rather than from `palette.colors`: on a rung
+    // other than the palette's own, the painted ground is the generated rung
+    // block's, and browser chrome that tracked the endpoint instead would leave
+    // a strip of the wrong colour above the page.
     const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-    if (meta) meta.content = palette.colors.background;
-  }, [palette]);
+    if (meta) {
+      const painted = getComputedStyle(root).getPropertyValue('--bg').trim();
+      meta.content = painted || palette.colors.background;
+    }
+  }, [palette, rung]);
 
   useEffect(() => {
     document.documentElement.dataset.mode = mode;
@@ -113,15 +175,54 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     else root.dataset.statue = statue;
   }, [statue]);
 
+  useEffect(() => {
+    // Same story as the statue pin: `auto` is the absence of `data-font`, so
+    // the active look's own `--sans`/`--heading`/`--label` decide.
+    const root = document.documentElement;
+    if (font === FONT_AUTO) delete root.dataset.font;
+    else root.dataset.font = font;
+  }, [font]);
+
   const setPalette = useCallback((next: string) => {
     if (!isPaletteId(next)) return;
+    const chosen = paletteById(next);
+    const home = defaultRung(chosen.scheme);
     setId(next);
+    // Picking a palette from the grid returns the slider to that palette's own
+    // end. Keeping the old rung would mean choosing "Porcelain" and getting a
+    // derived rung of it, which is not what the swatch showed.
+    setRungState(home);
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, next);
+      window.localStorage.setItem(RUNG_STORAGE_KEY, String(home));
     } catch {
       // Preference simply does not persist; the switch still works this session.
     }
   }, []);
+
+  const setRung = useCallback(
+    (next: number) => {
+      const index = Math.max(0, Math.min(CONTINUUM_LENGTH - 1, Math.round(next)));
+      const current = paletteById(id);
+      const { id: side } = rungAddress(index);
+
+      // A rung belongs to one end of the pair. Crossing the gap therefore also
+      // changes which palette is selected — the ladder is one object to the
+      // reader, but two palettes plus their derived rungs underneath.
+      const wantsLight = side === 'light';
+      const target = wantsLight === (current.scheme === 'light') ? current : paletteById(current.pair);
+
+      setId(target.id);
+      setRungState(index);
+      try {
+        window.localStorage.setItem(THEME_STORAGE_KEY, target.id);
+        window.localStorage.setItem(RUNG_STORAGE_KEY, String(index));
+      } catch {
+        // As above.
+      }
+    },
+    [id],
+  );
 
   const setMode = useCallback((next: string) => {
     if (!isModeId(next)) return;
@@ -144,9 +245,35 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const setFont = useCallback((next: string) => {
+    if (!isFontChoice(next)) return;
+    setFontState(next);
+    try {
+      if (next === FONT_AUTO) window.localStorage.removeItem(FONT_STORAGE_KEY);
+      else window.localStorage.setItem(FONT_STORAGE_KEY, next);
+    } catch {
+      // As above.
+    }
+  }, []);
+
   const value = useMemo<ThemeState>(
-    () => ({ palette, palettes, setPalette, mode, modes, setMode, statue, statues, setStatue }),
-    [palette, setPalette, mode, setMode, statue, setStatue],
+    () => ({
+      palette,
+      palettes,
+      setPalette,
+      mode,
+      modes,
+      setMode,
+      statue,
+      statues,
+      setStatue,
+      rung,
+      setRung,
+      font,
+      fontOptions,
+      setFont,
+    }),
+    [palette, setPalette, mode, setMode, statue, setStatue, rung, setRung, font, setFont],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

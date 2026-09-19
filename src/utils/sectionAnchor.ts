@@ -52,7 +52,7 @@ const ANCHOR_FOR: Record<string, string> = {
  * is the current entry: navigating detail-to-detail must not rewrite the detail
  * entry you are standing on, or Back would skip it entirely.
  */
-const HOME_HASHES = new Set(['', 'team', 'practice', 'testimonials', 'contact']);
+const HOME_HASHES = new Set(['', 'team', 'practice', 'clients', 'contact']);
 
 /** `#practice/corporate` → `practice/corporate`, `#` → ``. */
 function hashPath(hash: string): string {

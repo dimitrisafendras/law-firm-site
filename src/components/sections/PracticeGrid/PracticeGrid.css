@@ -133,13 +133,25 @@
    * Where the cards stop growing.
    *
    * `1fr` of the screen is the right rule right up until the card has more
-   * height than it has anything to put in it. The card is 190px wide from
+   * height than it has anything to put in it. The card is 222px wide from
    * 1440 up — `--layout-max-width` fixes the inner column, so extra viewport
    * width buys no measure — and at that measure the longest description in
-   * either locale is complete in a card 289px tall. Every pixel of card past
+   * either locale is complete in a card 268px tall. Every pixel of card past
    * that is void by construction: no copy exists to fill it. Measured at
    * 2560x1440, where the uncapped card is 539px, the ten cards were carrying
    * between 266 and 332px of nothing each.
+   *
+   * Re-measured after the "DOMAIN I" overline was removed from the card. The
+   * cap was 290px, cut when that overline was still taking a caption line and
+   * its margin off the top of every card; with it gone the tallest card needs
+   * 268 (Greek, 222px wide) and 267 (English), so 290 was handing all ten
+   * cards 22px of fresh void at every viewport tall enough for the cap to
+   * bind. Measured by pinning every level that stretches — the bento's
+   * `flex`, its row sizing, the fade wrappers' `align-self` and the card's
+   * own height — and asking the cards how tall they wanted to be. Releasing
+   * the row sizing alone does NOT measure content: the card is still
+   * stretched by the flex above it, and the tell is that the answer changes
+   * with viewport height, which a content height cannot do.
    *
    * So the row is capped at the height where the copy runs out, and the grid
    * takes the free space as margin instead of as card. That is the same
@@ -148,19 +160,20 @@
    * has a width past which it stops being readable. A card has a height past
    * which it stops being a card.
    *
-   * 290px is that measurement plus one pixel of rounding, not a taste value —
-   * raise it and the void comes back, lower it and the longest descriptions
-   * start fading out early. The card grows at half a pixel per pixel of
-   * viewport, so the cap first binds at exactly 942px of viewport height and
-   * below that this rule does nothing at all: the card is already smaller.
+   * It is a measurement, not a taste value. The card grows at half a pixel
+   * per pixel of viewport, so the cap binds from roughly 900px of viewport
+   * height up; below that this rule does nothing at all, because the card is
+   * already smaller than the cap.
    *
    * Gated on the height as well as the width, matching App.css's screen gate
    * exactly: outside it the section has no definite height, `1fr` rows resolve
    * to their content, and a max-height would be a crop rather than a cap.
    */
   @media (min-width: 1280px) and (min-height: 700px) {
-    /* One-off geometry: the tallest card whose content is complete. */
-    --bento-row-max: 290px;
+    /* One-off geometry: the tallest card whose content is complete, plus two
+       pixels of rounding. Raise it and the void comes back; lower it and the
+       longest Greek description starts fading out early. */
+    --bento-row-max: 270px;
 
     max-height: calc(2 * var(--bento-row-max) + var(--space-4));
     /* Auto margins take whatever the cap left over. In a flex column the
@@ -489,30 +502,18 @@
   color: var(--accent-text);
 }
 
-.practice-domain__num {
-  font-family: var(--label);
-  font-size: var(--type-caption-size);
-  font-weight: var(--type-caption-weight);
-  line-height: var(--type-caption-leading);
-  text-transform: uppercase;
-  letter-spacing: var(--type-caps-tracking-wide);
-  color: var(--accent-text);
-  display: block;
-  margin-bottom: var(--space-8);
-
-  /* space-8 under a 12px numeral is a third of a bento card's inner height. */
-  @media (min-width: 1280px) {
-    margin-bottom: var(--space-2);
-  }
-}
-
 .practice-domain__title {
   font-family: var(--heading);
   font-size: var(--type-h3-size);
   font-weight: var(--type-h3-weight);
   line-height: var(--type-h3-leading);
   letter-spacing: var(--type-h3-tracking);
-  color: var(--text-h);
+  /* The accent the "DOMAIN I" overline used to carry, moved onto the title
+     when that overline was removed: `--accent-text` is the token for accent
+     ON the page ground, and it is the one already proven at body contrast on
+     all eighteen palettes -- a heading is large text, so it clears with
+     room. Not `--accent`, which is a FILL and is pale on several palettes. */
+  color: var(--accent-text);
   margin: 0 0 var(--space-4);
 
   /*
@@ -538,17 +539,24 @@
   font-weight: var(--type-body-weight);
   line-height: var(--type-body-leading);
   letter-spacing: var(--type-body-tracking);
+  /* Full strength, not the secondary 0.7. The description used to be the
+     third thing in the card and was dimmed to sit behind the overline and
+     the title; with the overline gone there are two things left and the
+     accent title already carries the hierarchy, so the copy is just copy.
+     `--text` and not a literal white -- it resolves near-black on the nine
+     light palettes, where white would disappear. */
   color: var(--text);
-  opacity: var(--text-emphasis-secondary);
   margin: 0 0 var(--space-8);
   max-width: 420px;
 
   /*
    * The one thing that does not survive the *short* end of ten-up.
    *
-   * 169px of card at 1280x700 pays for the numeral, two or three lines of
-   * title and the cue with about 20px to spare — measured, the worst Greek
-   * card has 28px between the title's last line and the cue. Clamping a
+   * 169px of card at 1280x700 pays for two or three lines of title and the
+   * cue with about 20px to spare — measured, the worst Greek card had 28px
+   * between the title's last line and the cue. That was measured with the
+   * "DOMAIN I" overline still in the card; it has since been removed, so the
+   * budget below is the tight case rather than the current one. Clamping a
    * description into that was the alternative and it is worse than dropping
    * it: a sentence cut mid-clause after five words tells a reader nothing and
    * costs the card its one piece of breathing room.
@@ -593,8 +601,8 @@
    * with a three-line title has two lines less room than the English card
    * beside it, and a per-band `line-clamp` sized for the worst card leaves the
    * best one with 50px of the void still in it. Growing into whatever the
-   * numeral, title and cue did not spend is the same measurement made ten
-   * times, per card, at every height, for free.
+   * title and cue did not spend is the same measurement made ten times, per
+   * card, at every height, for free.
    *
    * `overflow: hidden` is what makes that safe, and the mask is what makes it
    * look deliberate: the last 0.9em dissolves, so copy that runs out of card
@@ -687,7 +695,6 @@
 }
 
 .practice-domain--linked > .practice-domain__bg,
-.practice-domain--linked > .practice-domain__num,
 .practice-domain--linked > .practice-domain__desc,
 .practice-domain--linked > .practice-domain__cue {
   pointer-events: none;

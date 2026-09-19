@@ -5,7 +5,7 @@ const en = {
   navPractice: 'Practice Areas',
   navTeam: 'Our Team',
   navAbout: 'About',
-  navTestimonials: 'Testimonials',
+  navClients: 'Clients',
   navContact: 'Contact',
   navCta: 'Book Consultation',
 
@@ -198,51 +198,23 @@ const en = {
   // ─── Stats ───────────────────────────────────────────────────────────────────
 
 
-  // ─── Testimonials ────────────────────────────────────────────────────────────
-  testimonialsOverline: 'What Clients Say',
-  testimonialsTitle: 'Client Testimonials',
-  testimonialsSubtitle: 'Trusted by ambitious professionals across industries.',
+  // ─── Clients ───────────────────────────────────────────────────────────────
+  clientsTitle: 'Clients',
+  clientsSubtitle: 'Businesses that trust us with the work that matters.',
 
-  testimonial1Quote:
-    'VKM guided our Series A from term sheet to close in 6 weeks. Their understanding of both Greek and EU venture frameworks saved us months of back-and-forth.',
-  testimonial1Author: 'Yiannis Papadopoulos',
-  testimonial1Role: 'CEO, Hellas Fintech',
+  // Each client's name, which is the accessible name of that logo's link
+  // rather than a visible caption: the wall shows marks, and several of these
+  // carry no wordmark at all, so this is the only text identifying the link.
+  clientDevelor: 'Develor Greece',
+  clientKarras: 'Karras Grande Resort',
+  clientStarboard: 'Starboard Digital',
+  clientGoat: 'GOAT Coffee Roasters',
+  clientEvivios: 'EviviosMed',
+  clientCityskal: 'City Skal',
+  clientPadel: 'Elliniko Padel Club',
+  clientPsi: 'PSI Construction',
 
-  testimonial2Quote:
-    'The maritime team handled a complex charter dispute that three other firms couldn\u2019t resolve. Professional, relentless, and deeply knowledgeable.',
-  testimonial2Author: 'Captain Nikos Stavridis',
-  testimonial2Role: 'Fleet Manager, Aegean Shipping Co.',
-
-  testimonial3Quote:
-    'When we needed to structure our tokenized real estate platform under MiCA, they were the only firm in Athens that could handle both sides \u2014 property law and crypto regulation.',
-  testimonial3Author: 'Elena Konstantinou',
-  testimonial3Role: 'Founder, PropChain',
-
-  testimonial4Quote:
-    'We closed on six properties across Athens and the Cyclades in under four months. Title diligence was faultless, and every permit question was raised before it could become a problem.',
-  testimonial4Author: 'Marina Vlachou',
-  testimonial4Role: 'Managing Director, Astrea Estates',
-
-  testimonial5Quote:
-    'Licensing our exchange under MiCA was uncharted ground for everyone involved. They drew the roadmap, held the line with the regulator, and delivered on the timetable they promised.',
-  testimonial5Author: 'Thanos Vergis',
-  testimonial5Role: 'Co-Founder, Meridian Digital Assets',
-
-  testimonial6Quote:
-    'They rebuilt our cap table before the seed round and spared us a structure that would have cost us control two years later. Counsel that thinks three moves ahead.',
-  testimonial6Author: 'Sofia Andreou',
-  testimonial6Role: 'Founder, Kyma Robotics',
-
-  // Carousel accessibility strings. These reach the user through ARIA
-  // attributes, so they are read by assistive technology rather than rendered.
-  testimonialsCarouselRole: 'carousel',
-  testimonialsSlideRole: 'slide',
-  testimonialsSlidePosition: '{{current}} of {{total}}',
-  testimonialsPrevLabel: 'Previous testimonial',
-  testimonialsNextLabel: 'Next testimonial',
-  testimonialsGoToLabel: 'Go to testimonial {{index}}',
-  testimonialsPause: 'Pause the rotating quotes',
-  testimonialsPlay: 'Resume the rotating quotes',
+  clientsOpensInNewTab: '(opens in a new tab)',
 
   // ─── CTA ──────────────────────────────────────────────────────────────────────
   ctaTitle: 'Ready to Secure\nYour Future?',
@@ -470,11 +442,23 @@ const en = {
   statueWhite: 'White',
   statueMono: 'Monochrome',
   statueLimestone: 'Limestone',
+  fontPickerLegend: 'Typeface',
+  fontAuto: 'Follow the look',
+  fontAutoHint: 'Jura in digital, Garamond in classic',
+  fontJura: 'Jura',
+  fontJuraHint: 'The digital look\u2019s own geometric sans',
+  fontGaramond: 'EB Garamond',
+  fontGaramondHint: 'The classic look\u2019s own serif, in either look',
+  fontGfsDidot: 'GFS Didot',
+  fontGfsDidotHint: 'A Greek-cut Didone, sharp and inscriptive',
+  schemeLabel: 'Light \u2192 dark',
+  schemeLightest: 'Lightest',
+  schemeDarkest: 'Darkest',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────
   chapterTeam: 'Chapter 01 / Team',
   chapterExpertise: 'Chapter 02 / Expertise',
-  chapterTestimonials: 'Chapter 03 / Testimonials',
+  chapterClients: 'Chapter 03 / Clients',
   chapterContact: 'Chapter 04 / Contact',
 
   // ─── Design System showcase labels ───────────────────────────────────────────

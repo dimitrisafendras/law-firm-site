@@ -238,6 +238,160 @@
   background: var(--swatch-secondary);
 }
 
+/* ─── The light-to-dark ladder ───────────────────────────────────────────── */
+
+/* Sits under the grid in every housing. The grid picks the family; this picks
+   how dark it is. Every colour it paints is a theme token, so the control is
+   re-themed by the very rung it sets. */
+.scheme-slider {
+  position: relative;
+  padding: var(--space-3) var(--space-1) var(--space-1);
+  border-top: 1px solid var(--glass-control-edge);
+  margin-top: var(--space-3);
+}
+
+.scheme-slider__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+/* Matches `.palette-row__family` above — the two labels sit in the same panel
+   and should read as one set. */
+.scheme-slider__label {
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  letter-spacing: var(--type-caps-tracking-tight);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.scheme-slider__value {
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  line-height: var(--type-caption-leading);
+  color: var(--accent-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* `appearance: none` drops the platform control on every engine; the track and
+   thumb below are then the whole of it. */
+.scheme-slider__input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 18px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.scheme-slider__input::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--accent-border);
+  border: 1px solid var(--glass-control-edge);
+}
+
+.scheme-slider__input::-moz-range-track {
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--accent-border);
+  border: 1px solid var(--glass-control-edge);
+}
+
+/* The negative margin centres the thumb on a 4px track: (14 - 4) / 2, plus the
+   track's own border. WebKit positions the thumb from the track's top edge. */
+.scheme-slider__input::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -6px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  border: 1px solid var(--glass-control-edge);
+}
+
+.scheme-slider__input::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  border: 1px solid var(--glass-control-edge);
+}
+
+.scheme-slider__input:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 4px;
+  border-radius: var(--radius-full);
+}
+
+/*
+   The gap, drawn where it falls.
+
+   Between the last dark rung and the first light one there is a jump that no
+   palette fills — see src/theme/continuum.ts. Marking it is not decoration: a
+   slider whose steps are evenly spaced everywhere except one place, with
+   nothing to say so, reads as a bug in the control rather than a property of
+   colour. `--gap-at` comes from the TSX so the mark cannot drift from
+   CONTINUUM_STEPS.
+*/
+.scheme-slider__track-note {
+  position: absolute;
+  left: var(--space-1);
+  right: var(--space-1);
+  /* Level with the track: the head above it, plus half the input's height. */
+  top: calc(var(--space-3) + var(--type-caption-leading) * 1em + var(--space-2) + 9px);
+  height: 10px;
+  margin-top: -5px;
+  pointer-events: none;
+}
+
+.scheme-slider__track-note::before {
+  content: '';
+  position: absolute;
+  left: var(--gap-at);
+  top: 0;
+  width: 2px;
+  height: 100%;
+  margin-left: -1px;
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  box-shadow: 0 0 0 1px var(--glass-control-edge);
+}
+
+/* ─── The font sample ────────────────────────────────────────────────────── */
+
+/*
+ * "Aa" set in the row's own face, at the same footprint as
+ * `.statue-options__chip` (LookPicker.css) so the theme popover's rows —
+ * palette chip, scheme slider, font sample — read as one family of controls.
+ * `FontPicker` sets the actual `font-family` inline per row (the one it is
+ * previewing); nothing here hardcodes a face.
+ */
+.font-options__sample {
+  flex: none;
+  width: 26px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px var(--glass-control-edge);
+}
+
 /* ─── Embedded in the account menu ───────────────────────────────────────── */
 
 /* Inside the avatar menu the grid is a section rather than the whole panel, so
@@ -245,3 +399,12 @@
 .auth-nav__menu .palette-swatches {
   padding: 0 var(--space-1) var(--space-1);
 }
+
+.auth-nav__menu .scheme-slider {
+  padding-left: var(--space-1);
+  padding-right: var(--space-1);
+}
+
+/* `FontPicker` reuses `.look-options` from LookPicker.css wholesale, so it
+   already picks up that file's `.auth-nav__menu .look-options` padding rule —
+   nothing to add here. */

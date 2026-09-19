@@ -97,11 +97,11 @@ export function AddressPin() {
 
       {/*
         The live region is this wrapper, and it is deliberately stable and
-        unkeyed — the same trap the testimonial stage documents. A region that
-        React destroys and rebuilds is handed to assistive tech as a brand-new
-        region rather than a changed one, and a brand-new region announces
-        nothing. So the element is always in the tree from first render and only
-        its text content changes.
+        unkeyed. A region that React destroys and rebuilds is handed to assistive
+        tech as a brand-new region rather than a changed one, and a brand-new
+        region announces nothing — so a `key` on the announcing element silently
+        turns the whole live region off. The element is therefore always in the
+        tree from first render and only its text content changes.
 
         `aria-atomic` because "Could not copy" without the address that follows
         it is not the message.

@@ -587,7 +587,17 @@ export interface Palette {
   gradients: GradientTokens;
 }
 
-function makePalette(id: string, pair: string, family: string, seed: PaletteSeed): Palette {
+/**
+ * Build a palette from a seed.
+ *
+ * Exported for `continuum.ts`, which synthesises intermediate palettes between
+ * a pair by moving a seed's ground and re-deriving everything from it. Deriving
+ * rather than interpolating finished palettes is not a stylistic preference: it
+ * is the only way `surface` and `heroDeep` keep their designed relationship to
+ * the ground, and without that relationship the intermediates are unreadable.
+ * See the note at the top of continuum.ts for the measurements.
+ */
+export function makePalette(id: string, pair: string, family: string, seed: PaletteSeed): Palette {
   const paletteColors = makeColors(seed);
   return {
     id,

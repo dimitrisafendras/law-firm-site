@@ -40,7 +40,7 @@ export function PracticeDomainCard({
   area,
   headingLevel: Heading = 'h3',
 }: PracticeDomainCardProps) {
-  const { key, slug, bg: Bg, num } = area;
+  const { key, slug, bg: Bg } = area;
   const { t } = useTranslation();
   const { canEdit } = useEditMode();
 
@@ -57,7 +57,6 @@ export function PracticeDomainCard({
   return (
     <Card as="article" interactive={linked} className={classes}>
       <Bg className="practice-domain__bg" />
-      <span className="practice-domain__num">{t('practiceDomainNum', { num })}</span>
 
       {linked ? (
         <Heading className="practice-domain__title">

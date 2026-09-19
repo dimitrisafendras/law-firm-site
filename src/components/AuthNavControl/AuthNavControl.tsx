@@ -3,7 +3,7 @@ import { useTranslation } from '@/i18n';
 import { useAuth } from '@/lib/auth';
 import { useEditMode } from '@/lib/edit-mode';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
-import { PaletteSwatches, ThemePicker } from '@/components/ThemePicker';
+import { FontPicker, PaletteSwatches, SchemeSlider, ThemePicker } from '@/components/ThemePicker';
 import { ModeOptions, ModePicker, StatueOptions, StatuePicker } from '@/components/LookPicker';
 import './AuthNavControl.css';
 
@@ -124,6 +124,8 @@ export function AuthNavControl() {
             {t('menuTheme')}
           </div>
           <PaletteSwatches />
+          <SchemeSlider />
+          <FontPicker />
 
           <div className="auth-nav__section-label" aria-hidden="true">
             {t('menuMode')}

@@ -21,9 +21,9 @@
  * mismatched, and the fix for a warm palette was never to re-tint the fire but
  * to hand it a statue the fire already matches.
  *
- * So five drawings and four colour sets. `white` and `mono` share one, because
- * the neutral profile does not depend on which grey the mesh came out (see
- * NEUTRAL_COLORS).
+ * So four drawings and four colour sets, one each. `white` takes the neutral
+ * set, which used to be shared with a monochrome render that is no longer in
+ * the registry (see NEUTRAL_COLORS).
  *
  * ── The artworks are interchangeable by construction ─────────────────────────
  *
@@ -85,7 +85,6 @@ const ARTWORKS: Record<StatueId, StatueArtwork> = {
   cyan: { id: 'cyan', colors: STATUE_COLORS },
   ultramarine: { id: 'ultramarine', colors: ULTRAMARINE_COLORS },
   white: { id: 'white', colors: NEUTRAL_COLORS },
-  mono: { id: 'mono', colors: NEUTRAL_COLORS },
   limestone: { id: 'limestone', colors: LIMESTONE_COLORS },
 };
 

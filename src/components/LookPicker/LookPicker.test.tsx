@@ -79,8 +79,8 @@ describe('StatueOptions', () => {
   it('has exactly one checked radio, defaulting to Follow the theme', () => {
     renderStatue();
     const radios = screen.getAllByRole('radio');
-    // "Follow the theme" plus the five registry artworks.
-    expect(radios).toHaveLength(6);
+    // "Follow the theme" plus the four registry artworks.
+    expect(radios).toHaveLength(5);
     const checked = radios.filter((r) => r.getAttribute('aria-checked') === 'true');
     expect(checked).toHaveLength(1);
     expect(checked[0]).toHaveAccessibleName(/follow the theme/i);
@@ -88,22 +88,22 @@ describe('StatueOptions', () => {
 
   it('pins a statue and stamps data-statue when a row is clicked', async () => {
     const { user } = renderStatue();
-    await user.click(screen.getByRole('radio', { name: /monochrome/i }));
+    await user.click(screen.getByRole('radio', { name: /limestone/i }));
 
-    expect(document.documentElement.dataset.statue).toBe('mono');
-    expect(window.localStorage.getItem(STATUE_STORAGE_KEY)).toBe('mono');
+    expect(document.documentElement.dataset.statue).toBe('limestone');
+    expect(window.localStorage.getItem(STATUE_STORAGE_KEY)).toBe('limestone');
 
     const radios = screen.getAllByRole('radio');
     const checked = radios.filter((r) => r.getAttribute('aria-checked') === 'true');
     expect(checked).toHaveLength(1);
-    expect(checked[0]).toHaveAccessibleName(/monochrome/i);
+    expect(checked[0]).toHaveAccessibleName(/limestone/i);
   });
 
   it('removes the attribute and the storage key when Follow the theme is re-selected', async () => {
     const { user } = renderStatue();
 
-    await user.click(screen.getByRole('radio', { name: /monochrome/i }));
-    expect(document.documentElement.dataset.statue).toBe('mono');
+    await user.click(screen.getByRole('radio', { name: /limestone/i }));
+    expect(document.documentElement.dataset.statue).toBe('limestone');
 
     await user.click(screen.getByRole('radio', { name: /follow the theme/i }));
 

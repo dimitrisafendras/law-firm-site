@@ -69,8 +69,8 @@ export const LIMESTONE_COLORS: SceneColors = {
 };
 
 /**
- * The two neutral artworks - `hero-statue-white-*` and `hero-statue-mono-*` -
- * share one set, and that is the limestone rule applied rather than skipped.
+ * The neutral artwork - `hero-statue-white-*` - and the limestone rule applied
+ * rather than skipped.
  *
  * That rule fixes the LIGHTNESS profile, not the artwork's own colour: the
  * cyan triple sits at HSL lightness 87 / 74 / 93 and the limestone one holds
@@ -79,11 +79,12 @@ export const LIMESTONE_COLORS: SceneColors = {
  * zero saturation is the whole derivation - 87% of 255 is 222, 74% is 189,
  * 93% is 237.
  *
- * It is one constant and not two because the profile does not depend on how
- * dark the statue's own wireframe came out: the white artwork's mesh measures
- * a median of 190 and the mono's 136, and giving each "its own" grey would
- * have made the mono scene dim exactly where the limestone note says the
- * scene must not - vanishing on the dark palettes.
+ * These are deliberately NOT the mesh's own greys. A monochrome render that
+ * used to share this constant measured a median of 136, and letting each
+ * artwork keep "its own" grey would have made that scene dim exactly where the
+ * limestone note says the scene must not - vanishing on the dark palettes.
+ * That artwork is gone; the derivation stays, because the next neutral one
+ * will hit the same trap.
  */
 export const NEUTRAL_COLORS: SceneColors = {
   accent: '222,222,222',

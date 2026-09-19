@@ -22,13 +22,12 @@ const STATUE_CHIPS: Record<StatueId, { stone: string; mesh: string }> = {
   cyan: { stone: '#E9E4DA', mesh: '#5FE3E0' },
   ultramarine: { stone: '#E9E4DA', mesh: '#89B3F0' },
   white: { stone: '#E9E4DA', mesh: '#EDEDED' },
-  mono: { stone: '#BDBDBD', mesh: '#9A9A9A' },
   limestone: { stone: '#E9E4DA', mesh: '#E0B070' },
 };
 
 /**
  * The reader's statue pin, as a radiogroup: "Follow the theme" first, then the
- * five artworks in registry order, each previewed by a two-tone chip.
+ * four artworks in registry order, each previewed by a two-tone chip.
  *
  * Modelled on `PaletteSwatches` and `ModeOptions` — a roving-tabindex
  * radiogroup rather than a listbox, because the pin applies the instant a row
@@ -39,7 +38,7 @@ export function StatueOptions() {
   const { statue: active, statues, setStatue } = useTheme();
 
   const groupRef = useRef<HTMLDivElement>(null);
-  // 'auto' plus the five registry entries, in the order the rows render.
+  // 'auto' plus the four registry entries, in the order the rows render.
   // Memoized so useCallback below does not see a new array identity — and a
   // stale keydown handler — on every render.
   const ids = useMemo<readonly string[]>(() => [STATUE_AUTO, ...statues.map((s) => s.id)], [statues]);

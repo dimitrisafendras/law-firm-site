@@ -461,7 +461,6 @@ const el = {
   statueCyan: 'Κυανό',
   statueUltramarine: 'Ουλτραμαρίν',
   statueWhite: 'Λευκό',
-  statueMono: 'Μονόχρωμο',
   statueLimestone: 'Ασβεστόλιθος',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────

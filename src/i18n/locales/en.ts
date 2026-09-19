@@ -468,7 +468,6 @@ const en = {
   statueCyan: 'Cyan',
   statueUltramarine: 'Ultramarine',
   statueWhite: 'White',
-  statueMono: 'Monochrome',
   statueLimestone: 'Limestone',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────

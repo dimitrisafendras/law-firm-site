@@ -82,7 +82,7 @@ layer that follows the theme while the image under it cannot is not themed, it
 is mismatched: the fire once burned khaki two inches from a cyan statue on every
 palette that is not blue.
 
-So there are five artworks and one registry (`src/theme/statues.ts`), and
+So there are four artworks and one registry (`src/theme/statues.ts`), and
 **every palette wears `ultramarine`**. It is the entry with `families: null`,
 the remainder; no other entry claims a family, so the remainder is all
 eighteen. The other four are reachable only through the header's statue menu
@@ -92,7 +92,7 @@ eighteen. The other four are reachable only through the header's statue menu
 This is a deliberate reversal, and it is worth knowing it is one. The four
 `*_STATUE_FAMILIES` lists used to pair each artwork with the palettes whose
 accent it sat well beside — limestone for the warm and green schemes, white
-for Amethyst, mono for Graphite — on the argument two paragraphs down: a
+for Amethyst — on the argument two paragraphs down: a
 wireframe fights an accent it does not match. One drawing across the whole
 site takes that trade knowingly. A reader on Terracotta now gets a blue
 wireframe and blue rain beside a warm accent, which is the mismatch that
@@ -103,7 +103,7 @@ DRAWING. Pin limestone and the rain turns gold, because `statueArtwork.ts` is
 keyed on the resolved statue. Nothing anywhere re-tints a canvas to match a
 palette.
 
-The LOOK does not pick a statue either. Both looks wear the same five, and
+The LOOK does not pick a statue either. Both looks wear the same four, and
 both light the scale pans with the same two flames.
 
 Each artwork carries its own `SceneColors` (`statueArtwork.ts`, keyed by statue
@@ -133,7 +133,7 @@ Relative `url()` cannot go in a custom property — lightningcss rejects it,
 because it would resolve from wherever the `var()` is used. The `image-set()`
 goes directly in the two rules.
 
-Two things a sixth artwork — or a revived family pairing — has to honour. It must be **framed identically** —
+Two things a fifth artwork — or a revived family pairing — has to honour. It must be **framed identically** —
 the flame and sparkle canvases are positioned against the scale pans and the
 body, so compare alpha bounding boxes before trusting a new render (the two
 shipped agree to four decimal places). And its `SceneColors` should take the new

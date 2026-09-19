@@ -3,9 +3,14 @@
  * choose from.
  *
  * ── The artworks ──────────────────────────────────────────────────────────────
- * Five renders of one photograph, framed identically (see CLAUDE.md, "The hero
+ * Four renders of one photograph, framed identically (see CLAUDE.md, "The hero
  * statue"): the dissolving figure with its wireframe re-coloured — cyan,
- * ultramarine, white, monochrome, limestone gold.
+ * ultramarine, white, limestone gold.
+ *
+ * There was a fifth, `mono`, the whole render in Rec. 709 grey with the brass
+ * scales greyed out too. It is gone because it was not liked, and the reason
+ * is worth keeping: it is the only artwork that took the metal out of the
+ * scales, so it was the only one where the hero had no warm note at all.
  *
  * There is no separate artwork for the classic look, and there was one
  * briefly. The figure's raised arm, its sword and one fall of drapery exist in
@@ -43,7 +48,7 @@
  * list both of them are keyed on.
  */
 
-export type StatueId = 'cyan' | 'ultramarine' | 'white' | 'mono' | 'limestone';
+export type StatueId = 'cyan' | 'ultramarine' | 'white' | 'limestone';
 
 /** A reader's pin, or `auto` for "let the palette decide". */
 export type StatueChoice = StatueId | 'auto';
@@ -74,7 +79,6 @@ export const statues: readonly Statue[] = [
   },
   { id: 'cyan', base: 'hero-statue', labelKey: 'statueCyan', families: [] },
   { id: 'white', base: 'hero-statue-white', labelKey: 'statueWhite', families: [] },
-  { id: 'mono', base: 'hero-statue-mono', labelKey: 'statueMono', families: [] },
   { id: 'limestone', base: 'hero-statue-limestone', labelKey: 'statueLimestone', families: [] },
 ];
 

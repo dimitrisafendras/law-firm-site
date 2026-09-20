@@ -92,10 +92,11 @@
   top: calc(100% + var(--space-3));
   right: 0;
   z-index: 200;
-  /* Wide enough for the palette grid's two columns at its longest label
-     ("Verdigris"). It was 232px when the menu held nothing but single-line
-     items. */
-  min-width: 280px;
+  /* Wide enough for three palette columns at the longest family name
+     ("Verdigris"), which is what the horizontal layout at the foot of this
+     file needs. It was 232px when the menu held nothing but single-line items,
+     and 280 when the pickers were still vertical lists. */
+  min-width: 320px;
   padding: var(--space-2);
   border-radius: var(--radius-xl);
   /* Opaque rather than the material's translucent tint, because this menu can
@@ -126,6 +127,25 @@
     inset 0 0 0 1px var(--glass-edge);
   animation: auth-nav-menu-in 0.18s cubic-bezier(0.22, 1, 0.36, 1);
   transform-origin: top right;
+
+  /*
+   * The backstop, and the thing whose absence was the actual bug: this menu had
+   * no height limit and no scroll, so once its contents outgrew the window the
+   * items at the bottom were not merely awkward to reach, they were
+   * unreachable. Account and Sign out were simply gone.
+   *
+   * `dvh` rather than `vh` because on a phone `vh` is the tallest the viewport
+   * ever gets, so a `vh`-based cap is still taller than the visible window
+   * while the browser chrome is showing -- which is exactly the case this rule
+   * exists to catch. The subtraction covers the bar the menu hangs from plus a
+   * little air beneath it.
+   *
+   * `overscroll-behavior` keeps a scroll that reaches the end of the menu from
+   * continuing into the page behind it.
+   */
+  max-height: calc(100dvh - 6rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -285,4 +305,107 @@
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-sm);
   padding: var(--space-1) var(--space-2);
+}
+
+/* ─── The menu's pickers, laid out horizontally ──────────────────────────── */
+
+/*
+ * The menu grew one theme axis at a time — palette, then the light-to-dark
+ * slider, then fonts, then look, then statue — and each arrived as the same
+ * shape: a vertical list of full-width labelled rows. Stacked, measured at a
+ * 726px viewport: 286px of palette (nine family rows), 60 of slider, ~110 of
+ * fonts, 103 of look, 250 of statue, plus ~350 of identity, section labels and
+ * the five real menu items. About 1160px of menu hanging off a bar 64px from
+ * the top of a 726px window, with no `max-height` and no `overflow`.
+ *
+ * So the bottom third simply could not be reached: Account and Sign out were
+ * below the fold with nothing to scroll. The menu had stopped being a menu.
+ *
+ * Two independent fixes, because either alone is a half fix. This block lays
+ * the pickers out horizontally so the content is short enough to fit; the
+ * `overflow-y` on the menu itself (above) means that even when it does not
+ * fit — a short window, a sixth axis, a locale that wraps wider — the items
+ * stay reachable instead of falling off the end.
+ *
+ * Scoped to the menu. The standalone popovers a signed-out visitor gets show
+ * one picker each, are nowhere near the fold, and keep the roomier layout with
+ * its descriptions on show.
+ */
+
+/* Nine family rows in three columns rather than nine lines: 286px becomes
+   about 110. The row turns into a column so the two chips sit above their
+   family name instead of beside it, which is what makes a ~100px track wide
+   enough for "Verdigris". */
+.auth-nav__menu .palette-swatches {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.auth-nav__menu .palette-row {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-1);
+  text-align: center;
+}
+
+.auth-nav__menu .palette-row__family {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Fonts, look and statue all render `.look-options`, so one rule does the
+   three of them: a wrapping row of chips instead of a column of full-width
+   rows. `flex: 1 1 auto` with `min-width` lets two or three share a line and
+   keeps a lone odd one from stretching to the full width and re-reading as a
+   list item. */
+.auth-nav__menu .look-options {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.auth-nav__menu .look-options__row {
+  position: relative;
+  width: auto;
+  flex: 1 1 auto;
+  min-width: 88px;
+  justify-content: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+/*
+ * The hint is the line that costs the height — every row carries a sentence of
+ * description under its label, and at fifteen rows that is most of the overflow.
+ *
+ * Clipped rather than `display: none`, because it is real text that a screen
+ * reader should still reach: these rows are radios whose accessible name is
+ * built from their contents, and dropping the hint out of the tree would
+ * quietly shorten what each option announces. Out of the layout, still in the
+ * name.
+ */
+.auth-nav__menu .look-options__hint {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.auth-nav__menu .look-options__body {
+  min-width: 0;
+}
+
+.auth-nav__menu .look-options__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }

@@ -83,9 +83,11 @@ is mismatched: the fire once burned khaki two inches from a cyan statue on every
 palette that is not blue.
 
 So there are five artworks and one registry (`src/theme/statues.ts`), and
-**every palette wears `ultramarine`**. It is the entry with `families: null`,
+**every palette wears `limestone`**. It is the entry with `families: null`,
 the remainder; no other entry claims a family, so the remainder is all
-eighteen. The other four are reachable only through the header's statue menu
+eighteen. The default pairing is therefore the Ultramarine palette (`lapis`)
+wearing the limestone figure. The other four are reachable only through the
+header's statue menu
 (`<html data-statue>`, `law-firm-site:statue`), which outranks the registry.
 `auto` is the absence of the attribute.
 
@@ -94,7 +96,7 @@ This is a deliberate reversal, and it is worth knowing it is one. The four
 accent it sat well beside — limestone for the warm and green schemes, white
 for Amethyst, mono for Graphite — on the argument two paragraphs down: a
 wireframe fights an accent it does not match. One drawing across the whole
-site takes that trade knowingly. A reader on Terracotta now gets a blue
+site takes that trade knowingly. A reader on Azure now gets a gold
 wireframe and blue rain beside a warm accent, which is the mismatch that
 argument is about, and the menu is the answer to it rather than the palette.
 

@@ -216,6 +216,14 @@ const en = {
 
   clientsOpensInNewTab: '(opens in a new tab)',
 
+  // Admin-only: the per-client visibility toggle on the wall. The short
+  // word is what the button shows; the *Label keys are its accessible
+  // name, which has to name the client.
+  clientHide: 'Hide',
+  clientShow: 'Show',
+  clientHideLabel: 'Hide {{name}} from the clients wall',
+  clientShowLabel: 'Show {{name}} on the clients wall',
+
   // ─── CTA ──────────────────────────────────────────────────────────────────────
   ctaTitle: 'Ready to Secure\nYour Future?',
   ctaSubtitle: 'The frontier is unforgiving to the unprepared. Partner with the architects of sovereign growth today.',

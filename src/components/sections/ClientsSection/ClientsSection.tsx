@@ -1,9 +1,11 @@
 import type { CSSProperties } from 'react';
 import { useTranslation } from '@/i18n';
+import { useEditMode } from '@/lib/edit-mode';
 import { Card } from '@/components';
 import { FadeInSection, StaggerGroup } from '@/components/animations/FadeInSection';
 import { SectionHeader } from '@/components/SectionHeader/SectionHeader';
 import { clients } from './clients';
+import { useClientVisibility } from './useClientVisibility';
 import './ClientsSection.css';
 
 /**
@@ -59,6 +61,16 @@ import './ClientsSection.css';
  */
 export function ClientsSection() {
   const { t } = useTranslation();
+  const { canEdit } = useEditMode();
+  const { isHidden, setHidden, saving } = useClientVisibility();
+
+  /*
+   * An admin in edit mode sees the whole roster, hidden ones included and
+   * marked; everyone else sees only what is visible. Filtered here rather than
+   * inside the map so the grid's child count stays honest — `StaggerGroup`
+   * indexes its children to stagger their entrances.
+   */
+  const shown = canEdit ? clients : clients.filter((client) => !isHidden(client.id));
 
   return (
     <section id="clients" className="clients-section">
@@ -72,7 +84,7 @@ export function ClientsSection() {
         </FadeInSection>
 
         <StaggerGroup className="clients-wall">
-          {clients.map((client) => (
+          {shown.map((client) => (
             /* Card inside the fade wrapper rather than on it, matching the
                practice grid: the wrapper owns the entrance, the card owns its
                hover transition. */
@@ -84,7 +96,13 @@ export function ClientsSection() {
                 empty space and paint a flat tint anyway. Matte says so on
                 purpose instead of arriving there by accident.
               */}
-              <Card as="article" interactive className="client-card glass--matte">
+              <Card
+                as="article"
+                interactive={!canEdit}
+                className={`client-card glass--matte ${
+                  canEdit && isHidden(client.id) ? 'client-card--hidden' : ''
+                }`.trim()}
+              >
                 <span
                   className="client-card__logo"
                   style={{ '--client-logo': `url(${client.logo.src})` } as CSSProperties}
@@ -98,18 +116,57 @@ export function ClientsSection() {
                   the card rather than against two words of name.
                 */}
                 <h3 className="client-card__name">
-                  <a
-                    className="client-card__link"
-                    href={client.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {t(client.nameKey)}
-                    {/* Part of the link's name rather than a `title`, which is
-                        not announced reliably and is unreachable by touch. */}
-                    <span className="visually-hidden"> {t('clientsOpensInNewTab')}</span>
-                  </a>
+                  {canEdit ? (
+                    /*
+                     * No link in edit mode. The card's click target is a
+                     * stretched `::after` covering the whole surface, so a
+                     * toggle inside it would be a control nested in a link,
+                     * with two handlers fighting over one click — the same
+                     * reason PracticeDomainCard drops its link while an admin
+                     * is editing. An admin managing the wall is not browsing it.
+                     */
+                    t(client.nameKey)
+                  ) : (
+                    <a
+                      className="client-card__link"
+                      href={client.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {t(client.nameKey)}
+                      {/* Part of the link's name rather than a `title`, which is
+                          not announced reliably and is unreachable by touch. */}
+                      <span className="visually-hidden"> {t('clientsOpensInNewTab')}</span>
+                    </a>
+                  )}
                 </h3>
+
+                {canEdit && (
+                  /*
+                   * `aria-pressed` rather than a checkbox: this is one button
+                   * whose effect toggles, and its label says which way it will
+                   * go.
+                   *
+                   * The visible word is just "Hide" / "Show" because the card is
+                   * small, but the accessible name names the client — a wall of
+                   * eight buttons all reading "Hide" is unusable from a screen
+                   * reader's element list or by voice. `aria-label` overrides
+                   * the text rather than adding to it, so the two never
+                   * double up.
+                   */
+                  <button
+                    type="button"
+                    className="client-card__visibility"
+                    aria-pressed={isHidden(client.id)}
+                    aria-label={t(isHidden(client.id) ? 'clientShowLabel' : 'clientHideLabel', {
+                      name: t(client.nameKey),
+                    })}
+                    disabled={saving === client.id}
+                    onClick={() => void setHidden(client.id, !isHidden(client.id))}
+                  >
+                    {t(isHidden(client.id) ? 'clientShow' : 'clientHide')}
+                  </button>
+                )}
               </Card>
             </FadeInSection>
           ))}

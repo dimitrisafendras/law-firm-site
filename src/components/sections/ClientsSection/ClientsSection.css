@@ -42,6 +42,15 @@
   flex: 0 0 auto;
 }
 
+/* `.section-header` ships a 64px bottom margin for the sections whose content
+   starts with a dense grid of copy. This one starts with a row of logos, which
+   needs far less air to separate it from the subtitle above — and the gap above
+   the wall was the top dead space this section was carrying. Scoped here rather
+   than changed on the shared component, which every other section relies on. */
+.clients-section .section-header {
+  margin-bottom: var(--space-8);
+}
+
 /* ─── The wall ─────────────────────────────────────────────────────────────── */
 
 /*
@@ -70,14 +79,18 @@
   grid-auto-rows: 1fr;
   gap: var(--space-4);
   align-content: center;
-  /* Content-sized, then centred in what the header left.
+  /* Content-sized, then pushed up under the heading.
      `flex: 0 1 auto` keeps the rows at the height the cards need — grow instead
      and `grid-auto-rows: 1fr` would divide a whole screen between two rows of a
      logo and a name, which is the void this section is supposed to not have.
-     The auto margins then take that free space as air above and below rather
-     than leaving the wall stranded under the heading with a screen beneath it. */
+
+     The free space below is a single auto margin rather than a pair, so all of
+     it collects underneath. Splitting it evenly was the obvious thing and it
+     read worse: on a 900px screen it put ~160px between the subtitle and the
+     first card, which detaches the wall from the heading it belongs to. Air
+     under a block is margin; air above one is a gap. */
   flex: 0 1 auto;
-  margin-block: auto;
+  margin-bottom: auto;
   min-height: 0;
 
   @media (max-width: 1024px) {
@@ -261,5 +274,67 @@
   .client-card:hover,
   .client-card:active {
     transform: none;
+  }
+}
+
+/* ─── Admin: per-client visibility ───────────────────────────────────────── */
+
+/*
+ * Only rendered for an admin with edit mode unlocked. A hidden client stays on
+ * the wall for them, dimmed and outlined, rather than vanishing — the whole
+ * point of the control is to see what you have hidden and put it back, and a
+ * card that disappears the moment you hide it leaves nothing to click.
+ *
+ * The dimming is opacity on the card, not a colour swap, so it reads the same
+ * on all eighteen palettes without a token of its own.
+ */
+.client-card--hidden {
+  opacity: 0.45;
+  outline: 1px dashed var(--glass-control-edge);
+  outline-offset: -1px;
+}
+
+.client-card__visibility {
+  /* Above the material's illumination and the card's own promoted children,
+     for the same reason the practice card's stretched link needs z-index 3. */
+  position: relative;
+  z-index: 4;
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  letter-spacing: var(--type-caps-tracking-wide);
+  text-transform: uppercase;
+  color: var(--accent-text);
+
+  background: none;
+  /* `--glass-control-edge` and not `--glass-border`: this is a control, and
+     that is the token tuned to clear WCAG 1.4.11's 3:1 in both schemes. */
+  border: 1px solid var(--glass-control-edge);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+.client-card__visibility:hover {
+  background-color: var(--accent-container);
+}
+
+.client-card__visibility:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+.client-card__visibility:disabled {
+  opacity: var(--text-emphasis-muted);
+  cursor: progress;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .client-card__visibility {
+    transition: none;
   }
 }

@@ -217,6 +217,14 @@ const el = {
 
   clientsOpensInNewTab: '(ανοίγει σε νέα καρτέλα)',
 
+  // Admin-only: the per-client visibility toggle on the wall. The short
+  // word is what the button shows; the *Label keys are its accessible
+  // name, which has to name the client.
+  clientHide: 'Απόκρυψη',
+  clientShow: 'Εμφάνιση',
+  clientHideLabel: 'Απόκρυψη του {{name}} από τους πελάτες',
+  clientShowLabel: 'Εμφάνιση του {{name}} στους πελάτες',
+
   // ─── CTA ──────────────────────────────────────────────────────────────────────
   ctaTitle: 'Έτοιμοι να Εξασφαλίσετε\nτο Μέλλον σας;',
   ctaSubtitle: 'Η πρωτοπορία είναι αμείλικτη για τους απροετοίμαστους. Συνεργαστείτε με τους αρχιτέκτονες κυρίαρχης ανάπτυξης σήμερα.',

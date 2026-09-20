@@ -119,10 +119,13 @@ describe('StatueOptions', () => {
     await user.keyboard('{ArrowDown}');
 
     const radios = screen.getAllByRole('radio');
-    // The second row in registry order is "Ultramarine" — the artwork every
-    // palette wears, and so the one the list leads with.
+    // The second row in registry order is "Limestone" — the artwork every
+    // palette wears, and so the one the list leads with. It is whichever entry
+    // in statues.ts carries `families: null`, not a fixed name: this moved from
+    // ultramarine when the default pairing became the Ultramarine palette
+    // wearing the limestone figure.
     expect(radios[1]).toHaveFocus();
-    expect(radios[1]).toHaveAccessibleName(/ultramarine/i);
+    expect(radios[1]).toHaveAccessibleName(/limestone/i);
     expect(radios[1]).toHaveAttribute('aria-checked', 'true');
   });
 });

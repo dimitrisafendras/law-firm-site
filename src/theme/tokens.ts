@@ -150,6 +150,21 @@ export const fonts = {
    */
   serif: "'EB Garamond', Georgia, 'Times New Roman', serif",
   mono: 'ui-monospace, Consolas, monospace',
+  /**
+   * GFS Didot — one of the reader's font-picker choices (see
+   * src/theme/fonts.ts). A Greek foundry's cut of the Firmin Didot the
+   * classical inscriptions of Athens are set in: a high-contrast Didone with a
+   * true, purpose-drawn Greek rather than a Latin face with Greek bolted on,
+   * which is exactly what a firm splitting its site between `en` and `el`
+   * needs from a display serif. Ships one weight — 400, no italic, no bold —
+   * so the font-picker option sets it everywhere `--sans`/`--heading`/`--label`
+   * point, and the site's own weight tokens (300/500/600 for the type scale's
+   * display and heading steps) simply render as the same 400 glyphs; a
+   * synthesised bold would distort a Didone's drawn thick/thin contrast far
+   * more than it would a geometric sans, so this is left alone rather than
+   * faked.
+   */
+  didot: "'GFS Didot', Georgia, serif",
 } as const;
 
 /**
@@ -1045,6 +1060,7 @@ export const fontVarNames: Record<string, string> = {
   heading: '--heading',
   label: '--label',
   mono: '--mono',
+  didot: '--gfs-didot',
 };
 
 // ─── Aggregate theme object ───────────────────────────────────────────────────

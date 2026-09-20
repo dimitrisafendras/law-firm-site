@@ -98,7 +98,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
         links={[
           { label: t('navTeam'), href: '#team' },
           { label: t('navPractice'), href: '#practice' },
-          { label: t('navTestimonials'), href: '#testimonials' },
+          { label: t('navClients'), href: '#clients' },
           { label: t('navContact'), href: '#contact' },
         ]}
         cta={<AuthNavControl />}

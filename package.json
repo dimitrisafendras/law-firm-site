@@ -17,7 +17,8 @@
     "audit:contrast": "node scripts/contrast-audit.mjs",
     "audit:cards": "node scripts/card-height-audit.mjs",
     "preview": "vite preview",
-    "optimize:images": "node scripts/optimize-images.mjs"
+    "optimize:images": "node scripts/optimize-images.mjs",
+    "prepare:client-logos": "node scripts/prepare-client-logos.mjs"
   },
   "dependencies": {
     "@emnapi/core": "^1.9.2",

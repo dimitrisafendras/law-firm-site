@@ -7,3 +7,6 @@ export { modes, DEFAULT_MODE_ID, isModeId } from './modes';
 export type { Mode, ModeId } from './modes';
 export { statues, STATUE_AUTO, isStatueId, isStatueChoice, statueById, statueForFamily, resolveStatue } from './statues';
 export type { Statue, StatueId, StatueChoice } from './statues';
+export { fontOptions, FONT_AUTO, isFontId, isFontChoice, fontOptionById } from './fonts';
+export type { FontOption, FontId, FontChoice } from './fonts';
+export { CONTINUUM_STEPS, CONTINUUM_LENGTH, continuumFor, continuumStop, rungAddress, contrastRatio, relativeLuminance } from './continuum';

@@ -75,8 +75,8 @@
  * is standing in. A `backdrop-filter` shows only what paints inside its nearest
  * backdrop root, and paint containment forms one — which `content-visibility:
  * auto` applies at all times, not only while a section is skipped. Three of the
- * home page's sections carry it (PracticeGrid, PartnerEthos,
- * TestimonialsSection), so the cards inside them sample an empty backdrop and
+ * home page's sections carry it (PracticeGrid, PartnerEthos, ClientsSection),
+ * so the cards inside them sample an empty backdrop and
  * render as a flat tint over the page. ContactSection leaves
  * `content-visibility` off for exactly this reason and does lens; it says so in
  * its own stylesheet.
@@ -339,8 +339,10 @@
  * first frame, with saturate live throughout, so there is no switch-on moment
  * to hide. See src/components/animations/FadeInSection.tsx.
  *
- * One surface still cannot lens: the testimonial track is translated, and a
- * transformed ancestor is a backdrop root no matter what its children do.
+ * The one surface that could not lens was the testimonials carousel's track,
+ * which was translated — a transformed ancestor is a backdrop root no matter
+ * what its children do. That section is gone, but the rule it illustrates is
+ * not: do not put a transform on an ancestor of glass that is meant to lens.
  */
 
 @media (hover: hover) {

@@ -33,7 +33,7 @@ export interface CardProps extends HTMLAttributes<HTMLElement> {
    * Turn it off for a card that has to match one which *cannot* lens: a
    * `backdrop-filter` samples only what paints inside its backdrop root, and
    * every home-page section that carries `content-visibility: auto`
-   * (PracticeGrid, PartnerEthos, TestimonialsSection) has paint containment and
+   * (PracticeGrid, PartnerEthos, ClientsSection) has paint containment and
    * is therefore a backdrop root with nothing in it. The cards in those sections
    * show a flat tint over the page; a card elsewhere on the site that is meant
    * to read as the same object has to say so. See src/styles/liquid-glass.css.

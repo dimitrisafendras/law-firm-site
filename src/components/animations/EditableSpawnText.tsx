@@ -58,9 +58,10 @@ export function EditableSpawnText({
    * the string. That used to be an `aria-label` on the owning element at each
    * call site — which is valid on the hero's `h1` and SectionHeader's `h2`
    * (headings support naming from author) and PROHIBITED on SectionHeader's
-   * `p` and the testimonial `blockquote`, whose roles do not. On those two the
-   * label was being dropped, so four section subtitles and the rotating quote
-   * were reaching screen readers completely empty.
+   * `p` and on a `blockquote`, whose roles do not. On those two the label was
+   * being dropped, so four section subtitles — and, while it existed, the
+   * testimonials carousel's rotating quote — were reaching screen readers
+   * completely empty.
    *
    * A visually-hidden text node has no role restrictions and works the same in
    * all four places, so the label lives here now and no call site carries one.

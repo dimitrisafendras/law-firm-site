@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { Mode, ModeId, Palette, Statue, StatueChoice } from '@/theme';
+import type { FontChoice, FontOption, Mode, ModeId, Palette, Statue, StatueChoice } from '@/theme';
 
 export interface ThemeState {
   /** The active palette, resolved — never null, never an unknown id. */
@@ -23,6 +23,26 @@ export interface ThemeState {
   statues: readonly Statue[];
   /** Pin a statue, or `auto` to let the palette and the look decide. */
   setStatue(id: string): void;
+  /**
+   * Which rung of the family's light-to-dark ladder is showing, 0 being the
+   * darkest. See src/theme/continuum.ts — and note that the ladder has a gap in
+   * the middle that no rung fills, because no readable palette lives there.
+   */
+  rung: number;
+  /** Move up or down the ladder. Crossing the gap also changes which of the
+   *  pair's two palettes is selected, since a rung is addressed outward from
+   *  whichever end it belongs to. */
+  setRung(index: number): void;
+  /**
+   * The reader's typeface pin, or `auto` — see src/theme/fonts.ts. This is the
+   * CHOICE, not the resolved family; `auto` means the active look's own font
+   * shows, exactly like a statue's `auto`.
+   */
+  font: FontChoice;
+  /** The three explicit choices, in menu order. */
+  fontOptions: readonly FontOption[];
+  /** Pin a typeface, or `auto` to let the look decide. */
+  setFont(id: string): void;
 }
 
 /** Kept out of the provider module so that file exports only a component,
@@ -39,3 +59,8 @@ export const ThemeContext = createContext<ThemeState | null>(null);
 export const THEME_STORAGE_KEY = 'law-firm-site:palette';
 export const MODE_STORAGE_KEY = 'law-firm-site:mode';
 export const STATUE_STORAGE_KEY = 'law-firm-site:statue';
+/** The ladder rung. The inline script duplicates this key and the tiny bit of
+ *  `rungAddress` it needs; see the note there. */
+export const RUNG_STORAGE_KEY = 'law-firm-site:rung';
+/** The font pin. Same "auto means absent" story as STATUE_STORAGE_KEY. */
+export const FONT_STORAGE_KEY = 'law-firm-site:font';

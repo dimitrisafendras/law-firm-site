@@ -1,0 +1,265 @@
+/*
+ * The clients wall.
+ *
+ * Layout conventions follow the practice grid next door: the section is a flex
+ * column padded asymmetrically at the top because the header bar is fixed and
+ * overlays every screen, the inner column carries the site max-width, and the
+ * whole thing is `content-visibility: auto` because it is below the fold.
+ */
+.clients-section {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-24) 0 var(--space-16);
+  display: flex;
+  flex-direction: column;
+  content-visibility: auto;
+
+  @media (max-width: 1024px) {
+    padding: var(--space-8) 0;
+    display: block;
+  }
+}
+
+.clients-section__inner {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-12);
+  flex: 1 1 auto;
+  /* `min-height: 0` for the same reason as the practice section: a flex item's
+     default `min-height: auto` refuses to shrink below its content. */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  @media (max-width: 1024px) {
+    padding: 0 var(--space-4);
+    display: block;
+  }
+}
+
+.clients-section__inner > .fade-section:first-child {
+  flex: 0 0 auto;
+}
+
+/* ─── The wall ─────────────────────────────────────────────────────────────── */
+
+/*
+ * Four across, two deep, and the column counts are explicit rather than
+ * `auto-fit`.
+ *
+ * Eight is a number auto-fit handles badly: `minmax(11rem, 1fr)` across the
+ * 1184px column resolved to six tracks, which left a first row of six and an
+ * orphan row of two — and the track count changed again at every width, so the
+ * wall read as a different shape on every screen. Eight divides cleanly by four
+ * and by two, so those are the counts it gets. The three-column band is the one
+ * width where a remainder of two is unavoidable and a fourth track would be too
+ * narrow for the widest wordmark.
+ *
+ * `align-content: center` and rows that size to their content, NOT rows that
+ * divide the section's height between them. A card here holds a logo and a name
+ * and nothing else, so a row stretched to half a screen is void by
+ * construction — there is no third element that could grow into it. The
+ * practice grid opposite divides its height because its cards have a
+ * description that genuinely uses the room; this one takes what it needs and
+ * gives the rest back to the section as air.
+ */
+.clients-wall {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 1fr;
+  gap: var(--space-4);
+  align-content: center;
+  /* Content-sized, then centred in what the header left.
+     `flex: 0 1 auto` keeps the rows at the height the cards need — grow instead
+     and `grid-auto-rows: 1fr` would divide a whole screen between two rows of a
+     logo and a name, which is the void this section is supposed to not have.
+     The auto margins then take that free space as air above and below rather
+     than leaving the wall stranded under the heading with a screen beneath it. */
+  flex: 0 1 auto;
+  margin-block: auto;
+  min-height: 0;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* The fade wrapper is the grid item, so it has to be a container itself or the
+   card inside sizes to its own content and stops filling the stretched row —
+   the exact failure CLAUDE.md records for the card sets. */
+.clients-wall > .fade-section {
+  display: grid;
+  min-height: 0;
+}
+
+/* ─── The card ─────────────────────────────────────────────────────────────── */
+
+.client-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  min-height: 0;
+  /* Generous, because this section has height to spend. Eight cards holding a
+     logo and a name do not need a screen, and the alternative to using some of
+     it is two thin rows stranded in the middle of one. */
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+}
+
+/*
+ * The mark: a box painted in a theme colour and clipped to the logo's alpha.
+ *
+ * `--client-logo` is set inline by the component because the file name is a
+ * Vite build hash. The paint colour is `--accent-text`, which is the token
+ * already guaranteed legible against the page ground on every palette — so the
+ * wall needs no per-scheme rule of its own and stays correct on the contrast
+ * ladder's middle rungs, where a palette-id-keyed filter would not.
+ *
+ * Both dimensions are caps, not the drawn size: the eight marks run from 0.88:1
+ * to 7.9:1, so `contain` fits each inside whichever cap binds first — wide
+ * wordmarks come out width-limited, compact roundels height-limited, and every
+ * cell occupies identical space either way.
+ */
+.client-card__logo {
+  display: block;
+  width: 100%;
+  max-width: 12rem;
+  height: 4rem;
+  flex: 0 0 auto;
+
+  background-color: var(--accent-text);
+
+  mask-image: var(--client-logo);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: var(--client-logo);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+
+  transition: background-color var(--transition);
+}
+
+.client-card__name {
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-leading);
+  text-transform: uppercase;
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--text);
+  margin: 0;
+  /* The heading goes back to static so the stretched `::after` on the link
+     inside it resolves against the card rather than against two words of name.
+     `.glass > *` would otherwise promote it — same fix, same reason as
+     `.practice-domain__title`. */
+  position: static;
+}
+
+/* The underline wipes in from the left rather than being a `text-decoration`,
+   which cannot be animated from one side to the other. Same gesture as the
+   practice card's title and the partner card's name. */
+.client-card__link {
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: background-size 0.45s var(--ease-settle);
+}
+
+/* The stretched target: the whole card is the link, with no second control and
+   no click handler on the `<article>`. `inset: 0` resolves against
+   `.client-card`, which `.glass` makes `position: relative`. */
+.client-card__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+}
+
+/*
+ * The same hover as the practice and partner cards, in this card's vocabulary.
+ *
+ * These cards are the same object as the ones two sections up, so they answer
+ * the pointer the same way: rise, take the overlay elevation with an accent rim
+ * and an accent halo, brighten the material, and underline the name from the
+ * left. Each card then moves the one asset it has — here the mark goes from the
+ * accent to full-strength ink, which is the only thing this card has to move.
+ *
+ * Rest is matte, so hover is where the card becomes glass and the saturation is
+ * one it did not previously have. The illumination's own shift (scale 1.08,
+ * opacity to full) is not repeated here — that is
+ * `.glass--interactive:hover::before` in liquid-glass.css, and `<Card
+ * interactive>` is what asks for it.
+ *
+ * Gated on a real hovering pointer: touch browsers leave `:hover` latched on
+ * the last-tapped card, so an ungated rule never releases and the card sits
+ * lifted and brightened until some other card is tapped.
+ */
+.client-card {
+  transition:
+    box-shadow 0.4s var(--ease-settle),
+    transform 0.4s var(--ease-settle),
+    background-color 0.4s ease;
+}
+
+@media (hover: hover) {
+  .client-card:hover {
+    /* Both go through the custom properties rather than through
+       `backdrop-filter` and `background-color` directly: a plain
+       `background-color` here would land at the same specificity but later in
+       the bundle, and would quietly defeat the reduced-transparency fallback. */
+    --glass-saturate: 200%;
+    --glass-hover-tint: var(--glass-bg-strong);
+    /* The rim goes through `--glass-rim` because `.glass--matte` draws it as a
+       real border rather than an inset shadow — an `inset` would be covered by
+       the card's own content. */
+    --glass-rim: var(--accent-border);
+
+    transform: translateY(-6px);
+    box-shadow:
+      var(--elev-overlay),
+      0 0 48px var(--glass-glow);
+  }
+
+  .client-card:hover .client-card__logo {
+    background-color: var(--text);
+  }
+
+  .client-card:hover .client-card__link {
+    background-size: 100% 1px;
+  }
+}
+
+/* Press: the card settles back toward the page, so a click has a bottom. */
+.client-card:active {
+  transform: translateY(-1px);
+}
+
+/* Keeps everything that is a change of state — elevation, accent edge and halo,
+   the brighter material, the ink at full — and loses the change of position.
+   The underline is a background-size animation, so it lands instantly rather
+   than wiping in. */
+@media (prefers-reduced-motion: reduce) {
+  .client-card,
+  .client-card__logo,
+  .client-card__link {
+    transition: none;
+  }
+
+  .client-card:hover,
+  .client-card:active {
+    transform: none;
+  }
+}

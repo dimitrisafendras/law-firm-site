@@ -399,9 +399,8 @@
    * Gated on `.glass--interactive`, which is what `<Card interactive>` and
    * `<Card clickable>` add — the same gate the material's own hover carries, and
    * for the reason given there: a static panel lighting up under a passing
-   * pointer promises a door that is not there. The contact panel, the
-   * testimonials stage and the detail pages' prose panels all keep the resting
-   * frame and nothing more.
+   * pointer promises a door that is not there. The contact panel and the detail
+   * pages' prose panels all keep the resting frame and nothing more.
    */
   [data-mode='classic'] .glass--matte.glass--interactive:hover {
     outline-color: var(--accent-border);
@@ -451,41 +450,6 @@
 [data-mode='classic'] .navbar__link,
 [data-mode='classic'] .navbar__mobile-link {
   letter-spacing: var(--type-caps-tracking-wide);
-}
-
-
-/* ─── Testimonials ────────────────────────────────────────────────────────────
- *
- * The opening quotation mark the digital look leaves to the italic alone. Set
- * upright, because a Garamond's italic quote is a comma on its side and this is
- * a mark rather than punctuation.
- *
- * Absolutely positioned, so it changes no layout at all: the carousel's height
- * comes from a hidden sizer holding every quote, and a float here would move
- * that sizer and re-measure the stage. It hangs left and up into the card's own
- * `--space-8` padding — deliberately not `right: 100%`, which at this size would
- * put the glyph outside the padding box and `.glass`'s `overflow: hidden` would
- * cut it in half.
- * ──────────────────────────────────────────────────────────────────────────── */
-
-[data-mode='classic'] .testimonials-stage__text {
-  position: relative;
-}
-
-[data-mode='classic'] .testimonials-stage__text::before {
-  content: '“';
-  position: absolute;
-  left: -0.24em;
-  top: -0.16em;
-  font-family: var(--serif);
-  font-style: normal;
-  font-size: 2.6em;
-  line-height: 1;
-  color: var(--accent-text);
-  /* Low enough that the first line of the quote reads straight through it,
-     which is the point: it is a watermark, not a character. */
-  opacity: 0.2;
-  pointer-events: none;
 }
 
 

@@ -5,7 +5,7 @@ import { VkmLogo } from '@/assets/VkmLogo';
 import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
 import { PracticeGrid } from '@/components/sections/PracticeGrid/PracticeGrid';
 import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
-import { TestimonialsSection } from '@/components/sections/TestimonialsSection/TestimonialsSection';
+import { ClientsSection } from '@/components/sections/ClientsSection/ClientsSection';
 import { ContactSection } from '@/components/sections/ContactSection/ContactSection';
 import { CircuitField } from '@/components/CircuitField';
 import { ClassicField } from '@/components/ClassicField';
@@ -83,7 +83,7 @@ export default function HomePage() {
         links={[
           { label: t('navTeam'), href: '#team' },
           { label: t('navPractice'), href: '#practice' },
-          { label: t('navTestimonials'), href: '#testimonials' },
+          { label: t('navClients'), href: '#clients' },
           { label: t('navContact'), href: '#contact' },
         ]}
         primaryCta={
@@ -110,7 +110,7 @@ export default function HomePage() {
         <HeroSection />
         <PartnerEthos />
         <PracticeGrid />
-        <TestimonialsSection />
+        <ClientsSection />
         {/* The map band that used to be its own "Global Network" section lives
             inside ContactSection now — one office, one pin, one section. */}
         <ContactSection />

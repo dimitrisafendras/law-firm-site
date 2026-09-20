@@ -95,6 +95,30 @@
   unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
 }
 
+/* GFS Didot — fetched only when the reader pins it from the font picker
+   (src/theme/fonts.ts). One weight, one style: Google ships this face as
+   400/normal only, so there is nothing else to fetch. Two subsets rather than
+   the usual three — Google does not offer a latin-ext block for this face at
+   all (its glyph set stops at Latin-1), and the "greek-ext" block it does
+   offer is polytonic Greek (ancient accents/breathings), which neither locale
+   on this site uses. ~21.7KB total. */
+@font-face {
+  font-family: 'GFS Didot';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/gfs-didot-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'GFS Didot';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/gfs-didot-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
 /* Base styles — CSS variable declarations are generated from src/theme/tokens.ts */
 
 *,
@@ -162,7 +186,7 @@ html {
 :target,
 #practice,
 #team,
-#testimonials,
+#clients,
 #contact {
   scroll-margin-top: var(--space-24);
 }
@@ -202,7 +226,7 @@ html {
    * padding, so the offset would be applied twice and leave a 96px strip of the
    * previous screen showing above the one that was asked for.
    */
-  :is(#practice, #team, #testimonials, #contact) {
+  :is(#practice, #team, #clients, #contact) {
     scroll-margin-top: 0;
   }
 }

@@ -5,9 +5,9 @@ import { brand, brandVarNames } from '../theme/tokens';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '../components/CircuitField';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
-import { PaletteSwatches, ThemePicker } from '../components/ThemePicker';
+import { FontPicker, PaletteSwatches, SchemeSlider, ThemePicker } from '../components/ThemePicker';
 import { ModeOptions, ModePicker, StatueOptions, StatuePicker } from '../components/LookPicker';
-import { palettes, modes, statues } from '../theme';
+import { palettes, modes, statues, fontOptions } from '../theme';
 import { useTheme } from '@/lib/theme';
 import { SpawnText } from '../components/animations/SpawnText';
 import { EditableSpawnText } from '../components/animations/EditableSpawnText';
@@ -295,6 +295,21 @@ export default function DesignSystem() {
             custom properties. Current: <strong>{activePalette.label}</strong>.
           </p>
           <PaletteSwatches />
+          <SchemeSlider />
+          <FontPicker />
+        </div>
+
+        <div style={showcaseBox}>
+          <span style={showcaseLabel}>Font Picker — {fontOptions.length + 1} choices</span>
+          <p style={{ marginBottom: '16px', color: 'var(--text)', opacity: 'var(--text-emphasis-secondary)' }}>
+            "Follow the look" (the default — no <code>data-font</code> at all)
+            plus the {fontOptions.length} explicit pins, each re-pointing{' '}
+            <code>--sans</code>/<code>--heading</code>/<code>--label</code>{' '}
+            regardless of which look is active. Standalone here for reference;
+            in the site it lives inside the theme popover above, not behind a
+            trigger of its own.
+          </p>
+          <FontPicker />
         </div>
 
         <div style={showcaseBox}>

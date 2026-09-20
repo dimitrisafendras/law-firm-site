@@ -9,7 +9,7 @@ const el = {
   navPractice: 'Τομείς Δικαίου',
   navTeam: 'Η Ομάδα μας',
   navAbout: 'Σχετικά',
-  navTestimonials: 'Μαρτυρίες',
+  navClients: 'Πελάτες',
   navContact: 'Επικοινωνία',
   navCta: 'Κλείστε Ραντεβού',
 
@@ -202,51 +202,20 @@ const el = {
   // ─── Stats ───────────────────────────────────────────────────────────────────
 
 
-  // ─── Testimonials ────────────────────────────────────────────────────────────
-  testimonialsOverline: 'Τι Λένε οι Πελάτες',
-  testimonialsTitle: 'Μαρτυρίες Πελατών',
-  testimonialsSubtitle: 'Εμπιστοσύνη από φιλόδοξους επαγγελματίες σε κάθε κλάδο.',
+  // ─── Πελάτες ───────────────────────────────────────────────────────────────
+  clientsTitle: 'Πελάτες',
+  clientsSubtitle: 'Επιχειρήσεις που μας εμπιστεύονται για ό,τι έχει σημασία.',
 
-  testimonial1Quote:
-    'Η VKM καθοδήγησε το Series A μας από term sheet σε κλείσιμο σε 6 εβδομάδες. Η κατανόησή τους του ελληνικού και ευρωπαϊκού πλαισίου μας γλίτωσε μήνες.',
-  testimonial1Author: 'Γιάννης Παπαδόπουλος',
-  testimonial1Role: 'CEO, Hellas Fintech',
+  clientDevelor: 'Develor Greece',
+  clientKarras: 'Karras Grande Resort',
+  clientStarboard: 'Starboard Digital',
+  clientGoat: 'GOAT Coffee Roasters',
+  clientEvivios: 'EviviosMed',
+  clientCityskal: 'Σκαλωσιές Αθήνα',
+  clientPadel: 'Elliniko Padel Club',
+  clientPsi: 'PSI Construction',
 
-  testimonial2Quote:
-    'Η ναυτιλιακή ομάδα χειρίστηκε μια σύνθετη διαφορά ναύλωσης που τρία άλλα γραφεία δεν μπορούσαν να επιλύσουν. Επαγγελματισμός και βαθιά γνώση.',
-  testimonial2Author: 'Καπτ. Νίκος Σταυρίδης',
-  testimonial2Role: 'Διευθυντής Στόλου, Aegean Shipping Co.',
-
-  testimonial3Quote:
-    'Όταν χρειαστήκαμε να δομήσουμε την tokenized πλατφόρμα ακινήτων μας υπό το MiCA, ήταν το μόνο γραφείο στην Αθήνα που μπορούσε να χειριστεί και τα δύο \u2014 δίκαιο ακινήτων και κανονισμό κρυπτονομισμάτων.',
-  testimonial3Author: 'Ελένη Κωνσταντίνου',
-  testimonial3Role: 'Ιδρύτρια, PropChain',
-
-  testimonial4Quote:
-    'Ολοκληρώσαμε την αγορά έξι ακινήτων σε Αθήνα και Κυκλάδες σε λιγότερο από τέσσερις μήνες. Ο έλεγχος τίτλων ήταν άψογος και κάθε ζήτημα αδειοδότησης τέθηκε προτού προλάβει να γίνει πρόβλημα.',
-  testimonial4Author: 'Μαρίνα Βλάχου',
-  testimonial4Role: 'Διευθύνουσα Σύμβουλος, Astrea Estates',
-
-  testimonial5Quote:
-    'Η αδειοδότηση του ανταλλακτηρίου μας υπό το MiCA ήταν αχαρτογράφητο έδαφος για όλους. Χάραξαν τον οδικό χάρτη, κράτησαν τη γραμμή απέναντι στον επόπτη και τήρησαν το χρονοδιάγραμμα που δεσμεύτηκαν.',
-  testimonial5Author: 'Θάνος Βεργής',
-  testimonial5Role: 'Συνιδρυτής, Meridian Digital Assets',
-
-  testimonial6Quote:
-    'Ανασχεδίασαν τον κεφαλαιακό μας πίνακα πριν τον γύρο seed και μας γλίτωσαν από μια δομή που θα μας στοίχιζε τον έλεγχο της εταιρείας δύο χρόνια αργότερα. Συμβουλευτική που σκέφτεται τρεις κινήσεις μπροστά.',
-  testimonial6Author: 'Σοφία Ανδρέου',
-  testimonial6Role: 'Ιδρύτρια, Kyma Robotics',
-
-  // Carousel accessibility strings. These reach the user through ARIA
-  // attributes, so they are read by assistive technology rather than rendered.
-  testimonialsCarouselRole: 'καρουζέλ',
-  testimonialsSlideRole: 'διαφάνεια',
-  testimonialsSlidePosition: '{{current}} από {{total}}',
-  testimonialsPrevLabel: 'Προηγούμενη μαρτυρία',
-  testimonialsNextLabel: 'Επόμενη μαρτυρία',
-  testimonialsGoToLabel: 'Μετάβαση στη μαρτυρία {{index}}',
-  testimonialsPause: 'Παύση εναλλαγής μαρτυριών',
-  testimonialsPlay: 'Συνέχιση εναλλαγής μαρτυριών',
+  clientsOpensInNewTab: '(ανοίγει σε νέα καρτέλα)',
 
   // ─── CTA ──────────────────────────────────────────────────────────────────────
   ctaTitle: 'Έτοιμοι να Εξασφαλίσετε\nτο Μέλλον σας;',
@@ -463,11 +432,23 @@ const el = {
   statueWhite: 'Λευκό',
   statueMono: 'Μονόχρωμο',
   statueLimestone: 'Ασβεστόλιθος',
+  fontPickerLegend: 'Γραμματοσειρά',
+  fontAuto: 'Κατά το ύφος',
+  fontAutoHint: 'Jura στο ψηφιακό, Garamond στο κλασικό',
+  fontJura: 'Jura',
+  fontJuraHint: 'Η γεωμετρική sans του ψηφιακού ύφους',
+  fontGaramond: 'EB Garamond',
+  fontGaramondHint: 'Η serif του κλασικού ύφους, και στα δύο ύφη',
+  fontGfsDidot: 'GFS Didot',
+  fontGfsDidotHint: 'Ελληνική Didone, αιχμηρή και επιγραφική',
+  schemeLabel: 'Φωτεινό \u2192 σκοτεινό',
+  schemeLightest: 'Πιο φωτεινό',
+  schemeDarkest: 'Πιο σκοτεινό',
 
   // ─── Section chapter labels ──────────────────────────────────────────────────
   chapterTeam: 'Κεφάλαιο 01 / Ομάδα',
   chapterExpertise: 'Κεφάλαιο 02 / Εξειδίκευση',
-  chapterTestimonials: 'Κεφάλαιο 03 / Μαρτυρίες',
+  chapterClients: 'Κεφάλαιο 03 / Πελάτες',
   chapterContact: 'Κεφάλαιο 04 / Επικοινωνία',
 
   // ─── Design System showcase labels ───────────────────────────────────────────

@@ -4,23 +4,35 @@
   pointer-events: none;
 }
 
-/* Rain — behind statue */
-.digital-statue__rain-wrap {
-  z-index: 0;
-  border-radius: 55% 0 0 35%;
-  width: 35%;
-  height: 100%;
+/* Behind the photograph, never painted over marble. Small drifting particles
+ * catches the negative spaces without a second full-size canvas or blur. */
+.digital-statue__depth {
   position: absolute;
-  top: 5%;
-  bottom: 0;
-  left: 9%;
+  inset: 0 0 0 -8%;
   overflow: hidden;
+  mask-image: radial-gradient(ellipse at 42% 50%, black 45%, transparent 85%);
+  pointer-events: none;
 }
 
-.digital-statue__rain {
-  display: block;
-  width: 100%;
-  height: 100%;
+.digital-statue__depth span {
+  position: absolute;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle, var(--accent-text) 15%,
+    color-mix(in srgb, var(--accent-text) 65%, transparent) 45%, transparent 75%);
+  animation: statue-particle-drift ease-in-out infinite;
+  animation-play-state: var(--ambient-play-state, paused);
+}
+
+@keyframes statue-particle-drift {
+  0% { transform: translate3d(-14px, 20px, 0); opacity: .3; }
+  33% { transform: translate3d(18px, -8px, 0); opacity: .8; }
+  66% { transform: translate3d(32px, -35px, 0); opacity: .55; }
+  100% { transform: translate3d(8px, -58px, 0); opacity: .35; }
+}
+
+[data-mode='classic'] .digital-statue__depth { display: none; }
+@media (max-width: 1024px), (prefers-reduced-motion: reduce) {
+  .digital-statue__depth { display: none; }
 }
 
 /*
@@ -53,117 +65,36 @@
   background-size: contain;
 }
 
-/* Sparkle wrappers — on top of statue */
-.digital-statue__sparkles-wrap {
+/* Same exact image box, with an alpha-preserving, mesh-only light texture. */
+.digital-statue__surface {
   position: absolute;
-  z-index: 2;
-  overflow: hidden;
+  inset: 0;
+  mix-blend-mode: screen;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
 }
 
-.digital-statue__sparkle-canvas {
+.digital-statue__surface canvas {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.digital-statue__sparkles-body {
-  width: 90%;
-  height: 95%;
-  top: 5%;
-  left: 4%;
-
-  /* Hand-traced silhouette of the statue in src/assets/images/hero-statue.webp.
-     These percentages follow the outline of THAT specific image so the body
-     sparkles are masked to the figure. If the statue image is ever swapped,
-     this polygon must be re-traced against the new artwork or the mask will
-     drift off the silhouette. */
-  clip-path: polygon(
-    /* ── right edge: straight down statue center ── */
-    44% -2%,
-    44% 100%,
-    /* ── bottom: pedestal base ── */
-    11% 100%,
-    /* ── left edge: pixel-traced outer silhouette going up ── */
-    14% 98%, 15% 96%, 14.5% 94%,
-    /* pedestal top */
-    13% 92%, 17% 89%,
-    /* above pedestal / ankle */
-    24% 87%, 25% 85%, 26% 83%, 26% 81%,
-    /* lower leg / shin */
-    19% 77%, 24% 75%, 20% 73%, 24% 71%,
-    /* knee / thigh */
-    20% 69%, 19% 66%, 19% 64%,
-    /* mid drape */
-    17% 62%, 15% 60%, 14% 58%,
-    /* upper drape / hip */
-    9% 54%, 9% 52%, 7% 49%,
-    /* sword hand area */
-    7% 47%, 7% 45%, 8% 43%,
-    /* sword / dissolving arm */
-    13% 41%, 15% 39%, 15% 37%,
-    /* dissolving arm upper */
-    16% 35%, 18% 33%, 19% 31%, 20% 28%,
-    /* scattered pixels */
-    20% 26%, 22% 24%, 22% 22%,
-    /* upper dissolving area */
-    22% 18%, 27% 16%, 30% 14%,
-    /* neck — tight to actual outline */
-    33% 13%, 34% 12%, 34% 11.5%,
-    /* neck narrows into jaw */
-    33% 10.5%, 32% 10%, 32% 9.5%,
-    /* jaw / ear level — widest part of head */
-    32% 9%, 32% 8%, 32% 7.5%,
-    /* mid head */
-    33% 6.5%, 33% 5.5%, 33.5% 5%,
-    /* upper head — curves back toward crown */
-    34.5% 4%, 35% 3%, 36% 2%,
-    37.5% 1%, 39% 0%, 40% -0.5%, 44% -20%
-  );
+[data-mode='classic'] .digital-statue__surface {
+  display: none;
 }
 
-.digital-statue__sparkles-scale {
-  top: 26%;
-  left: 58%;
-  width: 15%;
-  height: 19%;
-  border-radius: 50%;
-
-}
-
-/* Flames — behind statue */
-.digital-statue__flame {
-  position: absolute;
-  z-index: 0;
-  overflow: hidden;
-}
-
-.digital-statue__flame-canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.digital-statue__flame--left {
-  width: 15%;
-  height: 10%;
-  top: 32%;
-  left: 58%;
-}
-
-.digital-statue__flame--right {
-  top: 32%;
-  left: 78%;
-  width: 15%;
-  height: 10%;
+@media (max-width: 1024px), (prefers-reduced-motion: reduce) {
+  .digital-statue__surface { display: none; }
 }
 
 /* ─── Entrance ─────────────────────────────────────────────────────────────── */
 /*
  * The statue rises out of the ground and phases in while its ambient canvas
- * layers (rain / flames / sparkles) ramp up with it — they are already alive as
+ * circuit traces ramp up with it — they are already alive as
  * it materialises, nothing waits for the entrance to finish. Everything above is
  * the final resting state, so the reduced-motion path renders the scene already
- * assembled, with the ambient loops running exactly as they always have.
+ * assembled, without ambient motion.
  *
  * `animation-fill-mode: backwards` (never `forwards`/`both`) means no filter or
  * clip-path survives the entrance — the ambient loops run on an unfiltered,
@@ -206,9 +137,7 @@
 
   /* Ambient layers ramp up over the same window as the rise, so the statue
      spawns already animated rather than switching on afterwards. */
-  .digital-statue__rain-wrap,
-  .digital-statue__sparkles-wrap,
-  .digital-statue__flame {
+  .digital-statue__surface {
     animation: statue-ambient-ignite var(--dur-materialize) var(--ease-spawn)
       var(--statue-entrance-delay, 0s) backwards;
   }

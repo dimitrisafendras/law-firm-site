@@ -17,15 +17,12 @@
  * dissolution over them.
  *
  * ── Who chooses ───────────────────────────────────────────────────────────────
- * Today, nothing: every palette wears **limestone**. It is the entry with
+ * Today, nothing: every palette wears **ultramarine**. It is the entry with
  * `families: null`, which means "the remainder" — and since no other entry
  * claims a family, the remainder is all eighteen.
  *
- * It was ultramarine until the default pairing was changed to the Ultramarine
- * palette wearing the limestone figure. Nothing about the mechanism moved,
- * only which entry holds the `null`. The scene follows the DRAWING, not the
- * palette, so the rain and the cool flame are now gold everywhere — that is
- * `statueArtwork.ts` doing its job, not a regression.
+ * The default pairs the Ultramarine palette with its blue-wireframe figure.
+ * Explicit reader pins remain untouched when the default changes.
  *
  * The `families` mechanism is still here and still the way a palette would
  * claim an artwork; it just has nothing to say at the moment. Four lists in
@@ -71,12 +68,12 @@ export interface Statue {
 export const statues: readonly Statue[] = [
   // `families: null` is the remainder, and with every other entry claiming
   // nothing the remainder is every palette. This one line is what makes
-  // limestone the site's statue.
+  // ultramarine the site's statue.
   {
     id: 'limestone',
     base: 'hero-statue-limestone',
     labelKey: 'statueLimestone',
-    families: null,
+    families: [],
   },
   { id: 'cyan', base: 'hero-statue', labelKey: 'statueCyan', families: [] },
   { id: 'white', base: 'hero-statue-white', labelKey: 'statueWhite', families: [] },
@@ -85,7 +82,7 @@ export const statues: readonly Statue[] = [
     id: 'ultramarine',
     base: 'hero-statue-ultramarine',
     labelKey: 'statueUltramarine',
-    families: [],
+    families: null,
   },
 ];
 

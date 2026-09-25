@@ -25,12 +25,17 @@ no separate staging or dev database.
 | `0001_profiles_and_roles.sql` | applied |
 | `0002_site_content.sql` | applied |
 | `0003_seed_admin.sql` | applied |
-| `0004_admin_user_management.sql` | **not applied** |
+| `0004_admin_user_management.sql` | applied |
 | `0005_client_visibility.sql` | applied |
 
-`0004` is committed but has not been run against the project. Until it is, the
-admin user-management page (`#admin-users`) can only see the signed-in admin's
-own profile row — the own-row policies from `0001` are all that is in force.
+`0004` was applied on **2026-09-25** through the SQL editor. Before that the
+admin user-management page (`#admin-users`) could only see the signed-in admin's
+own profile row — the own-row policies from `0001` were all that was in force.
+Verified after applying: policies `profiles_select_admin` and
+`profiles_update_admin` alongside the own-row pair, triggers
+`profiles_guard_role` and `profiles_require_last_admin`, and the
+`profiles_require_last_admin()` function present. Three admin rows exist, so the
+last-admin guard has something to protect.
 
 `0005` was applied on **2026-09-25** through the SQL editor. Before that the
 clients wall's hide/show controls were inert: `GET /rest/v1/client_visibility`
@@ -186,8 +191,14 @@ data writes. Re-running does not drop data or reset anyone's role except forcing
 These are **not** covered by the SQL and have to be done by hand in the Supabase
 dashboard:
 
-- **Apply `0004`.** It is the only migration still outstanding. (`0005` was
-  applied on 2026-09-25 — see **Where things stand**.)
+- ~~Apply `0004`.~~ Done — `0004` and `0005` were both applied on 2026-09-25.
+  **No migration is outstanding.** See **Where things stand**.
+- **Auth → URL Configuration** is set: Site URL `https://vkmlegal.gr`, redirect
+  allowlist `https://vkmlegal.gr/**` and `http://localhost:5173/**` (set
+  2026-09-25; it had been left on the Supabase default `http://localhost:3000`
+  with an empty allowlist, which broke sign-in on the live site). `www` is
+  deliberately absent — GitHub Pages has not issued a certificate for it, so
+  `https://www.vkmlegal.gr` does not resolve over TLS. Add it once it does.
 - **Sign up `dimitris.afendras@gmail.com`.** The migrations grant admin, they do not
   create the account. Sign up through the app (or **Auth → Users → Add user**),
   then optionally re-run `0003` to confirm the promotion.

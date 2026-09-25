@@ -165,20 +165,20 @@ const en = {
   teamSubtitle:
     'Three attorneys, three disciplines, one commitment to moving you forward.',
 
-  attorney1Name: 'Dimitris Afendras',
-  attorney1Title: 'Founding Partner',
+  attorney1Name: 'Stylianos Vlachos',
+  attorney1Title: 'Managing Partner',
   attorney1Bio:
-    'Dimitris brings sharp transactional instinct to property and startup clients. Known for structuring complex real estate deals and guiding founders through critical funding milestones with clarity and precision.',
-  attorney1Spec1: 'Real Estate',
-  attorney1Spec2: 'Startup Funding',
+    'Stylianos brings sharp transactional instinct to property and startup clients. Known for structuring complex real estate deals and guiding founders through critical funding milestones with clarity and precision.',
+  attorney1Spec1: 'Corporate',
+  attorney1Spec2: 'Fintech',
   attorney1Spec3: 'Venture Capital',
   attorney1Focus: 'Transactional Strategy',
   attorney1Origin: 'Athens',
 
-  attorney2Name: 'Alexandra Marinaki',
+  attorney2Name: 'Polytimi Konstantakopoulou',
   attorney2Title: 'Founding Partner',
   attorney2Bio:
-    'Alexandra navigates the intersection of traditional maritime law and the digital asset frontier. Her dual expertise allows clients to move confidently through both high-seas disputes and blockchain regulation.',
+    'Polytimi navigates the intersection of traditional maritime law and the digital asset frontier. Her dual expertise allows clients to move confidently through both high-seas disputes and blockchain regulation.',
   attorney2Spec1: 'Maritime Law',
   attorney2Spec2: 'Cryptocurrency',
   attorney2Spec3: 'Digital Assets',
@@ -399,11 +399,10 @@ const en = {
   editEmpty: 'Empty \u2014 click to add text',
 
   // ─── Attorney 3 (crypto) ─────────────────────────────────────────────────────
-  // PLACEHOLDER NAME — replace with the real partner's details.
-  attorney3Name: 'Stavros Leventis',
-  attorney3Title: 'Partner',
+  attorney3Name: 'Evangelos Mastrodimas',
+  attorney3Title: 'Founding Partner',
   attorney3Bio:
-    'Stavros advises founders and funds operating at the regulatory frontier of digital assets. He structures token offerings, guides protocols through MiCA authorisation, and resolves disputes where code and contract law meet.',
+    'Evangelos advises founders and funds operating at the regulatory frontier of digital assets. He structures token offerings, guides protocols through MiCA authorisation, and resolves disputes where code and contract law meet.',
   attorney3Spec1: 'Digital Assets',
   attorney3Spec2: 'AML & Licensing',
   attorney3Spec3: 'MiCA Compliance',

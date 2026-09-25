@@ -26,19 +26,21 @@ no separate staging or dev database.
 | `0002_site_content.sql` | applied |
 | `0003_seed_admin.sql` | applied |
 | `0004_admin_user_management.sql` | **not applied** |
-| `0005_client_visibility.sql` | **not applied** |
+| `0005_client_visibility.sql` | applied |
 
 `0004` is committed but has not been run against the project. Until it is, the
 admin user-management page (`#admin-users`) can only see the signed-in admin's
 own profile row — the own-row policies from `0001` are all that is in force.
 
-`0005` is committed and has not been run either. Confirmed against production on
-**2026-09-25**: `GET /rest/v1/client_visibility?select=client_id,hidden` returns
-**404** on `https://vkmlegal.gr`, and the page logs
-`[clients] could not load client_visibility`. The read failing is harmless by
-design — absence of a row means visible, so the wall shows every client in
-`clients.ts` — but the WRITE fails the same way, so an admin cannot hide anyone.
-The hide/show controls are inert until this is applied.
+`0005` was applied on **2026-09-25** through the SQL editor. Before that the
+clients wall's hide/show controls were inert: `GET /rest/v1/client_visibility`
+returned **404** on `https://vkmlegal.gr` and the page logged
+`[clients] could not load client_visibility`. The read failing was harmless by
+design — absence of a row means visible, so the wall still showed every client
+in `clients.ts` — but the write failed the same way, so nobody could be hidden.
+Verified after applying: 4 columns, RLS on, policies
+`client_visibility_read_all=SELECT` and `client_visibility_write_admin=ALL`,
+trigger `stamp_client_visibility`, 0 rows; the same request now returns **200**.
 
 An earlier `law-firm-stg` project (`lxjnhmizkdpdodpldwjr`) exists on the
 `d.afendras@kiefer.gr` account from before the two-account split was understood.
@@ -184,9 +186,8 @@ data writes. Re-running does not drop data or reset anyone's role except forcing
 These are **not** covered by the SQL and have to be done by hand in the Supabase
 dashboard:
 
-- **Apply `0004` and `0005`.** Both are outstanding. `0005` is the one that makes
-  the clients wall's hide/show controls do anything — without it every write
-  404s and the admin is told the change could not be saved.
+- **Apply `0004`.** It is the only migration still outstanding. (`0005` was
+  applied on 2026-09-25 — see **Where things stand**.)
 - **Sign up `dimitris.afendras@gmail.com`.** The migrations grant admin, they do not
   create the account. Sign up through the app (or **Auth → Users → Add user**),
   then optionally re-run `0003` to confirm the promotion.

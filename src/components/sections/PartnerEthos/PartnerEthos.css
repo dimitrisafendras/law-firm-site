@@ -15,7 +15,7 @@
  */
 .partner-ethos {
   position: relative;
-  padding: var(--space-24) 0 var(--space-16);
+  padding: var(--section-pad-start) 0 var(--section-pad-end);
   display: flex;
   flex-direction: column;
 
@@ -23,8 +23,10 @@
      1100px it used to claim is a height this section can no longer have. */
   content-visibility: auto;
 
+  /* This section used to carry 64px top and bottom here while the two grid
+     sections next to it carried 32 — the single biggest source of the uneven
+     section-to-section rhythm on a phone. The rhythm is one token now. */
   @media (max-width: 1024px) {
-    padding: var(--space-16) 0;
     display: block;
   }
 }

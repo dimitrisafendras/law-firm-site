@@ -1,13 +1,16 @@
 /* The gap shrinks because the title grew. At 40px the header needed 80px
    beneath it to separate itself from the content; at 80px the type carries
    that separation on its own, and the old margin left ~300px of mostly air
-   before the first card in every section. */
-.section-header {
-  margin-bottom: var(--space-16);
+   before the first card in every section.
 
-  @media (max-width: 1024px) {
-    margin-bottom: var(--space-12);
-  }
+   One token, no media query of its own: `--section-header-gap` is the same
+   distance in every section at every width (see `sectionRhythm` in
+   src/theme/tokens.ts for why it does not step with the breakpoint). The two
+   sections that used to override this — the clients wall at 32, the contact
+   band at 0-plus-a-flex-gap — read the same token now, so the reader sees one
+   distance under every section title on the page. */
+.section-header {
+  margin-bottom: var(--section-header-gap);
 }
 
 /* ─── Overline ───────────────────────────────────────────────────────────── */

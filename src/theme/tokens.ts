@@ -297,6 +297,71 @@ export const spacing = {
   32: '128px',
 } as const;
 
+// ─── Section rhythm ───────────────────────────────────────────────────────────
+
+/**
+ * The page's one vertical measure — how far a section's ink sits from its
+ * edges, and how far its header sits from its content.
+ *
+ * These are not new values. They are the values the home page was already
+ * using, with the disagreements taken out: every top-level section retyped its
+ * own `padding` pair and the shared `.section-header` margin was overridden per
+ * section, so the rhythm the reader scrolls through was the sum of four
+ * independent decisions rather than one. Measured before this existed, at
+ * 1000px wide: the air between consecutive sections ran 64, 96, 64, 96 — and
+ * the gap under a section header ran 48, 48, 32, 48.
+ *
+ * Referencing `spacing` rather than restating it, so the rhythm stays on the
+ * 4px grid by construction.
+ *
+ * ── Why the pair is asymmetric ───────────────────────────────────────────────
+ *
+ * The header bar is fixed and overlays the top of every screen, so the air
+ * above a section's title is doing a job the air below its last card is not.
+ * 96/64 is what the three grid sections already carried; it is kept because it
+ * was right, not because it was there.
+ *
+ * ── Why the header gap is one value at every width ───────────────────────────
+ *
+ * 48px, and no compact variant. The wide value used to be 64 and the narrow one
+ * 48, which is a defensible ramp for a header whose title also steps down —
+ * except that the contact section cannot afford 64 anywhere (its fit budget
+ * spends exactly one step here to make the band fit one screen; see
+ * ContactSection.css) and the clients wall had been pulled down to 32 on the
+ * argument that a row of logos needs less air than a grid of copy. Three
+ * sections, three answers. One value settles it, and 48 is the one every
+ * section can already pay: it costs the two grid sections 16px of header air on
+ * a wide screen, which their cards take back, and it buys the clients wall the
+ * 16px that made it read as a different section from its neighbours.
+ */
+export const sectionRhythm = {
+  /** Air above a section's first ink. Clears the fixed header bar. */
+  padStart: spacing[24],
+  /** Air below a section's last ink. */
+  padEnd: spacing[16],
+  /** A section header's bottom margin — header to first content. */
+  headerGap: spacing[12],
+} as const;
+
+/**
+ * The same three below `breakpoints.mobile`, where a section is a normal-flow
+ * block rather than one screen and the whole page is read by scrolling.
+ *
+ * Half the wide values, so the rhythm reads as the same rhythm compressed
+ * rather than as a second one. The header gap does not halve — see above.
+ */
+export const sectionRhythmCompact = {
+  padStart: spacing[12],
+  padEnd: spacing[8],
+  headerGap: spacing[12],
+} as const;
+
+export const sectionRhythmVarNames: Record<string, string> = {
+  padStart: '--section-pad-start',
+  padEnd: '--section-pad-end',
+  headerGap: '--section-header-gap',
+};
+
 // ─── Radii ────────────────────────────────────────────────────────────────────
 
 /**
@@ -1072,6 +1137,8 @@ export const theme = {
   lineHeights,
   letterSpacings,
   spacing,
+  sectionRhythm,
+  sectionRhythmCompact,
   radii,
   glass,
   materials,

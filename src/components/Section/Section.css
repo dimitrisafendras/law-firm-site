@@ -1,9 +1,10 @@
+/* The generic section primitive. It carried a hand-typed `88px 0` / `48px 0`,
+   which was the only vertical rhythm on the site that belonged to no scale at
+   all — 88 is not a step of the 4px grid's extension and did not match any
+   section the page actually renders. It takes the shared rhythm now, so the
+   showcase demonstrates the system rather than a fourth opinion about it. */
 .section {
-  padding: 88px 0;
-
-  @media (max-width: 1024px) {
-    padding: 48px 0;
-  }
+  padding: var(--section-pad-start) 0 var(--section-pad-end);
 }
 
 .section--default {

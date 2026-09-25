@@ -18,12 +18,15 @@
  * what two rows of five have to divide — one gutter of 16 and 169px of card.
  *
  * The top padding is asymmetric because the header bar is fixed and overlays
- * the top of every screen — space-24 clears it, space-16 below is just air.
+ * the top of every screen — `--section-pad-start` clears it, `--section-pad-end`
+ * below is just air. Both come from the page's shared section rhythm
+ * (`sectionRhythm` in src/theme/tokens.ts) rather than from this file, so the
+ * "160" in the budget above is one decision made once for every section.
  */
 .practice-section {
   position: relative;
   overflow: hidden;
-  padding: var(--space-24) 0 var(--space-16);
+  padding: var(--section-pad-start) 0 var(--section-pad-end);
   display: flex;
   flex-direction: column;
 
@@ -33,7 +36,6 @@
   content-visibility: auto;
 
   @media (max-width: 1024px) {
-    padding: var(--space-8) 0;
     display: block;
   }
 }
@@ -176,11 +178,22 @@
     --bento-row-max: 270px;
 
     max-height: calc(2 * var(--bento-row-max) + var(--space-4));
-    /* Auto margins take whatever the cap left over. In a flex column the
-       grow is resolved before free space reaches a margin, so these stay at
+    /* An auto margin takes whatever the cap left over. In a flex column the
+       grow is resolved before free space reaches a margin, so this stays at
        zero until `max-height` actually clamps the item — below 942px of
-       viewport they are inert and the grid sits where it always did. */
-    margin-block: auto;
+       viewport it is inert and the grid sits where it always did.
+
+       END only. It used to be `margin-block: auto`, which split the leftover
+       above and below the grid — and the half above lands between the section
+       header and the first card, which is the one distance on this page that
+       is supposed to be the same in every section. Measured at 1440x1300 it
+       was 255px against 48px in the other three: the grid was a fifth of a
+       screen further from its own title than the partners were from theirs,
+       and the amount changed with the window. Pinning the start keeps
+       `--section-header-gap` true at every height and lets the slack fall
+       where every other section already puts it — under the content, on top
+       of `--section-pad-end`. */
+    margin-block-end: auto;
   }
 }
 

@@ -1,7 +1,10 @@
 .cta-section {
   position: relative;
   overflow: hidden;
-  padding: var(--space-24) 0;
+  /* The shared rhythm, like every other top-level section — so that if this one
+     is ever mounted it joins the sequence rather than reintroducing a fourth
+     opinion about vertical air. */
+  padding: var(--section-pad-start) 0 var(--section-pad-end);
   /* This section is not mounted anywhere today, so it sits outside the page's
      background ramp. If it is ever added back, re-chain the sections around it
      — each one opens on the colour the section above it closes on, and dropping
@@ -9,9 +12,6 @@
      on both sides of it. */
   background: linear-gradient(180deg, var(--grad-4) 0%, var(--grad-5) 100%);
 
-  @media (max-width: 1024px) {
-    padding: var(--space-16) 0;
-  }
 }
 
 .cta-section__inner {

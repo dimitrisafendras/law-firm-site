@@ -23,6 +23,10 @@ import {
   fonts,
   radii,
   spacing,
+  sectionRhythm,
+  sectionRhythmCompact,
+  sectionRhythmVarNames,
+  breakpoints,
   elevations,
   elevationsLight,
   decor,
@@ -94,6 +98,10 @@ function buildInvariantBlock() {
     ...mapVars(fonts, fontVarNames),
     ...mapVars(radii, radiusVarNames),
     ...mapVars(spacing, spacingVarNames),
+    // The page's one vertical measure. Every top-level section reads these
+    // three instead of retyping a padding pair and a header margin of its own;
+    // the compact block below re-points them at the mobile breakpoint.
+    ...mapVars(sectionRhythm, sectionRhythmVarNames),
     ...mapVars(weights, weightVarNames),
     ...mapVars(layout, layoutVarNames),
     ...mapVars(textEmphasis, textEmphasisVarNames),
@@ -130,6 +138,28 @@ function buildPaletteBlock(palette) {
     ...mapVars(palette.gradients, gradientVarNames),
     ...mapVars(palette.scheme === 'light' ? elevationsLight : elevations, elevationVarNames),
     `  color-scheme: ${palette.scheme};`,
+  ].join('\n');
+}
+
+/*
+ * The section rhythm, compressed.
+ *
+ * One media query for the whole page, emitted from `breakpoints.mobile` so the
+ * gate is the token rather than a fourth hand-typed `1024px`. Below it a
+ * section is a normal-flow block instead of one screen, and the same three
+ * custom properties take their narrow values — so no section stylesheet needs
+ * a `@media` rule to change its own spacing, and none of them can disagree.
+ *
+ * Same selector as the `:root` block above, so source order is the precedence
+ * and this has to stay after it. Nothing later in the file declares these three.
+ */
+function buildCompactRhythmBlock() {
+  return [
+    `@media (max-width: ${breakpoints.mobile}) {`,
+    '  :root {',
+    ...mapVars(sectionRhythmCompact, sectionRhythmVarNames).map((line) => `  ${line}`),
+    '  }',
+    '}',
   ].join('\n');
 }
 
@@ -380,6 +410,7 @@ const css = `/* AUTO-GENERATED from src/theme/tokens.ts + src/theme/palettes.ts 
 ${buildInvariantBlock()}
 ${buildPaletteBlock(defaultPalette)}
 }
+${buildCompactRhythmBlock()}
 ${paletteBlocks}
 ${continuumBlocks}
 ${schemeRules}

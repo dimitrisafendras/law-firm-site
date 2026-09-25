@@ -9,13 +9,15 @@
 .clients-section {
   position: relative;
   overflow: hidden;
-  padding: var(--space-24) 0 var(--space-16);
+  /* The page's shared rhythm, and the only place this section says anything
+     about its own vertical air. The narrow values are re-pointed once, in the
+     generated stylesheet, so there is no `padding` in the media query below. */
+  padding: var(--section-pad-start) 0 var(--section-pad-end);
   display: flex;
   flex-direction: column;
   content-visibility: auto;
 
   @media (max-width: 1024px) {
-    padding: var(--space-8) 0;
     display: block;
   }
 }
@@ -42,14 +44,18 @@
   flex: 0 0 auto;
 }
 
-/* `.section-header` ships a 64px bottom margin for the sections whose content
-   starts with a dense grid of copy. This one starts with a row of logos, which
-   needs far less air to separate it from the subtitle above — and the gap above
-   the wall was the top dead space this section was carrying. Scoped here rather
-   than changed on the shared component, which every other section relies on. */
-.clients-section .section-header {
-  margin-bottom: var(--space-8);
-}
+/*
+ * No `.section-header` override here any more.
+ *
+ * This section used to pull the shared margin down to 32px on the argument that
+ * a row of logos needs less air beneath a subtitle than a grid of copy does.
+ * True in isolation and wrong in sequence: the reader scrolls four section
+ * titles in a row, and a gap that is half the one above it reads as this
+ * section being set differently rather than as its content being lighter. The
+ * shared margin is 48px now — see `sectionRhythm` in src/theme/tokens.ts — and
+ * the dead space that override was really chasing is gone with the section's
+ * own padding, which comes from the same three tokens.
+ */
 
 /* ─── The wall ─────────────────────────────────────────────────────────────── */
 

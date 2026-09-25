@@ -12,6 +12,7 @@ supabase/migrations/
   0002_site_content.sql            site_content table, stamp trigger, RLS
   0003_seed_admin.sql              promote dimitris.afendras@gmail.com to admin
   0004_admin_user_management.sql   admin-wide profiles policies, last-admin guard
+  0005_client_visibility.sql       client_visibility table, stamp trigger, RLS
 ```
 
 ## Where things stand
@@ -25,10 +26,21 @@ no separate staging or dev database.
 | `0002_site_content.sql` | applied |
 | `0003_seed_admin.sql` | applied |
 | `0004_admin_user_management.sql` | **not applied** |
+| `0005_client_visibility.sql` | applied |
 
 `0004` is committed but has not been run against the project. Until it is, the
 admin user-management page (`#admin-users`) can only see the signed-in admin's
 own profile row — the own-row policies from `0001` are all that is in force.
+
+`0005` was applied on **2026-09-25** through the SQL editor. Before that the
+clients wall's hide/show controls were inert: `GET /rest/v1/client_visibility`
+returned **404** on `https://vkmlegal.gr` and the page logged
+`[clients] could not load client_visibility`. The read failing was harmless by
+design — absence of a row means visible, so the wall still showed every client
+in `clients.ts` — but the write failed the same way, so nobody could be hidden.
+Verified after applying: 4 columns, RLS on, policies
+`client_visibility_read_all=SELECT` and `client_visibility_write_admin=ALL`,
+trigger `stamp_client_visibility`, 0 rows; the same request now returns **200**.
 
 An earlier `law-firm-stg` project (`lxjnhmizkdpdodpldwjr`) exists on the
 `d.afendras@kiefer.gr` account from before the two-account split was understood.
@@ -75,6 +87,16 @@ integrity invariant, not an authorization rule. To tear down the final admin on
 purpose, `alter table public.profiles disable trigger profiles_require_last_admin;`
 first.
 
+**0005 — client visibility.** Creates `public.client_visibility` (`client_id`
+primary key, `hidden`, `updated_at`, `updated_by`), one row per card on the
+clients wall. `SELECT` is open to everyone, because the signed-out marketing
+site has to know which clients to leave out; `INSERT` / `UPDATE` / `DELETE`
+require `public.is_admin()`, with `with check` as well as `using` so an admin
+cannot write a row they would then not be allowed to read back. A
+`BEFORE INSERT OR UPDATE` trigger stamps `updated_at` and `updated_by`.
+A missing row means VISIBLE, so adding a client to `clients.ts` needs no
+database write before it appears.
+
 ## Applying a migration
 
 Project ref: `nyqfzoxdplvogflzkmpq` (`https://nyqfzoxdplvogflzkmpq.supabase.co`).
@@ -86,7 +108,8 @@ browser or CLI job, not something an agent can do for you.
 
 1. Open the project → **SQL Editor** → **New query**.
 2. Paste the contents of the migration, run it, confirm success.
-3. **Order matters** — 0002, 0003 and 0004 all depend on objects created by 0001.
+3. **Order matters** — 0002, 0003, 0004 and 0005 all depend on objects created by
+   0001 (`public.profiles` and `public.is_admin()`).
 4. Check the **Advisors** → **Security** tab afterwards; it should report no
    RLS-disabled tables in `public`.
 
@@ -124,6 +147,8 @@ project has not recorded yet, in filename order, and records them in
 ```bash
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 \
   -f supabase/migrations/0004_admin_user_management.sql
+
+psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 \n  -f supabase/migrations/0005_client_visibility.sql
 ```
 
 Grab the connection string from **Project Settings → Database → Connection
@@ -132,15 +157,16 @@ password — keep it out of the repo and out of shell history).
 
 ## Standing up a fresh environment
 
-If a second project is ever needed, apply `0001` → `0002` → `0003` → `0004` in
-order. Nothing in them is environment-specific except the hardcoded admin email.
+If a second project is ever needed, apply `0001` → `0002` → `0003` → `0004` →
+`0005` in order. Nothing in them is environment-specific except the hardcoded
+admin email.
 
 1. Create the Supabase project (or select it).
 2. **Auth → URL Configuration**: set the Site URL to
    `https://dimitrisafendras.github.io/law-firm-site/` and add it (plus
    `http://localhost:5173/law-firm-site/` for local work) to the redirect
    allowlist. Without this, OAuth and email-confirmation links bounce.
-3. Apply the four migrations using any option above.
+3. Apply the five migrations using any option above.
 4. Point the app at it by setting `VITE_SUPABASE_URL` and
    `VITE_SUPABASE_PUBLISHABLE_KEY` to that project's values in the deploy
    environment. Do **not** commit them.
@@ -148,7 +174,7 @@ order. Nothing in them is environment-specific except the hardcoded admin email.
 
 ## Re-running
 
-All four files are safe to run again on an environment that already has them.
+All five files are safe to run again on an environment that already has them.
 They use `create table if not exists`, `create or replace function`,
 `drop policy if exists` before each `create policy`, `drop trigger if exists`
 before each `create trigger`, and `on conflict do nothing` / `do update` for the
@@ -160,7 +186,8 @@ data writes. Re-running does not drop data or reset anyone's role except forcing
 These are **not** covered by the SQL and have to be done by hand in the Supabase
 dashboard:
 
-- **Apply `0004`.** It is the only migration still outstanding.
+- **Apply `0004`.** It is the only migration still outstanding. (`0005` was
+  applied on 2026-09-25 — see **Where things stand**.)
 - **Sign up `dimitris.afendras@gmail.com`.** The migrations grant admin, they do not
   create the account. Sign up through the app (or **Auth → Users → Add user**),
   then optionally re-run `0003` to confirm the promotion.

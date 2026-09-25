@@ -194,11 +194,17 @@ dashboard:
 - ~~Apply `0004`.~~ Done — `0004` and `0005` were both applied on 2026-09-25.
   **No migration is outstanding.** See **Where things stand**.
 - **Auth → URL Configuration** is set: Site URL `https://vkmlegal.gr`, redirect
-  allowlist `https://vkmlegal.gr/**` and `http://localhost:5173/**` (set
-  2026-09-25; it had been left on the Supabase default `http://localhost:3000`
-  with an empty allowlist, which broke sign-in on the live site). `www` is
-  deliberately absent — GitHub Pages has not issued a certificate for it, so
-  `https://www.vkmlegal.gr` does not resolve over TLS. Add it once it does.
+  allowlist `https://vkmlegal.gr/**`, `https://www.vkmlegal.gr/**` and
+  `http://localhost:5173/**` (set 2026-09-25; it had been left on the Supabase
+  default `http://localhost:3000` with an empty allowlist, which broke sign-in
+  on the live site). `www` was added the same day, once GitHub Pages reissued
+  the apex certificate with both names in its SAN list; before that
+  `https://www.vkmlegal.gr` had no TLS and an allowlist entry would have
+  pointed at a host browsers refused to reach.
+- **Leaked password protection stays off, and that is not a misconfiguration.**
+  The Security Advisor warns about it, but the setting (Auth → Providers →
+  Email, the HaveIBeenPwned check) is **Pro plan and above** and this project
+  is on Free. Nothing in the dashboard can turn it on; only an upgrade can.
 - **Sign up `dimitris.afendras@gmail.com`.** The migrations grant admin, they do not
   create the account. Sign up through the app (or **Auth → Users → Add user**),
   then optionally re-run `0003` to confirm the promotion.

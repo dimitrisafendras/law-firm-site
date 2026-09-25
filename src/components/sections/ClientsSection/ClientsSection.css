@@ -333,6 +333,24 @@
   cursor: progress;
 }
 
+/*
+ * A write that did not land. Admin-only and transient, but it has to be said:
+ * the table is created by a migration applied by hand, so until that is run
+ * every toggle fails, and a button that does nothing without explanation is
+ * indistinguishable from a broken one.
+ */
+.client-card__error {
+  /* Above the material, with the toggle it belongs to. */
+  position: relative;
+  z-index: 4;
+  margin-top: var(--space-2);
+
+  font-family: var(--label);
+  font-size: var(--type-caption-size);
+  letter-spacing: var(--type-caps-tracking-wide);
+  color: var(--error);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .client-card__visibility {
     transition: none;

@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { useTranslation } from '@/i18n';
 import { useEditMode } from '@/lib/edit-mode';
 import { Card } from '@/components';
@@ -63,6 +63,26 @@ export function ClientsSection() {
   const { t } = useTranslation();
   const { canEdit } = useEditMode();
   const { isHidden, setHidden, saving } = useClientVisibility();
+
+  /*
+   * The id whose last write failed, so its card can say so.
+   *
+   * useClientVisibility documents that a write failure is surfaced to the admin
+   * — the person is waiting on an answer and silence reads as success — but the
+   * result was discarded here, so a failed toggle did nothing and said nothing.
+   * With the table missing (migration 0005 unapplied) that is every toggle, and
+   * it is exactly what 'the hide button is broken' looks like from the outside.
+   *
+   * One id rather than a set: the admin is clicking one card at a time, and a
+   * retry that succeeds should clear the message it replaced.
+   */
+  const [failed, setFailed] = useState<string | null>(null);
+
+  const toggle = async (id: string, next: boolean) => {
+    const { error } = await setHidden(id, next);
+    if (error) setFailed(id);
+    else setFailed((prev) => (prev === id ? null : prev));
+  };
 
   /*
    * An admin in edit mode sees the whole roster, hidden ones included and
@@ -162,10 +182,24 @@ export function ClientsSection() {
                       name: t(client.nameKey),
                     })}
                     disabled={saving === client.id}
-                    onClick={() => void setHidden(client.id, !isHidden(client.id))}
+                    onClick={() => void toggle(client.id, !isHidden(client.id))}
                   >
                     {t(isHidden(client.id) ? 'clientShow' : 'clientHide')}
                   </button>
+                )}
+
+                {canEdit && failed === client.id && (
+                  /*
+                   * `role="alert"` and the shared `editError` string, the same
+                   * contract EditableText has for a save that did not land.
+                   *
+                   * In flow rather than absolutely positioned: the wall is
+                   * `grid-auto-rows: 1fr`, so this line grows every card by the
+                   * same amount and the set stays equal-height.
+                   */
+                  <span className="client-card__error" role="alert">
+                    {t('editError')}
+                  </span>
                 )}
               </Card>
             </FadeInSection>

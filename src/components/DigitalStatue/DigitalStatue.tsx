@@ -9,7 +9,8 @@ import './DigitalStatue.css';
 // Art lighting, deliberately independent of the page palette.
 const mobileBreakpoint = parseInt(breakpoints.mobile, 10);
 // Most negative spaces are between 24–49% of the source image's width.
-const ambientParticles = [19, 24, 29, 34, 39, 44, 49, 54, 59, 64, 69, 74, 79, 31, 42, 51, 62, 71, 22, 37, 57, 76] as const;
+const ambientParticles = [19, 24, 29, 34, 39, 44, 49, 54, 59, 64, 69, 74, 79, 31, 42, 51, 62, 71, 22, 37, 57, 76,
+  17, 27, 33, 41, 47, 56, 66, 81] as const;
 
 export function DigitalStatue({ className = '' }: { className?: string }) {
   const { palette, mode, statue } = useTheme();

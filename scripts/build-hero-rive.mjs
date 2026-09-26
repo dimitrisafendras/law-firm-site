@@ -25,6 +25,12 @@ const swordRegions=[
   [[141,522],[217,484],[231,505],[151,548]],
   [[146,423],[165,420],[185,477],[165,490]],
 ];
+// Follow the leg-side edge through the three annotated patches, rather than
+// leaving rectangular gaps between them. The diagonal left boundary stays on
+// the leg side of the sword; source colour still excludes marble and holes.
+const legMeshPatches=[
+  [[239,600],[355,600],[355,800],[306,800],[300,770],[285,728],[269,690],[253,648]],
+];
 const inPolygon=(x,y,points)=>{
   let inside=false;
   for(let i=0,j=points.length-1;i<points.length;j=i++){
@@ -33,7 +39,8 @@ const inPolygon=(x,y,points)=>{
   }
   return inside;
 };
-const onSword=(x,y)=>swordRegions.some(points=>inPolygon(x,y,points));
+const onSword=(x,y)=>swordRegions.some(points=>inPolygon(x,y,points))
+  &&!legMeshPatches.some(points=>inPolygon(x,y,points));
 const mask=Buffer.alloc(info.width*info.height*4);
 for(let y=0;y<info.height;y++) for(let x=0;x<info.width;x++){
   const p=(y*info.width+x)*4;
@@ -70,7 +77,10 @@ const neighbors=(x,y)=>{
 for(const [x,y] of pixels){
   const scale=x>466;
   const cluster=(Math.sin(x*.049+y*.023)+Math.sin(y*.079-x*.018)+2)/4;
-  const spacing=scale?2.8+cluster*3.2:4.5+cluster*6;
+  // Accentuate only the already-masked leg material beside the diagonal blade.
+  // Never widen eligibility: the sword exclusion also clips every baked bloom.
+  const legEdge=legMeshPatches.some(points=>inPolygon(x,y,points));
+  const spacing=scale?2.8+cluster*3.2:(4.5+cluster*6)*(legEdge?.58:1);
   const near=neighbors(x,y);
   if(near.some(p=>Math.hypot(p.x-x,p.y-y)<(spacing+p.spacing)*.5))continue;
   const size=scale?.8+random()*1.25:1.4+random()*2.8;

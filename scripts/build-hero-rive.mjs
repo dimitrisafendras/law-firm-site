@@ -116,9 +116,27 @@ if(coverage.some(r=>Number(r.maxDistance)>(r.region==='digital scale'?7:12)))thr
 // Rive animates 24 cropped textures instead of retessellating thousands of paths.
 mkdirSync('art/rive/hero/layers',{recursive:true});
 const mask2x=await sharp(mask,{raw:{width:info.width,height:info.height,channels:4}}).resize(1400,1876).png().toBuffer();
+// Extract the photograph's own fine wire highlights at export resolution.
+// This is baked once, not an edge filter or pixel scan run in the browser.
+const source2x=await sharp('src/assets/images/hero-statue-1400.webp').resize(1400,1876).ensureAlpha().raw().toBuffer();
+const soft2x=await sharp(source2x,{raw:{width:1400,height:1876,channels:4}}).blur(2).raw().toBuffer();
+const material2x=await sharp(mask2x).ensureAlpha().raw().toBuffer();
+const wireStrength=new Float32Array(1400*1876);
+const wirePhase=new Float32Array(1400*1876);
+for(let y=0;y<1876;y++)for(let x=0;x<1400;x++){
+  const q=y*1400+x,p=q*4;
+  if(!material2x[p+3])continue;
+  const luminance=source2x[p+1]*.6+source2x[p+2]*.4;
+  const local=soft2x[p+1]*.6+soft2x[p+2]*.4;
+  wireStrength[q]=Math.min(1,1.4*Math.pow(Math.min(1,Math.max(0,(luminance-local-1)/18)),.55))*material2x[p+3]/255;
+  // Smooth overlapping fields light existing lines in independently moving
+  // neighbourhoods, without stamping square tiles or inventing a new grid.
+  wirePhase[q]=(12+5*Math.sin(x/47+y/89)+5*Math.sin(y/61-x/113))%24;
+}
+const wireColour=ULTRAMARINE_COLORS.accentBright.split(',').map(Number);
 const svgPath=points=>`M${points.map(([x,y])=>`${x.toFixed(2)},${y.toFixed(2)}`).join(' L')}`;
 let content='',timeline='',assets='';
-async function texture(name,paths,rest=false,customSvg=null){
+async function texture(name,paths,rest=false,customSvg=null,wireGroup=null){
   const strokes=paths.map(p=>`${svgPath(p)} Z`).join(' ');
   const edges=paths.map(p=>svgPath(p.slice(0,3))).join(' ');
   const svg=customSvg??`<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1876" viewBox="0 0 700 938"><defs><filter id="b" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="1.1"/></filter></defs>
@@ -129,6 +147,22 @@ async function texture(name,paths,rest=false,customSvg=null){
   // Only explicitly authored exterior fragments bypass the material mask.
   // Body textures always retain the original mask and its transparent holes.
   const {data:rgba,info:ri}=await sharp(Buffer.from(svg)).composite(customSvg?[]:[{input:mask2x,blend:'dest-in'}]).ensureAlpha().raw().toBuffer({resolveWithObject:true});
+  if(!customSvg){
+    for(let y=0;y<ri.height;y++)for(let x=0;x<ri.width;x++){
+      // Keep the leg's filled, softly blooming fragments as the visual language.
+      // Fine artwork traces support that material rather than replacing it with
+      // a faint outline-only treatment. The approved leg remains untouched.
+      if(y>=1020&&y<1650&&x<710)continue;
+      const q=y*ri.width+x,p=q*4;
+      const weight=rest?.1:Math.max(0,1-Math.abs(wirePhase[q]-wireGroup));
+      const fragmentAlpha=rgba[p+3]/255;
+      const traceAlpha=wireStrength[q]*weight*.65;
+      if(fragmentAlpha===0){
+        rgba[p]=wireColour[0];rgba[p+1]=wireColour[1];rgba[p+2]=wireColour[2];
+      }
+      rgba[p+3]=Math.round(255*(1-(1-fragmentAlpha)*(1-traceAlpha)));
+    }
+  }
   let left=ri.width,top=ri.height,right=0,bottom=0;
   for(let y=0;y<ri.height;y++)for(let x=0;x<ri.width;x++)if(rgba[(y*ri.width+x)*4+3]>0){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}
   if(right<left)return '';
@@ -147,7 +181,7 @@ async function texture(name,paths,rest=false,customSvg=null){
 }
 for(let i=0;i<groups.length;i++){
   const group=groups[i],node=id();
-  content+=`<Node id="${node}" name="Fragment light ${i}">${await texture('circuit-'+i,group.paths)}</Node>`;
+  content+=`<Node id="${node}" name="Artwork light ${i}">${await texture('circuit-'+i,group.paths,false,null,i)}</Node>`;
   // Gentle overlapping harmonics have no target-arrival pauses, clamps, or
   // sudden brightness reversals. Independent phases avoid synchronized flashes.
   // A stable light floor preserves the material instead of blinking facets.

@@ -23,6 +23,38 @@
   animation-play-state: var(--ambient-play-state, paused);
 }
 
+/* A pair of sparse light fields behind the broken side, not an overall haze.
+ * Only transforms/opacity animate; the opaque photograph occludes the lights. */
+.digital-statue__depth::before,
+.digital-statue__depth::after {
+  content: '';
+  position: absolute;
+  inset: 16% 46% 8% 21%;
+  background:
+    radial-gradient(circle at 24% 12%, var(--accent-text) 0 1px, transparent 5px),
+    radial-gradient(circle at 76% 25%, var(--accent-text) 0 1.5px, transparent 7px),
+    radial-gradient(circle at 43% 39%, var(--accent-text) 0 1px, transparent 5px),
+    radial-gradient(circle at 18% 53%, var(--accent-text) 0 1.5px, transparent 8px),
+    radial-gradient(circle at 67% 62%, var(--accent-text) 0 1px, transparent 6px),
+    radial-gradient(circle at 36% 78%, var(--accent-text) 0 1.5px, transparent 7px),
+    radial-gradient(circle at 82% 91%, var(--accent-text) 0 1px, transparent 5px);
+  animation: statue-cutout-lights 13s ease-in-out infinite alternate;
+  animation-play-state: var(--ambient-play-state, paused);
+}
+
+.digital-statue__depth::after {
+  inset: 11% 43% 13% 24%;
+  animation-duration: 19s;
+  animation-delay: -11s;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes statue-cutout-lights {
+  0% { transform: translate3d(-18px, 28px, 0); opacity: .3; }
+  50% { transform: translate3d(14px, -4px, 0); opacity: .7; }
+  100% { transform: translate3d(-4px, -42px, 0); opacity: .4; }
+}
+
 @keyframes statue-particle-drift {
   0% { transform: translate3d(-14px, 20px, 0); opacity: .3; }
   33% { transform: translate3d(18px, -8px, 0); opacity: .8; }

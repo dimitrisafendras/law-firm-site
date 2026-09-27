@@ -141,7 +141,7 @@ async function texture(name,paths,rest=false,customSvg=null,wireGroup=null){
   const edges=paths.map(p=>svgPath(p.slice(0,3))).join(' ');
   const svg=customSvg??`<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1876" viewBox="0 0 700 938"><defs><filter id="b" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="1.1"/></filter></defs>
   ${rest?'':`<path d="${strokes}" fill="${glow}" fill-opacity=".85" filter="url(#b)"/>`}
-  <path d="${strokes}" fill="${light}" fill-opacity="${rest?.08:.64}" stroke="${glow}" stroke-opacity="${rest?.15:.65}" stroke-width=".4"/>
+  <path d="${strokes}" fill="${light}" fill-opacity="${rest?.08:.70}" stroke="${glow}" stroke-opacity="${rest?.15:.65}" stroke-width=".4"/>
   <path d="${edges}" fill="none" stroke="${core}" stroke-opacity="${rest?.14:1}" stroke-width="${rest?.35:1.05}" stroke-linejoin="round"/>
   </svg>`;
   // Only explicitly authored exterior fragments bypass the material mask.
@@ -186,10 +186,10 @@ for(let i=0;i<groups.length;i++){
   // sudden brightness reversals. Independent phases avoid synchronized flashes.
   // A stable light floor preserves the material instead of blinking facets.
   const phase=random()*Math.PI*2,secondaryPhase=random()*Math.PI*2;
-  const speed=8+i%3;
-  const frames=Array.from({length:289},(_,k)=>{
-    const t=k/288*Math.PI*2;
-    const opacity=.56+.34*Math.sin(t*speed+phase)+.09*Math.sin(t*(speed+1)+secondaryPhase);
+  const speed=12+i%3;
+  const frames=Array.from({length:2305},(_,k)=>{
+    const t=k/288*Math.PI*2*1.125;
+    const opacity=.52+.32*Math.sin(t*speed+phase)+.09*Math.sin(t*(speed+1)+secondaryPhase);
     return `<KeyFrameDouble frame="${k*5}" value="${opacity.toFixed(5)}" interpolationType="linear"/>`;
   }).join('');
   timeline+=`<KeyedObject objectId="${node}"><KeyedProperty propertyKey="18">${frames}</KeyedProperty></KeyedObject>`;
@@ -216,9 +216,9 @@ for(const [i,{x,y,dx,dy}] of manifest.entries()){
   const node=id(),s=1.5+(i%3)*.45;
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1876" viewBox="0 0 700 938"><path d="M${x-s},${y-s} L${x+s},${y-s*.6} L${x+s*.7},${y+s} L${x-s},${y+s*.5}Z" fill="${light}" fill-opacity=".38" stroke="${core}" stroke-width=".55"/><path d="M${x-s},${y-s} L${x},${y} L${x+s*.7},${y+s}" stroke="${glow}" stroke-width=".4" fill="none"/></svg>`;
   content+=`<Node id="${node}" name="Manifest fragment ${i}">${await texture(`manifest-${i}`,[],false,svg)}</Node>`;
-  const channels={13:t=>dx*(1-t),14:t=>dy*(1-t),18:t=>.65*Math.pow(Math.sin(Math.PI*t),2)};
-  const tracks=Object.entries(channels).map(([key,value])=>`<KeyedProperty propertyKey="${key}">${Array.from({length:289},(_,k)=>{
-    const progress=(k/288*(5+i%2)+i*.137)%1;
+  const channels={13:t=>dx*(1-t),14:t=>dy*(1-t),18:t=>.72*Math.pow(Math.sin(Math.PI*t),2)};
+  const tracks=Object.entries(channels).map(([key,value])=>`<KeyedProperty propertyKey="${key}">${Array.from({length:2305},(_,k)=>{
+    const progress=(k/288*(4+i%2)+i*.137)%1;
     return `<KeyFrameDouble frame="${k*5}" value="${value(progress).toFixed(5)}" interpolationType="linear"/>`;
   }).join('')}</KeyedProperty>`).join('');
   timeline+=`<KeyedObject objectId="${node}">${tracks}</KeyedObject>`;
@@ -226,8 +226,17 @@ for(const [i,{x,y,dx,dy}] of manifest.entries()){
 const fire=await buildFire(id);
 content+=fire.content;
 assets+=fire.assets;
-timeline+=fire.timeline;
-const xml=`<Rive version="1" kind="fragment"><Artboard id="0:1" name="Mesh" width="700" height="938" styleId="0:2" defaultStateMachineId="0:4"><LayoutComponentStyle id="0:2"/>${content}<LinearAnimation id="0:3" name="Ambient" duration="1440" fps="60" loopValue="loop">${timeline}</LinearAnimation><StateMachine id="0:4" name="Ambient"><StateMachineLayer><EntryState><StateTransition stateToId="0:5"/></EntryState><AnimationState id="0:5" animationId="0:3" x="200"/></StateMachineLayer></StateMachine></Artboard>${assets}</Rive>`;
+// Repeat the original fire tracks at their existing cadence. The longer
+// shared loop lets the 1.125x light harmonics meet seamlessly at its boundary.
+timeline+=fire.timeline.replace(/<KeyedProperty([^>]*)>(.*?)<\/KeyedProperty>/gs, (_, attrs, keys) => {
+  const repeated=Array.from({length:8},(_,repeat)=>keys.replace(/<KeyFrameDouble frame="(\d+)"[^>]*\/>/g,(key,frame)=>{
+    const at=Number(frame);
+    if(repeat<7 && at===1440)return '';
+    return key.replace(`frame="${frame}"`, `frame="${at+repeat*1440}"`);
+  })).join('');
+  return `<KeyedProperty${attrs}>${repeated}</KeyedProperty>`;
+});
+const xml=`<Rive version="1" kind="fragment"><Artboard id="0:1" name="Mesh" width="700" height="938" styleId="0:2" defaultStateMachineId="0:4"><LayoutComponentStyle id="0:2"/>${content}<LinearAnimation id="0:3" name="Ambient" duration="11520" fps="60" loopValue="loop">${timeline}</LinearAnimation><StateMachine id="0:4" name="Ambient"><StateMachineLayer><EntryState><StateTransition stateToId="0:5"/></EntryState><AnimationState id="0:5" animationId="0:3" x="200"/></StateMachineLayer></StateMachine></Artboard>${assets}</Rive>`;
 writeFileSync('art/rive/hero/scene.rml',xml);
 console.log(`${facets.length} organically clustered facets, ${manifest.length} exterior squares, 24 lighting groups + two blended fire sequences`);
 execFileSync('rive',['art/rive/hero','--verify'],{stdio:'inherit'});

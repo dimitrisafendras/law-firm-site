@@ -58,45 +58,20 @@
   .digital-statue__surface { display: none; }
 }
 
-/* ─── Entrance ─────────────────────────────────────────────────────────────── */
-/*
- * The statue rises out of the ground and phases in while its ambient canvas
- * circuit traces ramp up with it — they are already alive as
- * it materialises, nothing waits for the entrance to finish. Everything above is
- * the final resting state, so the reduced-motion path renders the scene already
- * assembled, without ambient motion.
- *
- * `animation-fill-mode: backwards` (never `forwards`/`both`) means no filter or
- * clip-path survives the entrance — the ambient loops run on an unfiltered,
- * uncomposited subtree exactly as they did before.
- *
- * Timings come from the motion tokens in src/index.css.
- * `--statue-entrance-delay` is set by the consuming section (see HeroSection).
- */
-
+/* Reveal the complete scene with one entrance after its assets are ready.
+   Avoid filters on the WebGL subtree during its first composited frames. */
 @keyframes statue-rise {
   from {
     opacity: 0;
     clip-path: inset(100% 0 0 0);
     transform: translate3d(0, 4%, 0);
-    /* The unrendered state — shared with every exit on the page, so arriving
-       here and leaving are the same gesture in opposite directions. */
-    filter: var(--x-flare);
   }
-  55% {
-    opacity: 1;
-  }
+  55% { opacity: 1; }
   to {
     opacity: 1;
     clip-path: inset(0 0 0 0);
     transform: translate3d(0, 0, 0);
-    filter: brightness(1) saturate(1);
   }
-}
-
-@keyframes statue-ambient-ignite {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -104,11 +79,13 @@
     animation: statue-rise var(--dur-materialize) var(--ease-wipe)
       var(--statue-entrance-delay, 0s) backwards;
   }
+}
 
-  /* Ambient layers ramp up over the same window as the rise, so the statue
-     spawns already animated rather than switching on afterwards. */
-  .digital-statue__surface {
-    animation: statue-ambient-ignite var(--dur-materialize) var(--ease-spawn)
-      var(--statue-entrance-delay, 0s) backwards;
-  }
+/* Also overrides the classic entrance while its photograph decodes. */
+.digital-statue[data-scene='loading'] {
+  visibility: hidden;
+  animation: none;
+}
+.digital-statue:not([data-surface='ready']) .digital-statue__surface {
+  visibility: hidden;
 }

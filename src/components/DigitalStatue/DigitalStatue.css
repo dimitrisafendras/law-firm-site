@@ -4,68 +4,6 @@
   pointer-events: none;
 }
 
-/* Behind the photograph, never painted over marble. Small drifting particles
- * catches the negative spaces without a second full-size canvas or blur. */
-.digital-statue__depth {
-  position: absolute;
-  inset: 0 0 0 -8%;
-  overflow: hidden;
-  mask-image: radial-gradient(ellipse at 42% 50%, black 45%, transparent 85%);
-  pointer-events: none;
-}
-
-.digital-statue__depth span {
-  position: absolute;
-  border-radius: var(--radius-full);
-  background: radial-gradient(circle, var(--accent-text) 15%,
-    color-mix(in srgb, var(--accent-text) 65%, transparent) 45%, transparent 75%);
-  animation: statue-particle-drift ease-in-out infinite;
-  animation-play-state: var(--ambient-play-state, paused);
-}
-
-/* A pair of sparse light fields behind the broken side, not an overall haze.
- * Only transforms/opacity animate; the opaque photograph occludes the lights. */
-.digital-statue__depth::before,
-.digital-statue__depth::after {
-  content: '';
-  position: absolute;
-  inset: 16% 46% 8% 21%;
-  background:
-    radial-gradient(circle at 24% 12%, var(--accent-text) 0 1px, transparent 5px),
-    radial-gradient(circle at 76% 25%, var(--accent-text) 0 1.5px, transparent 7px),
-    radial-gradient(circle at 43% 39%, var(--accent-text) 0 1px, transparent 5px),
-    radial-gradient(circle at 18% 53%, var(--accent-text) 0 1.5px, transparent 8px),
-    radial-gradient(circle at 67% 62%, var(--accent-text) 0 1px, transparent 6px),
-    radial-gradient(circle at 36% 78%, var(--accent-text) 0 1.5px, transparent 7px),
-    radial-gradient(circle at 82% 91%, var(--accent-text) 0 1px, transparent 5px);
-  animation: statue-cutout-lights 13s ease-in-out infinite alternate;
-  animation-play-state: var(--ambient-play-state, paused);
-}
-
-.digital-statue__depth::after {
-  inset: 11% 43% 13% 24%;
-  animation-duration: 19s;
-  animation-delay: -11s;
-  animation-direction: alternate-reverse;
-}
-
-@keyframes statue-cutout-lights {
-  0% { transform: translate3d(-18px, 28px, 0); opacity: .3; }
-  50% { transform: translate3d(14px, -4px, 0); opacity: .7; }
-  100% { transform: translate3d(-4px, -42px, 0); opacity: .4; }
-}
-
-@keyframes statue-particle-drift {
-  0% { transform: translate3d(-14px, 20px, 0); opacity: .3; }
-  33% { transform: translate3d(18px, -8px, 0); opacity: .8; }
-  66% { transform: translate3d(32px, -35px, 0); opacity: .55; }
-  100% { transform: translate3d(8px, -58px, 0); opacity: .35; }
-}
-
-[data-mode='classic'] .digital-statue__depth { display: none; }
-@media (max-width: 1024px), (prefers-reduced-motion: reduce) {
-  .digital-statue__depth { display: none; }
-}
 
 /*
  * Statue image.

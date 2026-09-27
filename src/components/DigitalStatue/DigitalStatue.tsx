@@ -8,9 +8,6 @@ import './DigitalStatue.css';
 
 // Art lighting, deliberately independent of the page palette.
 const mobileBreakpoint = parseInt(breakpoints.mobile, 10);
-// Most negative spaces are between 24–49% of the source image's width.
-const ambientParticles = [19, 24, 29, 34, 39, 44, 49, 54, 59, 64, 69, 74, 79, 31, 42, 51, 62, 71, 22, 37, 57, 76,
-  17, 27, 33, 41, 47, 56, 66, 81] as const;
 
 export function DigitalStatue({ className = '' }: { className?: string }) {
   const { palette, mode, statue } = useTheme();
@@ -30,8 +27,6 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     let started = false;
     let inView = false;
     const sync = () => {
-      container.style.setProperty('--ambient-play-state',
-        inView && !document.hidden && !motion.matches && desktop.matches ? 'running' : 'paused');
       for (const rive of instances) {
         if (inView && !document.hidden && !motion.matches && desktop.matches) rive.play('Ambient');
         else rive.pause();
@@ -102,14 +97,6 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
   // Fresh canvases keep each artwork/look instance's lifecycle independent.
   return (
     <div ref={containerRef} className={`digital-statue ${className}`.trim()} aria-hidden="true">
-      <div className="digital-statue__depth">
-        {ambientParticles.map((left, i) => (
-          <span key={left} style={{ left: `${left}%`, top: `${(i * 29) % 80}%`,
-            width: `${2 + i % 3}px`, height: `${2 + i % 3}px`,
-            animationDelay: `${-i * 2.3}s`, animationDirection: i % 2 ? 'alternate-reverse' : 'alternate',
-            animationDuration: `${12 + (i % 5) * 2}s` }} />
-        ))}
-      </div>
       <div className="digital-statue__img" role="presentation">
         <div className="digital-statue__surface">
           <canvas key={canvasKey} ref={surfaceRef} />

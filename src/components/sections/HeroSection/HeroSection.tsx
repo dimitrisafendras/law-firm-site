@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useTranslation } from '@/i18n';
 import { EditableSpawnText } from '@/components/animations/EditableSpawnText';
 import { EditableText } from '@/components';
@@ -32,15 +33,37 @@ const CLASSIC_MOTES = [
   { cx: '89%', cy: '27%', r: 1.3 },
   { cx: '93%', cy: '59%', r: 1.6 },
 ];
+const HERO_PARTICLES = [4, 10, 18, 25, 33, 41, 49, 57, 65, 73, 81, 88, 94,
+  7, 15, 28, 38, 46, 54, 62, 70, 78, 85, 91, 22, 59, 97, 35,
+  12, 20, 30, 43, 51, 67, 76, 83, 93, 6, 26, 56, 72, 96] as const;
 
 export function HeroSection() {
   const { t } = useTranslation();
+  const particlesRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const layer = particlesRef.current;
+    if (!layer) return;
+    let visible = false;
+    const sync = () => layer.style.setProperty('--hero-particle-play', visible && !document.hidden ? 'running' : 'paused');
+    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
+    observer.observe(layer);
+    document.addEventListener('visibilitychange', sync);
+    return () => { observer.disconnect(); document.removeEventListener('visibilitychange', sync); };
+  }, []);
 
   const titleLine1 = t('heroTitleLine1');
   const titleLine2 = t('heroTitleLine2');
 
   return (
     <header className="hero-section">
+      <div ref={particlesRef} className="hero-section__particles" aria-hidden="true">
+        {HERO_PARTICLES.map((left, i) => (
+          <span key={left} style={{ left: `${left}%`, top: `${5 + (i * 37) % 89}%`,
+            width: `${2 + i % 2}px`, height: `${2 + i % 2}px`,
+            animationDelay: `${-i * 2.3}s`, animationDirection: i % 2 ? 'alternate-reverse' : 'alternate',
+            animationDuration: `${15 + (i % 5) * 2}s` }} />
+        ))}
+      </div>
       <div className="hero-section__bg">
         <DigitalStatue />
       </div>

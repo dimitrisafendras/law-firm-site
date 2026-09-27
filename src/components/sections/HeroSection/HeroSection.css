@@ -1,3 +1,35 @@
+/* Tiny lights only: no background shards or overall glow. */
+.hero-section__particles {
+  position: absolute;
+  inset: 0;
+  /* Above the text scrim (0), below later statue/copy siblings (1). */
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+@media (max-width: 1024px) {
+  /* Mobile raises the scrim to 1 and the copy to 2. */
+  .hero-section__particles { z-index: 2; }
+}
+.hero-section__particles span {
+  position: absolute;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle, var(--accent-text) 15%,
+    color-mix(in srgb, var(--accent-text) 65%, transparent) 45%, transparent 75%);
+  animation: hero-particle-drift ease-in-out infinite;
+  animation-play-state: var(--hero-particle-play, paused);
+}
+@keyframes hero-particle-drift {
+  0% { transform: translate3d(-14px, 20px, 0); opacity: .25; }
+  33% { transform: translate3d(18px, -8px, 0); opacity: .65; }
+  66% { transform: translate3d(32px, -35px, 0); opacity: .45; }
+  100% { transform: translate3d(8px, -58px, 0); opacity: .3; }
+}
+[data-mode='classic'] .hero-section__particles { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-section__particles { display: none; }
+}
+
 .hero-section {
   position: relative;
   min-height: 100vh;

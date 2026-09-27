@@ -44,6 +44,7 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     let started = false;
     let inView = false;
     let assetsReady = false;
+    let pageHidden = false;
     let revealFrame = 0;
     const abort = new AbortController();
     container.dataset.scene = 'loading';
@@ -52,7 +53,7 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     // Attach a rejection handler immediately while the runtime is loading.
     void imageReady.catch(() => {});
     const reveal = () => {
-      if (!cancelled) container.dataset.scene = 'ready';
+      if (!cancelled && !pageHidden) container.dataset.scene = 'ready';
     };
     const fallback = () => {
       if (cancelled) return;
@@ -65,7 +66,7 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     let fallbackTimer = window.setTimeout(fallback, 10000);
     const sync = () => {
       for (const rive of instances) {
-        if (assetsReady && container.dataset.surface !== 'failed' && inView && !document.hidden && !motion.matches && desktop.matches) rive.play('Ambient');
+        if (!pageHidden && assetsReady && container.dataset.surface !== 'failed' && inView && !document.hidden && !motion.matches && desktop.matches) rive.play('Ambient');
         else rive.pause();
       }
     };
@@ -75,6 +76,9 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       const images: Promise<void>[] = [];
       const rive = new Rive({
         canvas, buffer, artboard, stateMachine: 'Ambient', autoplay: false,
+        // Copy completed GPU frames into a normal 2D canvas. A directly
+        // composited WebGL surface can flash opaque during rapid navigations.
+        useOffscreenRenderer: true,
         layout: new Layout({ fit: Fit.Fill, alignment: Alignment.Center }),
         // Ambient opacity changes are deliberately tiny. Present each active
         // frame rather than relying on the runtime's dirty-scene heuristic.
@@ -101,10 +105,10 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
         },
         onLoadError: fallback,
         onAdvance: () => {
-          if (!assetsReady || cancelled || revealFrame) return;
+          if (!assetsReady || cancelled || pageHidden || revealFrame) return;
           // Advance fires before draw; reveal on the following presentation frame.
           revealFrame = requestAnimationFrame(() => {
-            if (cancelled || container.dataset.surface === 'failed') return;
+            if (cancelled || pageHidden || container.dataset.surface === 'failed') return;
             clearTimeout(fallbackTimer);
             container.dataset.surface = 'ready';
             reveal();
@@ -153,6 +157,21 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       for (const rive of instances) rive.resizeDrawingSurfaceToCanvas(Math.min(devicePixelRatio, 1.5));
     });
     resize.observe(container);
+    const hidePage = () => {
+      pageHidden = true;
+      cancelAnimationFrame(revealFrame);
+      revealFrame = 0;
+      container.dataset.surface = 'loading';
+      sync();
+    };
+    const showPage = () => {
+      pageHidden = false;
+      maybeStart();
+    };
+    // React does not unmount on navigation. Hide the outgoing surface before
+    // the browser releases its GPU resources; resume after a bfcache restore.
+    window.addEventListener('pagehide', hidePage);
+    window.addEventListener('pageshow', showPage);
     document.addEventListener('visibilitychange', sync);
     motion.addEventListener('change', maybeStart);
     desktop.addEventListener('change', maybeStart);
@@ -164,6 +183,8 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       delete container.dataset.surface;
       observer.disconnect();
       resize.disconnect();
+      window.removeEventListener('pagehide', hidePage);
+      window.removeEventListener('pageshow', showPage);
       document.removeEventListener('visibilitychange', sync);
       motion.removeEventListener('change', maybeStart);
       desktop.removeEventListener('change', maybeStart);

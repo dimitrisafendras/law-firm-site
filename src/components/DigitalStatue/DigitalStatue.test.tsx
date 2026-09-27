@@ -81,3 +81,21 @@ it('does not attach a late texture to a destroyed instance', async () => {
   expect(asset.setRenderImage).not.toHaveBeenCalled();
   expect(image.unref).toHaveBeenCalled();
 });
+
+
+it('uses a copied 2D presentation surface and hides it during navigation', async () => {
+  const { scene } = await mount();
+  expect(mock.params!.useOffscreenRenderer).toBe(true);
+  mock.params!.onLoad!({ type: 'load' } as never);
+  await act(async () => {});
+  mock.params!.onAdvance!({ type: 'advance' } as never);
+  await waitFor(() => expect(scene).toHaveAttribute('data-surface', 'ready'));
+  act(() => window.dispatchEvent(new Event('pagehide')));
+  expect(scene).toHaveAttribute('data-surface', 'loading');
+  // An outgoing frame cannot make the canvas visible again.
+  mock.params!.onAdvance!({ type: 'advance' } as never);
+  expect(scene).toHaveAttribute('data-surface', 'loading');
+  act(() => window.dispatchEvent(new Event('pageshow')));
+  mock.params!.onAdvance!({ type: 'advance' } as never);
+  await waitFor(() => expect(scene).toHaveAttribute('data-surface', 'ready'));
+});

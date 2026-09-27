@@ -19,6 +19,20 @@
   animation: hero-particle-drift ease-in-out infinite;
   animation-play-state: var(--hero-particle-play, paused);
 }
+/* The first 13 lights span the entire hero. Trim later lights on smaller
+   screens without viewport-dependent markup or running hidden animations. */
+@media (max-width: 1280px) {
+  .hero-section__particles span:nth-child(n + 35) { display: none; animation: none; }
+}
+@media (max-width: 1024px) {
+  .hero-section__particles span:nth-child(n + 29) { display: none; animation: none; }
+}
+@media (max-width: 768px) {
+  .hero-section__particles span:nth-child(n + 21) { display: none; animation: none; }
+}
+@media (max-width: 480px) {
+  .hero-section__particles span:nth-child(n + 14) { display: none; animation: none; }
+}
 @keyframes hero-particle-drift {
   0% { transform: translate3d(-14px, 20px, 0); opacity: .25; }
   33% { transform: translate3d(18px, -8px, 0); opacity: .65; }

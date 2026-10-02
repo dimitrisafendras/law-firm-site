@@ -142,6 +142,20 @@ for(let y=0;y<1876;y++)for(let x=0;x<1400;x++){
   // neighbourhoods, without stamping square tiles or inventing a new grid.
   wirePhase[q]=(12+5*Math.sin(x/47+y/89)+5*Math.sin(y/61-x/113))%24;
 }
+// The photograph's own alpha at full resolution, grown by one pixel so the
+// light keeps its wires. The material mask is built at 700px, where the leg's
+// thin wires and the holes between them blur into one partial value, so the
+// leg's filled fragments spilled into its holes as a haze; clipping them to
+// this keeps the holes as dark as the arm's.
+const solid2x=new Uint8Array(1400*1876);
+for(let y=0;y<1876;y++)for(let x=0;x<1400;x++){
+  let a=0;
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+    const sx=x+dx,sy=y+dy;
+    if(sx>=0&&sx<1400&&sy>=0&&sy<1876)a=Math.max(a,source2x[(sy*1400+sx)*4+3]);
+  }
+  solid2x[y*1400+x]=a;
+}
 const wireColour=ULTRAMARINE_COLORS.accentBright.split(',').map(Number);
 const svgPath=points=>`M${points.map(([x,y])=>`${x.toFixed(2)},${y.toFixed(2)}`).join(' L')}`;
 // The tracks below are sampled every 5 frames, which stores hundreds of
@@ -181,8 +195,8 @@ async function texture(name,paths,rest=false,customSvg=null,wireGroup=null){
       // Keep the leg's filled, softly blooming fragments as the visual language.
       // Fine artwork traces support that material rather than replacing it with
       // a faint outline-only treatment. The approved leg remains untouched.
-      if(y>=1020&&y<1650&&x<710)continue;
       const q=y*ri.width+x,p=q*4;
+      if(y>=1020&&y<1650&&x<710){rgba[p+3]=Math.round(rgba[p+3]*solid2x[q]/255);continue;}
       const weight=rest?.1:Math.max(0,1-Math.abs(wirePhase[q]-wireGroup));
       const fragmentAlpha=rgba[p+3]/255;
       const traceAlpha=wireStrength[q]*weight*.65;

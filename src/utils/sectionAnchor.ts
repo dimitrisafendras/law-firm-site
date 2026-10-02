@@ -27,6 +27,11 @@
  * to restore a scroll position; the URL says where you are, which it should
  * have done all along.
  *
+ * Scrolling does touch the URL now (sectionSpy.ts keeps it naming the section
+ * being read), so this usually finds the entry already right. It stays for the
+ * click that arrives before the observer has caught up — a card clicked just as
+ * its section crosses the middle of the viewport.
+ *
  * ─── Why a delegated listener ────────────────────────────────────────────────
  *
  * The two cards that link out are plain `<a href="#practice/…">` and

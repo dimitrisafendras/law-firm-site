@@ -91,6 +91,25 @@
           before you leave it, so returning lands you there by anchor.
         */
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+        /*
+          The address bar names the section being read as the page scrolls
+          (src/utils/sectionSpy.ts), so a reload would otherwise be a fragment
+          navigation to wherever the reader had got to. A reload of the home
+          page always opens on the hero: drop a section hash before the
+          browser can scroll to it. A followed link to #contact, and Back or
+          Forward, still land on their section; detail routes (#partner/2)
+          are pages, not sections, and keep their hash.
+        */
+        try {
+          var nav = performance.getEntriesByType('navigation')[0];
+          var section = /^#(team|practice|clients|contact)$/.test(location.hash);
+          if (nav && nav.type === 'reload' && section) {
+            history.replaceState(history.state, '', location.pathname + location.search);
+          }
+        } catch (e) {
+          /* Navigation timing unavailable: keep the hash. */
+        }
       })();
     </script>
     <link rel="canonical" href="https://vkmlegal.gr/" />

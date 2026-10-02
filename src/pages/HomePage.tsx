@@ -9,6 +9,7 @@ import { ClientsSection } from '@/components/sections/ClientsSection/ClientsSect
 import { ContactSection } from '@/components/sections/ContactSection/ContactSection';
 import { CircuitField } from '@/components/CircuitField';
 import { ClassicField } from '@/components/ClassicField';
+import { watchSection } from '@/utils/sectionSpy';
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -70,6 +71,11 @@ export default function HomePage() {
     const timers = [setTimeout(align, 120), setTimeout(align, 400)];
     return () => timers.forEach(clearTimeout);
   }, []);
+
+  // The address bar follows the section being read (src/utils/sectionSpy.ts).
+  useEffect(() => watchSection([
+    ...document.querySelectorAll('main > .hero-section, main > section[id]'),
+  ]), []);
 
   return (
     <>

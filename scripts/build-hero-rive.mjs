@@ -178,7 +178,7 @@ function keyframes(samples,tolerance){
   }
   return samples.filter((_,k)=>keep[k]).map(([f,v])=>`<KeyFrameDouble frame="${f}" value="${v.toFixed(5)}" interpolationType="linear"/>`).join('');
 }
-let content='',timeline='',assets='';
+let content='',timeline='',cycle='',assets='';
 async function texture(name,paths,rest=false,customSvg=null,wireGroup=null){
   const strokes=paths.map(p=>`${svgPath(p)} Z`).join(' ');
   const edges=paths.map(p=>svgPath(p.slice(0,3))).join(' ');
@@ -259,28 +259,25 @@ for(const [i,{x,y,dx,dy}] of manifest.entries()){
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1876" viewBox="0 0 700 938"><path d="M${x-s},${y-s} L${x+s},${y-s*.6} L${x+s*.7},${y+s} L${x-s},${y+s*.5}Z" fill="${light}" fill-opacity=".38" stroke="${core}" stroke-width=".55"/><path d="M${x-s},${y-s} L${x},${y} L${x+s*.7},${y+s}" stroke="${glow}" stroke-width=".4" fill="none"/></svg>`;
   content+=`<Node id="${node}" name="Manifest fragment ${i}">${await texture(`manifest-${i}`,[],false,svg)}</Node>`;
   const channels={13:t=>dx*(1-t),14:t=>dy*(1-t),18:t=>.72*Math.pow(Math.sin(Math.PI*t),2)};
-  const tracks=Object.entries(channels).map(([key,value])=>`<KeyedProperty propertyKey="${key}">${keyframes(Array.from({length:2305},(_,k)=>{
+  const tracks=Object.entries(channels).map(([key,value])=>`<KeyedProperty propertyKey="${key}">${keyframes(Array.from({length:289},(_,k)=>{
     const progress=(k/288*(4+i%2)+i*.137)%1;
     return [k*5,value(progress)];
   }),key==='18'?.003:1e-4)}</KeyedProperty>`).join('');
-  timeline+=`<KeyedObject objectId="${node}">${tracks}</KeyedObject>`;
+  cycle+=`<KeyedObject objectId="${node}">${tracks}</KeyedObject>`;
 }
 const fire=await buildFire(id);
 // Under the light textures, not over them: the digital pan's front wires are
 // in front of its flame, and their shimmer has to stay on top of it.
 content=fire.content+content;
 assets+=fire.assets;
-// Repeat the original fire tracks at their existing cadence. The longer
-// shared loop lets the 1.125x light harmonics meet seamlessly at its boundary.
-timeline+=fire.timeline.replace(/<KeyedProperty([^>]*)>(.*?)<\/KeyedProperty>/gs, (_, attrs, keys) => {
-  const repeated=Array.from({length:8},(_,repeat)=>keys.replace(/<KeyFrameDouble frame="(\d+)"[^>]*\/>/g,(key,frame)=>{
-    const at=Number(frame);
-    if(repeat<7 && at===1440)return '';
-    return key.replace(`frame="${frame}"`, `frame="${at+repeat*1440}"`);
-  })).join('');
-  return `<KeyedProperty${attrs}>${repeated}</KeyedProperty>`;
-});
-const xml=`<Rive version="1" kind="fragment"><Artboard id="0:1" name="Mesh" width="700" height="938" styleId="0:2" defaultStateMachineId="0:4"><LayoutComponentStyle id="0:2"/>${content}<LinearAnimation id="0:3" name="Ambient" duration="11520" fps="60" loopValue="loop">${timeline}</LinearAnimation><StateMachine id="0:4" name="Ambient"><StateMachineLayer><EntryState><StateTransition stateToId="0:5"/></EntryState><AnimationState id="0:5" animationId="0:3" x="200"/></StateMachineLayer></StateMachine></Artboard>${assets}</Rive>`;
+// The fire and the fragments repeat every 1440 frames (the fragments' four-
+// and five-cycle periods both divide it), so they play on a second layer in
+// their own 1440-frame loop instead of being written out eight times to fill
+// the lights' 11520 — which the 1.125x light harmonics need to meet seamlessly
+// at the boundary. Every keyframe is an object the runtime parses on the main
+// thread at start-up, and the repeats were ~60k of them.
+cycle+=fire.timeline;
+const xml=`<Rive version="1" kind="fragment"><Artboard id="0:1" name="Mesh" width="700" height="938" styleId="0:2" defaultStateMachineId="0:4"><LayoutComponentStyle id="0:2"/>${content}<LinearAnimation id="0:3" name="Ambient" duration="11520" fps="60" loopValue="loop">${timeline}</LinearAnimation><LinearAnimation id="0:6" name="Cycle" duration="1440" fps="60" loopValue="loop">${cycle}</LinearAnimation><StateMachine id="0:4" name="Ambient"><StateMachineLayer><EntryState><StateTransition stateToId="0:5"/></EntryState><AnimationState id="0:5" animationId="0:3" x="200"/></StateMachineLayer><StateMachineLayer><EntryState><StateTransition stateToId="0:7"/></EntryState><AnimationState id="0:7" animationId="0:6" x="200"/></StateMachineLayer></StateMachine></Artboard>${assets}</Rive>`;
 writeFileSync('art/rive/hero/scene.rml',xml);
 console.log(`${facets.length} organically clustered facets, ${manifest.length} exterior squares, 24 lighting groups + two blended fire sequences`);
 execFileSync('rive',['art/rive/hero','--verify'],{stdio:'inherit'});

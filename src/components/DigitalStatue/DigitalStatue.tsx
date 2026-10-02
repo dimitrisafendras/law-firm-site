@@ -1,7 +1,11 @@
 import { useEffect, useRef } from 'react';
+import type { CSSProperties } from 'react';
 import { breakpoints, resolveStatue } from '@/theme';
 import { useTheme } from '@/lib/theme';
 import { artworkFor } from './statueArtwork';
+// The Rive mesh is baked in this blue whichever statue shows (see
+// scripts/build-hero-rive.mjs), so its entrance scan is too.
+import { ULTRAMARINE_COLORS } from './sceneColors';
 import type { ImageAsset, Rive } from '@rive-app/webgl2';
 import riveWasm from '@rive-app/webgl2/rive.wasm?url';
 import './DigitalStatue.css';
@@ -136,24 +140,26 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       });
       instances.push(rive);
     };
-    async function start() {
-      try {
-        runtime = await import('@rive-app/webgl2');
-        if (cancelled) return;
-        runtime.RuntimeLoader.setWasmUrl(riveWasm);
-        runtime.RuntimeLoader.setWasmFallbackUrl(null);
-        const response = await fetch(`${import.meta.env.BASE_URL}animations/hero.riv`, { signal: abort.signal });
-        if (!response.ok) throw new Error(`Statue animation: HTTP ${response.status}`);
-        const buffer = await response.arrayBuffer();
-        if (cancelled) return;
-        if (!cancelled && surfaceRef.current) {
-          add(surfaceRef.current, 'Mesh', buffer);
-        }
-      } catch (error) {
-        // The original transparent photograph stays visible if Rive cannot load.
-        if (!cancelled) { console.warn('Statue animation unavailable', error); fallback(); }
-      }
-    }
+    // Only the network is done up front, all three requests in parallel and at
+    // low priority behind the page's own assets: it costs the main thread
+    // nothing. Instantiating the WASM is itself ~0.3s of main-thread work on a
+    // cold visit, so the runtime is not touched until afterEntrances. The WASM
+    // is fetched here only to warm the HTTP cache for RuntimeLoader's request.
+    const download = () => Promise.all([
+      import('@rive-app/webgl2'),
+      fetch(`${import.meta.env.BASE_URL}animations/hero.riv`, { signal: abort.signal, priority: 'low' })
+        .then(response => {
+          if (!response.ok) throw new Error(`Statue animation: HTTP ${response.status}`);
+          return response.arrayBuffer();
+        }),
+      fetch(riveWasm, { signal: abort.signal, priority: 'low' }).then(response => response.arrayBuffer()),
+    ]);
+    const start = (loaded: typeof import('@rive-app/webgl2'), buffer: ArrayBuffer) => {
+      runtime = loaded;
+      runtime.RuntimeLoader.setWasmUrl(riveWasm);
+      runtime.RuntimeLoader.setWasmFallbackUrl(null);
+      if (surfaceRef.current) add(surfaceRef.current, 'Mesh', buffer);
+    };
     const maybeStart = () => {
       // The photograph enters on its own schedule; the Rive light layer joins
       // it later (see afterEntrances) and fades in over it.
@@ -162,10 +168,18 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       if (!started && mode !== 'classic' && !motion.matches && desktop.matches && inView) {
         started = true;
         clearTimeout(fallbackTimer);
-        void imageReady.then(() => afterEntrances(abort.signal)).then(() => {
+        const downloads = download();
+        void downloads.catch(() => {});
+        void imageReady.then(() => afterEntrances(abort.signal)).then(async () => {
           if (cancelled) return;
           fallbackTimer = window.setTimeout(fallback, 10000);
-          void start();
+          try {
+            const [loaded, buffer] = await downloads;
+            if (!cancelled) start(loaded, buffer);
+          } catch (error) {
+            // The original transparent photograph stays visible if Rive cannot load.
+            if (!cancelled) { console.warn('Statue animation unavailable', error); fallback(); }
+          }
         }, () => {});
       }
       sync();
@@ -216,7 +230,15 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
 
   // Fresh canvases keep each artwork/look instance's lifecycle independent.
   return (
-    <div ref={containerRef} className={`digital-statue ${className}`.trim()} aria-hidden="true" data-scene="loading" data-surface="loading">
+    <div
+      ref={containerRef}
+      className={`digital-statue ${className}`.trim()}
+      aria-hidden="true"
+      data-scene="loading"
+      data-surface="loading"
+      // Constant, so it is the same markup on the server and the client.
+      style={{ '--statue-surface-glow': ULTRAMARINE_COLORS.accentBright } as CSSProperties}
+    >
       <div className="digital-statue__img" role="presentation">
         <div className="digital-statue__surface">
           <canvas key={canvasKey} ref={surfaceRef} />

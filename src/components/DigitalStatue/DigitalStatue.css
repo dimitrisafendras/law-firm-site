@@ -88,11 +88,72 @@
 }
 .digital-statue:not([data-surface='ready']) .digital-statue__surface {
   visibility: hidden;
-  opacity: 0;
 }
-/* The light layer arrives after the figure has risen (its runtime starts once
-   the hero entrance is over), so it fades in over it. The transition lives on
-   the ready state only: hiding for a navigation stays instant. */
+
+/*
+ * The light layer charges up the figure.
+ *
+ * It arrives after the figure has risen — its runtime starts once the hero
+ * entrance is over (see afterEntrances in DigitalStatue.tsx) — so rather than
+ * fading in over a statue that is already standing, it climbs it: a soft edge
+ * rises from the plinth to the crown, and a scan band rides that edge, masked
+ * to the digital material alone so the marble is never lit.
+ *
+ * Both run on the same curve, which is what keeps the band on the edge. The
+ * surface's mask is 220% of the box with its opaque half at the bottom, so
+ * `mask-position` 0 -> 100% carries the edge from 1.1 boxes down to 0.1 above;
+ * the band is 30% tall, so its centre follows that edge at background-position
+ * 135.7% -> -35.7%. The start is held one tight beat: the first frame Rive
+ * draws compiles its shaders, ~0.1s, and that stall should land while nothing
+ * is visibly moving. Everything here is on the ready state only, so hiding for
+ * a navigation stays instant.
+ */
+@keyframes statue-surface-charge {
+  from {
+    mask-image: linear-gradient(to top, #000 0 45%, transparent 55% 100%);
+    mask-position: 0 0;
+  }
+  to {
+    mask-image: linear-gradient(to top, #000 0 45%, transparent 55% 100%);
+    mask-position: 0 100%;
+  }
+}
+
+@keyframes statue-surface-scan {
+  from { background-position: 0 135.7%; opacity: 1; }
+  80% { opacity: 1; }
+  to { background-position: 0 -35.7%; opacity: 0; }
+}
+
 .digital-statue[data-surface='ready'] .digital-statue__surface {
-  transition: opacity var(--dur-materialize) var(--ease-wipe);
+  mask-size: 100% 220%;
+  animation: statue-surface-charge calc(var(--dur-materialize) * 1.5) var(--ease-settle)
+    var(--seq-beat-tight) backwards;
+}
+
+.digital-statue[data-surface='ready'] .digital-statue__img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* The baked colour of the Rive mesh, set on the element by the component. */
+  background: linear-gradient(
+      to top,
+      transparent,
+      rgba(var(--statue-surface-glow), 0.55) 45%,
+      rgba(var(--statue-surface-glow), 0.9) 50%,
+      rgba(var(--statue-surface-glow), 0.55) 55%,
+      transparent
+    )
+    no-repeat 0 135.7% / 100% 30%;
+  mix-blend-mode: screen;
+  mask: url('/animations/statue-digital-mask.png') no-repeat 0 0 / 100% 100%;
+  opacity: 0;
+  animation: statue-surface-scan calc(var(--dur-materialize) * 1.5) var(--ease-settle)
+    var(--seq-beat-tight) forwards;
+}
+
+@media (max-width: 1024px), (prefers-reduced-motion: reduce) {
+  .digital-statue__img::after { display: none; }
 }

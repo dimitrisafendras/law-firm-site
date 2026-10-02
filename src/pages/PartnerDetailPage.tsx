@@ -153,19 +153,17 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
             </Card>
 
             <div className="partner-page__identity">
-              {/* The name, then its designation tucked under the name's right
-                  end. It stays OUTSIDE the `h1` on purpose: it would otherwise
-                  join the page's accessible heading, and this page's title is
-                  the name. Source order follows the reading order now that the
-                  rank sits below rather than in front — the heading first, then
-                  what qualifies it. */}
+              {/* The designation as an eyebrow above the name's left edge, then
+                  the name. It stays OUTSIDE the `h1` on purpose: it would
+                  otherwise join the page's accessible heading, and this page's
+                  title is the name. Source order is the reading order. */}
               <div className="partner-page__namerow">
-                <EditableText tKey={`attorney${n}Name`} as="h1" className="partner-page__name" />
                 <EditableText
                   tKey={`attorney${n}Title`}
                   as="span"
                   className="partner-page__honorific"
                 />
+                <EditableText tKey={`attorney${n}Name`} as="h1" className="partner-page__name" />
               </div>
               <EditableText
                 tKey="partnerContactCta"

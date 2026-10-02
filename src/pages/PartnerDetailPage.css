@@ -350,7 +350,7 @@
 
 /* The rank, as a filled pill on the name's line. */
 /*
- * The rank, as an honorific on the name — under the name's right end, where a
+ * The rank, as an honorific on the name — on its own line above it, where a
  * designation sits against the thing it qualifies rather than competing with it
  * for the same line.
  *
@@ -380,29 +380,24 @@
   letter-spacing: var(--type-caps-tracking-wide);
   color: var(--accent-text);
   white-space: nowrap;
-  align-self: flex-end;
+  /* Above the name, flush with its left edge — an eyebrow, the way a section
+     overline leads its heading. It used to hang under the name's right end. */
+  align-self: flex-start;
 }
 
 /*
- * The name's block: the name, and its designation under the name's right end.
+ * The name's block: the designation above it, then the name.
  * This is the grid item, so it carries the `1 / -1` the name used to.
  *
- * A column with a stretched name and the rank at `flex-end` — rather than a
- * two-column grid — because the name's width is what the rank should sit
- * against, and the name's width is its content. Stretching the name and
- * pushing only the rank to the far edge keeps the two associated at any name
- * length instead of stranding the rank across a gap on the short ones.
+ * A column rather than a two-column grid, because the name's width is what the
+ * rank should sit against, and the name's width is its content.
  */
 .partner-page__namerow {
   grid-column: 1 / -1;
   /*
-   * `fit-content`, and this is the whole reason the rank lands where it should.
-   *
-   * The row spans the identity (`1 / -1`), which is the full width of the
-   * masthead — so `align-self: flex-end` on the rank sent it to the far right
-   * of the PAGE, a hundred-odd pixels of empty space away from the name it
-   * belongs to. Shrinking the row to its content makes the name's own width the
-   * box the rank aligns inside, so "flex-end" means the name's right edge.
+   * `fit-content`: the row spans the identity (`1 / -1`), the full width of
+   * the masthead, and shrinking it to its content makes the name's own width
+   * the box the rank aligns inside rather than the page's.
    *
    * `max-width: 100%` so the longest name still wraps inside the column rather
    * than pushing the row past it.

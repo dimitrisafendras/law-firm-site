@@ -1,6 +1,7 @@
 // Native Rive energized fragments: masked facets, 24 independent light groups.
 import { writeFileSync, copyFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { toWebp } from './webp-exact.mjs';
 import sharp from 'sharp';
 import { ULTRAMARINE_COLORS } from '../src/components/DigitalStatue/sceneColors.ts';
 import { buildFire } from './hero-fire.mjs';
@@ -52,6 +53,14 @@ for(let y=0;y<info.height;y++) for(let x=0;x<info.width;x++){
   mask[p+3]=onSword(x,y)?0:Math.round(data[p+3]*Math.max(body,pan));
 }
 await sharp(mask,{raw:{width:info.width,height:info.height,channels:4}}).png().toFile('public/animations/statue-digital-mask.png');
+// The CSS entrance scan's mask (DigitalStatue.css): the same material, small
+// and soft. A mask image counts toward Largest Contentful Paint, and at full
+// size it became the page's LCP when the scan ran; this one is low-content
+// enough (bits per displayed pixel), and small enough in natural pixels to
+// stay under the hero subtitle, that it never wins. The band it masks
+// is a soft glow, so the resolution does not show.
+await sharp(mask,{raw:{width:info.width,height:info.height,channels:4}}).resize(160).blur(.8)
+  .png({palette:true,colours:16,compressionLevel:9}).toFile('public/animations/statue-scan-mask.png');
 const allowed=(x,y)=>{
   x=Math.round(x);y=Math.round(y);
   return x>=0&&x<info.width&&y>=0&&y<info.height&&mask[(y*info.width+x)*4+3]>45;
@@ -186,10 +195,8 @@ async function texture(name,paths,rest=false,customSvg=null,wireGroup=null){
   let left=ri.width,top=ri.height,right=0,bottom=0;
   for(let y=0;y<ri.height;y++)for(let x=0;x<ri.width;x++)if(rgba[(y*ri.width+x)*4+3]>0){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}
   if(right<left)return '';
-  // Lossless WebP: the same pixels as the PNG this used to write, ~40% fewer
-  // bytes. The runtime hands embedded images to the browser to decode.
   const file=`layers/${name}.webp`,asset=id();
-  const png=await sharp(rgba,{raw:{width:ri.width,height:ri.height,channels:4}}).extract({left,top,width:right-left+1,height:bottom-top+1}).webp({lossless:true,effort:6}).toBuffer();
+  const png=await toWebp(await sharp(rgba,{raw:{width:ri.width,height:ri.height,channels:4}}).extract({left,top,width:right-left+1,height:bottom-top+1}).png().toBuffer());
   // The Windows preview watcher can briefly hold a texture open while reloading.
   for(let attempt=0;;attempt++){
     try { writeFileSync(`art/rive/hero/${file}`,png);break; }

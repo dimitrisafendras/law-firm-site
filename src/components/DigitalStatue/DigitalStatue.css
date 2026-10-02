@@ -88,25 +88,27 @@
 }
 .digital-statue:not([data-surface='ready']) .digital-statue__surface {
   visibility: hidden;
+  opacity: 0;
 }
 
 /*
- * The light layer charges up the figure.
+ * The light charges up the figure, and it does so the moment the hero's
+ * letters have landed — not when Rive is ready, which is ~0.4s later.
  *
- * It arrives after the figure has risen — its runtime starts once the hero
- * entrance is over (see afterEntrances in DigitalStatue.tsx) — so rather than
- * fading in over a statue that is already standing, it climbs it: a soft edge
- * rises from the plinth to the crown, and a scan band rides that edge, masked
- * to the digital material alone so the marble is never lit.
+ * `data-charge` is set by the component as the hero's entrance finishes, and
+ * Rive is only started two frames after that. The runtime's start-up blocks
+ * the main thread for ~0.3s, so the part of this that has to keep moving
+ * through it is a `transform` animation, which runs on the compositor: a scan
+ * band climbing the figure, masked to the digital material alone so the marble
+ * is never lit. The light mesh joins it when it is ready — a quick fade, inside
+ * a soft edge that is already climbing on the same curve, so whatever the band
+ * has passed is lit and whatever it has not is still dark.
  *
- * Both run on the same curve, which is what keeps the band on the edge. The
- * surface's mask is 220% of the box with its opaque half at the bottom, so
- * `mask-position` 0 -> 100% carries the edge from 1.1 boxes down to 0.1 above;
- * the band is 30% tall, so its centre follows that edge at background-position
- * 135.7% -> -35.7%. No hold before it: the component only marks the surface
- * ready two frames after Rive's first draw, whose shader compile (~0.1s) has
- * then already happened with the layer hidden. Everything here is on the ready
- * state only, so hiding for a navigation stays instant.
+ * The geometry that keeps the two together: the surface's mask is 220% of the
+ * box with its opaque half at the bottom, so `mask-position` 0 -> 100% carries
+ * its edge from 1.1 boxes down to 0.1 above; the band is 30% of the box tall,
+ * so its centre rides that edge at translateY 316.7% -> -83.3% of itself.
+ * Everything keys on the attributes, so hiding for a navigation stays instant.
  */
 @keyframes statue-surface-charge {
   from {
@@ -120,38 +122,60 @@
 }
 
 @keyframes statue-surface-scan {
-  from { background-position: 0 135.7%; opacity: 1; }
+  from { transform: translateY(316.7%); opacity: 1; }
   80% { opacity: 1; }
-  to { background-position: 0 -35.7%; opacity: 0; }
+  to { transform: translateY(-83.3%); opacity: 0; }
 }
 
-.digital-statue[data-surface='ready'] .digital-statue__surface {
+.digital-statue[data-charge='on'] .digital-statue__surface {
   mask-size: 100% 220%;
   animation: statue-surface-charge var(--dur-materialize) var(--ease-settle) backwards;
 }
 
-.digital-statue[data-surface='ready'] .digital-statue__img::after {
-  content: '';
+.digital-statue[data-surface='ready'] .digital-statue__surface {
+  transition: opacity var(--seq-beat-tight) var(--ease-settle);
+}
+
+/* A static mask around a moving band: the mask has to stay put on the figure
+   while the light travels through it, so they cannot be one element.
+
+   Its mask is a small, soft copy of the material mask (statue-scan-mask.png,
+   160px wide). Chrome counts a mask's image as an image paint for Largest
+   Contentful Paint, and with the full-size mask the scan became the page's LCP
+   at ~2.9s, where the hero subtitle has it at ~0.1s. */
+.digital-statue__scan {
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
+  overflow: hidden;
+  mix-blend-mode: screen;
+  mask: url('/animations/statue-scan-mask.png') no-repeat 0 0 / 100% 100%;
+}
+
+.digital-statue__scan::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 30%;
   /* The baked colour of the Rive mesh, set on the element by the component. */
   background: linear-gradient(
-      to top,
-      transparent,
-      rgba(var(--statue-surface-glow), 0.55) 45%,
-      rgba(var(--statue-surface-glow), 0.9) 50%,
-      rgba(var(--statue-surface-glow), 0.55) 55%,
-      transparent
-    )
-    no-repeat 0 135.7% / 100% 30%;
-  mix-blend-mode: screen;
-  mask: url('/animations/statue-digital-mask.png') no-repeat 0 0 / 100% 100%;
+    to top,
+    transparent,
+    rgba(var(--statue-surface-glow), 0.55) 45%,
+    rgba(var(--statue-surface-glow), 0.9) 50%,
+    rgba(var(--statue-surface-glow), 0.55) 55%,
+    transparent
+  );
   opacity: 0;
+  transform: translateY(316.7%);
+}
+
+.digital-statue[data-charge='on'] .digital-statue__scan::before {
   animation: statue-surface-scan var(--dur-materialize) var(--ease-settle) forwards;
 }
 
 @media (max-width: 1024px), (prefers-reduced-motion: reduce) {
-  .digital-statue__img::after { display: none; }
+  .digital-statue__scan { display: none; }
 }
+[data-mode='classic'] .digital-statue__scan { display: none; }

@@ -18,7 +18,8 @@ One native Rive artboard, driven by the looping `Ambient` state machine:
   Their trajectories are checked against the photo alpha to avoid marble.
 
 `npm run build:hero-rive` regenerates the editable RML, verifies/inspects it,
-and exports `public/animations/hero.riv`. Requires the Rive CLI. Ordinary site
+and exports `public/animations/hero.riv`. Requires the Rive CLI and `cwebp`
+(libwebp: `brew install webp`), which encodes the layers as exact lossless WebP. Ordinary site
 builds use the checked-in binary and do not require Rive or an account.
 
 Edit `scripts/build-hero-rive.mjs` for reproducible changes, or open this project

@@ -188,6 +188,12 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
         void downloads.catch(() => {});
         void imageReady.then(() => afterEntrances(abort.signal)).then(async () => {
           if (cancelled) return;
+          // The charge-up starts with the last letters, not with Rive. Give the
+          // compositor two frames to take its band before the runtime's
+          // start-up holds the main thread.
+          container.dataset.charge = 'on';
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          if (cancelled) return;
           fallbackTimer = window.setTimeout(fallback, 10000);
           try {
             const [loaded, buffer] = await downloads;
@@ -239,6 +245,7 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       clearTimeout(fallbackTimer);
       cancelAnimationFrame(revealFrame);
       delete container.dataset.surface;
+      delete container.dataset.charge;
       observer.disconnect();
       resize.disconnect();
       window.removeEventListener('pagehide', hidePage);
@@ -267,6 +274,7 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
         <div className="digital-statue__surface">
           <canvas key={canvasKey} ref={surfaceRef} />
         </div>
+        <div className="digital-statue__scan" />
       </div>
     </div>
   );

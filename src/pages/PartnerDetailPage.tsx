@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import type { JSX } from 'react';
+import type { CSSProperties, JSX } from 'react';
 import { useTranslation } from '@/i18n';
 import { Navbar, Container, Card, EditableText, AuthNavControl } from '@/components';
 import { VkmLogo } from '@/assets/VkmLogo';
@@ -44,7 +44,7 @@ interface PartnerDetailPageProps {
  * exists to remove.
  */
 export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): JSX.Element {
-  const { n, avif, fallback } = partner;
+  const { n, avif, fallback, focus } = partner;
   const { t } = useTranslation();
 
   /*
@@ -111,6 +111,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
                   src={fallback}
                   alt={name}
                   className="partner-page__image"
+                  style={focus?.page ? ({ '--portrait-focus': focus.page } as CSSProperties) : undefined}
                   width={512}
                   height={640}
                   decoding="async"

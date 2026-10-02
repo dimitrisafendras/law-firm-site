@@ -200,8 +200,9 @@
      than 4/5 — nearer 1:2.6 — so `cover` scales the 512x640 source off its
      height and crops the sides. The head has to sit higher in the frame than it
      did in a squarer box or the crop takes the top of it; at 14% the eyeline
-     lands on the upper third at every supported height. */
-  object-position: center 14%;
+     lands on the upper third at every supported height. `--portrait-focus` is
+     a partner's own override (`focus.page` in partners.ts). */
+  object-position: center var(--portrait-focus, 14%);
   display: block;
 }
 

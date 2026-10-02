@@ -227,9 +227,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 20%;
+  /* `--portrait-focus` is a partner's own override (`focus.card` in
+     partners.ts), set inline on the image. */
+  object-position: center var(--portrait-focus, 20%);
   display: block;
-  transform-origin: center 20%;
+  transform-origin: center var(--portrait-focus, 20%);
 
   /* Toned to the page rather than left at the camera's white balance — see
      `portraitTone` in tokens.ts for why, and why it is one string. */
@@ -350,6 +352,16 @@
    * from 8.85:1 up.
    */
   color: var(--accent);
+
+  /*
+   * A plate again, but the scrim's black rather than an accent fill: it stops
+   * the label depending on how dark the photograph is at that spot (an office
+   * backdrop is busier than a studio one), and keeps the `--accent`-on-black
+   * pairing argued above in every palette.
+   */
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  background: rgb(0 0 0 / 62%);
 }
 
 /* ─── Text ─────────────────────────────────────────────────────────────────── */

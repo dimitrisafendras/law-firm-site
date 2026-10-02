@@ -8,6 +8,13 @@ export interface Partner {
   n: 1 | 2 | 3;
   avif: string;
   fallback: string;
+  /**
+   * Vertical `object-position` for a photograph framed differently from the
+   * rest, per surface. Omitted, each surface keeps its own default (20% on the
+   * card, 14% on the detail page) — those were tuned for head-and-shoulders
+   * crops, and a portrait shot wider than that sinks the head down the frame.
+   */
+  focus?: { card?: string; page?: string };
 }
 
 /*
@@ -18,7 +25,9 @@ export interface Partner {
  */
 export const partners: Partner[] = [
   { n: 1, avif: partnerMaleAvif, fallback: partnerMaleImg },
-  { n: 2, avif: partnerFemaleAvif, fallback: partnerFemaleImg },
+  // Cropped hair-to-waist from a full-length frame: pinned to the top edge
+  // on both surfaces so the defaults' headroom does not reappear.
+  { n: 2, avif: partnerFemaleAvif, fallback: partnerFemaleImg, focus: { card: '0%', page: '0%' } },
   { n: 3, avif: partnerMaleAvif, fallback: partnerMaleImg },
 ];
 

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { useTranslation } from '@/i18n';
 import { useEditMode } from '@/lib/edit-mode';
 import { Card, EditableText } from '@/components';
@@ -43,7 +44,7 @@ interface PartnerCardProps {
  * until edit mode is switched off.
  */
 export function PartnerCard({ partner, headingLevel: Heading = 'h3' }: PartnerCardProps) {
-  const { n, avif, fallback } = partner;
+  const { n, avif, fallback, focus } = partner;
   const { t } = useTranslation();
   const { canEdit } = useEditMode();
 
@@ -66,6 +67,7 @@ export function PartnerCard({ partner, headingLevel: Heading = 'h3' }: PartnerCa
               src={fallback}
               alt={t(`attorney${n}Name`)}
               className="partner-ethos__image"
+              style={focus?.card ? ({ '--portrait-focus': focus.card } as CSSProperties) : undefined}
               width={512}
               height={640}
               loading="lazy"

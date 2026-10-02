@@ -32,11 +32,11 @@ async function decodeArtwork(element: Element) {
 // nothing on the main thread competes with the words and it is normally ready
 // by then.
 //
-// A tenth of a second early, so the light reads as the words' landing setting
+// A fifth of a second early, so the light reads as the words' landing setting
 // it off rather than as something that follows it. The tail of the word's
 // curve is a settle by then — it is fully visible — and with the runtime off
 // the main thread starting under it costs the word nothing.
-const LIGHT_LEAD_MS = 100;
+const LIGHT_LEAD_MS = 200;
 
 // When the hero's last word lands, from the running `.spawn-text` animations;
 // without them, when every finite document-timeline animation has finished

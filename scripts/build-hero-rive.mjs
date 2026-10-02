@@ -135,6 +135,26 @@ for(let y=0;y<1876;y++)for(let x=0;x<1400;x++){
 }
 const wireColour=ULTRAMARINE_COLORS.accentBright.split(',').map(Number);
 const svgPath=points=>`M${points.map(([x,y])=>`${x.toFixed(2)},${y.toFixed(2)}`).join(' L')}`;
+// The tracks below are sampled every 5 frames, which stores hundreds of
+// points on stretches that are straight lines (the drift is linear between
+// wraps). Douglas-Peucker keeps only the samples linear interpolation needs to
+// stay within `tolerance` of every original sample: a smaller file that the
+// runtime also parses faster. Positions use a negligible tolerance, so they
+// are reproduced exactly; opacity uses a few thousandths.
+function keyframes(samples,tolerance){
+  const keep=new Uint8Array(samples.length);keep[0]=keep[samples.length-1]=1;
+  const stack=[[0,samples.length-1]];
+  while(stack.length){
+    const [a,b]=stack.pop();let worst=-1,at=-1;
+    const [fa,va]=samples[a],[fb,vb]=samples[b];
+    for(let k=a+1;k<b;k++){
+      const [f,v]=samples[k],error=Math.abs(v-(va+(vb-va)*(f-fa)/(fb-fa)));
+      if(error>worst){worst=error;at=k;}
+    }
+    if(worst>tolerance){keep[at]=1;stack.push([a,at],[at,b]);}
+  }
+  return samples.filter((_,k)=>keep[k]).map(([f,v])=>`<KeyFrameDouble frame="${f}" value="${v.toFixed(5)}" interpolationType="linear"/>`).join('');
+}
 let content='',timeline='',assets='';
 async function texture(name,paths,rest=false,customSvg=null,wireGroup=null){
   const strokes=paths.map(p=>`${svgPath(p)} Z`).join(' ');
@@ -166,8 +186,10 @@ async function texture(name,paths,rest=false,customSvg=null,wireGroup=null){
   let left=ri.width,top=ri.height,right=0,bottom=0;
   for(let y=0;y<ri.height;y++)for(let x=0;x<ri.width;x++)if(rgba[(y*ri.width+x)*4+3]>0){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}
   if(right<left)return '';
-  const file=`layers/${name}.png`,asset=id();
-  const png=await sharp(rgba,{raw:{width:ri.width,height:ri.height,channels:4}}).extract({left,top,width:right-left+1,height:bottom-top+1}).png().toBuffer();
+  // Lossless WebP: the same pixels as the PNG this used to write, ~40% fewer
+  // bytes. The runtime hands embedded images to the browser to decode.
+  const file=`layers/${name}.webp`,asset=id();
+  const png=await sharp(rgba,{raw:{width:ri.width,height:ri.height,channels:4}}).extract({left,top,width:right-left+1,height:bottom-top+1}).webp({lossless:true,effort:6}).toBuffer();
   // The Windows preview watcher can briefly hold a texture open while reloading.
   for(let attempt=0;;attempt++){
     try { writeFileSync(`art/rive/hero/${file}`,png);break; }
@@ -187,11 +209,10 @@ for(let i=0;i<groups.length;i++){
   // A stable light floor preserves the material instead of blinking facets.
   const phase=random()*Math.PI*2,secondaryPhase=random()*Math.PI*2;
   const speed=12+i%3;
-  const frames=Array.from({length:2305},(_,k)=>{
+  const frames=keyframes(Array.from({length:2305},(_,k)=>{
     const t=k/288*Math.PI*2*1.125;
-    const opacity=.52+.32*Math.sin(t*speed+phase)+.09*Math.sin(t*(speed+1)+secondaryPhase);
-    return `<KeyFrameDouble frame="${k*5}" value="${opacity.toFixed(5)}" interpolationType="linear"/>`;
-  }).join('');
+    return [k*5,.52+.32*Math.sin(t*speed+phase)+.09*Math.sin(t*(speed+1)+secondaryPhase)];
+  }),.003);
   timeline+=`<KeyedObject objectId="${node}"><KeyedProperty propertyKey="18">${frames}</KeyedProperty></KeyedObject>`;
 }
 content+=await texture('rest',facets,true);
@@ -217,10 +238,10 @@ for(const [i,{x,y,dx,dy}] of manifest.entries()){
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1876" viewBox="0 0 700 938"><path d="M${x-s},${y-s} L${x+s},${y-s*.6} L${x+s*.7},${y+s} L${x-s},${y+s*.5}Z" fill="${light}" fill-opacity=".38" stroke="${core}" stroke-width=".55"/><path d="M${x-s},${y-s} L${x},${y} L${x+s*.7},${y+s}" stroke="${glow}" stroke-width=".4" fill="none"/></svg>`;
   content+=`<Node id="${node}" name="Manifest fragment ${i}">${await texture(`manifest-${i}`,[],false,svg)}</Node>`;
   const channels={13:t=>dx*(1-t),14:t=>dy*(1-t),18:t=>.72*Math.pow(Math.sin(Math.PI*t),2)};
-  const tracks=Object.entries(channels).map(([key,value])=>`<KeyedProperty propertyKey="${key}">${Array.from({length:2305},(_,k)=>{
+  const tracks=Object.entries(channels).map(([key,value])=>`<KeyedProperty propertyKey="${key}">${keyframes(Array.from({length:2305},(_,k)=>{
     const progress=(k/288*(4+i%2)+i*.137)%1;
-    return `<KeyFrameDouble frame="${k*5}" value="${value(progress).toFixed(5)}" interpolationType="linear"/>`;
-  }).join('')}</KeyedProperty>`).join('');
+    return [k*5,value(progress)];
+  }),key==='18'?.003:1e-4)}</KeyedProperty>`).join('');
   timeline+=`<KeyedObject objectId="${node}">${tracks}</KeyedObject>`;
 }
 const fire=await buildFire(id);

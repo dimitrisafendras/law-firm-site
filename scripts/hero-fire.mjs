@@ -43,8 +43,10 @@ export async function buildFire(id){
         }
         rgba[p+3]=Math.round(alpha*225);
       }
-      const name=`fire-${pan}-${frame}`,file=`layers/${name}.png`,asset=id(),node=id();
-      await sharp(rgba,{raw:{width,height,channels:4}}).blur(.45).png({palette:true,quality:95,dither:0}).toFile(`art/rive/hero/${file}`);
+      const name=`fire-${pan}-${frame}`,file=`layers/${name}.webp`,asset=id(),node=id();
+      // Quantised exactly as before, then stored as lossless WebP (smaller).
+      const quantised=await sharp(rgba,{raw:{width,height,channels:4}}).blur(.45).png({palette:true,quality:95,dither:0}).toBuffer();
+      await sharp(quantised).webp({lossless:true,effort:6}).toFile(`art/rive/hero/${file}`);
       assets+=`<ImageAsset id="${asset}" name="${name}" file="${file}"/>`;
       content+=`<Node id="${node}" name="${name}" opacity="0"><Image assetId="${asset}" x="${cx-36}" y="319" originX="0" originY="0" scaleX="0.5" scaleY="0.5"/></Node>`;
       // 240 samples / eight seconds (30 fps), linearly blended. Integer frame

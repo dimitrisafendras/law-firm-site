@@ -103,10 +103,10 @@
  * surface's mask is 220% of the box with its opaque half at the bottom, so
  * `mask-position` 0 -> 100% carries the edge from 1.1 boxes down to 0.1 above;
  * the band is 30% tall, so its centre follows that edge at background-position
- * 135.7% -> -35.7%. The start is held one tight beat: the first frame Rive
- * draws compiles its shaders, ~0.1s, and that stall should land while nothing
- * is visibly moving. Everything here is on the ready state only, so hiding for
- * a navigation stays instant.
+ * 135.7% -> -35.7%. No hold before it: the component only marks the surface
+ * ready two frames after Rive's first draw, whose shader compile (~0.1s) has
+ * then already happened with the layer hidden. Everything here is on the ready
+ * state only, so hiding for a navigation stays instant.
  */
 @keyframes statue-surface-charge {
   from {
@@ -127,8 +127,7 @@
 
 .digital-statue[data-surface='ready'] .digital-statue__surface {
   mask-size: 100% 220%;
-  animation: statue-surface-charge calc(var(--dur-materialize) * 1.5) var(--ease-settle)
-    var(--seq-beat-tight) backwards;
+  animation: statue-surface-charge var(--dur-materialize) var(--ease-settle) backwards;
 }
 
 .digital-statue[data-surface='ready'] .digital-statue__img::after {
@@ -150,8 +149,7 @@
   mix-blend-mode: screen;
   mask: url('/animations/statue-digital-mask.png') no-repeat 0 0 / 100% 100%;
   opacity: 0;
-  animation: statue-surface-scan calc(var(--dur-materialize) * 1.5) var(--ease-settle)
-    var(--seq-beat-tight) forwards;
+  animation: statue-surface-scan var(--dur-materialize) var(--ease-settle) forwards;
 }
 
 @media (max-width: 1024px), (prefers-reduced-motion: reduce) {

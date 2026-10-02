@@ -27,11 +27,12 @@ async function decodeArtwork(element: Element) {
   throw new Error('Statue artwork could not be decoded');
 }
 
-// Rive's start-up — WASM compile, parsing the .riv, first shader compile — is
-// ~0.5s of main-thread work on a cold visit. Run during the hero entrance, it
+// Rive's start-up — instantiating the WASM, parsing the .riv, first shader
+// compile — is ~0.4s of main-thread work. Run during the hero entrance, it
 // stalls every main-thread animation in it, so it waits until the page's
 // finite document-timeline animations have played out (scroll-driven ones
-// never finish and are excluded), then for an idle moment.
+// never finish and are excluded) — and not a moment longer: an idle-callback
+// wait here once cost half a second for nothing.
 function afterEntrances(signal: AbortSignal): Promise<void> {
   const running = (document.getAnimations?.() ?? []).filter(animation =>
     animation.timeline === document.timeline &&
@@ -40,9 +41,7 @@ function afterEntrances(signal: AbortSignal): Promise<void> {
   const settled = Promise.allSettled(running.map(animation => animation.finished));
   const cap = new Promise(resolve => setTimeout(resolve, 4000));
   return Promise.race([settled, cap]).then(() => new Promise<void>(resolve => {
-    if (signal.aborted) return;
-    if ('requestIdleCallback' in window) requestIdleCallback(() => resolve(), { timeout: 1000 });
-    else setTimeout(resolve, 0);
+    if (!signal.aborted) resolve();
   }));
 }
 
@@ -68,6 +67,13 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     let inView = false;
     let assetsReady = false;
     let pageHidden = false;
+    // Every Rive frame copies the WebGL result into a 2D canvas, which makes
+    // the main thread wait on the GPU. The first time a glass-heavy section
+    // scrolls into view the GPU is busy painting it, and that wait turned into
+    // 140-280ms frames. The ambient light is slow enough that holding it still
+    // for the length of a scroll is invisible, so it does.
+    let scrolling = false;
+    let scrollTimer = 0;
     let revealFrame = 0;
     const abort = new AbortController();
     container.dataset.scene = 'loading';
@@ -89,7 +95,7 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     let fallbackTimer = window.setTimeout(fallback, 10000);
     const sync = () => {
       for (const rive of instances) {
-        if (!pageHidden && assetsReady && container.dataset.surface !== 'failed' && inView && !document.hidden && !motion.matches && desktop.matches) rive.play('Ambient');
+        if (!pageHidden && !scrolling && assetsReady && container.dataset.surface !== 'failed' && inView && !document.hidden && !motion.matches && desktop.matches) rive.play('Ambient');
         else rive.pause();
       }
     };
@@ -129,13 +135,23 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
         onLoadError: fallback,
         onAdvance: () => {
           if (!assetsReady || cancelled || pageHidden || revealFrame) return;
-          // Advance fires before draw; reveal on the following presentation frame.
-          revealFrame = requestAnimationFrame(() => {
+          // Advance fires before draw, and Rive's first frames compile shaders
+          // and upload textures — 100ms+ each. Revealing on a fixed frame count
+          // still caught the tail of that and the entrance stuttered as it
+          // began, so wait until the layer is actually rendering smoothly:
+          // three consecutive short frames, capped so it can never hang.
+          const began = performance.now();
+          let last = began, smooth = 0;
+          const settle = (now: number) => {
             if (cancelled || pageHidden || container.dataset.surface === 'failed') return;
+            smooth = now - last < 25 ? smooth + 1 : 0;
+            last = now;
+            if (smooth < 3 && now - began < 500) { revealFrame = requestAnimationFrame(settle); return; }
             clearTimeout(fallbackTimer);
             container.dataset.surface = 'ready';
             reveal();
-          });
+          };
+          revealFrame = requestAnimationFrame(settle);
         },
       });
       instances.push(rive);
@@ -209,6 +225,12 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     window.addEventListener('pagehide', hidePage);
     window.addEventListener('pageshow', showPage);
     document.addEventListener('visibilitychange', sync);
+    const onScroll = () => {
+      if (!scrolling) { scrolling = true; sync(); }
+      clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => { scrolling = false; sync(); }, 250);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
     motion.addEventListener('change', maybeStart);
     desktop.addEventListener('change', maybeStart);
     return () => {
@@ -222,6 +244,8 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       window.removeEventListener('pagehide', hidePage);
       window.removeEventListener('pageshow', showPage);
       document.removeEventListener('visibilitychange', sync);
+      window.removeEventListener('scroll', onScroll);
+      clearTimeout(scrollTimer);
       motion.removeEventListener('change', maybeStart);
       desktop.removeEventListener('change', maybeStart);
       for (const rive of instances) rive.cleanup();

@@ -27,18 +27,41 @@ async function decodeArtwork(element: Element) {
   throw new Error('Statue artwork could not be decoded');
 }
 
-// The light layer joins as the hero's entrance ends: the page's finite
-// document-timeline animations (scroll-driven ones never finish and are
-// excluded). Rive itself warms up in a worker meanwhile (statue.worker.ts), so
-// by then it is normally ready and the light starts as the last word lands.
+// The light layer joins as the hero's entrance ends: just before the last of
+// its words lands. Rive warms up in a worker meanwhile (statue.worker.ts), so
+// nothing on the main thread competes with the words and it is normally ready
+// by then.
+//
+// A tenth of a second early, so the light reads as the words' landing setting
+// it off rather than as something that follows it. The tail of the word's
+// curve is a settle by then — it is fully visible — and with the runtime off
+// the main thread starting under it costs the word nothing.
+const LIGHT_LEAD_MS = 100;
+
+// When the hero's last word lands, from the running `.spawn-text` animations;
+// without them, when every finite document-timeline animation has finished
+// (scroll-driven ones never finish and are excluded).
 function afterEntrances(signal: AbortSignal): Promise<void> {
   const running = (document.getAnimations?.() ?? []).filter(animation =>
     animation.timeline === document.timeline &&
     animation.playState === 'running' &&
     animation.effect?.getTiming().iterations !== Infinity);
-  const settled = Promise.allSettled(running.map(animation => animation.finished));
+  const words = running.filter(animation => {
+    const target = (animation.effect as KeyframeEffect | null)?.target;
+    return target instanceof Element && target.closest('.spawn-text') !== null;
+  });
+  // A word still pending has no start time yet; `ready` is when it gets one.
+  const landed = Promise.all(words.map(animation => animation.ready)).then(() => {
+    const ends = words.map(animation => {
+      const end = animation.effect?.getComputedTiming().endTime;
+      return animation.startTime == null || typeof end !== 'number' ? NaN : Number(animation.startTime) + end;
+    });
+    return words.length && ends.every(Number.isFinite)
+      ? new Promise(resolve => setTimeout(resolve, Math.max(0, Math.max(...ends) - LIGHT_LEAD_MS - performance.now())))
+      : Promise.allSettled((words.length ? words : running).map(animation => animation.finished));
+  });
   const cap = new Promise(resolve => setTimeout(resolve, 4000));
-  return Promise.race([settled, cap]).then(() => new Promise<void>(resolve => {
+  return Promise.race([landed, cap]).then(() => new Promise<void>(resolve => {
     if (!signal.aborted) resolve();
   }));
 }

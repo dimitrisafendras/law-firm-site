@@ -77,6 +77,31 @@ it('lights the figure, glare and mesh together, once the worker is warm and the 
   }
 });
 
+it('lights the figure just before the last word lands, not after every entrance', async () => {
+  const title = document.body.appendChild(document.createElement('span'));
+  title.className = 'spawn-text';
+  const word = title.appendChild(document.createElement('span'));
+  const never = new Promise<void>(() => {});
+  const landing = {
+    timeline: document.timeline, playState: 'running', startTime: performance.now(), ready: Promise.resolve(),
+    effect: { target: word, getTiming: () => ({ iterations: 1 }), getComputedTiming: () => ({ endTime: 150 }) },
+    finished: never,
+  };
+  const slower = {
+    timeline: document.timeline, playState: 'running',
+    effect: { getTiming: () => ({ iterations: 1 }) }, finished: never,
+  };
+  document.getAnimations = () => [landing, slower] as unknown as Animation[];
+  try {
+    const { scene, worker } = await mount();
+    worker.reply({ type: 'warm' });
+    await waitFor(() => expect(scene).toHaveAttribute('data-charge', 'on'));
+  } finally {
+    delete (document as { getAnimations?: unknown }).getAnimations;
+    title.remove();
+  }
+});
+
 it('shows only the photograph when the worker fails', async () => {
   vi.spyOn(console, 'warn').mockImplementation(() => {});
   const { scene, worker } = await mount();

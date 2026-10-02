@@ -1,68 +1,59 @@
 import { act, render, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import type { ImageAsset, RiveParameters } from '@rive-app/webgl2';
 import { ThemeProvider } from '@/lib/theme';
 import { setMatchMedia, triggerIntersection } from '@/test/setup';
 import { DigitalStatue } from './DigitalStatue';
 
-const mock = vi.hoisted(() => ({
-  params: null as RiveParameters | null,
-  decode: vi.fn(),
-  play: vi.fn(),
-  cleanup: vi.fn(),
-}));
-vi.mock('@rive-app/webgl2', () => ({
-  Rive: class {
-    constructor(params: RiveParameters) { mock.params = params; }
-    play = mock.play;
-    pause = vi.fn();
-    cleanup = mock.cleanup;
-    resizeDrawingSurfaceToCanvas = vi.fn();
-  },
-  Layout: class {}, Fit: { Fill: 0 }, Alignment: { Center: 0 },
-  DrawOptimizationOptions: { AlwaysDraw: 0 },
-  RuntimeLoader: { setWasmUrl: vi.fn(), setWasmFallbackUrl: vi.fn() },
-  decodeImage: mock.decode,
-}));
+// The light layer runs in a worker (statue.worker.ts); the component only
+// hands it the canvas and listens. This stands in for that worker.
+const workers: FakeWorker[] = [];
+class FakeWorker {
+  messages: { type: string; playing?: boolean }[] = [];
+  transferred: unknown[] = [];
+  onmessage: ((event: MessageEvent) => void) | null = null;
+  onerror: ((event: ErrorEvent) => void) | null = null;
+  terminated = false;
+  constructor() { workers.push(this); }
+  postMessage(message: { type: string }, transfer: unknown[] = []) {
+    this.messages.push(message);
+    this.transferred.push(...transfer);
+  }
+  terminate() { this.terminated = true; }
+  reply(data: unknown) { act(() => this.onmessage?.({ data } as MessageEvent)); }
+  get running() { return this.messages.filter(m => m.type === 'run').at(-1)?.playing ?? false; }
+}
 
 beforeEach(() => {
-  mock.params = null;
-  mock.play.mockClear();
+  workers.length = 0;
   setMatchMedia(query => query.includes('min-width'));
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, arrayBuffer: async () => new ArrayBuffer(1) }));
   vi.spyOn(window, 'getComputedStyle').mockReturnValue({ backgroundImage: 'url("/statue.avif")', getPropertyValue: () => '' } as unknown as CSSStyleDeclaration);
   vi.stubGlobal('Image', class { decode() { return Promise.resolve(); } });
+  vi.stubGlobal('Worker', FakeWorker);
+  HTMLCanvasElement.prototype.transferControlToOffscreen = function () { return { offscreen: this } as unknown as OffscreenCanvas; };
 });
-afterEach(() => { vi.unstubAllGlobals(); });
+afterEach(() => {
+  vi.unstubAllGlobals();
+  delete (HTMLCanvasElement.prototype as { transferControlToOffscreen?: unknown }).transferControlToOffscreen;
+});
 
 async function mount() {
   const view = render(<ThemeProvider><DigitalStatue /></ThemeProvider>);
   act(() => triggerIntersection());
-  await waitFor(() => expect(mock.params).not.toBeNull());
-  return { ...view, scene: view.container.querySelector('.digital-statue')! };
+  await waitFor(() => expect(workers).toHaveLength(1));
+  const scene = view.container.querySelector('.digital-statue')!;
+  return { ...view, scene, worker: workers[0] };
 }
 
-it('reveals the photograph without waiting for Rive, and the light layer only after its textures and first frame', async () => {
-  let resolveTexture!: (image: { unref: () => void }) => void;
-  mock.decode.mockReturnValue(new Promise(resolve => { resolveTexture = resolve; }));
-  const { scene } = await mount();
-  expect(scene).toHaveAttribute('data-scene', 'ready');
-  const asset = { isImage: true, setRenderImage: vi.fn() };
-  mock.params!.assetLoader!(asset as unknown as ImageAsset, new Uint8Array(1));
-  mock.params!.onLoad!({ type: 'load' } as never);
-  await act(async () => {});
+it('hands the canvas to the worker straight away, and reveals the photograph without waiting for it', async () => {
+  const { scene, worker } = await mount();
+  const init = worker.messages[0];
+  expect(init.type).toBe('init');
+  expect(worker.transferred).toHaveLength(1);
+  await waitFor(() => expect(scene).toHaveAttribute('data-scene', 'ready'));
   expect(scene).toHaveAttribute('data-surface', 'loading');
-  expect(mock.play).not.toHaveBeenCalled();
-  const image = { unref: vi.fn() };
-  await act(async () => resolveTexture(image));
-  expect(asset.setRenderImage).toHaveBeenCalledWith(image);
-  expect(image.unref).toHaveBeenCalled();
-  expect(scene).toHaveAttribute('data-surface', 'loading');
-  mock.params!.onAdvance!({ type: 'advance' } as never);
-  await waitFor(() => expect(scene).toHaveAttribute('data-surface', 'ready'));
 });
 
-it('does not start the Rive runtime until running entrance animations finish', async () => {
+it('lights the figure, glare and mesh together, once the worker is warm and the entrance is over', async () => {
   let finish!: () => void;
   const entrance = {
     timeline: document.timeline, playState: 'running',
@@ -71,53 +62,48 @@ it('does not start the Rive runtime until running entrance animations finish', a
   };
   document.getAnimations = () => [entrance as unknown as Animation];
   try {
-    const view = render(<ThemeProvider><DigitalStatue /></ThemeProvider>);
-    act(() => triggerIntersection());
-    const scene = view.container.querySelector('.digital-statue')!;
-    await waitFor(() => expect(scene).toHaveAttribute('data-scene', 'ready'));
-    await act(async () => { await new Promise(resolve => setTimeout(resolve, 50)); });
-    expect(mock.params).toBeNull();
+    const { scene, worker } = await mount();
+    worker.reply({ type: 'warm' });
+    await act(async () => { await new Promise(resolve => setTimeout(resolve, 20)); });
+    expect(scene).toHaveAttribute('data-surface', 'loading');
+    expect(scene).not.toHaveAttribute('data-charge');
+    expect(worker.running).toBe(false);
     await act(async () => finish());
-    await waitFor(() => expect(mock.params).not.toBeNull());
+    await waitFor(() => expect(scene).toHaveAttribute('data-surface', 'ready'));
+    expect(scene).toHaveAttribute('data-charge', 'on');
+    expect(worker.running).toBe(true);
   } finally {
     delete (document as { getAnimations?: unknown }).getAnimations;
   }
 });
 
-it('shows only the photograph when Rive fails', async () => {
-  const { scene } = await mount();
-  act(() => mock.params!.onLoadError!({ type: 'loaderror' } as never));
+it('shows only the photograph when the worker fails', async () => {
+  vi.spyOn(console, 'warn').mockImplementation(() => {});
+  const { scene, worker } = await mount();
+  worker.reply({ type: 'error', message: 'no webgl2' });
   expect(scene).toHaveAttribute('data-scene', 'ready');
   expect(scene).toHaveAttribute('data-surface', 'failed');
 });
 
-it('does not attach a late texture to a destroyed instance', async () => {
-  let resolveTexture!: (image: { unref: () => void }) => void;
-  mock.decode.mockReturnValue(new Promise(resolve => { resolveTexture = resolve; }));
-  const { unmount } = await mount();
-  const asset = { isImage: true, setRenderImage: vi.fn() };
-  mock.params!.assetLoader!(asset as unknown as ImageAsset, new Uint8Array(1));
-  unmount();
-  const image = { unref: vi.fn() };
-  await act(async () => resolveTexture(image));
-  expect(asset.setRenderImage).not.toHaveBeenCalled();
-  expect(image.unref).toHaveBeenCalled();
+it('shows only the photograph where a canvas cannot be drawn off the main thread', async () => {
+  delete (HTMLCanvasElement.prototype as { transferControlToOffscreen?: unknown }).transferControlToOffscreen;
+  const view = render(<ThemeProvider><DigitalStatue /></ThemeProvider>);
+  act(() => triggerIntersection());
+  const scene = view.container.querySelector('.digital-statue')!;
+  await waitFor(() => expect(scene).toHaveAttribute('data-surface', 'failed'));
+  expect(workers).toHaveLength(0);
 });
 
-
-it('uses a copied 2D presentation surface and hides it during navigation', async () => {
-  const { scene } = await mount();
-  expect(mock.params!.useOffscreenRenderer).toBe(true);
-  mock.params!.onLoad!({ type: 'load' } as never);
-  await act(async () => {});
-  mock.params!.onAdvance!({ type: 'advance' } as never);
+it('hides and pauses the light during navigation, and terminates the worker on unmount', async () => {
+  const { scene, worker, unmount } = await mount();
+  worker.reply({ type: 'warm' });
   await waitFor(() => expect(scene).toHaveAttribute('data-surface', 'ready'));
   act(() => window.dispatchEvent(new Event('pagehide')));
   expect(scene).toHaveAttribute('data-surface', 'loading');
-  // An outgoing frame cannot make the canvas visible again.
-  mock.params!.onAdvance!({ type: 'advance' } as never);
-  expect(scene).toHaveAttribute('data-surface', 'loading');
+  expect(worker.running).toBe(false);
   act(() => window.dispatchEvent(new Event('pageshow')));
-  mock.params!.onAdvance!({ type: 'advance' } as never);
-  await waitFor(() => expect(scene).toHaveAttribute('data-surface', 'ready'));
+  expect(scene).toHaveAttribute('data-surface', 'ready');
+  expect(worker.running).toBe(true);
+  unmount();
+  expect(worker.terminated).toBe(true);
 });

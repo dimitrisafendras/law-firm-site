@@ -6,8 +6,8 @@ import { artworkFor } from './statueArtwork';
 // The Rive mesh is baked in this blue whichever statue shows (see
 // scripts/build-hero-rive.mjs), so its entrance scan is too.
 import { ULTRAMARINE_COLORS } from './sceneColors';
-import type { ImageAsset, Rive } from '@rive-app/webgl2';
 import riveWasm from '@rive-app/webgl2/rive.wasm?url';
+import type { StatueWorkerMessage } from './statue.worker';
 import './DigitalStatue.css';
 
 // Decode the CSS-selected artwork without moving palette selection into React.
@@ -27,15 +27,10 @@ async function decodeArtwork(element: Element) {
   throw new Error('Statue artwork could not be decoded');
 }
 
-// Rive's start-up — instantiating the WASM, parsing the .riv, first shader
-// compile — is ~0.4s of main-thread work, and it waits until the page's finite
-// document-timeline animations have played out (scroll-driven ones never
-// finish and are excluded) — and not a moment longer: an idle-callback wait
-// here once cost half a second for nothing.
-//
-// Not a moment sooner either. Starting it a beat early, during the subtitle's
-// last words, measured fine in a trace — every hero entrance is composited —
-// and still visibly stuttered those words on screen.
+// The light layer joins as the hero's entrance ends: the page's finite
+// document-timeline animations (scroll-driven ones never finish and are
+// excluded). Rive itself warms up in a worker meanwhile (statue.worker.ts), so
+// by then it is normally ready and the light starts as the last word lands.
 function afterEntrances(signal: AbortSignal): Promise<void> {
   const running = (document.getAnimations?.() ?? []).filter(animation =>
     animation.timeline === document.timeline &&
@@ -47,6 +42,12 @@ function afterEntrances(signal: AbortSignal): Promise<void> {
     if (!signal.aborted) resolve();
   }));
 }
+
+// The worker draws straight into the page's canvas. Without OffscreenCanvas
+// there is no light layer, only the photograph — which is the whole figure.
+const offscreenSupported = () =>
+  typeof Worker !== 'undefined' && typeof HTMLCanvasElement !== 'undefined' &&
+  'transferControlToOffscreen' in HTMLCanvasElement.prototype;
 
 // Art lighting, deliberately independent of the page palette.
 const mobileBreakpoint = parseInt(breakpoints.mobile, 10);
@@ -63,21 +64,21 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     if (!container) return;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const desktop = window.matchMedia(`(min-width: ${mobileBreakpoint + 1}px)`);
-    const instances: Rive[] = [];
-    let runtime: typeof import('@rive-app/webgl2');
+    let worker: Worker | null = null;
     let cancelled = false;
     let started = false;
     let inView = false;
-    let assetsReady = false;
+    let warm = false;
+    let entered = false;
     let pageHidden = false;
-    // Every Rive frame copies the WebGL result into a 2D canvas, which makes
-    // the main thread wait on the GPU. The first time a glass-heavy section
-    // scrolls into view the GPU is busy painting it, and that wait turned into
-    // 140-280ms frames. The ambient light is slow enough that holding it still
-    // for the length of a scroll is invisible, so it does.
+    let playing = false;
+    // The light pauses for the length of a scroll. It used to be because each
+    // frame made the main thread wait on the GPU; in the worker it does not,
+    // but the GPU is still shared with the first paint of every glass-heavy
+    // section, and the ambient light is slow enough that holding it is
+    // invisible.
     let scrolling = false;
     let scrollTimer = 0;
-    let revealFrame = 0;
     const abort = new AbortController();
     container.dataset.scene = 'loading';
     container.dataset.surface = 'loading';
@@ -87,124 +88,75 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     const reveal = () => {
       if (!cancelled && !pageHidden) container.dataset.scene = 'ready';
     };
+    const send = (message: StatueWorkerMessage, transfer: Transferable[] = []) => worker?.postMessage(message, transfer);
+    const sync = () => {
+      const next = warm && entered && !pageHidden && !scrolling && container.dataset.surface === 'ready' &&
+        inView && !document.hidden && !motion.matches && desktop.matches;
+      if (next !== playing) { playing = next; send({ type: 'run', playing }); }
+    };
     const fallback = () => {
       if (cancelled) return;
       container.dataset.surface = 'failed';
       clearTimeout(fallbackTimer);
-      for (const rive of instances) rive.pause();
+      sync();
       reveal();
     };
     // A failed or stalled runtime must never leave the photograph hidden.
-    let fallbackTimer = window.setTimeout(fallback, 10000);
-    const sync = () => {
-      for (const rive of instances) {
-        if (!pageHidden && !scrolling && assetsReady && container.dataset.surface !== 'failed' && inView && !document.hidden && !motion.matches && desktop.matches) rive.play('Ambient');
-        else rive.pause();
+    const fallbackTimer = window.setTimeout(fallback, 10000);
+    // The glare and the light it switches on are one event: the band climbs
+    // the figure and the live mesh appears right behind it. Both wait for the
+    // entrance to finish and for the worker to be rendering smoothly.
+    const lightUp = () => {
+      if (cancelled || pageHidden || !warm || !entered || container.dataset.surface === 'failed') return;
+      clearTimeout(fallbackTimer);
+      container.dataset.charge = 'on';
+      container.dataset.surface = 'ready';
+      reveal();
+      sync();
+    };
+    const drawingSize = () => {
+      const box = surfaceRef.current!.getBoundingClientRect();
+      const scale = Math.min(devicePixelRatio, 1.5);
+      return { width: Math.max(1, Math.round(box.width * scale)), height: Math.max(1, Math.round(box.height * scale)) };
+    };
+    const start = () => {
+      const canvas = surfaceRef.current;
+      if (!canvas || !offscreenSupported()) { fallback(); return; }
+      try {
+        const target = canvas.transferControlToOffscreen();
+        worker = new Worker(new URL('./statue.worker.ts', import.meta.url), { type: 'module' });
+        worker.onmessage = ({ data }: MessageEvent<{ type: 'warm' } | { type: 'error'; message: string }>) => {
+          if (data.type === 'warm') { warm = true; lightUp(); }
+          else { console.warn('Statue animation unavailable', data.message); fallback(); }
+        };
+        worker.onerror = event => { console.warn('Statue animation unavailable', event.message); fallback(); };
+        send({
+          type: 'init',
+          canvas: target,
+          riv: new URL(`${import.meta.env.BASE_URL}animations/hero.riv`, location.href).href,
+          wasm: new URL(riveWasm, location.href).href,
+          ...drawingSize(),
+        }, [target]);
+      } catch (error) {
+        console.warn('Statue animation unavailable', error);
+        fallback();
       }
     };
-    const add = (canvas: HTMLCanvasElement | null, artboard: string, buffer: ArrayBuffer) => {
-      if (!canvas || cancelled) return;
-      const { Rive, Layout, Fit, Alignment, DrawOptimizationOptions } = runtime;
-      const images: Promise<void>[] = [];
-      const rive = new Rive({
-        canvas, buffer, artboard, stateMachine: 'Ambient', autoplay: false,
-        // Copy completed GPU frames into a normal 2D canvas. A directly
-        // composited WebGL surface can flash opaque during rapid navigations.
-        useOffscreenRenderer: true,
-        layout: new Layout({ fit: Fit.Fill, alignment: Alignment.Center }),
-        // Ambient opacity changes are deliberately tiny. Present each active
-        // frame rather than relying on the runtime's dirty-scene heuristic.
-        drawingOptions: DrawOptimizationOptions.AlwaysDraw,
-        shouldDisableRiveListeners: true, enableRiveAssetCDN: false,
-        assetLoader: (asset, bytes) => {
-          if (!asset.isImage) return false;
-          const decoded = runtime.decodeImage(bytes).then(image => {
-            try {
-              if (!cancelled) (asset as ImageAsset).setRenderImage(image);
-            } finally { image.unref(); }
-          });
-          images.push(decoded);
-          void decoded.catch(fallback);
-          return true;
-        },
-        onLoad: () => {
-          void Promise.all([imageReady, ...images]).then(() => {
-            if (cancelled || container.dataset.surface === 'failed') return;
-            assetsReady = true;
-            rive.resizeDrawingSurfaceToCanvas(Math.min(devicePixelRatio, 1.5));
-            sync();
-          }).catch(fallback);
-        },
-        onLoadError: fallback,
-        onAdvance: () => {
-          if (!assetsReady || cancelled || pageHidden || revealFrame) return;
-          // Advance fires before draw, and Rive's first frames compile shaders
-          // and upload textures — 100ms+ each. Revealing on a fixed frame count
-          // still caught the tail of that and the entrance stuttered as it
-          // began, so wait until the layer is actually rendering smoothly:
-          // three consecutive short frames, capped so it can never hang.
-          const began = performance.now();
-          let last = began, smooth = 0;
-          const settle = (now: number) => {
-            if (cancelled || pageHidden || container.dataset.surface === 'failed') return;
-            smooth = now - last < 25 ? smooth + 1 : 0;
-            last = now;
-            if (smooth < 3 && now - began < 500) { revealFrame = requestAnimationFrame(settle); return; }
-            clearTimeout(fallbackTimer);
-            // The glare and the light it switches on are one event: the band
-            // climbs the figure and the live mesh appears right behind it, so
-            // the charge waits for this first smooth frame.
-            container.dataset.charge = 'on';
-            container.dataset.surface = 'ready';
-            reveal();
-          };
-          revealFrame = requestAnimationFrame(settle);
-        },
-      });
-      instances.push(rive);
-    };
-    // Only the network is done up front, all three requests in parallel and at
-    // low priority behind the page's own assets: it costs the main thread
-    // nothing. Instantiating the WASM is itself ~0.3s of main-thread work on a
-    // cold visit, so the runtime is not touched until afterEntrances. The WASM
-    // is fetched here only to warm the HTTP cache for RuntimeLoader's request.
-    const download = () => Promise.all([
-      import('@rive-app/webgl2'),
-      fetch(`${import.meta.env.BASE_URL}animations/hero.riv`, { signal: abort.signal, priority: 'low' })
-        .then(response => {
-          if (!response.ok) throw new Error(`Statue animation: HTTP ${response.status}`);
-          return response.arrayBuffer();
-        }),
-      fetch(riveWasm, { signal: abort.signal, priority: 'low' }).then(response => response.arrayBuffer()),
-    ]);
-    const start = (loaded: typeof import('@rive-app/webgl2'), buffer: ArrayBuffer) => {
-      runtime = loaded;
-      runtime.RuntimeLoader.setWasmUrl(riveWasm);
-      runtime.RuntimeLoader.setWasmFallbackUrl(null);
-      if (surfaceRef.current) add(surfaceRef.current, 'Mesh', buffer);
-    };
     const maybeStart = () => {
-      // The photograph enters on its own schedule; the Rive light layer joins
-      // it later (see afterEntrances) and fades in over it.
+      // The photograph enters on its own schedule; the light layer joins it
+      // as the entrance ends (see afterEntrances).
       void imageReady.then(reveal).catch(fallback);
       if (mode === 'classic' || motion.matches || !desktop.matches) clearTimeout(fallbackTimer);
       if (!started && mode !== 'classic' && !motion.matches && desktop.matches && inView) {
         started = true;
-        clearTimeout(fallbackTimer);
-        const downloads = download();
-        void downloads.catch(() => {});
-        void imageReady.then(() => afterEntrances(abort.signal)).then(async () => {
-          if (cancelled) return;
-          fallbackTimer = window.setTimeout(fallback, 10000);
-          try {
-            const [loaded, buffer] = await downloads;
-            if (!cancelled) start(loaded, buffer);
-          } catch (error) {
-            // The original transparent photograph stays visible if Rive cannot load.
-            if (!cancelled) { console.warn('Statue animation unavailable', error); fallback(); }
-          }
+        // Off the main thread, so it starts now and warms up under the entrance.
+        start();
+        void imageReady.then(() => afterEntrances(abort.signal)).then(() => {
+          entered = true;
+          lightUp();
         }, () => {});
       }
+      lightUp();
       sync();
     };
     const observer = new IntersectionObserver(([entry]) => {
@@ -213,13 +165,11 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     });
     observer.observe(container);
     const resize = new ResizeObserver(() => {
-      for (const rive of instances) rive.resizeDrawingSurfaceToCanvas(Math.min(devicePixelRatio, 1.5));
+      if (worker) send({ type: 'resize', ...drawingSize() });
     });
     resize.observe(container);
     const hidePage = () => {
       pageHidden = true;
-      cancelAnimationFrame(revealFrame);
-      revealFrame = 0;
       container.dataset.surface = 'loading';
       sync();
     };
@@ -244,7 +194,6 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       cancelled = true;
       abort.abort();
       clearTimeout(fallbackTimer);
-      cancelAnimationFrame(revealFrame);
       delete container.dataset.surface;
       delete container.dataset.charge;
       observer.disconnect();
@@ -256,7 +205,7 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       clearTimeout(scrollTimer);
       motion.removeEventListener('change', maybeStart);
       desktop.removeEventListener('change', maybeStart);
-      for (const rive of instances) rive.cleanup();
+      worker?.terminate();
     };
   }, [artwork, mode]);
 

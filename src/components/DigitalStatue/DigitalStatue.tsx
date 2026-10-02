@@ -32,11 +32,11 @@ async function decodeArtwork(element: Element) {
 // nothing on the main thread competes with the words and it is normally ready
 // by then.
 //
-// A second early, so the figure charges up while the subtitle is still
-// arriving and the two land as one movement. With the runtime off the main
-// thread, starting under the words costs them nothing; if the worker is not
-// warm by then (a slow first visit), the light waits for it.
-const LIGHT_LEAD_MS = 1000;
+// Six-tenths of a second early, so the figure charges up while the subtitle
+// is still arriving and the two land as one movement. With the runtime off
+// the main thread, starting under the words costs them nothing; if the worker
+// is not warm by then (a slow first visit), the light waits for it.
+const LIGHT_LEAD_MS = 600;
 
 // When the hero's last word lands, from the running `.spawn-text` animations;
 // without them, when every finite document-timeline animation has finished

@@ -92,17 +92,17 @@
 }
 
 /*
- * The light charges up the figure, and it does so the moment the hero's
- * letters have landed — not when Rive is ready, which is ~0.4s later.
+ * The light charges up the figure as the hero's last letters land, and the
+ * glare and the light are one event: a scan band climbs the figure, masked to
+ * the digital material alone so the marble is never lit, and the live mesh
+ * appears right behind it inside a soft edge climbing on the same curve, so
+ * whatever the band has passed is lit and whatever it has not is still dark.
  *
- * `data-charge` is set by the component as the hero's entrance finishes, and
- * Rive is only started two frames after that. The runtime's start-up blocks
- * the main thread for ~0.3s, so the part of this that has to keep moving
- * through it is a `transform` animation, which runs on the compositor: a scan
- * band climbing the figure, masked to the digital material alone so the marble
- * is never lit. The light mesh joins it when it is ready — a quick fade, inside
- * a soft edge that is already climbing on the same curve, so whatever the band
- * has passed is lit and whatever it has not is still dark.
+ * `data-charge` and `data-surface='ready'` are set together, by the component,
+ * on Rive's first smoothly rendered frame and no earlier than a beat before
+ * the hero's last word lands. Rive is started ahead of that by about its own
+ * start-up time (see afterEntrances), so the band never runs on ahead of a
+ * mesh that is still loading.
  *
  * The geometry that keeps the two together: the surface's mask is 220% of the
  * box with its opaque half at the bottom, so `mask-position` 0 -> 100% carries

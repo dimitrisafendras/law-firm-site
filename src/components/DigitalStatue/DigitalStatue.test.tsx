@@ -42,24 +42,46 @@ async function mount() {
   return { ...view, scene: view.container.querySelector('.digital-statue')! };
 }
 
-it('waits for embedded textures and the first rendered frame before revealing either layer', async () => {
+it('reveals the photograph without waiting for Rive, and the light layer only after its textures and first frame', async () => {
   let resolveTexture!: (image: { unref: () => void }) => void;
   mock.decode.mockReturnValue(new Promise(resolve => { resolveTexture = resolve; }));
   const { scene } = await mount();
+  expect(scene).toHaveAttribute('data-scene', 'ready');
   const asset = { isImage: true, setRenderImage: vi.fn() };
   mock.params!.assetLoader!(asset as unknown as ImageAsset, new Uint8Array(1));
   mock.params!.onLoad!({ type: 'load' } as never);
   await act(async () => {});
-  expect(scene).toHaveAttribute('data-scene', 'loading');
+  expect(scene).toHaveAttribute('data-surface', 'loading');
   expect(mock.play).not.toHaveBeenCalled();
   const image = { unref: vi.fn() };
   await act(async () => resolveTexture(image));
   expect(asset.setRenderImage).toHaveBeenCalledWith(image);
   expect(image.unref).toHaveBeenCalled();
-  expect(scene).toHaveAttribute('data-scene', 'loading');
+  expect(scene).toHaveAttribute('data-surface', 'loading');
   mock.params!.onAdvance!({ type: 'advance' } as never);
-  await waitFor(() => expect(scene).toHaveAttribute('data-scene', 'ready'));
-  expect(scene).toHaveAttribute('data-surface', 'ready');
+  await waitFor(() => expect(scene).toHaveAttribute('data-surface', 'ready'));
+});
+
+it('does not start the Rive runtime until running entrance animations finish', async () => {
+  let finish!: () => void;
+  const entrance = {
+    timeline: document.timeline, playState: 'running',
+    effect: { getTiming: () => ({ iterations: 1 }) },
+    finished: new Promise<void>(resolve => { finish = resolve; }),
+  };
+  document.getAnimations = () => [entrance as unknown as Animation];
+  try {
+    const view = render(<ThemeProvider><DigitalStatue /></ThemeProvider>);
+    act(() => triggerIntersection());
+    const scene = view.container.querySelector('.digital-statue')!;
+    await waitFor(() => expect(scene).toHaveAttribute('data-scene', 'ready'));
+    await act(async () => { await new Promise(resolve => setTimeout(resolve, 50)); });
+    expect(mock.params).toBeNull();
+    await act(async () => finish());
+    await waitFor(() => expect(mock.params).not.toBeNull());
+  } finally {
+    delete (document as { getAnimations?: unknown }).getAnimations;
+  }
 });
 
 it('shows only the photograph when Rive fails', async () => {

@@ -88,4 +88,11 @@
 }
 .digital-statue:not([data-surface='ready']) .digital-statue__surface {
   visibility: hidden;
+  opacity: 0;
+}
+/* The light layer arrives after the figure has risen (its runtime starts once
+   the hero entrance is over), so it fades in over it. The transition lives on
+   the ready state only: hiding for a navigation stays instant. */
+.digital-statue[data-surface='ready'] .digital-statue__surface {
+  transition: opacity var(--dur-materialize) var(--ease-wipe);
 }

@@ -23,6 +23,25 @@ async function decodeArtwork(element: Element) {
   throw new Error('Statue artwork could not be decoded');
 }
 
+// Rive's start-up — WASM compile, parsing the .riv, first shader compile — is
+// ~0.5s of main-thread work on a cold visit. Run during the hero entrance, it
+// stalls every main-thread animation in it, so it waits until the page's
+// finite document-timeline animations have played out (scroll-driven ones
+// never finish and are excluded), then for an idle moment.
+function afterEntrances(signal: AbortSignal): Promise<void> {
+  const running = (document.getAnimations?.() ?? []).filter(animation =>
+    animation.timeline === document.timeline &&
+    animation.playState === 'running' &&
+    animation.effect?.getTiming().iterations !== Infinity);
+  const settled = Promise.allSettled(running.map(animation => animation.finished));
+  const cap = new Promise(resolve => setTimeout(resolve, 4000));
+  return Promise.race([settled, cap]).then(() => new Promise<void>(resolve => {
+    if (signal.aborted) return;
+    if ('requestIdleCallback' in window) requestIdleCallback(() => resolve(), { timeout: 1000 });
+    else setTimeout(resolve, 0);
+  }));
+}
+
 // Art lighting, deliberately independent of the page palette.
 const mobileBreakpoint = parseInt(breakpoints.mobile, 10);
 
@@ -136,15 +155,18 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       }
     }
     const maybeStart = () => {
-      if (mode === 'classic' || motion.matches || !desktop.matches) {
-        clearTimeout(fallbackTimer);
-        void imageReady.then(reveal).catch(fallback);
-      }
+      // The photograph enters on its own schedule; the Rive light layer joins
+      // it later (see afterEntrances) and fades in over it.
+      void imageReady.then(reveal).catch(fallback);
+      if (mode === 'classic' || motion.matches || !desktop.matches) clearTimeout(fallbackTimer);
       if (!started && mode !== 'classic' && !motion.matches && desktop.matches && inView) {
         started = true;
         clearTimeout(fallbackTimer);
-        fallbackTimer = window.setTimeout(fallback, 10000);
-        void start();
+        void imageReady.then(() => afterEntrances(abort.signal)).then(() => {
+          if (cancelled) return;
+          fallbackTimer = window.setTimeout(fallback, 10000);
+          void start();
+        }, () => {});
       }
       sync();
     };

@@ -28,49 +28,25 @@ async function decodeArtwork(element: Element) {
 }
 
 // Rive's start-up — instantiating the WASM, parsing the .riv, first shader
-// compile — is ~0.4s of main-thread work. Run during the hero entrance, it
-// stalls every main-thread animation in it, so it is held back until the
-// entrance is nearly over (scroll-driven animations never finish and are
-// excluded) — and not a moment longer: an idle-callback wait here once cost
-// half a second for nothing.
+// compile — is ~0.4s of main-thread work, and it waits until the page's finite
+// document-timeline animations have played out (scroll-driven ones never
+// finish and are excluded) — and not a moment longer: an idle-callback wait
+// here once cost half a second for nothing.
 //
-// "Nearly over" is the hero's letters, when there are any: this resolves
-// `lead` ms before the last of them lands and reports when that is. Waiting
-// for every entrance held the statue back behind the scroll hint and the
-// action panel, ~0.35s past the last letter, and that read as a pause. The
-// letters and the hint only animate opacity, transform and filter, which the
-// compositor runs straight through Rive's start-up; the panel's clip-path is
-// composited too, and in the slow tail of its curve by then.
-function afterEntrances(signal: AbortSignal, lead: number): Promise<number> {
+// Not a moment sooner either. Starting it a beat early, during the subtitle's
+// last words, measured fine in a trace — every hero entrance is composited —
+// and still visibly stuttered those words on screen.
+function afterEntrances(signal: AbortSignal): Promise<void> {
   const running = (document.getAnimations?.() ?? []).filter(animation =>
     animation.timeline === document.timeline &&
     animation.playState === 'running' &&
     animation.effect?.getTiming().iterations !== Infinity);
-  const letters = running.filter(animation => {
-    const target = (animation.effect as KeyframeEffect | null)?.target;
-    return target instanceof Element && target.closest('.spawn-text') !== null;
-  });
-  const ends = letters.map(animation => {
-    const end = animation.effect?.getComputedTiming().endTime;
-    return animation.startTime == null || typeof end !== 'number' ? null : Number(animation.startTime) + end;
-  });
+  const settled = Promise.allSettled(running.map(animation => animation.finished));
   const cap = new Promise(resolve => setTimeout(resolve, 4000));
-  let settled: Promise<unknown>;
-  let landing = 0;
-  if (letters.length && ends.every(end => end !== null)) {
-    landing = Math.max(...(ends as number[]));
-    settled = new Promise(resolve => setTimeout(resolve, Math.max(0, landing - lead - performance.now())));
-  } else {
-    settled = Promise.allSettled((letters.length ? letters : running).map(animation => animation.finished));
-  }
-  return Promise.race([settled, cap]).then(() => new Promise<number>(resolve => {
-    if (!signal.aborted) resolve(landing || performance.now());
+  return Promise.race([settled, cap]).then(() => new Promise<void>(resolve => {
+    if (!signal.aborted) resolve();
   }));
 }
-
-// A CSS time token in milliseconds.
-const tokenMs = (name: string) =>
-  parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name)) * 1000 || 0;
 
 // Art lighting, deliberately independent of the page palette.
 const mobileBreakpoint = parseInt(breakpoints.mobile, 10);
@@ -102,8 +78,6 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     let scrolling = false;
     let scrollTimer = 0;
     let revealFrame = 0;
-    let chargeAt = 0;
-    let chargeTimer = 0;
     const abort = new AbortController();
     container.dataset.scene = 'loading';
     container.dataset.surface = 'loading';
@@ -179,17 +153,10 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
             clearTimeout(fallbackTimer);
             // The glare and the light it switches on are one event: the band
             // climbs the figure and the live mesh appears right behind it, so
-            // the charge waits for this first smooth frame — and, when Rive is
-            // early, for a beat before the last word lands.
-            const show = () => {
-              if (cancelled || pageHidden || container.dataset.surface === 'failed') return;
-              container.dataset.charge = 'on';
-              container.dataset.surface = 'ready';
-              reveal();
-            };
-            const wait = container.dataset.charge === 'on' ? 0 : chargeAt - performance.now();
-            if (wait > 0) chargeTimer = window.setTimeout(show, wait);
-            else show();
+            // the charge waits for this first smooth frame.
+            container.dataset.charge = 'on';
+            container.dataset.surface = 'ready';
+            reveal();
           };
           revealFrame = requestAnimationFrame(settle);
         },
@@ -226,16 +193,8 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
         clearTimeout(fallbackTimer);
         const downloads = download();
         void downloads.catch(() => {});
-        // The charge is due a beat before the last word lands — it is fully
-        // visible by then, the rest of its curve is a settle — and Rive
-        // starts a further beat and a tight beat ahead of that, about its own
-        // start-up time, so it is rendering by the moment it is due (see
-        // onAdvance).
-        const beat = tokenMs('--seq-beat');
-        const startLead = 2 * beat + tokenMs('--seq-beat-tight');
-        void imageReady.then(() => afterEntrances(abort.signal, startLead)).then(async landing => {
+        void imageReady.then(() => afterEntrances(abort.signal)).then(async () => {
           if (cancelled) return;
-          chargeAt = landing - beat;
           fallbackTimer = window.setTimeout(fallback, 10000);
           try {
             const [loaded, buffer] = await downloads;
@@ -260,7 +219,6 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
     const hidePage = () => {
       pageHidden = true;
       cancelAnimationFrame(revealFrame);
-      clearTimeout(chargeTimer);
       revealFrame = 0;
       container.dataset.surface = 'loading';
       sync();
@@ -286,7 +244,6 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       cancelled = true;
       abort.abort();
       clearTimeout(fallbackTimer);
-      clearTimeout(chargeTimer);
       cancelAnimationFrame(revealFrame);
       delete container.dataset.surface;
       delete container.dataset.charge;

@@ -84,32 +84,6 @@ it('does not start the Rive runtime until running entrance animations finish', a
   }
 });
 
-it('starts the Rive runtime on the hero letters, not on the slowest entrance', async () => {
-  const title = document.createElement('span');
-  title.className = 'spawn-text';
-  const letter = title.appendChild(document.createElement('span'));
-  document.body.appendChild(title);
-  const finite = { getTiming: () => ({ iterations: 1 }) };
-  const landing = {
-    timeline: document.timeline, playState: 'running', startTime: performance.now(),
-    effect: { ...finite, target: letter, getComputedTiming: () => ({ endTime: 0 }) },
-    finished: new Promise<void>(() => {}),
-  };
-  const slower = {
-    timeline: document.timeline, playState: 'running',
-    effect: finite, finished: new Promise<void>(() => {}),
-  };
-  document.getAnimations = () => [landing, slower] as unknown as Animation[];
-  try {
-    render(<ThemeProvider><DigitalStatue /></ThemeProvider>);
-    act(() => triggerIntersection());
-    await waitFor(() => expect(mock.params).not.toBeNull());
-  } finally {
-    delete (document as { getAnimations?: unknown }).getAnimations;
-    title.remove();
-  }
-});
-
 it('shows only the photograph when Rive fails', async () => {
   const { scene } = await mount();
   act(() => mock.params!.onLoadError!({ type: 'loaderror' } as never));

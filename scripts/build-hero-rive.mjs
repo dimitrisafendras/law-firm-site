@@ -252,7 +252,9 @@ for(const [i,{x,y,dx,dy}] of manifest.entries()){
   timeline+=`<KeyedObject objectId="${node}">${tracks}</KeyedObject>`;
 }
 const fire=await buildFire(id);
-content+=fire.content;
+// Under the light textures, not over them: the digital pan's front wires are
+// in front of its flame, and their shimmer has to stay on top of it.
+content=fire.content+content;
 assets+=fire.assets;
 // Repeat the original fire tracks at their existing cadence. The longer
 // shared loop lets the 1.125x light harmonics meet seamlessly at its boundary.

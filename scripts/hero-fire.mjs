@@ -54,8 +54,27 @@ async function readBowls(){
   return bowls;
 }
 
-export async function buildFire(id){
+/*
+ * The digital pan's fire burns in the statue's own colours, like the rest of
+ * the light layer: the ramp runs from a deep, saturated version of the set's
+ * `secondary` to its `accentBright` at the hottest point, which is the shape
+ * that flame always had in blue (62,133,255 → near white) generalised to any
+ * hue. The brass pan keeps an ordinary fire in every theme — the owner's
+ * call: it is the real, gold half of the scales, so it burns like real fire.
+ */
+function fireRamp(colours){
+  const secondary=colours.secondary.split(',').map(Number);
+  const bright=colours.accentBright.split(',').map(Number);
+  // Scale to full brightness, then push every channel away from the top one:
+  // a pale step becomes the saturated body a flame needs at its base.
+  const top=Math.max(...secondary);
+  const deep=secondary.map(c=>Math.max(0,Math.round(255-(255-c*255/top)*2.2)));
+  return hot=>deep.map((d,i)=>Math.round(d+(bright[i]-d)*Math.pow(hot,1.2)));
+}
+
+export async function buildFire(id,colours){
   let content='',assets='',timeline='';
+  const ramp=fireRamp(colours);
   const count=240,cycle=480,bowls=await readBowls(),top=319;
   // [name, seed]; each texture spans the bowl's width and runs from the flame
   // tip down to the bowl's floor.
@@ -102,7 +121,7 @@ export async function buildFire(id){
         if(pan==='brass'){
           rgba[p]=255;rgba[p+1]=Math.round(100+155*Math.pow(hot,.6));rgba[p+2]=Math.round(18+218*Math.pow(hot,2.2));
         }else{
-          rgba[p]=Math.round(62+185*Math.pow(hot,1.4));rgba[p+1]=Math.round(133+117*hot);rgba[p+2]=255;
+          [rgba[p],rgba[p+1],rgba[p+2]]=ramp(hot);
         }
         rgba[p+3]=Math.round(alpha*225);
       }

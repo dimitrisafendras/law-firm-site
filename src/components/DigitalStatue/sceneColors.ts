@@ -107,3 +107,20 @@ export const ULTRAMARINE_COLORS: SceneColors = {
   secondary: '137,179,240',
   accentBright: '220,234,255',
 };
+
+/**
+ * Amethyst's pink, for the white statue that family wears.
+ *
+ * The one set NOT keyed to the drawing's own wireframe: the white artwork's
+ * mesh is neutral, and on the pink scheme a grey light layer read as nothing
+ * in particular. The owner wanted the animation pink there, so this is the
+ * ultramarine set's saturation and lightness, point for point, turned to the
+ * hue of `porphyry`'s accent (#E8A9C4, 334.3deg). Holding the lightness
+ * profile is what keeps it glowing rather than drawn (see the note at the
+ * top of this file).
+ */
+export const AMETHYST_COLORS: SceneColors = {
+  accent: '255,188,217',
+  secondary: '240,137,181',
+  accentBright: '255,220,235',
+};

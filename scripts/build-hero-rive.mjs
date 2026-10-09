@@ -5,6 +5,7 @@ import { toWebp } from './webp-exact.mjs';
 import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
 import {
+  AMETHYST_COLORS,
   LIMESTONE_COLORS,
   NEUTRAL_COLORS,
   STATUE_COLORS,
@@ -12,14 +13,18 @@ import {
 } from '../src/components/DigitalStatue/sceneColors.ts';
 import { buildFire } from './hero-fire.mjs';
 // One mesh per colour set, so the light layer matches whichever statue is on
-// screen — the same sets, keyed the same way, as statueArtwork.ts. White and
-// mono share NEUTRAL_COLORS and so share a file. The geometry, timing and fire
+// screen — the same sets, keyed the same way, as statueArtwork.ts. Mono uses
+// `neutral`; white uses `amethyst`, the pink of the family that wears it. The geometry, timing and fire
 // are identical across files: the seed and ids below restart in every process.
+// Ultramarine is LAST on purpose: each build rewrites art/rive/hero with its
+// own set's textures, and the default palette's set is the one to leave there
+// (and commit) after a full build.
 const COLOUR_SETS = {
   cyan: STATUE_COLORS,
-  ultramarine: ULTRAMARINE_COLORS,
   limestone: LIMESTONE_COLORS,
   neutral: NEUTRAL_COLORS,
+  amethyst: AMETHYST_COLORS,
+  ultramarine: ULTRAMARINE_COLORS,
 };
 const SET = process.argv[2];
 if (!SET) {
@@ -292,7 +297,7 @@ for(const [i,{x,y,dx,dy}] of manifest.entries()){
   }),key==='18'?.003:1e-4)}</KeyedProperty>`).join('');
   cycle+=`<KeyedObject objectId="${node}">${tracks}</KeyedObject>`;
 }
-const fire=await buildFire(id);
+const fire=await buildFire(id,COLOURS);
 // Under the light textures, not over them: the digital pan's front wires are
 // in front of its flame, and their shimmer has to stay on top of it.
 content=fire.content+content;

@@ -74,8 +74,13 @@ export const statues: readonly Statue[] = [
   { id: 'white', base: 'hero-statue-white', labelKey: 'statueWhite', families: ['Amethyst'] },
   { id: 'mono', base: 'hero-statue-mono', labelKey: 'statueMono', families: ['Graphite'] },
   {
+    // The white figure under ultramarine light: the owner's call, on trial.
+    // The image is the white artwork; the colour set and the light layer
+    // (statueArtwork.ts) stay ultramarine, so the mesh, fire and scan glow
+    // blue over a white figure. `hero-statue-ultramarine-*` is kept in the
+    // repo so going back is this one line.
     id: 'ultramarine',
-    base: 'hero-statue-ultramarine',
+    base: 'hero-statue-white',
     labelKey: 'statueUltramarine',
     families: ['Ultramarine'],
   },

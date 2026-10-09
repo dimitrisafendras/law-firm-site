@@ -61,6 +61,7 @@
 
 import { type StatueId } from '@/theme';
 import {
+  AMETHYST_COLORS,
   LIMESTONE_COLORS,
   NEUTRAL_COLORS,
   STATUE_COLORS,
@@ -76,7 +77,7 @@ export interface StatueArtwork {
   /**
    * The light layer's Rive file under public/animations/, built from the same
    * colour set by scripts/build-hero-rive.mjs, so the mesh lights in the
-   * drawing's colour too. White and mono share one, as they share colours.
+   * drawing's colour too. White wears Amethyst's pink (AMETHYST_COLORS).
    */
   riv: string;
 }
@@ -90,7 +91,7 @@ export interface StatueArtwork {
 const ARTWORKS: Record<StatueId, StatueArtwork> = {
   cyan: { id: 'cyan', colors: STATUE_COLORS, riv: 'hero-cyan.riv' },
   ultramarine: { id: 'ultramarine', colors: ULTRAMARINE_COLORS, riv: 'hero-ultramarine.riv' },
-  white: { id: 'white', colors: NEUTRAL_COLORS, riv: 'hero-neutral.riv' },
+  white: { id: 'white', colors: AMETHYST_COLORS, riv: 'hero-amethyst.riv' },
   mono: { id: 'mono', colors: NEUTRAL_COLORS, riv: 'hero-neutral.riv' },
   limestone: { id: 'limestone', colors: LIMESTONE_COLORS, riv: 'hero-limestone.riv' },
 };

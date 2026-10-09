@@ -42,3 +42,13 @@ export const ORION_STARS: readonly OrionStar[] = [
   { id: 'pi5', x: 94.6, y: 59.6, mag: 3.7 },
   { id: 'pi6', x: 89.4, y: 62.0, mag: 4.5 },
 ];
+
+/** The usual stick figure: head, shoulders, belt, legs, raised club, shield. */
+export const ORION_LINES: readonly (readonly [string, string])[] = [
+  ['betelgeuse', 'meissa'], ['meissa', 'bellatrix'],
+  ['betelgeuse', 'alnitak'], ['bellatrix', 'mintaka'],
+  ['mintaka', 'alnilam'], ['alnilam', 'alnitak'],
+  ['alnitak', 'saiph'], ['mintaka', 'rigel'],
+  ['betelgeuse', 'mu'], ['mu', 'nu'], ['nu', 'chi1'], ['nu', 'xi'], ['xi', 'chi2'],
+  ['bellatrix', 'pi3'], ['pi1', 'pi2'], ['pi2', 'pi3'], ['pi3', 'pi4'], ['pi4', 'pi5'], ['pi5', 'pi6'],
+];

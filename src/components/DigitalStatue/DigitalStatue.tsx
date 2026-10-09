@@ -12,7 +12,11 @@ async function decodeArtwork(element: Element) {
   const candidates = [...background.matchAll(/url\(["']?([^"')]+)["']?\)/g)];
   // Computed image-set syntax can put type() between the URL and resolution.
   const urls = candidates.map(match => match[1]);
-  const groups = [urls.filter(url => url.endsWith('.avif')), urls.filter(url => url.endsWith('.webp'))];
+  // Match on the path, not the whole URL: the dev server appends `?t=…` to an
+  // asset that changed since it started, and an extension test on the full
+  // URL then found no candidates and left the light layer off.
+  const ext = (url: string) => url.split(/[?#]/)[0];
+  const groups = [urls.filter(url => ext(url).endsWith('.avif')), urls.filter(url => ext(url).endsWith('.webp'))];
   for (const group of groups) {
     if (!group.length) continue;
     const image = new Image();

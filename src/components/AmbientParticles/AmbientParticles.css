@@ -1,31 +1,48 @@
 /* The page's floating decoration: Orion and nothing else (see
    AmbientParticles.tsx). */
+/* A background on every page: fixed like `.circuit-field`, at the same level,
+   so content scrolls over a sky that stays put. It must be mounted inside
+   `main.page-ramp`, whose gradient is opaque. */
 .ambient-particles {
-  position: absolute;
+  position: fixed;
   inset: 0;
+  z-index: 0;
   overflow: hidden;
   pointer-events: none;
 }
 
 /*
- * Spread across the whole area, by the owner's choice, rather than kept at the
- * figure's true proportions in a box: the star positions (0–100 on each axis,
- * orion.ts) map onto most of the layer, inset toward the middle so the
- * figure stays a figure. On pages other than the home page the layer can be a whole page tall,
- * so there the figure is held to the first screen (viewport units) and
- * scrolls away with it.
+ * Spread over most of the screen, by the owner's choice, rather than drawn to
+ * scale: the star positions (0–100 on each axis, orion.ts) map onto this box,
+ * centre-left. On the home page the hero's text scrim is opaque over the left
+ * third of the screen and this layer is behind it, so there the club arm is
+ * hidden until the hero scrolls away.
+ *
+ * The whole figure drifts as one (the stars are joined, so they cannot wander
+ * separately) and each star only twinkles.
  */
 .ambient-particles__orion {
   position: absolute;
-  inset: 14% 18%;
+  top: 10vh;
+  left: 16%;
+  width: 54%;
+  height: 78vh;
+  animation: ambient-orion-drift 48s ease-in-out infinite alternate;
+  animation-play-state: var(--ambient-particle-play, paused);
 }
 
-.ambient-particles:not(.hero-section__particles) .ambient-particles__orion {
-  inset: auto;
-  top: 12vh;
-  left: 18%;
-  width: 64%;
-  height: 74vh;
+.ambient-particles__lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.ambient-particles__lines line {
+  stroke: var(--accent-text);
+  stroke-width: 1px;
+  stroke-opacity: 0.16;
 }
 
 .ambient-particles__star {
@@ -35,17 +52,30 @@
   background: radial-gradient(circle, var(--accent-text) 15%,
     color-mix(in srgb, var(--accent-text) 65%, transparent) 45%, transparent 75%);
   box-shadow: 0 0 6px color-mix(in srgb, var(--accent-text) 45%, transparent);
-  animation: ambient-star-float ease-in-out infinite alternate;
+  animation: ambient-star-twinkle ease-in-out infinite alternate;
   animation-play-state: var(--ambient-particle-play, paused);
 }
 
-@keyframes ambient-star-float {
-  0% { transform: translate3d(-9px, 6px, 0); opacity: .85; }
-  50% { transform: translate3d(5px, -10px, 0); opacity: .5; }
-  100% { transform: translate3d(11px, 3px, 0); opacity: .75; }
+@keyframes ambient-orion-drift {
+  0% { transform: translate3d(-14px, 8px, 0); }
+  50% { transform: translate3d(10px, -12px, 0); }
+  100% { transform: translate3d(16px, 6px, 0); }
+}
+
+@keyframes ambient-star-twinkle {
+  from { opacity: .9; }
+  to { opacity: .5; }
+}
+
+@media (max-width: 768px) {
+  .ambient-particles__orion {
+    left: 6%;
+    width: 88%;
+  }
 }
 
 /* Stars that float are motion; with reduced motion they stay, still. */
 @media (prefers-reduced-motion: reduce) {
+  .ambient-particles__orion,
   .ambient-particles__star { animation: none; }
 }

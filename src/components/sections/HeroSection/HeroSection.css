@@ -1,12 +1,3 @@
-.hero-section__particles {
-  /* Above the text scrim (0), below later statue/copy siblings (1). */
-  z-index: 1;
-}
-@media (max-width: 1024px) {
-  /* Mobile raises the scrim to 1 and the copy to 2. */
-  .hero-section__particles { z-index: 2; }
-}
-
 .hero-section {
   position: relative;
   min-height: 100vh;
@@ -72,7 +63,6 @@
      thing the eye was left with, going down and coming back up. Now the
      page-wide exit window, shared with every screen below the hero. */
   --hero-x-statue: var(--x-range);
-  --hero-x-grid: exit 35% exit 100%;
 
   /* The per-character stagger has to come down with the beat: at the old
      0.03s a long title line took longer to finish spelling itself out than
@@ -185,36 +175,6 @@
   }
 }
 
-
-/* ─── Digital Lines ───────────────────────────────────────────────────────── */
-
-.hero-section__lines {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 55%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-
-  @media (max-width: 1024px) {
-    width: 100%;
-    opacity: 0.5;
-
-    /* On a phone this layer spans the full hero, so at 0.5 it is drawing
-       behind every line of copy as well as behind the figure. Half again. */
-    @media (max-width: 640px) {
-      opacity: 0.26;
-    }
-  }
-}
-
-/* Junction nodes scale from their own centre. Opacity is left to the SVG
-   presentation attribute so each node keeps its individual weight. */
-.hero-section__lines-nodes circle {
-  transform-box: fill-box;
-  transform-origin: center;
-}
 
 /* ─── Content ──────────────────────────────────────────────────────────────── */
 
@@ -593,16 +553,6 @@
  * filter / clip-path — nothing that triggers layout.
  */
 
-@keyframes hero-trace {
-  from { clip-path: inset(0 100% 0 0); }
-  to { clip-path: inset(0 0 0 0); }
-}
-
-@keyframes hero-node-bloom {
-  from { transform: scale(0); }
-  to { transform: scale(1); }
-}
-
 @keyframes hero-badge-materialize {
   from {
     opacity: 0;
@@ -644,34 +594,6 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Circuit grid traces itself in left→right. Opacity is deliberately absent
-     so the mobile `opacity: 0.5` on the layer is preserved. */
-  .hero-section__lines {
-    /* Published as a custom property so the exit rule at the foot of this file
-       can re-declare the animation *list* — entrance plus exit — without
-       restating the entrance and giving the two a chance to drift apart. */
-    --hero-lines-entrance: hero-trace var(--dur-wipe) var(--ease-wipe) var(--hero-t-scene) backwards;
-    animation: var(--hero-lines-entrance);
-  }
-
-  /* Junctions pop once the trace has swept past them. */
-  .hero-section__lines-nodes circle {
-    animation: hero-node-bloom var(--dur-spawn-element) var(--ease-spawn) backwards;
-    animation-delay: calc(
-      var(--hero-t-scene) + var(--dur-wipe) * 0.4 + var(--node-index, 0) * var(--stagger-element-tight)
-    );
-  }
-
-  .hero-section__lines-nodes circle:nth-of-type(1) { --node-index: 0; }
-  .hero-section__lines-nodes circle:nth-of-type(2) { --node-index: 1; }
-  .hero-section__lines-nodes circle:nth-of-type(3) { --node-index: 0.5; }
-  .hero-section__lines-nodes circle:nth-of-type(4) { --node-index: 2; }
-  .hero-section__lines-nodes circle:nth-of-type(5) { --node-index: 1.5; }
-  .hero-section__lines-nodes circle:nth-of-type(6) { --node-index: 2.5; }
-  .hero-section__lines-nodes circle:nth-of-type(7) { --node-index: 0.75; }
-  .hero-section__lines-nodes circle:nth-of-type(8) { --node-index: 1.75; }
-  .hero-section__lines-nodes circle:nth-of-type(9) { --node-index: 2.25; }
-
   /* Overline is painted in under a travelling accent scan line. */
   .hero-section__badge {
     animation: hero-badge-materialize var(--dur-spawn-element) var(--ease-wipe) var(--hero-t-overline) backwards;
@@ -788,14 +710,6 @@
  * and neither side can drift. The statue's own timing sits on the rule below.
  */
 
-@keyframes hero-grid-dim {
-  /* `to` only, deliberately. The implicit 0% is the layer's own computed
-     opacity, which is 1 on desktop and 0.5 on the phone branch; writing
-     `from { opacity: 1 }` would brighten the mobile grid for the whole exit
-     before dimming it, undoing the reason that 0.5 is there. */
-  to { opacity: 0; }
-}
-
 @media (prefers-reduced-motion: no-preference) {
   /*
    * `@supports` rather than a bare rule: a browser without scroll-driven
@@ -870,12 +784,5 @@
       animation-range: var(--hero-x-statue);
     }
 
-    .hero-section__lines {
-      /* Entrance first here, and it does not matter: the trace writes
-         `clip-path` and the dim writes `opacity`, so the two never contend. */
-      animation: var(--hero-lines-entrance), hero-grid-dim linear both;
-      animation-timeline: auto, --hero-exit;
-      animation-range: normal, var(--hero-x-grid);
-    }
   }
 }

@@ -392,6 +392,18 @@ const schemeRules = [
   '}',
   `${lightSelector('#social .button-icon')} {\n  filter: none;\n}`,
   '',
+  /*
+   * The statue's light layer (the Rive mesh, its fire, and the scan band) is
+   * painted in light values and composited with `screen`, which can only
+   * brighten: on a light ground it disappears whatever its colour. On the light
+   * palettes it is inverted back to the same hue at a dark value
+   * (`invert` + `hue-rotate(180deg)`) and multiplied instead, so the lit
+   * facets read as ink in the wireframe's own colour. Compared side by side on
+   * chalk with the neutral mesh before choosing; the extra saturate/contrast
+   * keeps the darker facets from going muddy.
+   */
+  `${lightSelector('.digital-statue__surface')},\n${lightSelector('.digital-statue__scan')} {\n  mix-blend-mode: multiply;\n  filter: invert(1) hue-rotate(180deg) saturate(1.6) contrast(1.2);\n}`,
+  '',
   statueRules,
   '',
   buildClassicBlock(),

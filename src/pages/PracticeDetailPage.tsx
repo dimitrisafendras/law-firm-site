@@ -5,6 +5,7 @@ import { Navbar, Container, Card, EditableText, AuthNavControl } from '@/compone
 import { VkmLogo } from '@/assets/VkmLogo';
 import type { PracticeArea } from '@/components/sections/PracticeGrid/practiceAreas';
 import './PracticeDetailPage.css';
+import { AmbientParticles } from '@/components/AmbientParticles';
 
 interface PracticeDetailPageProps {
   area: PracticeArea;
@@ -109,6 +110,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
             for why this is here instead of `<CircuitField />`. The SVG declares
             its own `aria-hidden` (src/assets/domainBackgrounds.tsx). */}
         <Bg className="practice-page__ground" />
+        <AmbientParticles fixed />
 
         <Container className="practice-page__inner">
           {/* The way back and the page's index on one line. They were two

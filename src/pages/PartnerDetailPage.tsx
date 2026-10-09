@@ -4,6 +4,7 @@ import { useTranslation } from '@/i18n';
 import { Navbar, Container, Card, EditableText, AuthNavControl } from '@/components';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '@/components/CircuitField/CircuitField';
+import { AmbientParticles } from '@/components/AmbientParticles';
 import type { Partner } from '@/components/sections/PartnerEthos/partners';
 import './PartnerDetailPage.css';
 
@@ -87,6 +88,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
 
       <main className="partner-page page-ramp page-ramp--short">
         <CircuitField />
+        <AmbientParticles fixed />
 
         <Container className="partner-page__inner">
           {/* The way back and what this page is, on one line over the hairline

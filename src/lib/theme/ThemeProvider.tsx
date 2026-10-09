@@ -21,7 +21,6 @@ import type { FontChoice, ModeId, StatueChoice } from '@/theme';
 import {
   FONT_STORAGE_KEY,
   RUNG_STORAGE_KEY,
-  STATUE_STORAGE_KEY,
   ThemeContext,
   THEME_STORAGE_KEY,
 } from './context';
@@ -38,16 +37,6 @@ function readStored(): string {
     return isPaletteId(stored) ? stored : DEFAULT_PALETTE_ID;
   } catch {
     return DEFAULT_PALETTE_ID;
-  }
-}
-
-function readStoredStatue(): StatueChoice {
-  if (typeof window === 'undefined') return STATUE_AUTO;
-  try {
-    const stored = window.localStorage.getItem(STATUE_STORAGE_KEY);
-    return isStatueChoice(stored) ? stored : STATUE_AUTO;
-  } catch {
-    return STATUE_AUTO;
   }
 }
 
@@ -120,7 +109,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // no longer leave. Every load starts digital; `setMode` survives only for the
   // design-system page, and lasts for that page view.
   const [mode, setModeState] = useState<ModeId>(DEFAULT_MODE_ID);
-  const [statue, setStatueState] = useState<StatueChoice>(readStoredStatue);
+  // The statue always follows the palette: the statue picker was removed, so
+  // a stored pin from before would freeze the hero on one artwork with no
+  // control left to release it. Same reasoning, and same design-system-only
+  // escape hatch, as the look.
+  const [statue, setStatueState] = useState<StatueChoice>(STATUE_AUTO);
   const [font, setFontState] = useState<FontChoice>(readStoredFont);
   // Seeded from the palette that was read above, so the pair (palette, rung) is
   // consistent on the very first render rather than after a correcting effect.
@@ -223,12 +216,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setStatue = useCallback((next: string) => {
     if (!isStatueChoice(next)) return;
     setStatueState(next);
-    try {
-      if (next === STATUE_AUTO) window.localStorage.removeItem(STATUE_STORAGE_KEY);
-      else window.localStorage.setItem(STATUE_STORAGE_KEY, next);
-    } catch {
-      // As above.
-    }
   }, []);
 
   const setFont = useCallback((next: string) => {

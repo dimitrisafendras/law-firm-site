@@ -4,6 +4,7 @@ import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, 
 import { brand, brandVarNames } from '../theme/tokens';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '../components/CircuitField';
+import { AmbientParticles } from '../components/AmbientParticles';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
 import { FontPicker, PaletteSwatches, SchemeSlider, ThemePicker } from '../components/ThemePicker';
 import { ModeOptions, ModePicker, StatueOptions, StatuePicker } from '../components/LookPicker';
@@ -330,8 +331,9 @@ export default function DesignSystem() {
         <div style={showcaseBox}>
           <span style={showcaseLabel}>Statue Picker — trigger &amp; popover</span>
           <p style={{ marginBottom: '16px', color: 'var(--text)', opacity: 'var(--text-emphasis-secondary)' }}>
-            Pin a specific hero artwork, or leave it on &quot;Follow the
-            theme&quot; and let the palette family and the look decide.
+            Not offered on the site any more: the hero always wears the
+            palette family&apos;s statue. Kept here to preview the other
+            artworks; a pin made here lasts for this page view only.
           </p>
           <StatuePicker />
         </div>
@@ -952,6 +954,16 @@ export default function DesignSystem() {
             field inside it; the overflow then clips it. */}
         <div style={{ position: 'relative', height: '260px', overflow: 'hidden', borderRadius: radii['2xl'], background: 'var(--grad-3)', transform: 'translateZ(0)' }}>
           <CircuitField />
+        </div>
+        <h3 style={{ fontFamily: 'var(--heading)', fontSize: '20px', margin: '32px 0 12px' }}>Ambient particles</h3>
+        <p style={{ maxWidth: '70ch', marginBottom: '24px', opacity: 0.75 }}>
+          The hero&apos;s drifting lights, on every page. Pages mount it with{' '}
+          <code>fixed</code> beside their ground layer; the home page clips it to
+          start below the hero, which carries its own copy above its text scrim.
+          Shown here unfixed, inside the box.
+        </p>
+        <div style={{ position: 'relative', height: '200px', overflow: 'hidden', borderRadius: radii['2xl'], background: 'var(--grad-3)' }}>
+          <AmbientParticles />
         </div>
       </section>
 

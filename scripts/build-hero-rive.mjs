@@ -3,12 +3,39 @@ import { writeFileSync, copyFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { toWebp } from './webp-exact.mjs';
 import sharp from 'sharp';
-import { ULTRAMARINE_COLORS } from '../src/components/DigitalStatue/sceneColors.ts';
+import { fileURLToPath } from 'node:url';
+import {
+  LIMESTONE_COLORS,
+  NEUTRAL_COLORS,
+  STATUE_COLORS,
+  ULTRAMARINE_COLORS,
+} from '../src/components/DigitalStatue/sceneColors.ts';
 import { buildFire } from './hero-fire.mjs';
-// Match the drawing's blue, not a palette fill. Bake all bloom at build time.
-const glow = `rgb(${ULTRAMARINE_COLORS.secondary})`;
-const light = `rgb(${ULTRAMARINE_COLORS.accent})`;
-const core = `rgb(${ULTRAMARINE_COLORS.accentBright})`;
+// One mesh per colour set, so the light layer matches whichever statue is on
+// screen — the same sets, keyed the same way, as statueArtwork.ts. White and
+// mono share NEUTRAL_COLORS and so share a file. The geometry, timing and fire
+// are identical across files: the seed and ids below restart in every process.
+const COLOUR_SETS = {
+  cyan: STATUE_COLORS,
+  ultramarine: ULTRAMARINE_COLORS,
+  limestone: LIMESTONE_COLORS,
+  neutral: NEUTRAL_COLORS,
+};
+const SET = process.argv[2];
+if (!SET) {
+  // No set named: build every one, each in a fresh process, because the build
+  // below is one pass over module-level state (serial ids, the seeded random).
+  for (const name of Object.keys(COLOUR_SETS)) {
+    execFileSync(process.execPath, [fileURLToPath(import.meta.url), name], { stdio: 'inherit' });
+  }
+  process.exit(0);
+}
+const COLOURS = COLOUR_SETS[SET];
+if (!COLOURS) throw Error(`Unknown colour set '${SET}' (expected ${Object.keys(COLOUR_SETS).join(', ')})`);
+// Match the drawing's wireframe, not a palette fill. Bake all bloom at build time.
+const glow = `rgb(${COLOURS.secondary})`;
+const light = `rgb(${COLOURS.accent})`;
+const core = `rgb(${COLOURS.accentBright})`;
 let serial=10;
 const id=()=>`0:${serial++}`;
 let seed=72663863;
@@ -156,7 +183,7 @@ for(let y=0;y<1876;y++)for(let x=0;x<1400;x++){
   }
   solid2x[y*1400+x]=a;
 }
-const wireColour=ULTRAMARINE_COLORS.accentBright.split(',').map(Number);
+const wireColour=COLOURS.accentBright.split(',').map(Number);
 const svgPath=points=>`M${points.map(([x,y])=>`${x.toFixed(2)},${y.toFixed(2)}`).join(' L')}`;
 // The tracks below are sampled every 5 frames, which stores hundreds of
 // points on stretches that are straight lines (the drift is linear between
@@ -283,4 +310,4 @@ console.log(`${facets.length} organically clustered facets, ${manifest.length} e
 execFileSync('rive',['art/rive/hero','--verify'],{stdio:'inherit'});
 execFileSync('rive',['inspect','art/rive/hero','--summary'],{stdio:'inherit'});
 execFileSync('rive',['art/rive/hero','--once'],{stdio:'inherit'});
-copyFileSync('art/rive/hero/build/hero.riv','public/animations/hero.riv');
+copyFileSync('art/rive/hero/build/hero.riv',`public/animations/hero-${SET}.riv`);

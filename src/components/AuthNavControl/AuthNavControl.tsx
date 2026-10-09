@@ -4,7 +4,6 @@ import { useAuth } from '@/lib/auth';
 import { useEditMode } from '@/lib/edit-mode';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
 import { FontPicker, PaletteSwatches, SchemeSlider, ThemePicker } from '@/components/ThemePicker';
-import { StatueOptions, StatuePicker } from '@/components/LookPicker';
 import './AuthNavControl.css';
 
 /** Two letters from the address: "dimitris.afendras@…" → "DA". */
@@ -67,7 +66,6 @@ export function AuthNavControl() {
       <div className="auth-nav auth-nav--anon">
         <LanguageSwitcher />
         <ThemePicker />
-        <StatuePicker />
         <a className="auth-nav__signin" href="#login">
           {t('authLogin')}
         </a>
@@ -125,11 +123,6 @@ export function AuthNavControl() {
           <PaletteSwatches />
           <SchemeSlider />
           <FontPicker />
-
-          <div className="auth-nav__section-label" aria-hidden="true">
-            {t('menuStatue')}
-          </div>
-          <StatueOptions />
 
           <div className="auth-nav__divider" />
 

@@ -87,12 +87,13 @@ describe('StatueOptions', () => {
     expect(checked[0]).toHaveAccessibleName(/follow the theme/i);
   });
 
-  it('pins a statue and stamps data-statue when a row is clicked', async () => {
+  it('pins a statue for the page view only when a row is clicked', async () => {
     const { user } = renderStatue();
     await user.click(screen.getByRole('radio', { name: /monochrome/i }));
 
     expect(document.documentElement.dataset.statue).toBe('mono');
-    expect(window.localStorage.getItem(STATUE_STORAGE_KEY)).toBe('mono');
+    // The statue is no longer a visitor setting, so a pin must not survive a reload.
+    expect(window.localStorage.getItem(STATUE_STORAGE_KEY)).toBeNull();
 
     const radios = screen.getAllByRole('radio');
     const checked = radios.filter((r) => r.getAttribute('aria-checked') === 'true');

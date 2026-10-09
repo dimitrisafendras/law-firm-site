@@ -4,6 +4,7 @@ import { useTranslation } from '@/i18n';
 import { Navbar, Footer, Container, Card, CardBody, Button, Heading, Text } from '@/components';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '@/components/CircuitField';
+import { AmbientParticles } from '@/components/AmbientParticles';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
 import { useAuth } from '@/lib/auth/useAuth';
 import './AuthPages.css';
@@ -59,6 +60,7 @@ export default function AccountPage(): JSX.Element {
 
       <main className="auth-page page-ramp page-ramp--short">
         <CircuitField />
+        <AmbientParticles fixed />
         <Container className="auth-page__inner">
           <Card variant="glow" className="auth-page__card">
             <CardBody>

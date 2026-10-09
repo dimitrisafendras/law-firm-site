@@ -94,19 +94,44 @@ So there are five artworks and one registry (`src/theme/statues.ts`), and
 limestone for Limestone, Terracotta, Patina, Verdant and Olive; white for
 Amethyst; mono for Graphite; ultramarine for Ultramarine; cyan is the
 `families: null` remainder, which today is Azure. The default pairing is the
-Ultramarine palette (`lapis`) wearing the ultramarine figure. That is what the
-header statue menu's "Follow the theme" (`auto`, the absence of
-`<html data-statue>`) means; a pin (`law-firm-site:statue`) outranks it.
+Ultramarine palette (`lapis`) wearing the ultramarine figure.
+
+**The statue always follows the theme; visitors cannot pick one.** The header
+statue menu and the account menu's statue section were removed. A stored
+`law-firm-site:statue` pin from before is ignored on purpose (it is neither
+stamped by the inline script nor read by `ThemeProvider`), because it would
+freeze the hero on one artwork with no control left to release it. The
+`[data-statue]` pin rules are still generated and `StatuePicker`/
+`StatueOptions` still exist, for previewing on the design-system page only.
 
 Every palette wore one statue for a while, a deliberate one-drawing-site-wide
-trade. It made "Follow the theme" an option that never followed anything, and
-the owner read that as a bug, so the pairing is back. Do not collapse it to
-one statue again without also removing or renaming `auto`.
+trade. The owner read the statue not changing with the theme as a bug, so the
+pairing is back. Do not collapse it to one statue again.
 
-What has NOT changed is the rule underneath: the scene still follows the
-DRAWING. Pin limestone and the rain turns gold, because `statueArtwork.ts` is
-keyed on the resolved statue. Nothing anywhere re-tints a canvas to match a
-palette.
+What has NOT changed is the rule underneath: the scene follows the DRAWING.
+`statueArtwork.ts` is keyed on the resolved statue, so its colours and its
+light layer come from the statue on screen. Nothing anywhere re-tints a canvas
+to match a palette.
+
+**The light layer is built once per statue colour set.** The Rive mesh (with
+the pan fire) bakes its colours at build time, so `scripts/build-hero-rive.mjs`
+builds `public/animations/hero-<set>.riv` for `cyan`, `ultramarine`,
+`limestone` and `neutral` (white and mono share it). Run with no argument to
+build all four (about three minutes each), or name one set. `statueArtwork.ts`
+maps each statue to its file, and `DigitalStatue` loads it inside the effect,
+which keeps it out of rendered markup. The scan band's glow colour is set in
+the same effect for the same reason. Builds are reproducible byte for byte.
+Each build rewrites `art/rive/hero/layers` and `scene.rml` for the set it built,
+so restore them afterwards (`git checkout -- art/rive/hero`).
+
+**On light palettes the light layer is inverted and multiplied.** It is painted
+in light values and composited with `screen`, which can only brighten, so on a
+near-white ground it vanished. The generator emits a light-scheme rule giving
+`.digital-statue__surface` and `.digital-statue__scan`
+`mix-blend-mode: multiply` and `invert(1) hue-rotate(180deg)` (plus saturate and
+contrast). That is the same hue at a dark value, so the lit facets read as ink
+in the wireframe's own colour. The fire in the pans goes dark with it. Check
+any change to these colours on a light palette as well as a dark one.
 
 The LOOK does not pick a statue either. Both looks wear the same five, and
 both light the scale pans with the same two flames.
@@ -149,7 +174,9 @@ burns out the light palettes or disappears on the dark ones. Add the master to
 the widths and quality ladder are shared. Then register it in `statues.ts`
 with the families that wear it (taking them from another entry), give
 it a `SceneColors` in `statueArtwork.ts`, and a label key in both locales; the
-generator, the statue menu and the scene pick it up from there.
+generator and the scene pick it up from there; build its light layer by adding
+its colour set to `COLOUR_SETS` in `build-hero-rive.mjs` and mapping it in
+`statueArtwork.ts`.
 
 **Writing palette-safe CSS:** `--accent`, `--accent-container` and `--secondary`
 are FILLS and may be pale. Text on the page ground takes `--accent-text`; text

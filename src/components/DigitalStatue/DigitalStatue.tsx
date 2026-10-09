@@ -1,11 +1,7 @@
 import { useEffect, useRef } from 'react';
-import type { CSSProperties } from 'react';
 import { breakpoints, resolveStatue } from '@/theme';
 import { useTheme } from '@/lib/theme';
 import { artworkFor } from './statueArtwork';
-// The Rive mesh is baked in this blue whichever statue shows (see
-// scripts/build-hero-rive.mjs), so its entrance scan is too.
-import { ULTRAMARINE_COLORS } from './sceneColors';
 import riveWasm from '@rive-app/webgl2/rive.wasm?url';
 import type { StatueWorkerMessage } from './statue.worker';
 import './DigitalStatue.css';
@@ -85,6 +81,10 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    // The scan is the mesh switching on, so it glows in the same statue's
+    // colour. Set here rather than in the markup: it depends on the palette,
+    // and the prerendered markup must not (see statueArtwork.ts).
+    container.style.setProperty('--statue-surface-glow', artwork.colors.accentBright);
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const desktop = window.matchMedia(`(min-width: ${mobileBreakpoint + 1}px)`);
     let worker: Worker | null = null;
@@ -156,7 +156,7 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
         send({
           type: 'init',
           canvas: target,
-          riv: new URL(`${import.meta.env.BASE_URL}animations/hero.riv`, location.href).href,
+          riv: new URL(`${import.meta.env.BASE_URL}animations/${artwork.riv}`, location.href).href,
           wasm: new URL(riveWasm, location.href).href,
           ...drawingSize(),
         }, [target]);
@@ -240,8 +240,6 @@ export function DigitalStatue({ className = '' }: { className?: string }) {
       aria-hidden="true"
       data-scene="loading"
       data-surface="loading"
-      // Constant, so it is the same markup on the server and the client.
-      style={{ '--statue-surface-glow': ULTRAMARINE_COLORS.accentBright } as CSSProperties}
     >
       <div className="digital-statue__img" role="presentation">
         <div className="digital-statue__surface">

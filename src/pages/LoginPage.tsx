@@ -5,6 +5,7 @@ import { VkmLogo } from '@/assets/VkmLogo';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
 import { AuthForm } from '@/components/AuthForm/AuthForm';
 import { CircuitField } from '@/components/CircuitField/CircuitField';
+import { AmbientParticles } from '@/components/AmbientParticles';
 import './AuthPages.css';
 
 export default function LoginPage(): JSX.Element {
@@ -36,6 +37,7 @@ export default function LoginPage(): JSX.Element {
 
       <main className="auth-page page-ramp page-ramp--short">
         <CircuitField />
+        <AmbientParticles fixed />
         <Container className="auth-page__inner">
           <Card variant="glow" className="auth-page__card">
             <CardBody>

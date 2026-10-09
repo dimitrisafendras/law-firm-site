@@ -4,6 +4,7 @@ import { useTranslation } from '@/i18n';
 import { Navbar, Footer, Container, Card, CardBody, Button, Heading, Text } from '@/components';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '@/components/CircuitField';
+import { AmbientParticles } from '@/components/AmbientParticles';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
 import { useAuth } from '@/lib/auth/useAuth';
 import { supabase } from '@/lib/supabase';
@@ -247,6 +248,7 @@ export default function AdminUsersPage(): JSX.Element {
 
       <main className="admin-users page-ramp page-ramp--short">
         <CircuitField />
+        <AmbientParticles fixed />
         <Container className="admin-users__inner">
           <Card variant="glow" className="admin-users__card">
             <CardBody>

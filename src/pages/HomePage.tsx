@@ -8,6 +8,7 @@ import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
 import { ClientsSection } from '@/components/sections/ClientsSection/ClientsSection';
 import { ContactSection } from '@/components/sections/ContactSection/ContactSection';
 import { CircuitField } from '@/components/CircuitField';
+import { AmbientParticles } from '@/components/AmbientParticles';
 import { ClassicField } from '@/components/ClassicField';
 import { watchSection } from '@/utils/sectionSpy';
 
@@ -109,6 +110,7 @@ export default function HomePage() {
           screen at a time. */}
       <main className="page-ramp page-ramp--screens">
         <CircuitField />
+        <AmbientParticles fixed below=".hero-section" />
         {/* The classic look's frame. Both decorative layers are always in the
             DOM and src/styles/classic.css picks the one that paints — the
             markup has to be mode-agnostic (see src/theme/modes.ts). */}

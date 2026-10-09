@@ -73,6 +73,12 @@ export interface StatueArtwork {
   id: StatueId;
   /** What the rain, sparkles and cool flame are painted in. */
   colors: SceneColors;
+  /**
+   * The light layer's Rive file under public/animations/, built from the same
+   * colour set by scripts/build-hero-rive.mjs, so the mesh lights in the
+   * drawing's colour too. White and mono share one, as they share colours.
+   */
+  riv: string;
 }
 
 /*
@@ -82,11 +88,11 @@ export interface StatueArtwork {
  * anything above the hero changed.
  */
 const ARTWORKS: Record<StatueId, StatueArtwork> = {
-  cyan: { id: 'cyan', colors: STATUE_COLORS },
-  ultramarine: { id: 'ultramarine', colors: ULTRAMARINE_COLORS },
-  white: { id: 'white', colors: NEUTRAL_COLORS },
-  mono: { id: 'mono', colors: NEUTRAL_COLORS },
-  limestone: { id: 'limestone', colors: LIMESTONE_COLORS },
+  cyan: { id: 'cyan', colors: STATUE_COLORS, riv: 'hero-cyan.riv' },
+  ultramarine: { id: 'ultramarine', colors: ULTRAMARINE_COLORS, riv: 'hero-ultramarine.riv' },
+  white: { id: 'white', colors: NEUTRAL_COLORS, riv: 'hero-neutral.riv' },
+  mono: { id: 'mono', colors: NEUTRAL_COLORS, riv: 'hero-neutral.riv' },
+  limestone: { id: 'limestone', colors: LIMESTONE_COLORS, riv: 'hero-limestone.riv' },
 };
 
 /** The scene for a resolved statue — see `resolveStatue` in src/theme/statues.ts. */

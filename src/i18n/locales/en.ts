@@ -243,7 +243,7 @@ const en = {
   // for an office actually reads it, so the subtitle was restating the section
   // it sits above.
   contactSubtitle: 'Tell us what the matter is; we\u2019ll tell you whether it is ours.',
-  contactAddress: '12 Vasilissis Sofias Avenue, Athens 10674, Greece',
+  contactAddress: '23 Asklipiou Street, Athens 10680, Greece',
   contactEmail: 'info@vkm.legal',
 
   // Column headings inside the glass panel over the map.

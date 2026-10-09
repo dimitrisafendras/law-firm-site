@@ -240,7 +240,7 @@ const el = {
   // Κόπηκε στη μία πρόταση που κάνει δουλειά — το υπόλοιπο το λέει ήδη το
   // `contactOfficeNote`, δίπλα στη διεύθυνση.
   contactSubtitle: 'Πείτε μας ποια είναι η υπόθεση· θα σας πούμε αν είναι δική μας.',
-  contactAddress: 'Λεωφ. Βασιλίσσης Σοφίας 12, Αθήνα 10674, Ελλάδα',
+  contactAddress: 'Ασκληπιού 23, Αθήνα 10680, Ελλάδα',
   contactEmail: 'info@vkm.legal',
 
   // Column headings inside the glass panel over the map.

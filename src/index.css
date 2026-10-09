@@ -423,6 +423,23 @@ code {
   --blur-spawn-tight: 8px;
 }
 
+/* ─── Touch phones and tablets ────────────────────────────────────────────────
+   No decorative motion on a touch device at the mobile breakpoint, for
+   performance: the floating stars, the pulsing dots, the entrances and the
+   scroll-driven section dissolves all stop and every element sits at its
+   resting state, which is the visible one by design. The statue's light layer
+   is already off below the same breakpoint (DigitalStatue). Transitions stay:
+   they only run on a tap and they are the feedback that something responded.
+   A desktop window narrowed to this width keeps its motion — the query asks
+   for a coarse pointer, not just a small viewport. */
+@media (max-width: 1024px) and (hover: none) and (pointer: coarse) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+  }
+}
+
 /* ─── Reduced motion ──────────────────────────────────────────────────────────
    Global kill-switch for users who prefer reduced motion. Neutralises the
    infinite decorative animations (pulse-dot, arrow-bounce, pin-bob) and

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type CSSProperties } from 'react';
 import { ORION_STARS } from './orion';
 import './AmbientParticles.css';
 
@@ -69,9 +69,11 @@ export function AmbientParticles({ className = '' }: { className?: string }) {
               top: `${star.y}%`,
               width: `${starSize(star.mag)}px`,
               height: `${starSize(star.mag)}px`,
-              animationDelay: `${-i * 1.9}s`,
-              animationDuration: `${8 + (i % 4) * 2}s`,
-            }}
+              animationDelay: `${-i * 1.3}s`,
+              animationDuration: `${6 + (i % 5) * 1.5}s`,
+              '--sx': i % 2 ? -1 : 1,
+              '--sy': i % 3 ? 1 : -1,
+            } as CSSProperties}
           />
         ))}
       </div>

@@ -45,12 +45,15 @@
   animation-play-state: var(--ambient-particle-play, paused);
 }
 
-/* A small drift: enough to see the stars move, not enough to break the figure. */
+/* Each star wanders about ten pixels and twinkles. The direction comes from
+   per-star `--sx`/`--sy` (±1, set in AmbientParticles.tsx), so neighbours move
+   apart and together instead of the whole figure sliding as one. */
 @keyframes ambient-star-float {
-  0% { transform: translate3d(-5px, 3px, 0); opacity: .85; }
-  33% { transform: translate3d(2px, -5px, 0); opacity: .55; }
-  66% { transform: translate3d(5px, 2px, 0); opacity: .8; }
-  100% { transform: translate3d(-1px, 5px, 0); opacity: .65; }
+  0% { transform: translate3d(calc(var(--sx, 1) * -10px), calc(var(--sy, 1) * 6px), 0); opacity: .9; }
+  25% { transform: translate3d(calc(var(--sx, 1) * 4px), calc(var(--sy, 1) * -10px), 0); opacity: .4; }
+  50% { transform: translate3d(calc(var(--sx, 1) * 11px), calc(var(--sy, 1) * 2px), 0); opacity: 1; }
+  75% { transform: translate3d(calc(var(--sx, 1) * 2px), calc(var(--sy, 1) * 10px), 0); opacity: .55; }
+  100% { transform: translate3d(calc(var(--sx, 1) * -6px), calc(var(--sy, 1) * -4px), 0); opacity: .85; }
 }
 
 @media (max-width: 768px) {

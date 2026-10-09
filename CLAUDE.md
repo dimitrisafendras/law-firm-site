@@ -107,11 +107,10 @@ So there are five artworks and one registry (`src/theme/statues.ts`), and
 limestone for Limestone, Terracotta, Patina, Verdant and Olive; white for
 Amethyst; mono for Graphite; ultramarine for Ultramarine; cyan is the
 `families: null` remainder, which today is Azure. The default pairing is the
-Ultramarine palette (`lapis`) wearing the `ultramarine` entry, which is on
-trial as the WHITE figure under ultramarine light: its `base` points at
-`hero-statue-white` while its colour set and light layer stay ultramarine.
-An entry's image and its colours are independent, so that is one line in
-`statues.ts` to revert.
+Ultramarine palette (`lapis`) wearing the `ultramarine` entry: the
+blue-wireframe figure under a near-white light layer (`ULTRAMARINE_COLORS` is
+a faintly blue white, by the owner's choice). An entry's image and its colours
+are independent; a white figure under blue light was tried and reversed.
 
 **The statue always follows the theme; visitors cannot pick one.** The header
 statue menu and the account menu's statue section were removed. A stored

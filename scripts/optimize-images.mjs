@@ -106,8 +106,13 @@ async function loadMonoSource() {
 /** The ultramarine statue: the cyan mesh re-hued to the family's blue. Same
  *  master arrangement as the other recolours. */
 async function loadUltramarineSource() {
-  const buffer = await readFile(join(imagesDir, 'hero-statue-ultramarine.webp'));
-  return { buffer, origin: 'on-disk hero-statue-ultramarine.webp (1400px master)' };
+  const master = await readFile(join(imagesDir, 'hero-statue-ultramarine.webp'));
+  // Lifted 18% at the owner's request: as drawn, the blue figure read too dark
+  // on the Ultramarine palettes. Applied here rather than as a CSS filter
+  // because the light layer is a child of the image box and would be
+  // brightened with it; the master on disk is left as drawn.
+  const buffer = await sharp(master).modulate({ brightness: 1.18 }).toBuffer();
+  return { buffer, origin: 'on-disk hero-statue-ultramarine.webp (1400px master), brightness x1.18' };
 }
 
 /**

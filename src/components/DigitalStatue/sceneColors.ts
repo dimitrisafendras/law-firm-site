@@ -97,19 +97,20 @@ export const NEUTRAL_COLORS: SceneColors = {
  *
  * The limestone rule again, with nothing to choose: the artwork's hue is the
  * family accent's, 215.3deg (porcelain, #A8C4EC), and the cyan set's HSL
- * saturation is held exactly; the lightness has since been taken down (see
- * the values). It is deliberately not the palette's
+ * saturation was held exactly; the set has since been moved to a near-white
+ * (see the values). It is deliberately not the palette's
  * own accent tokens: `lapis`'s accent is white plates, and the rain has to be
  * the wireframe's colour, not the buttons'.
  */
 export const ULTRAMARINE_COLORS: SceneColors = {
-  // Darkened from the cyan profile (L 87/74/93 → 70/55/82, hue and saturation
-  // kept) at the owner's request, once the Ultramarine palettes moved to the
-  // WHITE figure: at the original lightness the light layer, screened over
-  // white marble, washed out to white instead of reading as ultramarine.
-  accent: '102,166,255',
-  secondary: '52,124,229',
-  accentBright: '163,200,255',
+  // Near-white with a faint ultramarine tint, at the owner's request: the
+  // figure is the blue-wireframe artwork again, and the light over it reads as
+  // white light on a blue drawing rather than blue on blue. (Tried and
+  // reversed first: a white figure under a darkened ultramarine.) The
+  // digital-pan fire follows, as an icy pale flame.
+  accent: '228,236,252',
+  secondary: '196,212,240',
+  accentBright: '244,248,255',
 };
 
 /**

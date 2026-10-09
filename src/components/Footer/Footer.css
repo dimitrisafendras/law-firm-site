@@ -5,6 +5,12 @@
   border-top: 1px solid var(--border);
   padding: var(--space-12) var(--space-6) var(--space-6);
 
+  /* Above the page's fixed layers (the Orion stars sit at up to z-index 1,
+     src/components/AmbientParticles): the footer is a solid band that closes
+     the page, so the sky stops at it rather than showing through it. */
+  position: relative;
+  z-index: 2;
+
   /* Below-the-fold: skip rendering until near-viewport; reserve a realistic
      height (self-corrects after first render via the `auto` keyword). */
   content-visibility: auto;

@@ -69,8 +69,8 @@ export function AmbientParticles({ className = '' }: { className?: string }) {
               top: `${star.y}%`,
               width: `${starSize(star.mag)}px`,
               height: `${starSize(star.mag)}px`,
-              animationDelay: `${-i * 1.3}s`,
-              animationDuration: `${6 + (i % 5) * 1.5}s`,
+              animationDelay: `${-i * 1.7}s`,
+              animationDuration: `${9 + (i % 5) * 2}s`,
               '--sx': i % 2 ? -1 : 1,
               '--sy': i % 3 ? 1 : -1,
             } as CSSProperties}

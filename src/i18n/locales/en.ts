@@ -403,7 +403,7 @@ const en = {
   attorney3Name: 'Evangelos Mastrodimas',
   attorney3Title: 'Founding Partner',
   attorney3Bio:
-    'Evangelos advises founders and funds operating at the regulatory frontier of digital assets. He structures token offerings, guides protocols through MiCA authorisation, and resolves disputes where code and contract law meet.',
+    'Evangelos advises founders and investors at the regulatory frontier of digital assets. He structures token offerings, guides protocols through MiCA authorisation, and resolves disputes where code meets contract.',
   attorney3Spec1: 'Digital Assets',
   attorney3Spec2: 'AML & Licensing',
   attorney3Spec3: 'MiCA Compliance',

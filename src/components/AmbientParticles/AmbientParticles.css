@@ -1,4 +1,5 @@
-/* Tiny lights only: no background shards or overall glow. */
+/* The page's floating decoration: Orion and nothing else (see
+   AmbientParticles.tsx). */
 .ambient-particles {
   position: absolute;
   inset: 0;
@@ -6,44 +7,45 @@
   pointer-events: none;
 }
 
-/* The site-wide layer: pinned to the viewport like `.circuit-field`, and at
-   the same level, so sections (positioned, later in the DOM) paint over it. */
-.ambient-particles--fixed {
-  position: fixed;
-  z-index: 0;
+/*
+ * Spread across the whole area, by the owner's choice, rather than kept at the
+ * figure's true proportions in a box: the star positions (0–100 on each axis,
+ * orion.ts) map onto the full layer, inset a little so no star sits on an
+ * edge. On pages other than the home page the layer can be a whole page tall,
+ * so there the figure is held to the first screen (viewport units) and
+ * scrolls away with it.
+ */
+.ambient-particles__orion {
+  position: absolute;
+  inset: 8% 6%;
 }
 
-.ambient-particles span {
+.ambient-particles:not(.hero-section__particles) .ambient-particles__orion {
+  inset: auto;
+  top: 8vh;
+  left: 6%;
+  width: 88%;
+  height: 84vh;
+}
+
+.ambient-particles__star {
   position: absolute;
+  translate: -50% -50%;
   border-radius: var(--radius-full);
   background: radial-gradient(circle, var(--accent-text) 15%,
     color-mix(in srgb, var(--accent-text) 65%, transparent) 45%, transparent 75%);
-  animation: ambient-particle-drift ease-in-out infinite;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent-text) 45%, transparent);
+  animation: ambient-star-float ease-in-out infinite alternate;
   animation-play-state: var(--ambient-particle-play, paused);
 }
 
-/* The first 13 lights span the entire width. Trim later lights on smaller
-   screens without viewport-dependent markup or running hidden animations. */
-@media (max-width: 1280px) {
-  .ambient-particles span:nth-child(n + 35) { display: none; animation: none; }
-}
-@media (max-width: 1024px) {
-  .ambient-particles span:nth-child(n + 29) { display: none; animation: none; }
-}
-@media (max-width: 768px) {
-  .ambient-particles span:nth-child(n + 21) { display: none; animation: none; }
-}
-@media (max-width: 480px) {
-  .ambient-particles span:nth-child(n + 14) { display: none; animation: none; }
+@keyframes ambient-star-float {
+  0% { transform: translate3d(-9px, 6px, 0); opacity: .85; }
+  50% { transform: translate3d(5px, -10px, 0); opacity: .5; }
+  100% { transform: translate3d(11px, 3px, 0); opacity: .75; }
 }
 
-@keyframes ambient-particle-drift {
-  0% { transform: translate3d(-14px, 20px, 0); opacity: .25; }
-  33% { transform: translate3d(18px, -8px, 0); opacity: .65; }
-  66% { transform: translate3d(32px, -35px, 0); opacity: .45; }
-  100% { transform: translate3d(8px, -58px, 0); opacity: .3; }
-}
-
+/* Stars that float are motion; with reduced motion they stay, still. */
 @media (prefers-reduced-motion: reduce) {
-  .ambient-particles { display: none; }
+  .ambient-particles__star { animation: none; }
 }

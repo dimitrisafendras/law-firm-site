@@ -248,7 +248,7 @@ export default function AdminUsersPage(): JSX.Element {
 
       <main className="admin-users page-ramp page-ramp--short">
         <CircuitField />
-        <AmbientParticles fixed />
+        <AmbientParticles />
         <Container className="admin-users__inner">
           <Card variant="glow" className="admin-users__card">
             <CardBody>

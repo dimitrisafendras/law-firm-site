@@ -88,7 +88,7 @@ export default function PartnerDetailPage({ partner }: PartnerDetailPageProps): 
 
       <main className="partner-page page-ramp page-ramp--short">
         <CircuitField />
-        <AmbientParticles fixed />
+        <AmbientParticles />
 
         <Container className="partner-page__inner">
           {/* The way back and what this page is, on one line over the hairline

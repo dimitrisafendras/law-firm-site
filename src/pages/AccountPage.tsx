@@ -60,7 +60,7 @@ export default function AccountPage(): JSX.Element {
 
       <main className="auth-page page-ramp page-ramp--short">
         <CircuitField />
-        <AmbientParticles fixed />
+        <AmbientParticles />
         <Container className="auth-page__inner">
           <Card variant="glow" className="auth-page__card">
             <CardBody>

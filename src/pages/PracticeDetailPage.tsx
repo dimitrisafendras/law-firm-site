@@ -110,7 +110,7 @@ export default function PracticeDetailPage({ area }: PracticeDetailPageProps): J
             for why this is here instead of `<CircuitField />`. The SVG declares
             its own `aria-hidden` (src/assets/domainBackgrounds.tsx). */}
         <Bg className="practice-page__ground" />
-        <AmbientParticles fixed />
+        <AmbientParticles />
 
         <Container className="practice-page__inner">
           {/* The way back and the page's index on one line. They were two

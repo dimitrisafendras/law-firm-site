@@ -971,14 +971,14 @@ export default function DesignSystem() {
         <div style={{ position: 'relative', height: '260px', overflow: 'hidden', borderRadius: radii['2xl'], background: 'var(--grad-3)', transform: 'translateZ(0)' }}>
           <CircuitField />
         </div>
-        <h3 style={{ fontFamily: 'var(--heading)', fontSize: '20px', margin: '32px 0 12px' }}>Ambient particles</h3>
+        <h3 style={{ fontFamily: 'var(--heading)', fontSize: '20px', margin: '32px 0 12px' }}>Orion</h3>
         <p style={{ maxWidth: '70ch', marginBottom: '24px', opacity: 0.75 }}>
-          The hero&apos;s drifting lights, on every page. Pages mount it with{' '}
-          <code>fixed</code> beside their ground layer; the home page clips it to
-          start below the hero, which carries its own copy above its text scrim.
-          Shown here unfixed, inside the box.
+          The page&apos;s only floating decoration: the constellation Orion as
+          21 floating lights, sized by each star&apos;s brightness, unjoined. It
+          scrolls with the page (in the hero on the home page, at the top of
+          <code>main</code> elsewhere).
         </p>
-        <div style={{ position: 'relative', height: '200px', overflow: 'hidden', borderRadius: radii['2xl'], background: 'var(--grad-3)' }}>
+        <div style={{ position: 'relative', height: '420px', overflow: 'hidden', borderRadius: radii['2xl'], background: 'var(--grad-3)' }}>
           <AmbientParticles />
         </div>
       </section>

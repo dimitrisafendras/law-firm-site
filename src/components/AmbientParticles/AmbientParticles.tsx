@@ -1,44 +1,32 @@
 import { useEffect, useRef } from 'react';
+import { ORION_STARS } from './orion';
 import './AmbientParticles.css';
 
-/*
- * Horizontal positions, as percentages, in the order the lights are dropped on
- * narrower screens (see the nth-child rules in the stylesheet): the first
- * thirteen already span the whole width, so trimming the tail thins the field
- * without leaving one side bare.
- */
-const POSITIONS = [4, 10, 18, 25, 33, 41, 49, 57, 65, 73, 81, 88, 94,
-  7, 15, 28, 38, 46, 54, 62, 70, 78, 85, 91, 22, 59, 97, 35,
-  12, 20, 30, 43, 51, 67, 76, 83, 93, 6, 26, 56, 72, 96] as const;
+/** Faintest star 2.5px, brightest about 6px: size reads as magnitude. */
+const starSize = (mag: number) => (2.5 + (4.6 - mag) * 0.8).toFixed(1);
 
 /**
- * Tiny drifting lights, the hero's ambient particles on every page.
+ * The constellation Orion, as a few floating lights: one per star, placed
+ * where the star is in the sky and sized by its brightness (see orion.ts).
  *
- * They began inside the hero, scoped to it, so they scrolled away with it and
- * the rest of the site had none. `fixed` makes the same lights a viewport
- * layer, like CircuitField, so content scrolls over a field that stays put.
- * Mount it inside `main.page-ramp`, beside the page's ground: the ramp paints
- * an opaque gradient, and anything behind `main` is never seen.
+ * This is the whole of the page's floating decoration, and deliberately so.
+ * It began as forty-odd drifting dots across every page, then gained Orion,
+ * then lines between its stars and a scatter of faint background stars; the
+ * owner pared it back each time, to the figure alone, unjoined. Too much
+ * floating around reads as noise, not sky.
  *
- * `below` names an element the fixed layer should start under. The home
- * page's hero carries its own layer, above its text scrim (which is opaque on
- * the left and would hide a layer behind it), so the site-wide one is clipped
- * to begin where the hero ends rather than doubling the field over it.
+ * The figure is spread across the whole area rather than drawn to scale (see
+ * the stylesheet). Each star floats on its own slow path, wide enough to read
+ * as floating and small enough that the figure holds. The layer scrolls with the page rather
+ * than being pinned to the viewport: the home page draws it in the hero, and
+ * other pages mount it at the top of `main`, beside their ground layer (the
+ * ramp paints an opaque gradient, so anything behind `main` is never seen).
  *
- * The markup is constant (positions, sizes and timings are derived from the
- * index alone), so the prerender and the client agree. Whether the drift runs
- * is decided after mount: only while the layer is on screen and the tab is
- * visible.
+ * The markup is constant (positions and timings derive from the data alone),
+ * so the prerender and the client agree. Whether the drift runs is decided
+ * after mount: only while the layer is on screen and the tab is visible.
  */
-export function AmbientParticles({
-  fixed = false,
-  below,
-  className = '',
-}: {
-  fixed?: boolean;
-  below?: string;
-  className?: string;
-}) {
+export function AmbientParticles({ className = '' }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -53,54 +41,30 @@ export function AmbientParticles({
     });
     observer.observe(layer);
     document.addEventListener('visibilitychange', sync);
-
-    const above = below ? document.querySelector(below) : null;
-    let frame = 0;
-    const clip = () => {
-      frame = 0;
-      const edge = Math.max(0, above!.getBoundingClientRect().bottom);
-      layer.style.clipPath = edge > 0 ? `inset(${edge}px 0 0 0)` : '';
-    };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(clip);
-    };
-    if (above) {
-      clip();
-      window.addEventListener('scroll', schedule, { passive: true });
-      window.addEventListener('resize', schedule);
-    }
-
     return () => {
       observer.disconnect();
       document.removeEventListener('visibilitychange', sync);
-      if (above) {
-        cancelAnimationFrame(frame);
-        window.removeEventListener('scroll', schedule);
-        window.removeEventListener('resize', schedule);
-      }
     };
-  }, [below]);
+  }, []);
 
   return (
-    <div
-      ref={ref}
-      className={`ambient-particles ${fixed ? 'ambient-particles--fixed' : ''} ${className}`.replace(/\s+/g, ' ').trim()}
-      aria-hidden="true"
-    >
-      {POSITIONS.map((left, i) => (
-        <span
-          key={left}
-          style={{
-            left: `${left}%`,
-            top: `${5 + ((i * 37) % 89)}%`,
-            width: `${2 + (i % 2)}px`,
-            height: `${2 + (i % 2)}px`,
-            animationDelay: `${-i * 2.3}s`,
-            animationDirection: i % 2 ? 'alternate-reverse' : 'alternate',
-            animationDuration: `${15 + (i % 5) * 2}s`,
-          }}
-        />
-      ))}
+    <div ref={ref} className={`ambient-particles ${className}`.trim()} aria-hidden="true">
+      <div className="ambient-particles__orion">
+        {ORION_STARS.map((star, i) => (
+          <span
+            key={star.id}
+            className="ambient-particles__star"
+            style={{
+              left: `${star.x}%`,
+              top: `${star.y}%`,
+              width: `${starSize(star.mag)}px`,
+              height: `${starSize(star.mag)}px`,
+              animationDelay: `${-i * 1.9}s`,
+              animationDuration: `${12 + (i % 4) * 2.5}s`,
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 }

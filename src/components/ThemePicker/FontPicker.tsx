@@ -11,7 +11,7 @@ import './ThemePicker.css';
 
 /**
  * The reader's typeface, as a radiogroup: "Follow the look" first, then the
- * three explicit choices in registry order, each row set in its own face so
+ * explicit choices in registry order, each row set in its own face so
  * picking one is a preview rather than a guess.
  *
  * ── Why this has no trigger of its own ───────────────────────────────────────
@@ -80,9 +80,13 @@ export function FontPicker() {
   // control previews rather than just names its choices. `auto`'s sample
   // follows the active LOOK, the one live thing it stands for — Jura in
   // digital, EB Garamond in classic — exactly what picking it will render.
+  // A face with a `sample` family previews through that two-glyph file instead
+  // of the face itself, so opening this list does not download every face on
+  // it (see `fontSamples` in tokens.ts).
   const sampleFamily = (id: string): string => {
     if (id === FONT_AUTO) return mode === 'classic' ? fonts.serif : fonts.sans;
-    return options.find((f) => f.id === id)?.fonts.sans ?? fonts.sans;
+    const option = options.find((f) => f.id === id);
+    return option?.sample ?? option?.fonts.sans ?? fonts.sans;
   };
 
   return (

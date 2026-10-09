@@ -27,7 +27,7 @@
  * three choices are a reader's explicit override, and they win regardless of
  * look — see the generator note below for how that precedence is enforced.
  *
- * ── The three explicit choices ────────────────────────────────────────────────
+ * ── The explicit choices ──────────────────────────────────────────────────────
  * `jura` and `garamond` set nothing this site has not already loaded: they are
  * the digital look's own sans and the classic look's own serif, made available
  * regardless of which look is active, using the family strings already in
@@ -37,6 +37,20 @@
  * @font-face blocks (self-hosted, latin + greek only — Google does not offer a
  * latin-ext subset for this face, and greek-ext is polytonic Greek this site
  * has no use for).
+ *
+ * The six after it — `literata`, `piazzolla`, `alegreya` (serif) and
+ * `manrope`, `commissioner`, `plexsans` (sans) — follow GFS Didot's pattern:
+ * self-hosted, fetched only once chosen, and each one VERIFIED (cmap checked,
+ * not taken on trust from a specimen page) to cover the whole monotonic Greek
+ * block U+0384–U+03CE, tonos and dialytika included, as well as Latin-1. See
+ * the note on them in `fonts` (tokens.ts). A new face has to clear the same
+ * bar: if its Greek subset is missing a single accented vowel, an `el` reader
+ * gets a fallback glyph mid-word, which is worse than not offering the face.
+ *
+ * Ids are 2–16 ASCII letters — index.html's pre-paint script stamps
+ * `data-font` only for values matching `/^[a-zA-Z]{2,16}$/`, so an id outside
+ * that pattern would still work after hydration but flash the look's font
+ * first.
  *
  * ── Why this file imports no images and needs no such caveat ─────────────────
  * Unlike statues.ts, nothing here is unimportable from bare node — `tokens.ts`
@@ -57,9 +71,18 @@
  * the attribute absent, only the classic (or bare) block ever applies.
  */
 
-import { fonts } from './tokens.ts';
+import { fonts, fontSamples } from './tokens.ts';
 
-export type FontId = 'jura' | 'garamond' | 'gfsDidot';
+export type FontId =
+  | 'jura'
+  | 'garamond'
+  | 'gfsDidot'
+  | 'literata'
+  | 'piazzolla'
+  | 'alegreya'
+  | 'manrope'
+  | 'commissioner'
+  | 'plexsans';
 
 /** A reader's font pin, or `auto` for "let the look decide". */
 export type FontChoice = FontId | 'auto';
@@ -70,6 +93,13 @@ export interface FontOption {
   labelKey: string;
   /** Translation key for the one-line description under the name. */
   hintKey: string;
+  /**
+   * The family the picker's "Aa" chip is set in, when it is not the face
+   * itself: a two-glyph preview subset (`fontSamples` in tokens.ts), so that
+   * opening the picker does not download every face on the list. Absent — as
+   * for Jura, which every page has already loaded — the chip uses `fonts.sans`.
+   */
+  sample?: string;
   /** The three tokens this choice re-points — see the file header. */
   fonts: {
     sans: string;
@@ -89,13 +119,57 @@ export const fontOptions: readonly FontOption[] = [
     id: 'garamond',
     labelKey: 'fontGaramond',
     hintKey: 'fontGaramondHint',
+    sample: fontSamples.garamond,
     fonts: { sans: fonts.serif, heading: fonts.serif, label: fonts.serif },
   },
   {
     id: 'gfsDidot',
     labelKey: 'fontGfsDidot',
     hintKey: 'fontGfsDidotHint',
+    sample: fontSamples.didot,
     fonts: { sans: fonts.didot, heading: fonts.didot, label: fonts.didot },
+  },
+  {
+    id: 'literata',
+    labelKey: 'fontLiterata',
+    hintKey: 'fontLiterataHint',
+    sample: fontSamples.literata,
+    fonts: { sans: fonts.literata, heading: fonts.literata, label: fonts.literata },
+  },
+  {
+    id: 'piazzolla',
+    labelKey: 'fontPiazzolla',
+    hintKey: 'fontPiazzollaHint',
+    sample: fontSamples.piazzolla,
+    fonts: { sans: fonts.piazzolla, heading: fonts.piazzolla, label: fonts.piazzolla },
+  },
+  {
+    id: 'alegreya',
+    labelKey: 'fontAlegreya',
+    hintKey: 'fontAlegreyaHint',
+    sample: fontSamples.alegreya,
+    fonts: { sans: fonts.alegreya, heading: fonts.alegreya, label: fonts.alegreya },
+  },
+  {
+    id: 'manrope',
+    labelKey: 'fontManrope',
+    hintKey: 'fontManropeHint',
+    sample: fontSamples.manrope,
+    fonts: { sans: fonts.manrope, heading: fonts.manrope, label: fonts.manrope },
+  },
+  {
+    id: 'commissioner',
+    labelKey: 'fontCommissioner',
+    hintKey: 'fontCommissionerHint',
+    sample: fontSamples.commissioner,
+    fonts: { sans: fonts.commissioner, heading: fonts.commissioner, label: fonts.commissioner },
+  },
+  {
+    id: 'plexsans',
+    labelKey: 'fontPlexSans',
+    hintKey: 'fontPlexSansHint',
+    sample: fontSamples.plexSans,
+    fonts: { sans: fonts.plexSans, heading: fonts.plexSans, label: fonts.plexSans },
   },
 ];
 

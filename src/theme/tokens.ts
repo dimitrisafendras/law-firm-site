@@ -165,6 +165,64 @@ export const fonts = {
    * faked.
    */
   didot: "'GFS Didot', Georgia, serif",
+  /*
+   * The rest of the font picker's faces (src/theme/fonts.ts). Every one was
+   * chosen for, and verified to carry, a complete monotonic Greek — the full
+   * U+0384–U+03CE block, tonos and dialytika included — alongside its Latin,
+   * so an `el` reader never falls back mid-word. All are variable on the
+   * weight axis and self-hosted as latin / latin-ext / greek subsets (see
+   * src/index.css), so unlike GFS Didot they render the type scale's own
+   * 300–700 weights as drawn rather than collapsing them to one.
+   *
+   * Three serifs, three sans, each a distinct voice rather than a near-copy of
+   * Jura or Garamond:
+   *   - Literata: a contemporary book serif (Type Together, drawn for long
+   *     reading on screen) — the calm, editorial choice.
+   *   - Piazzolla: a sharp, compact serif with wedge serifs — more contrast and
+   *     authority at display sizes than Literata, still readable as body.
+   *   - Alegreya: a calligraphic old-style serif with real rhythm — the most
+   *     "literary" of the three. Its axis starts at 400, so the light display
+   *     steps render as 400.
+   *   - Manrope: a modern geometric-grotesque hybrid — the closest in spirit
+   *     to Jura, without Jura's techno squareness.
+   *   - Commissioner: a low-contrast sans with a hint of flare in its strokes —
+   *     warm and institutional.
+   *   - IBM Plex Sans: a neutral, engineered grotesque — the corporate-precise
+   *     choice.
+   */
+  literata: "'Literata', Georgia, serif",
+  piazzolla: "'Piazzolla', Georgia, serif",
+  alegreya: "'Alegreya', Georgia, serif",
+  manrope: "'Manrope', sans-serif",
+  commissioner: "'Commissioner', sans-serif",
+  plexSans: "'IBM Plex Sans', sans-serif",
+} as const;
+
+/**
+ * Preview-only families for the font picker's "Aa" chip.
+ *
+ * Each is a separate @font-face (src/index.css) over a ~1–4KB woff2 that holds
+ * nothing but the glyphs "A" and "a", cut from the face's latin subset. The
+ * picker shows a row per face, each previewing its own face; pointing those
+ * chips at the real families would make merely OPENING the theme panel
+ * download the latin subset of every face on the list (~300KB), when a face
+ * should only be fetched once a reader actually chooses it. With these,
+ * opening the panel costs ~14KB and the full face is fetched on the click.
+ *
+ * The fallback after each sample is a GENERIC family, never the real face:
+ * while a sample file is still loading, the browser walks down the list to
+ * find something to measure with, and a web font found there gets fetched —
+ * which is exactly the download these exist to avoid.
+ */
+export const fontSamples = {
+  garamond: "'EB Garamond Sample', serif",
+  didot: "'GFS Didot Sample', serif",
+  literata: "'Literata Sample', serif",
+  piazzolla: "'Piazzolla Sample', serif",
+  alegreya: "'Alegreya Sample', serif",
+  manrope: "'Manrope Sample', sans-serif",
+  commissioner: "'Commissioner Sample', sans-serif",
+  plexSans: "'IBM Plex Sans Sample', sans-serif",
 } as const;
 
 /**
@@ -1126,6 +1184,12 @@ export const fontVarNames: Record<string, string> = {
   label: '--label',
   mono: '--mono',
   didot: '--gfs-didot',
+  literata: '--literata',
+  piazzolla: '--piazzolla',
+  alegreya: '--alegreya',
+  manrope: '--manrope',
+  commissioner: '--commissioner',
+  plexSans: '--plex-sans',
 };
 
 // ─── Aggregate theme object ───────────────────────────────────────────────────

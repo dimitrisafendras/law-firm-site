@@ -87,6 +87,14 @@
    order — same reasoning as `.auth-nav > .auth-nav__menu`. */
 .theme-picker > .theme-picker__panel {
   position: absolute;
+  /* Nine palette rows, the slider and ten typeface rows run to ~975px — taller
+     than a laptop window. Capped and scrollable on the same terms as
+     `.auth-nav__menu`, so the last typeface stays reachable rather than
+     hanging off the bottom of the screen; `contain` keeps a scroll that hits
+     the end from carrying on into the page behind. */
+  max-height: calc(100dvh - 6rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   box-shadow:

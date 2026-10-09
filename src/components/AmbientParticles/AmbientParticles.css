@@ -11,28 +11,18 @@
   pointer-events: none;
 }
 
-/* The hero's own copy (see AmbientParticles.tsx): positioned in the hero, at
-   the same level as its fade but later in the DOM, so above the fade and
-   below the statue and the copy (both z-index 1). */
-.ambient-particles--hero {
-  position: absolute;
-  height: 100vh;
-  inset: 0 0 auto;
-  z-index: 0;
-  will-change: transform;
-}
-
-@media (max-width: 1024px) {
-  /* The phone hero raises its fade to 1; stay above it. */
-  .ambient-particles--hero { z-index: 1; }
+/* The home page: mounted right after the hero and raised to the hero's level,
+   so it paints over the hero's opaque text scrim (left third) — and still
+   under every later section, which comes later in the DOM at the same level.
+   One fixed layer, so it cannot drift out of step with itself on scroll. */
+.ambient-particles--over-hero {
+  z-index: 1;
 }
 
 /*
  * Spread over most of the screen, by the owner's choice, rather than drawn to
  * scale: the star positions (0–100 on each axis, orion.ts) map onto this box,
- * centre-left. On the home page the hero's text scrim is opaque over the left
- * third of the screen and this layer is behind it, so there the club arm is
- * hidden until the hero scrolls away.
+ * centre-left.
  *
  * Each star floats on its own slow path; they are not joined.
  */
@@ -55,11 +45,12 @@
   animation-play-state: var(--ambient-particle-play, paused);
 }
 
-/* A tiny drift: a few pixels, so the stars are alive but stay put. */
+/* A small drift: enough to see the stars move, not enough to break the figure. */
 @keyframes ambient-star-float {
-  0% { transform: translate3d(-2px, 1.5px, 0); opacity: .85; }
-  50% { transform: translate3d(1.5px, -2.5px, 0); opacity: .55; }
-  100% { transform: translate3d(3px, 1px, 0); opacity: .75; }
+  0% { transform: translate3d(-5px, 3px, 0); opacity: .85; }
+  33% { transform: translate3d(2px, -5px, 0); opacity: .55; }
+  66% { transform: translate3d(5px, 2px, 0); opacity: .8; }
+  100% { transform: translate3d(-1px, 5px, 0); opacity: .65; }
 }
 
 @media (max-width: 768px) {

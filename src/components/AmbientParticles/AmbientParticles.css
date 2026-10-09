@@ -11,6 +11,22 @@
   pointer-events: none;
 }
 
+/* The hero's own copy (see AmbientParticles.tsx): positioned in the hero, at
+   the same level as its fade but later in the DOM, so above the fade and
+   below the statue and the copy (both z-index 1). */
+.ambient-particles--hero {
+  position: absolute;
+  height: 100vh;
+  inset: 0 0 auto;
+  z-index: 0;
+  will-change: transform;
+}
+
+@media (max-width: 1024px) {
+  /* The phone hero raises its fade to 1; stay above it. */
+  .ambient-particles--hero { z-index: 1; }
+}
+
 /*
  * Spread over most of the screen, by the owner's choice, rather than drawn to
  * scale: the star positions (0–100 on each axis, orion.ts) map onto this box,
@@ -22,10 +38,10 @@
  */
 .ambient-particles__orion {
   position: absolute;
-  top: 10vh;
-  left: 16%;
-  width: 54%;
-  height: 78vh;
+  top: 7vh;
+  left: 12%;
+  width: 62%;
+  height: 84vh;
 }
 
 .ambient-particles__star {
@@ -39,10 +55,11 @@
   animation-play-state: var(--ambient-particle-play, paused);
 }
 
+/* A tiny drift: a few pixels, so the stars are alive but stay put. */
 @keyframes ambient-star-float {
-  0% { transform: translate3d(-9px, 6px, 0); opacity: .85; }
-  50% { transform: translate3d(5px, -10px, 0); opacity: .5; }
-  100% { transform: translate3d(11px, 3px, 0); opacity: .75; }
+  0% { transform: translate3d(-2px, 1.5px, 0); opacity: .85; }
+  50% { transform: translate3d(1.5px, -2.5px, 0); opacity: .55; }
+  100% { transform: translate3d(3px, 1px, 0); opacity: .75; }
 }
 
 @media (max-width: 768px) {

@@ -110,7 +110,7 @@ export default function HomePage() {
           screen at a time. */}
       <main className="page-ramp page-ramp--screens">
         <CircuitField />
-        <AmbientParticles />
+        <AmbientParticles below=".hero-section" />
         {/* The classic look's frame. Both decorative layers are always in the
             DOM and src/styles/classic.css picks the one that paints — the
             markup has to be mode-agnostic (see src/theme/modes.ts). */}

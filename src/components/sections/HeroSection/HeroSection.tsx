@@ -2,6 +2,7 @@ import { useTranslation } from '@/i18n';
 import { EditableSpawnText } from '@/components/animations/EditableSpawnText';
 import { EditableText } from '@/components';
 import { DigitalStatue } from '@/components/DigitalStatue/DigitalStatue';
+import { AmbientParticles } from '@/components/AmbientParticles';
 import './HeroSection.css';
 
 /*
@@ -52,6 +53,7 @@ export function HeroSection() {
         squeezed into a 150px column beside it instead.
       */}
       <div className="hero-section__bg-fade" aria-hidden="true" />
+      <AmbientParticles inHero />
 
       {/*
         The same beat in the classic look: no traces, no junctions — a shaft of

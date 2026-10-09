@@ -1,5 +1,5 @@
 import { useTranslation } from '@/i18n';
-import { colors, fonts, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, elevations, typeScale, capsTracking, breakpoints, layout, transitions, colorVarNames } from '../theme';
+import { colors, fonts, fontVarNames, fontSizes, lineHeights, letterSpacings, spacing, radii, glass, elevations, typeScale, capsTracking, breakpoints, layout, transitions, colorVarNames } from '../theme';
 // Brand is not re-exported from '../theme' — it is consumed only by the mark.
 import { brand, brandVarNames } from '../theme/tokens';
 import { VkmLogo } from '@/assets/VkmLogo';
@@ -136,6 +136,10 @@ const tokenRowStyle: React.CSSProperties = {
   padding: '12px 0',
   borderBottom: '1px solid var(--border)',
 };
+
+/** Font-picker specimens, both scripts on every face (see the Font Picker box). */
+const FONT_SPECIMEN_EN = 'Counsel for property, ventures and capital \u2014 0123456789';
+const FONT_SPECIMEN_EL = 'Άά Έέ Ήή Ίί Όό Ύύ Ώώ ϊ ϋ ΐ ΰ \u2014 Νομική συμβουλή για ακίνητα και επιχειρήσεις';
 
 const showcaseBox: React.CSSProperties = {
   padding: '32px',
@@ -311,6 +315,26 @@ export default function DesignSystem() {
             trigger of its own.
           </p>
           <FontPicker />
+          {/* Every pin, set in both scripts at once regardless of the page's
+              locale: the Greek line carries every accented vowel, capital
+              and lowercase, plus both dialytika forms, so a face that
+              falls back on any of them shows it here as a glyph in the
+              wrong style. Loading this section fetches each face's latin
+              and greek subsets — this is the one page where that is the
+              point. */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', marginTop: 'var(--space-6)' }}>
+            {fontOptions.map((option) => (
+              <div key={option.id}>
+                <span style={labelStyle}>
+                  {t(option.labelKey)} &mdash; <code style={{ background: 'none', padding: 0, textTransform: 'none' }}>data-font=&quot;{option.id}&quot;</code>
+                </span>
+                <p style={{ fontFamily: option.fonts.heading, fontSize: 'var(--type-h3-size)', marginTop: 'var(--space-2)' }}>
+                  {FONT_SPECIMEN_EN}
+                </p>
+                <p style={{ fontFamily: option.fonts.sans, fontSize: 'var(--type-h3-size)' }}>{FONT_SPECIMEN_EL}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div style={showcaseBox}>
@@ -816,7 +840,7 @@ export default function DesignSystem() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', marginBottom: '48px' }}>
           {Object.entries(fonts).map(([key, family]) => (
             <div key={key} style={{ padding: '24px', background: 'var(--surface)', borderRadius: '4px', border: '1px solid var(--border)' }}>
-              <span style={labelStyle}>{key} &mdash; <code style={{ background: 'none', padding: 0, fontSize: '11px' }}>var(--{key})</code></span>
+              <span style={labelStyle}>{key} &mdash; <code style={{ background: 'none', padding: 0, fontSize: '11px' }}>var({fontVarNames[key] ?? `--${key}`})</code></span>
               <p style={{ fontFamily: family, fontSize: '28px', marginTop: '12px', letterSpacing: '-0.5px' }}>
                 {t('pangram')}
               </p>

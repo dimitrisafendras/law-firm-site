@@ -35,9 +35,12 @@
           }
           /* A pinned typeface (FONT_STORAGE_KEY, src/theme/fonts.ts). Same
              story as the palette: pattern-checked, and an unknown value or
-             "auto" matches no rule, so the active look's own font shows. */
+             "auto" matches no rule, so the active look's own font shows.
+             Letters of either case: the registry has a camelCase id
+             (`gfsDidot`), which a lowercase-only pattern skipped here and
+             left to flash the look's font until hydration. */
           var font = localStorage.getItem('law-firm-site:font');
-          if (font && /^[a-z]{2,16}$/.test(font) && font !== 'auto') {
+          if (font && /^[a-zA-Z]{2,16}$/.test(font) && font !== 'auto') {
             document.documentElement.setAttribute('data-font', font);
           }
           /* The light-to-dark ladder rung (RUNG_STORAGE_KEY). The palette id

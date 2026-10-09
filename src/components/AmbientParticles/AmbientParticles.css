@@ -18,8 +18,7 @@
  * third of the screen and this layer is behind it, so there the club arm is
  * hidden until the hero scrolls away.
  *
- * The whole figure drifts as one (the stars are joined, so they cannot wander
- * separately) and each star only twinkles.
+ * Each star floats on its own slow path; they are not joined.
  */
 .ambient-particles__orion {
   position: absolute;
@@ -27,22 +26,6 @@
   left: 16%;
   width: 54%;
   height: 78vh;
-  animation: ambient-orion-drift 48s ease-in-out infinite alternate;
-  animation-play-state: var(--ambient-particle-play, paused);
-}
-
-.ambient-particles__lines {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.ambient-particles__lines line {
-  stroke: var(--accent-text);
-  stroke-width: 1px;
-  stroke-opacity: 0.16;
 }
 
 .ambient-particles__star {
@@ -52,19 +35,14 @@
   background: radial-gradient(circle, var(--accent-text) 15%,
     color-mix(in srgb, var(--accent-text) 65%, transparent) 45%, transparent 75%);
   box-shadow: 0 0 6px color-mix(in srgb, var(--accent-text) 45%, transparent);
-  animation: ambient-star-twinkle ease-in-out infinite alternate;
+  animation: ambient-star-float ease-in-out infinite alternate;
   animation-play-state: var(--ambient-particle-play, paused);
 }
 
-@keyframes ambient-orion-drift {
-  0% { transform: translate3d(-14px, 8px, 0); }
-  50% { transform: translate3d(10px, -12px, 0); }
-  100% { transform: translate3d(16px, 6px, 0); }
-}
-
-@keyframes ambient-star-twinkle {
-  from { opacity: .9; }
-  to { opacity: .5; }
+@keyframes ambient-star-float {
+  0% { transform: translate3d(-9px, 6px, 0); opacity: .85; }
+  50% { transform: translate3d(5px, -10px, 0); opacity: .5; }
+  100% { transform: translate3d(11px, 3px, 0); opacity: .75; }
 }
 
 @media (max-width: 768px) {
@@ -76,6 +54,5 @@
 
 /* Stars that float are motion; with reduced motion they stay, still. */
 @media (prefers-reduced-motion: reduce) {
-  .ambient-particles__orion,
   .ambient-particles__star { animation: none; }
 }

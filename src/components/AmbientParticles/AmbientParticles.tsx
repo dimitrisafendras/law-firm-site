@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { ORION_LINES, ORION_STARS } from './orion';
+import { ORION_STARS } from './orion';
 import './AmbientParticles.css';
-
-const STAR_BY_ID = new Map(ORION_STARS.map((star) => [star.id, star]));
 
 /** Faintest star 2.5px, brightest about 6px: size reads as magnitude. */
 const starSize = (mag: number) => (2.5 + (4.6 - mag) * 0.8).toFixed(1);
@@ -14,9 +12,8 @@ const starSize = (mag: number) => (2.5 + (4.6 - mag) * 0.8).toFixed(1);
  * This is the whole of the page's floating decoration, and deliberately so.
  * It began as forty-odd drifting dots across every page and was pared back to
  * the figure alone; too much floating around reads as noise, not sky. The
- * stars are joined by faint hairlines, so the whole figure drifts as one and
- * the stars only twinkle: stars wandering on their own paths would pull away
- * from their lines.
+ * stars are not joined (lines were tried, twice, and taken out): each floats
+ * on its own slow path, small enough that the figure holds.
  *
  * It is a background on every page: a fixed layer, mounted at the top of each
  * page's `main` beside its ground layer (the ramp paints an opaque gradient,
@@ -52,25 +49,6 @@ export function AmbientParticles({ className = '' }: { className?: string }) {
   return (
     <div ref={ref} className={`ambient-particles ${className}`.trim()} aria-hidden="true">
       <div className="ambient-particles__orion">
-        {/* The box is stretched, so the lines are drawn in the stars' own
-            0–100 space with `preserveAspectRatio="none"`, and their stroke is
-            kept a hairline at any stretch with non-scaling-stroke. */}
-        <svg className="ambient-particles__lines" viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
-          {ORION_LINES.map(([a, b]) => {
-            const from = STAR_BY_ID.get(a)!;
-            const to = STAR_BY_ID.get(b)!;
-            return (
-              <line
-                key={`${a}-${b}`}
-                x1={from.x}
-                y1={from.y}
-                x2={to.x}
-                y2={to.y}
-                vectorEffect="non-scaling-stroke"
-              />
-            );
-          })}
-        </svg>
         {ORION_STARS.map((star, i) => (
           <span
             key={star.id}

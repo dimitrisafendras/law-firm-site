@@ -17,6 +17,11 @@
   white-space: pre;
 }
 
+/* One word's letters, kept on one line (see SpawnText.tsx). */
+.spawn-text__word {
+  white-space: nowrap;
+}
+
 /*
  * Whitespace between units is rendered as a bare text node (see SpawnText.tsx),
  * so it collapses at a line break like any normal space. Wrapping it in an

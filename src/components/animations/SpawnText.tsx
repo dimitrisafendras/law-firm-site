@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import './SpawnText.css';
 
 export type SpawnMode = 'char' | 'word';
@@ -91,32 +91,62 @@ export function SpawnText({
     .filter(Boolean)
     .join(' ');
 
+  const renderUnit = (unit: SpawnUnit, i: number) => {
+    const style = { '--spawn-index': unit.index } as Record<string, string | number>;
+    if (gradient && unit.index !== null) {
+      // 1 at both ends, 0 in the middle — mirrors the original
+      // accent → accent-container → accent ramp of the title gradient.
+      style['--spawn-t'] = Math.abs(1 - (2 * unit.index) / lastIndex).toFixed(3);
+    }
+    return (
+      <span key={i} className="spawn-text__unit" style={style as CSSProperties}>
+        {unit.value}
+      </span>
+    );
+  };
+
+  /*
+   * In `char` mode the letters of one word are held together in a no-wrap
+   * span. Each letter is its own inline-block, and a line may break between
+   * any two inline-blocks, so without this a heading wrapped mid-word wherever
+   * it ran out of room: "Συμβουλευτι / κή" in a wider typeface, "Αθή / να"
+   * before that, which had been fixed by rewording the copy. Lines now break
+   * only at spaces, as text does.
+   */
+  const children: ReactNode[] = [];
+  let word: ReactNode[] = [];
+  const flushWord = () => {
+    if (!word.length) return;
+    children.push(
+      mode === 'char' ? (
+        <span key={`w${children.length}`} className="spawn-text__word">
+          {word}
+        </span>
+      ) : (
+        word
+      ),
+    );
+    word = [];
+  };
+  units.forEach((unit, i) => {
+    if (unit.index === null) {
+      flushWord();
+      // A bare text node, deliberately NOT a styled span. A space wrapped in
+      // an element with `white-space: pre` cannot collapse at a line break,
+      // which indents every wrapped line by one space width and breaks the
+      // left alignment of multi-line copy.
+      children.push(<Fragment key={i}>{unit.value}</Fragment>);
+      return;
+    }
+    word.push(renderUnit(unit, i));
+  });
+  flushWord();
+
   return (
     // Keying on the text remounts (and so replays) the reveal when the
     // active language changes.
     <span key={text} className={rootClass} aria-hidden={ariaHidden || undefined}>
-      {units.map((unit, i) => {
-        if (unit.index === null) {
-          // A bare text node, deliberately NOT a styled span. A space wrapped in
-          // an element with `white-space: pre` cannot collapse at a line break,
-          // which indents every wrapped line by one space width and breaks the
-          // left alignment of multi-line copy.
-          return <Fragment key={i}>{unit.value}</Fragment>;
-        }
-
-        const style = { '--spawn-index': unit.index } as Record<string, string | number>;
-        if (gradient) {
-          // 1 at both ends, 0 in the middle — mirrors the original
-          // accent → accent-container → accent ramp of the title gradient.
-          style['--spawn-t'] = Math.abs(1 - (2 * unit.index) / lastIndex).toFixed(3);
-        }
-
-        return (
-          <span key={i} className="spawn-text__unit" style={style as CSSProperties}>
-            {unit.value}
-          </span>
-        );
-      })}
+      {children}
     </span>
   );
 }

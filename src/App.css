@@ -561,6 +561,7 @@
      looking at a section that faded out and did not come back. */
   @supports (animation-timeline: view()) {
     .page-ramp--screens > header,
+    .page-ramp--screens > .hero-backdrop,
     .page-ramp--screens > section:not(:last-of-type) {
       /*
        * The erasure is a stencil that SLIDES, not a gradient whose stops move.
@@ -622,11 +623,12 @@
  * Three layers are excluded: the circuit network the digital look wears and
  * the meander frame the classic look wears are both always in the DOM (the
  * markup is mode-agnostic — see src/theme/modes.ts), and whichever is painting
- * has to stay underneath the page; so do the site-wide ambient particles.
+ * has to stay underneath the page; so do the site-wide ambient particles and
+ * the hero's desktop scrim (HeroBackdrop), which the particles sit above.
  */
 .page-ramp > header,
 .page-ramp > section,
-.page-ramp > div:not(.circuit-field):not(.classic-field):not(.ambient-particles) {
+.page-ramp > div:not(.circuit-field):not(.classic-field):not(.ambient-particles):not(.hero-backdrop) {
   position: relative;
   z-index: 1;
 }

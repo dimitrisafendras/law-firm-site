@@ -22,11 +22,11 @@ const starSize = (mag: number) => (2.5 + (4.6 - mag) * 0.8).toFixed(1);
  * (see the stylesheet).
  *
  * One layer, and nothing moves it but the browser. The home page once drew a
- * second copy inside the hero, counter-scrolled from script so it would sit
- * on top of the page-wide one; script runs a frame behind compositor
- * scrolling, so mid-scroll the two parted and the figure showed twice. On the
- * home page the single layer is instead mounted after the hero and raised
- * over it (see the stylesheet).
+ * second copy inside the hero, counter-scrolled from script; script runs a
+ * frame behind compositor scrolling, so mid-scroll the two parted and the
+ * figure showed twice. Instead the hero's desktop scrim was moved out of the
+ * hero (HeroBackdrop), so this one layer can sit above the scrim and below
+ * the statue and the copy.
  *
  * The markup is constant (positions and timings derive from the data alone),
  * so the prerender and the client agree. Whether the drift runs is decided

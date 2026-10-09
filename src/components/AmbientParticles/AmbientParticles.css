@@ -11,13 +11,10 @@
   pointer-events: none;
 }
 
-/* The home page: mounted right after the hero and raised to the hero's level,
-   so it paints over the hero's opaque text scrim (left third) — and still
-   under every later section, which comes later in the DOM at the same level.
-   One fixed layer, so it cannot drift out of step with itself on scroll. */
-.ambient-particles--over-hero {
-  z-index: 1;
-}
+/* Order on the home page: circuit field → hero scrim (HeroBackdrop) → these
+   stars → the hero's statue and copy → sections → footer. Every layer up to
+   the stars is at z-index 0 and is ordered by the DOM; the page content above
+   it is at 1, the footer at 2. */
 
 /*
  * Spread over most of the screen, by the owner's choice, rather than drawn to

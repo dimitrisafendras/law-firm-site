@@ -3,6 +3,7 @@ import { useTranslation } from '@/i18n';
 import { Navbar, Footer, Button, EditableText, AuthNavControl } from '@/components';
 import { VkmLogo } from '@/assets/VkmLogo';
 import { HeroSection } from '@/components/sections/HeroSection/HeroSection';
+import { HeroBackdrop } from '@/components/sections/HeroSection/HeroBackdrop';
 import { PracticeGrid } from '@/components/sections/PracticeGrid/PracticeGrid';
 import { PartnerEthos } from '@/components/sections/PartnerEthos/PartnerEthos';
 import { ClientsSection } from '@/components/sections/ClientsSection/ClientsSection';
@@ -114,8 +115,9 @@ export default function HomePage() {
             DOM and src/styles/classic.css picks the one that paints — the
             markup has to be mode-agnostic (see src/theme/modes.ts). */}
         <ClassicField />
+        <HeroBackdrop />
+        <AmbientParticles />
         <HeroSection />
-        <AmbientParticles className="ambient-particles--over-hero" />
         <PartnerEthos />
         <PracticeGrid />
         <ClientsSection />

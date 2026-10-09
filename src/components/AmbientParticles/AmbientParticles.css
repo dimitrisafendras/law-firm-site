@@ -10,22 +10,22 @@
 /*
  * Spread across the whole area, by the owner's choice, rather than kept at the
  * figure's true proportions in a box: the star positions (0–100 on each axis,
- * orion.ts) map onto the full layer, inset a little so no star sits on an
- * edge. On pages other than the home page the layer can be a whole page tall,
+ * orion.ts) map onto most of the layer, inset toward the middle so the
+ * figure stays a figure. On pages other than the home page the layer can be a whole page tall,
  * so there the figure is held to the first screen (viewport units) and
  * scrolls away with it.
  */
 .ambient-particles__orion {
   position: absolute;
-  inset: 8% 6%;
+  inset: 14% 18%;
 }
 
 .ambient-particles:not(.hero-section__particles) .ambient-particles__orion {
   inset: auto;
-  top: 8vh;
-  left: 6%;
-  width: 88%;
-  height: 84vh;
+  top: 12vh;
+  left: 18%;
+  width: 64%;
+  height: 74vh;
 }
 
 .ambient-particles__star {

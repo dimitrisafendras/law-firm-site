@@ -213,6 +213,7 @@ const en = {
   clientCityskal: 'City Skal',
   clientPadel: 'Elliniko Padel Club',
   clientPsi: 'PSI Construction',
+  clientAllcourt: 'All Court Tennis Academy',
 
   clientsOpensInNewTab: '(opens in a new tab)',
 

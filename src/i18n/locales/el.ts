@@ -214,6 +214,7 @@ const el = {
   clientCityskal: 'Σκαλωσιές Αθήνα',
   clientPadel: 'Elliniko Padel Club',
   clientPsi: 'PSI Construction',
+  clientAllcourt: 'All Court Tennis Academy',
 
   clientsOpensInNewTab: '(ανοίγει σε νέα καρτέλα)',
 

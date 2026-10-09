@@ -12,6 +12,7 @@ import goat from '@/assets/images/clients/goat.png';
 import cityskal from '@/assets/images/clients/cityskal.png';
 import psi from '@/assets/images/clients/psi.png';
 import padel from '@/assets/images/clients/padel.png';
+import allcourt from '@/assets/images/clients/allcourt.png';
 
 export interface ClientLogo {
   id: string;
@@ -29,4 +30,5 @@ export const CLIENT_LOGOS: Record<string, ClientLogo> = {
   cityskal: { id: 'cityskal', src: cityskal, width: 133, height: 88 },
   psi: { id: 'psi', src: psi, width: 165, height: 88 },
   padel: { id: 'padel', src: padel, width: 219, height: 88 },
+  allcourt: { id: 'allcourt', src: allcourt, width: 88, height: 88 },
 };

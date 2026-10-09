@@ -1,8 +1,8 @@
 // Normalise the client logos into one set that can be presented as one set.
 //
-// They arrive from eight different websites in eight different states: two are
+// They arrive from nine different websites in nine different states: two are
 // opaque rectangles (a JPEG and an RGB PNG) that would show as slabs, three are
-// near-white artwork that vanishes on the nine light palettes, three are
+// near-white artwork that vanishes on the nine light palettes, four are
 // near-black artwork that vanishes on the nine dark ones. Measured:
 //
 //   cityskal.jpg         100% opaque, ink L 0.764   white slab
@@ -12,6 +12,7 @@
 //   psi-white.png         alpha, ink L 0.878        dies on light grounds
 //   padel.png             alpha, ink L 0.540
 //   psi.png               alpha, ink L 0.100        dies on dark grounds
+//   allcourt.webp         alpha, ink L 0.151        dies on dark grounds
 //   karras.png            alpha, ink L 0.036        dies on dark grounds
 //   starboard-mark.png    alpha, ink L 0.031        dies on dark grounds
 //
@@ -61,6 +62,7 @@ const SOURCES = [
   { id: 'cityskal', file: 'cityskal.jpg', key: true },
   { id: 'psi', file: 'psi.png' },
   { id: 'padel', file: 'padel.png' },
+  { id: 'allcourt', file: 'allcourt.webp' },
 ];
 
 /**

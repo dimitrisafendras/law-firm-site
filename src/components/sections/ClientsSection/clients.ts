@@ -35,4 +35,5 @@ export const clients: Client[] = [
   { id: 'cityskal', logo: CLIENT_LOGOS.cityskal, href: 'https://skalosies-athina.gr/', nameKey: 'clientCityskal' },
   { id: 'padel', logo: CLIENT_LOGOS.padel, href: 'https://ellinikopadelclub.gr/', nameKey: 'clientPadel' },
   { id: 'psi', logo: CLIENT_LOGOS.psi, href: 'https://www.psi-c.gr/el', nameKey: 'clientPsi' },
+  { id: 'allcourt', logo: CLIENT_LOGOS.allcourt, href: 'https://allcourt.gr/en/', nameKey: 'clientAllcourt' },
 ];

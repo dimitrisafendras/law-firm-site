@@ -9,7 +9,7 @@ import { useClientVisibility } from './useClientVisibility';
 import './ClientsSection.css';
 
 /**
- * The clients wall — eight glass cards, each a link to that client's own site.
+ * The clients wall — nine glass cards, each a link to that client's own site.
  *
  * ## Why the logos are monochrome
  *

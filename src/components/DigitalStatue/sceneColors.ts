@@ -97,15 +97,19 @@ export const NEUTRAL_COLORS: SceneColors = {
  *
  * The limestone rule again, with nothing to choose: the artwork's hue is the
  * family accent's, 215.3deg (porcelain, #A8C4EC), and the cyan set's HSL
- * saturation AND lightness are held exactly - 100/87, 77/74, 100/93 - so this
- * is the cyan triple re-hued and no more. It is deliberately not the palette's
+ * saturation is held exactly; the lightness has since been taken down (see
+ * the values). It is deliberately not the palette's
  * own accent tokens: `lapis`'s accent is white plates, and the rain has to be
  * the wireframe's colour, not the buttons'.
  */
 export const ULTRAMARINE_COLORS: SceneColors = {
-  accent: '188,216,255',
-  secondary: '137,179,240',
-  accentBright: '220,234,255',
+  // Darkened from the cyan profile (L 87/74/93 → 70/55/82, hue and saturation
+  // kept) at the owner's request, once the Ultramarine palettes moved to the
+  // WHITE figure: at the original lightness the light layer, screened over
+  // white marble, washed out to white instead of reading as ultramarine.
+  accent: '102,166,255',
+  secondary: '52,124,229',
+  accentBright: '163,200,255',
 };
 
 /**
@@ -114,7 +118,8 @@ export const ULTRAMARINE_COLORS: SceneColors = {
  * The one set NOT keyed to the drawing's own wireframe: the white artwork's
  * mesh is neutral, and on the pink scheme a grey light layer read as nothing
  * in particular. The owner wanted the animation pink there, so this is the
- * ultramarine set's saturation and lightness, point for point, turned to the
+ * ultramarine set's original saturation and lightness (100/87, 77/74,
+ * 100/93), point for point, turned to the
  * hue of `porphyry`'s accent (#E8A9C4, 334.3deg). Holding the lightness
  * profile is what keeps it glowing rather than drawn (see the note at the
  * top of this file).

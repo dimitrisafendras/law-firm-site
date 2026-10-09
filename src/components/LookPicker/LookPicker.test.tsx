@@ -42,12 +42,13 @@ describe('ModeOptions', () => {
     expect(checked[0]).toHaveAccessibleName(/digital/i);
   });
 
-  it('sets data-mode and persists the choice when Classic is clicked', async () => {
+  it('sets data-mode but does not persist the choice when Classic is clicked', async () => {
     const { user } = renderMode();
     await user.click(screen.getByRole('radio', { name: /classic/i }));
 
     expect(document.documentElement.dataset.mode).toBe('classic');
-    expect(window.localStorage.getItem(MODE_STORAGE_KEY)).toBe('classic');
+    // The look is no longer a visitor setting, so it must not survive a reload.
+    expect(window.localStorage.getItem(MODE_STORAGE_KEY)).toBeNull();
 
     const radios = screen.getAllByRole('radio');
     const checked = radios.filter((r) => r.getAttribute('aria-checked') === 'true');

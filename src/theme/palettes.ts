@@ -739,20 +739,9 @@ export const palettePairs: PalettePair[] = LIGHT.map((light, i) => ({
 export const paletteRadioOrder: Palette[] = palettePairs.flatMap((p) => [p.light, p.dark]);
 
 /*
- * There used to be four `*_STATUE_FAMILIES` lists here, pairing each hero
- * artwork with the palette families whose accent it sat well beside: limestone
- * for the warm and green schemes, white for Amethyst, mono for Graphite,
- * ultramarine for Ultramarine, cyan for the remainder.
- *
- * Every palette now wears the ultramarine statue, so the pairing is a single
- * fact and it lives in the registry that owns it — `src/theme/statues.ts`,
- * where `ultramarine` is the artwork with `families: null`. The lists are gone
- * rather than emptied: four exported arrays that no longer decide anything
- * read like a mechanism still in use.
- *
- * If per-family artworks ever come back, they come back as `families` entries
- * on the registry. Nothing here needs to change for that — this note exists
- * only so the removal does not look like an accident.
+ * Which statue each palette family wears lives in the registry that owns it —
+ * the `families` entries in `src/theme/statues.ts`. There used to be four
+ * `*_STATUE_FAMILIES` lists here; they are not coming back as lists.
  */
 
 /**

@@ -20,7 +20,6 @@ import {
 import type { FontChoice, ModeId, StatueChoice } from '@/theme';
 import {
   FONT_STORAGE_KEY,
-  MODE_STORAGE_KEY,
   RUNG_STORAGE_KEY,
   STATUE_STORAGE_KEY,
   ThemeContext,
@@ -39,18 +38,6 @@ function readStored(): string {
     return isPaletteId(stored) ? stored : DEFAULT_PALETTE_ID;
   } catch {
     return DEFAULT_PALETTE_ID;
-  }
-}
-
-function readStoredMode(): ModeId {
-  // Same reasoning as the palette: the default look is what bare `:root`
-  // renders, so it is what the prerender and the first client render agree on.
-  if (typeof window === 'undefined') return DEFAULT_MODE_ID;
-  try {
-    const stored = window.localStorage.getItem(MODE_STORAGE_KEY);
-    return isModeId(stored) ? stored : DEFAULT_MODE_ID;
-  } catch {
-    return DEFAULT_MODE_ID;
   }
 }
 
@@ -128,7 +115,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // already on <html> by now (the inline script put it there), so an effect
   // would only re-render to reach the state we can read synchronously.
   const [id, setId] = useState(readStored);
-  const [mode, setModeState] = useState<ModeId>(readStoredMode);
+  // The look is no longer a visitor's choice: the header picker was removed, so
+  // a stored `classic` from before would leave that visitor in a look they can
+  // no longer leave. Every load starts digital; `setMode` survives only for the
+  // design-system page, and lasts for that page view.
+  const [mode, setModeState] = useState<ModeId>(DEFAULT_MODE_ID);
   const [statue, setStatueState] = useState<StatueChoice>(readStoredStatue);
   const [font, setFontState] = useState<FontChoice>(readStoredFont);
   // Seeded from the palette that was read above, so the pair (palette, rung) is
@@ -227,11 +218,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setMode = useCallback((next: string) => {
     if (!isModeId(next)) return;
     setModeState(next);
-    try {
-      window.localStorage.setItem(MODE_STORAGE_KEY, next);
-    } catch {
-      // As above.
-    }
   }, []);
 
   const setStatue = useCallback((next: string) => {

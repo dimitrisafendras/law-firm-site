@@ -33,15 +33,6 @@
           if (id && /^[a-z][a-z0-9-]{0,31}$/.test(id)) {
             document.documentElement.setAttribute('data-theme', id);
           }
-          /* The look — digital or classic — is the same story with two
-             values. Key duplicated from MODE_STORAGE_KEY in
-             src/lib/theme/context.ts. Only `classic` has a stylesheet block, so
-             the default needs no stamp; stamping an unknown value would match
-             nothing and is skipped for tidiness. */
-          var mode = localStorage.getItem('law-firm-site:mode');
-          if (mode === 'classic' || mode === 'digital') {
-            document.documentElement.setAttribute('data-mode', mode);
-          }
           /* A pinned statue (STATUE_STORAGE_KEY). Pattern-checked like the
              palette id; an unknown value matches no rule and the palette's
              own statue shows. Absent means "auto". */

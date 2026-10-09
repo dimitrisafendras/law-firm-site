@@ -40,9 +40,16 @@ gradients and an elevation set — swapped by `<html data-theme="...">`.
 ### Looks
 
 Orthogonal to the palette, the site has two **looks** (`src/theme/modes.ts`),
-switched by `<html data-mode>` exactly the way a palette is: stamped before
-first paint by the same inline script, mirrored by `ThemeProvider`, chosen from
-the header. Every palette wears both.
+switched by `<html data-mode>` and mirrored by `ThemeProvider`. Every palette
+wears both.
+
+**Visitors no longer choose the look.** The header's look picker and the
+account menu's Look section were removed, every load starts `digital`, and the
+choice is neither stamped by the inline script nor persisted. A stored
+`law-firm-site:mode` from before is ignored on purpose: honouring it would
+leave anyone who once picked classic in a look they can no longer leave. The
+classic look, its tokens and `ModePicker`/`ModeOptions` still exist and can be
+previewed on the design-system page, for that page view only.
 
 - **digital** (the default; bare `:root`) — the dissolving figure, the rain,
   the fire, the circuit field, Jura, poured-glass corners.
@@ -83,22 +90,18 @@ is mismatched: the fire once burned khaki two inches from a cyan statue on every
 palette that is not blue.
 
 So there are five artworks and one registry (`src/theme/statues.ts`), and
-**every palette wears `limestone`**. It is the entry with `families: null`,
-the remainder; no other entry claims a family, so the remainder is all
-eighteen. The default pairing is therefore the Ultramarine palette (`lapis`)
-wearing the limestone figure. The other four are reachable only through the
-header's statue menu
-(`<html data-statue>`, `law-firm-site:statue`), which outranks the registry.
-`auto` is the absence of the attribute.
+**the palette's family picks the statue** through each entry's `families`:
+limestone for Limestone, Terracotta, Patina, Verdant and Olive; white for
+Amethyst; mono for Graphite; ultramarine for Ultramarine; cyan is the
+`families: null` remainder, which today is Azure. The default pairing is the
+Ultramarine palette (`lapis`) wearing the ultramarine figure. That is what the
+header statue menu's "Follow the theme" (`auto`, the absence of
+`<html data-statue>`) means; a pin (`law-firm-site:statue`) outranks it.
 
-This is a deliberate reversal, and it is worth knowing it is one. The four
-`*_STATUE_FAMILIES` lists used to pair each artwork with the palettes whose
-accent it sat well beside — limestone for the warm and green schemes, white
-for Amethyst, mono for Graphite — on the argument two paragraphs down: a
-wireframe fights an accent it does not match. One drawing across the whole
-site takes that trade knowingly. A reader on Azure now gets a gold
-wireframe and blue rain beside a warm accent, which is the mismatch that
-argument is about, and the menu is the answer to it rather than the palette.
+Every palette wore one statue for a while, a deliberate one-drawing-site-wide
+trade. It made "Follow the theme" an option that never followed anything, and
+the owner read that as a bug, so the pairing is back. Do not collapse it to
+one statue again without also removing or renaming `auto`.
 
 What has NOT changed is the rule underneath: the scene still follows the
 DRAWING. Pin limestone and the rain turns gold, because `statueArtwork.ts` is
@@ -115,8 +118,8 @@ id), so the rain and the cool flame follow whatever statue is showing.
 negotiable.** The generator emits the `background-image` swaps — per palette,
 then per pin, in that order, since every selector is (0,2,1) and source order
 is the precedence — from the registry in
-`statues.ts` and the `*_STATUE_FAMILIES` lists in `palettes.ts` (which is why
-those live in the theme registry and import no images —
+`statues.ts` and its `families` entries (which is why the registry lives in
+the theme and imports no images —
 `generate-theme-css.mjs` runs in bare node and cannot load a module that
 imports one). Choosing the image in React instead puts a
 palette-dependent `srcSet` in the tree, and ThemeProvider's invariant is that
@@ -144,7 +147,7 @@ what makes the rain read as glowing rather than as drawn, and getting it wrong
 burns out the light palettes or disappears on the dark ones. Add the master to
 `src/assets/images/` and a `buildStatue()` call in `scripts/optimize-images.mjs`;
 the widths and quality ladder are shared. Then register it in `statues.ts`
-with the families that wear it (`[]` today for all but `ultramarine`), give
+with the families that wear it (taking them from another entry), give
 it a `SceneColors` in `statueArtwork.ts`, and a label key in both locales; the
 generator, the statue menu and the scene pick it up from there.
 

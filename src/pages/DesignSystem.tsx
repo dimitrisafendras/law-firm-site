@@ -315,9 +315,9 @@ export default function DesignSystem() {
         <div style={showcaseBox}>
           <span style={showcaseLabel}>Look Picker — mode trigger &amp; popover</span>
           <p style={{ marginBottom: '16px', color: 'var(--text)', opacity: 'var(--text-emphasis-secondary)' }}>
-            Digital or classic. Same two housings as the theme picker: this
-            standalone trigger for signed-out visitors, the radiogroup below
-            embedded in the account menu for signed-in ones.
+            Digital or classic. Not offered on the site any more: every visit
+            loads the digital look. Kept here so the classic look can still be
+            previewed; a choice made here lasts for this page view only.
           </p>
           <ModePicker />
         </div>

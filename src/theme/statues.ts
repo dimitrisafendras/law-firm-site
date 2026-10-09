@@ -17,20 +17,15 @@
  * dissolution over them.
  *
  * ── Who chooses ───────────────────────────────────────────────────────────────
- * Today, nothing: every palette wears **ultramarine**. It is the entry with
- * `families: null`, which means "the remainder" — and since no other entry
- * claims a family, the remainder is all eighteen.
+ * The palette's family, through `families` below: limestone for the warm and
+ * green schemes, white for Amethyst, mono for Graphite, ultramarine for
+ * Ultramarine, and cyan (`families: null`) for the remainder. That is what
+ * the header's "Follow the theme" means, so the statue changes with the
+ * palette.
  *
- * The default pairs the Ultramarine palette with its blue-wireframe figure.
- * Explicit reader pins remain untouched when the default changes.
- *
- * The `families` mechanism is still here and still the way a palette would
- * claim an artwork; it just has nothing to say at the moment. Four lists in
- * `palettes.ts` used to pair the warm schemes with limestone, Amethyst with
- * white, Graphite with mono and Ultramarine with ultramarine, on the argument
- * in sceneColors.ts that a wireframe fights an accent it does not match. That
- * pairing is off: one drawing across the whole site, and the other four are
- * reachable deliberately rather than by side effect.
+ * Every palette wore one statue for a while (ultramarine, the remainder with
+ * nothing else claiming a family). It made "Follow the theme" a choice that
+ * never followed anything, so the pairing is back.
  *
  * Which is what a reader's pin is for. A pin from the header outranks the
  * family — stored under `law-firm-site:statue`, stamped on
@@ -66,23 +61,23 @@ export interface Statue {
 }
 
 export const statues: readonly Statue[] = [
-  // `families: null` is the remainder, and with every other entry claiming
-  // nothing the remainder is every palette. This one line is what makes
-  // ultramarine the site's statue.
+  // Each artwork is worn by the families whose accent its wireframe sits
+  // beside — the argument in sceneColors.ts that a wireframe fights an accent
+  // it does not match. Cyan is the remainder, which today is Azure.
   {
     id: 'limestone',
     base: 'hero-statue-limestone',
     labelKey: 'statueLimestone',
-    families: [],
+    families: ['Limestone', 'Terracotta', 'Patina', 'Verdant', 'Olive'],
   },
-  { id: 'cyan', base: 'hero-statue', labelKey: 'statueCyan', families: [] },
-  { id: 'white', base: 'hero-statue-white', labelKey: 'statueWhite', families: [] },
-  { id: 'mono', base: 'hero-statue-mono', labelKey: 'statueMono', families: [] },
+  { id: 'cyan', base: 'hero-statue', labelKey: 'statueCyan', families: null },
+  { id: 'white', base: 'hero-statue-white', labelKey: 'statueWhite', families: ['Amethyst'] },
+  { id: 'mono', base: 'hero-statue-mono', labelKey: 'statueMono', families: ['Graphite'] },
   {
     id: 'ultramarine',
     base: 'hero-statue-ultramarine',
     labelKey: 'statueUltramarine',
-    families: null,
+    families: ['Ultramarine'],
   },
 ];
 

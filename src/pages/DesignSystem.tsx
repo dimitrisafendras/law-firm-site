@@ -6,9 +6,9 @@ import { VkmLogo } from '@/assets/VkmLogo';
 import { CircuitField } from '../components/CircuitField';
 import { AmbientParticles } from '../components/AmbientParticles';
 import LanguageSwitcher from '../components/LanguageSwitcher/LanguageSwitcher';
-import { FontPicker, PaletteSwatches, SchemeSlider, ThemePicker } from '../components/ThemePicker';
+import { PaletteSwatches, SchemeSlider, ThemePicker } from '../components/ThemePicker';
 import { ModeOptions, ModePicker, StatueOptions, StatuePicker } from '../components/LookPicker';
-import { palettes, modes, statues, fontOptions } from '../theme';
+import { palettes, modes, statues } from '../theme';
 import { useTheme } from '@/lib/theme';
 import { SpawnText } from '../components/animations/SpawnText';
 import { EditableSpawnText } from '../components/animations/EditableSpawnText';
@@ -137,7 +137,7 @@ const tokenRowStyle: React.CSSProperties = {
   borderBottom: '1px solid var(--border)',
 };
 
-/** Font-picker specimens, both scripts on every face (see the Font Picker box). */
+/** Typeface specimens, both scripts in both faces (see the Typeface box). */
 const FONT_SPECIMEN_EN = 'Counsel for property, ventures and capital \u2014 0123456789';
 const FONT_SPECIMEN_EL = 'Άά Έέ Ήή Ίί Όό Ύύ Ώώ ϊ ϋ ΐ ΰ \u2014 Νομική συμβουλή για ακίνητα και επιχειρήσεις';
 
@@ -301,37 +301,30 @@ export default function DesignSystem() {
           </p>
           <PaletteSwatches />
           <SchemeSlider />
-          <FontPicker />
         </div>
 
         <div style={showcaseBox}>
-          <span style={showcaseLabel}>Font Picker — {fontOptions.length + 1} choices</span>
+          <span style={showcaseLabel}>Typeface — one setup, not a choice</span>
           <p style={{ marginBottom: '16px', color: 'var(--text)', opacity: 'var(--text-emphasis-secondary)' }}>
-            "Follow the look" (the default — no <code>data-font</code> at all)
-            plus the {fontOptions.length} explicit pins, each re-pointing{' '}
-            <code>--sans</code>/<code>--heading</code>/<code>--label</code>{' '}
-            regardless of which look is active. Standalone here for reference;
-            in the site it lives inside the theme popover above, not behind a
-            trigger of its own.
+            Headings are GFS Didot (<code>--heading</code>), a Didone like the VKM
+            mark. Body copy and labels are Manrope (<code>--sans</code>,{' '}
+            <code>--label</code>), because Didot&rsquo;s hairlines go faint at
+            reading sizes. Didot ships one weight, so every heading renders at
+            400. Italics stay EB Garamond (<code>--serif</code>). Both scripts
+            are set here regardless of the page&rsquo;s locale: the Greek line
+            carries every accented vowel and both dialytika forms, so a missing
+            glyph shows as a fallback in the wrong style.
           </p>
-          <FontPicker />
-          {/* Every pin, set in both scripts at once regardless of the page's
-              locale: the Greek line carries every accented vowel, capital
-              and lowercase, plus both dialytika forms, so a face that
-              falls back on any of them shows it here as a glyph in the
-              wrong style. Loading this section fetches each face's latin
-              and greek subsets — this is the one page where that is the
-              point. */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', marginTop: 'var(--space-6)' }}>
-            {fontOptions.map((option) => (
-              <div key={option.id}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            {(['heading', 'sans'] as const).map((role) => (
+              <div key={role}>
                 <span style={labelStyle}>
-                  {t(option.labelKey)} &mdash; <code style={{ background: 'none', padding: 0, textTransform: 'none' }}>data-font=&quot;{option.id}&quot;</code>
+                  {role === 'heading' ? 'GFS Didot' : 'Manrope'} &mdash; <code style={{ background: 'none', padding: 0, textTransform: 'none' }}>var({fontVarNames[role]})</code>
                 </span>
-                <p style={{ fontFamily: option.fonts.heading, fontSize: 'var(--type-h3-size)', marginTop: 'var(--space-2)' }}>
+                <p style={{ fontFamily: `var(${fontVarNames[role]})`, fontSize: role === 'heading' ? 'var(--type-h2-size)' : 'var(--type-body-lg-size)', marginTop: 'var(--space-2)' }}>
                   {FONT_SPECIMEN_EN}
                 </p>
-                <p style={{ fontFamily: option.fonts.sans, fontSize: 'var(--type-h3-size)' }}>{FONT_SPECIMEN_EL}</p>
+                <p style={{ fontFamily: `var(${fontVarNames[role]})`, fontSize: role === 'heading' ? 'var(--type-h2-size)' : 'var(--type-body-lg-size)' }}>{FONT_SPECIMEN_EL}</p>
               </div>
             ))}
           </div>
@@ -748,10 +741,9 @@ export default function DesignSystem() {
       <section style={sectionStyle}>
         <h2 style={{ fontFamily: 'var(--heading)', fontSize: '32px', marginBottom: '12px' }}>Brand mark</h2>
         <p style={{ maxWidth: '640px', lineHeight: '1.6', marginBottom: '32px', opacity: 0.8 }}>
-          The supplied artwork as drawn — navy V and M, the K picked out in sky, an 8px
-          white keyline behind each glyph — set in Jura and carrying its own white plate,
-          which is what lets marks built for paper sit on a #0F1A2E page without being
-          repainted.
+          The supplied artwork as drawn: outlined paths with no font dependency, with
+          only the letters&rsquo; fill and the K&rsquo;s fill mapped to custom properties so
+          the mark follows the palette.
         </p>
 
         <style>{

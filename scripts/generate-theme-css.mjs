@@ -56,7 +56,6 @@ import {
 import { palettes, DEFAULT_PALETTE_ID } from '../src/theme/palettes.ts';
 import { CONTINUUM_STEPS, continuumStop } from '../src/theme/continuum.ts';
 import { statues, statueForFamily } from '../src/theme/statues.ts';
-import { fontOptions } from '../src/theme/fonts.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outPath = join(__dirname, '..', 'src', 'theme', 'theme.generated.css');
@@ -366,26 +365,6 @@ function buildClassicBlock() {
   return `:root[data-mode='classic'] {\n${lines.join('\n')}\n}`;
 }
 
-/*
- * ── The font picker ───────────────────────────────────────────────────────────
- *
- * One block per entry in src/theme/fonts.ts, each re-pointing only the three
- * tokens a look already re-points (`--sans`/`--heading`/`--label`). `auto` — the
- * default — needs no block: ThemeProvider removes `data-font` entirely for it,
- * so nothing here ever matches and the active look's own block decides.
- *
- * Emitted AFTER the classic block on purpose. `:root[data-mode='classic']` and
- * `:root[data-font='<id>']` are the same shape of selector and so carry equal
- * specificity; with the font blocks last, an explicit font choice always wins
- * over the look's default font, in both looks. See fonts.ts for the full
- * argument.
- */
-function buildFontBlocks() {
-  return fontOptions
-    .map((option) => `:root[data-font='${option.id}'] {\n${mapVars(option.fonts, fontVarNames).join('\n')}\n}`)
-    .join('\n\n');
-}
-
 const schemeRules = [
   '#social .button-icon {',
   '  filter: invert(1) brightness(2);',
@@ -407,8 +386,6 @@ const schemeRules = [
   statueRules,
   '',
   buildClassicBlock(),
-  '',
-  buildFontBlocks(),
 ].join('\n');
 
 const css = `/* AUTO-GENERATED from src/theme/tokens.ts + src/theme/palettes.ts by

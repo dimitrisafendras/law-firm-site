@@ -3,7 +3,7 @@ import { useTranslation } from '@/i18n';
 import { useAuth } from '@/lib/auth';
 import { useEditMode } from '@/lib/edit-mode';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
-import { FontPicker, PaletteSwatches, SchemeSlider, ThemePicker } from '@/components/ThemePicker';
+import { PaletteSwatches, SchemeSlider, ThemePicker } from '@/components/ThemePicker';
 import './AuthNavControl.css';
 
 /** Two letters from the address: "dimitris.afendras@…" → "DA". */
@@ -122,7 +122,6 @@ export function AuthNavControl() {
           </div>
           <PaletteSwatches />
           <SchemeSlider />
-          <FontPicker />
 
           <div className="auth-nav__divider" />
 

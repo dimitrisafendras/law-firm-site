@@ -65,7 +65,7 @@
 }
 
 .testimonial-card__quote {
-  /* Real italic, not a synthesised slant of Jura. Matches the testimonial
+  /* Real italic, not a synthesised slant of Manrope. Matches the testimonial
      stage on the home page; this component now lives only in the design
      system showcase, and the two must not drift. */
   font-family: var(--serif);

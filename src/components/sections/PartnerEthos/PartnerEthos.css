@@ -413,9 +413,9 @@
 
 .partner-ethos__role {
   /*
-   * A real italic. Jura has none, so this was a browser-synthesised oblique — a
-   * slanted geometric sans, which at this size looks exactly as cheap as that
-   * description suggests.
+   * A real italic. Manrope has none, so this would be a browser-synthesised
+   * oblique — a slanted sans, which at this size looks exactly as cheap as
+   * that description suggests.
    */
   font-family: var(--serif);
   font-style: italic;

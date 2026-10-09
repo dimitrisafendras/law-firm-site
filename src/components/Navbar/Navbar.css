@@ -65,11 +65,12 @@
 
 /*
  * The band between the mobile breakpoint and 1280px is the tightest the desktop
- * header ever is, and it was tuned with Jura's labels. Garamond sets the same
- * six words ~60px wider (wider caps, and the classic look tracks them out
- * further still), so the row has to give some room back before the reader gets
- * to the width where the hamburger takes over. The gutters shrink one step and
- * the two internal gaps shrink with them; above 1280 nothing changes.
+ * header ever is, and it was tuned with the sans labels (Jura then, Manrope
+ * now). Garamond sets the same six words ~60px wider (wider caps, and the
+ * classic look tracks them out further still), so the row has to give some
+ * room back before the reader gets to the width where the hamburger takes
+ * over. The gutters shrink one step and the two internal gaps shrink with
+ * them; above 1280 nothing changes.
  */
 @media (min-width: 1121px) and (max-width: 1280px) {
   .navbar__inner {

@@ -409,7 +409,7 @@
   gap: var(--space-2);
 }
 
-/* The same real italic the card uses — Jura has no italic of its own, so this
+/* The same real italic the card uses — Manrope has no italic of its own, so this
    has to be the serif rather than a synthesised oblique. */
 /*
  * Layout only. The look is `btn btn--primary btn--lg` in the markup — the

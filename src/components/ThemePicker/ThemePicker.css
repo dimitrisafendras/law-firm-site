@@ -377,29 +377,6 @@
   box-shadow: 0 0 0 1px var(--glass-control-edge);
 }
 
-/* ─── The font sample ────────────────────────────────────────────────────── */
-
-/*
- * "Aa" set in the row's own face, at the same footprint as
- * `.statue-options__chip` (LookPicker.css) so the theme popover's rows —
- * palette chip, scheme slider, font sample — read as one family of controls.
- * `FontPicker` sets the actual `font-family` inline per row (the one it is
- * previewing); nothing here hardcodes a face.
- */
-.font-options__sample {
-  flex: none;
-  width: 26px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  line-height: 1;
-  color: var(--text);
-  border-radius: var(--radius-sm);
-  box-shadow: inset 0 0 0 1px var(--glass-control-edge);
-}
-
 /* ─── Embedded in the account menu ───────────────────────────────────────── */
 
 /* Inside the avatar menu the grid is a section rather than the whole panel, so
@@ -413,6 +390,3 @@
   padding-right: var(--space-1);
 }
 
-/* `FontPicker` reuses `.look-options` from LookPicker.css wholesale, so it
-   already picks up that file's `.auth-nav__menu .look-options` padding rule —
-   nothing to add here. */

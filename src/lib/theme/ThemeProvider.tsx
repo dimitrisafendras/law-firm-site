@@ -4,10 +4,7 @@ import {
   CONTINUUM_LENGTH,
   DEFAULT_MODE_ID,
   DEFAULT_PALETTE_ID,
-  FONT_AUTO,
   STATUE_AUTO,
-  fontOptions,
-  isFontChoice,
   isModeId,
   isPaletteId,
   isStatueChoice,
@@ -17,13 +14,8 @@ import {
   rungAddress,
   statues,
 } from '@/theme';
-import type { FontChoice, ModeId, StatueChoice } from '@/theme';
-import {
-  FONT_STORAGE_KEY,
-  RUNG_STORAGE_KEY,
-  ThemeContext,
-  THEME_STORAGE_KEY,
-} from './context';
+import type { ModeId, StatueChoice } from '@/theme';
+import { RUNG_STORAGE_KEY, ThemeContext, THEME_STORAGE_KEY } from './context';
 import type { ThemeState } from './context';
 
 function readStored(): string {
@@ -37,16 +29,6 @@ function readStored(): string {
     return isPaletteId(stored) ? stored : DEFAULT_PALETTE_ID;
   } catch {
     return DEFAULT_PALETTE_ID;
-  }
-}
-
-function readStoredFont(): FontChoice {
-  if (typeof window === 'undefined') return FONT_AUTO;
-  try {
-    const stored = window.localStorage.getItem(FONT_STORAGE_KEY);
-    return isFontChoice(stored) ? stored : FONT_AUTO;
-  } catch {
-    return FONT_AUTO;
   }
 }
 
@@ -114,7 +96,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // control left to release it. Same reasoning, and same design-system-only
   // escape hatch, as the look.
   const [statue, setStatueState] = useState<StatueChoice>(STATUE_AUTO);
-  const [font, setFontState] = useState<FontChoice>(readStoredFont);
   // Seeded from the palette that was read above, so the pair (palette, rung) is
   // consistent on the very first render rather than after a correcting effect.
   const [rung, setRungState] = useState<number>(() => readStoredRung(paletteById(id).scheme));
@@ -158,14 +139,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (statue === STATUE_AUTO) delete root.dataset.statue;
     else root.dataset.statue = statue;
   }, [statue]);
-
-  useEffect(() => {
-    // Same story as the statue pin: `auto` is the absence of `data-font`, so
-    // the active look's own `--sans`/`--heading`/`--label` decide.
-    const root = document.documentElement;
-    if (font === FONT_AUTO) delete root.dataset.font;
-    else root.dataset.font = font;
-  }, [font]);
 
   const setPalette = useCallback((next: string) => {
     if (!isPaletteId(next)) return;
@@ -218,17 +191,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setStatueState(next);
   }, []);
 
-  const setFont = useCallback((next: string) => {
-    if (!isFontChoice(next)) return;
-    setFontState(next);
-    try {
-      if (next === FONT_AUTO) window.localStorage.removeItem(FONT_STORAGE_KEY);
-      else window.localStorage.setItem(FONT_STORAGE_KEY, next);
-    } catch {
-      // As above.
-    }
-  }, []);
-
   const value = useMemo<ThemeState>(
     () => ({
       palette,
@@ -242,11 +204,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setStatue,
       rung,
       setRung,
-      font,
-      fontOptions,
-      setFont,
     }),
-    [palette, setPalette, mode, setMode, statue, setStatue, rung, setRung, font, setFont],
+    [palette, setPalette, mode, setMode, statue, setStatue, rung, setRung],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

@@ -33,16 +33,6 @@
           if (id && /^[a-z][a-z0-9-]{0,31}$/.test(id)) {
             document.documentElement.setAttribute('data-theme', id);
           }
-          /* A pinned typeface (FONT_STORAGE_KEY, src/theme/fonts.ts). Same
-             story as the palette: pattern-checked, and an unknown value or
-             "auto" matches no rule, so the active look's own font shows.
-             Letters of either case: the registry has a camelCase id
-             (`gfsDidot`), which a lowercase-only pattern skipped here and
-             left to flash the look's font until hydration. */
-          var font = localStorage.getItem('law-firm-site:font');
-          if (font && /^[a-zA-Z]{2,16}$/.test(font) && font !== 'auto') {
-            document.documentElement.setAttribute('data-font', font);
-          }
           /* The light-to-dark ladder rung (RUNG_STORAGE_KEY). The palette id
              above already names which END of the pair the rung belongs to —
              ThemeProvider keeps the two in step — so all that is needed here is
@@ -138,8 +128,11 @@
       "knowsAbout": ["Real estate law", "Startup and venture capital law", "Maritime law", "Cryptocurrency regulation"]
     }
     </script>
-    <!-- Preload the above-the-fold face; other subsets load on demand via @font-face -->
-    <link rel="preload" href="/fonts/jura-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Preload the above-the-fold faces: Manrope for body copy, GFS Didot for
+         the hero title (one ~15KB file). Other subsets load on demand via
+         @font-face. -->
+    <link rel="preload" href="/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/gfs-didot-latin.woff2" as="font" type="font/woff2" crossorigin />
     <title>VKM — Legal & Advisory | Super Prime Legal Counsel</title>
   </head>
   <body>

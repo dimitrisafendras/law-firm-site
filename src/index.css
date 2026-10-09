@@ -4,40 +4,43 @@
    the browser from fetching subsets it doesn't need. font-display: swap avoids
    invisible text while a face loads. */
 
-/* Jura — headings, body and labels (latin + latin-ext + greek for EL).
-   Variable weight 300–700, upright only: Jura ships no italic face. */
+/* Manrope — body copy and labels (`--sans`, `--label`): latin + latin-ext +
+   greek, so an EL reader never falls back mid-word (the greek file carries all
+   of U+0384–U+03CE, tonos and dialytika included). Variable 200–800 in the
+   file; declared 300–700, the range the type scale uses. Upright only:
+   italics are set in EB Garamond (`--serif`). The latin file is preloaded in
+   index.html — body text is above the fold. ~34KB latin+greek. */
 @font-face {
-  font-family: 'Jura';
+  font-family: 'Manrope';
   font-style: normal;
   font-weight: 300 700;
   font-display: swap;
-  src: url('/fonts/jura-latin.woff2') format('woff2');
+  src: url('/fonts/manrope-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
-  font-family: 'Jura';
+  font-family: 'Manrope';
   font-style: normal;
   font-weight: 300 700;
   font-display: swap;
-  src: url('/fonts/jura-latin-ext.woff2') format('woff2');
+  src: url('/fonts/manrope-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
-  font-family: 'Jura';
+  font-family: 'Manrope';
   font-style: normal;
   font-weight: 300 700;
   font-display: swap;
-  src: url('/fonts/jura-greek.woff2') format('woff2');
+  src: url('/fonts/manrope-greek.woff2') format('woff2');
   unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
 }
 
-/* EB Garamond, italic only — the one place a second family is loaded.
-   Only the italic is fetched, and only where an italic is actually set
-   (testimonial quotes, partner roles): those were the two places the browser
-   was synthesising an oblique out of a geometric sans, which is what a
-   synthesised italic of Jura looks like. Variable weight 400–500, same three
-   subsets as Jura so Greek quotes are covered. ~156KB across all three, and a
-   visitor who never reaches a quote fetches none of them. */
+/* EB Garamond, italic — `--serif`, the site's only italic.
+   Fetched only where an italic is actually set (testimonial quotes, partner
+   roles). Neither Manrope nor GFS Didot ships an italic, so without this the
+   browser would synthesise an oblique. Variable weight 400–500, same three
+   subsets as Manrope so Greek quotes are covered. ~156KB across all three,
+   and a visitor who never reaches a quote fetches none of them. */
 @font-face {
   font-family: 'EB Garamond';
   font-style: italic;
@@ -95,13 +98,13 @@
   unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
 }
 
-/* GFS Didot — fetched only when the reader pins it from the font picker
-   (src/theme/fonts.ts). One weight, one style: Google ships this face as
-   400/normal only, so there is nothing else to fetch. Two subsets rather than
-   the usual three — Google does not offer a latin-ext block for this face at
-   all (its glyph set stops at Latin-1), and the "greek-ext" block it does
-   offer is polytonic Greek (ancient accents/breathings), which neither locale
-   on this site uses. ~21.7KB total. */
+/* GFS Didot — every heading (`--heading`). One weight, one style: Google
+   ships this face as 400/normal only, so there is nothing else to fetch. Two
+   subsets rather than the usual three — Google does not offer a latin-ext
+   block for this face at all (its glyph set stops at Latin-1), and the
+   "greek-ext" block it does offer is polytonic Greek (ancient
+   accents/breathings), which neither locale on this site uses. ~21.7KB total; the latin file is preloaded in index.html
+   because the hero title is a heading. */
 @font-face {
   font-family: 'GFS Didot';
   font-style: normal;
@@ -117,251 +120,6 @@
   font-display: swap;
   src: url('/fonts/gfs-didot-greek.woff2') format('woff2');
   unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-
-/* ─── Font-picker faces ─────────────────────────────────────────────────────
-   Six more faces for the reader's font picker (src/theme/fonts.ts), each
-   fetched only once a reader pins it: nothing here is preloaded, and a face's
-   @font-face rules do nothing until some element is set in that family.
-   Same three subsets and unicode-ranges as Jura and EB Garamond above, so an
-   English reader fetches the latin file alone and a Greek reader the latin
-   and greek files — latin-ext only if a character from it is ever set. Every
-   greek file was checked (fontTools cmap) to carry all of U+0384–U+03CE —
-   every monotonic letter, tonos and dialytika included. Upright only: italics
-   on this site are set in EB Garamond (`--serif`), never in `--sans`. Files
-   are the Google Fonts variable (wght) builds, via Fontsource, OFL-1.1. */
-
-/* Literata — serif. Variable 200–900 in the file; declared 300–700, the
-   range the type scale uses. ~72KB latin+greek. */
-@font-face {
-  font-family: 'Literata';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/literata-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Literata';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/literata-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Literata';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/literata-greek.woff2') format('woff2');
-  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-
-/* Piazzolla — serif. Variable 100–900; declared 300–700. ~44KB latin+greek. */
-@font-face {
-  font-family: 'Piazzolla';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/piazzolla-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Piazzolla';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/piazzolla-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Piazzolla';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/piazzolla-greek.woff2') format('woff2');
-  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-
-/* Alegreya — serif. Variable 400–900: the axis has no light end, so the
-   300 display steps render at 400 rather than being synthesised. ~58KB
-   latin+greek. */
-@font-face {
-  font-family: 'Alegreya';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url('/fonts/alegreya-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Alegreya';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url('/fonts/alegreya-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Alegreya';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url('/fonts/alegreya-greek.woff2') format('woff2');
-  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-
-/* Manrope — sans. Variable 200–800; declared 300–700. ~34KB latin+greek. */
-@font-face {
-  font-family: 'Manrope';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/manrope-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Manrope';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/manrope-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Manrope';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/manrope-greek.woff2') format('woff2');
-  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-
-/* Commissioner — sans. Variable 100–900; declared 300–700. ~52KB
-   latin+greek. */
-@font-face {
-  font-family: 'Commissioner';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/commissioner-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Commissioner';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/commissioner-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Commissioner';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/commissioner-greek.woff2') format('woff2');
-  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-
-/* IBM Plex Sans — sans. Variable 100–700; declared 300–700. ~65KB
-   latin+greek. */
-@font-face {
-  font-family: 'IBM Plex Sans';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/ibm-plex-sans-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'IBM Plex Sans';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/ibm-plex-sans-latin-ext.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'IBM Plex Sans';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/ibm-plex-sans-greek.woff2') format('woff2');
-  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
-}
-
-/* The font picker's "Aa" chips. One tiny file per face holding only the two
-   glyphs the chip draws (`fontSamples` in tokens.ts), so opening the theme
-   panel previews every face for ~14KB instead of fetching ~300KB of latin
-   subsets a reader may never choose. unicode-range is exactly A and a, so the
-   browser never asks these files for anything they do not hold. EB Garamond
-   and GFS Didot get one too: before this, opening the panel fetched both of
-   their latin subsets just to draw two letters. */
-@font-face {
-  font-family: 'EB Garamond Sample';
-  font-style: normal;
-  font-weight: 400 800;
-  font-display: swap;
-  src: url('/fonts/eb-garamond-sample.woff2') format('woff2');
-  unicode-range: U+0041, U+0061;
-}
-@font-face {
-  font-family: 'GFS Didot Sample';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/gfs-didot-sample.woff2') format('woff2');
-  unicode-range: U+0041, U+0061;
-}
-@font-face {
-  font-family: 'Literata Sample';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/literata-sample.woff2') format('woff2');
-  unicode-range: U+0041, U+0061;
-}
-@font-face {
-  font-family: 'Piazzolla Sample';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/piazzolla-sample.woff2') format('woff2');
-  unicode-range: U+0041, U+0061;
-}
-@font-face {
-  font-family: 'Alegreya Sample';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url('/fonts/alegreya-sample.woff2') format('woff2');
-  unicode-range: U+0041, U+0061;
-}
-@font-face {
-  font-family: 'Manrope Sample';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/manrope-sample.woff2') format('woff2');
-  unicode-range: U+0041, U+0061;
-}
-@font-face {
-  font-family: 'Commissioner Sample';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/commissioner-sample.woff2') format('woff2');
-  unicode-range: U+0041, U+0061;
-}
-@font-face {
-  font-family: 'IBM Plex Sans Sample';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/ibm-plex-sans-sample.woff2') format('woff2');
-  unicode-range: U+0041, U+0061;
 }
 
 /* Base styles — CSS variable declarations are generated from src/theme/tokens.ts */
@@ -388,8 +146,8 @@
   background: transparent;
   /* Synthesis fully off. Every italic on the site is now set in EB Garamond,
      which has a real one; leaving style synthesis on would let any *other*
-     italic silently fall back to a slanted Jura, which is the thing this was
-     meant to fix. */
+     italic silently fall back to a slanted Manrope or Didot, which is the
+     thing this was meant to fix. */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

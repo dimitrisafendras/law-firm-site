@@ -37,6 +37,18 @@ gradients and an elevation set — swapped by `<html data-theme="...">`.
 - `ThemeProvider` (`src/lib/theme/`) mirrors the choice into React and
   localStorage; an inline script in `index.html` applies it before first paint.
 
+### Typography
+
+One typeface setup for the whole site; there is no font picker. Headings
+(`--heading`) are GFS Didot, a Didone like the VKM mark; body copy and labels
+(`--sans`, `--label`) are Manrope, because Didot's hairlines go faint at
+reading sizes; `--serif` is EB Garamond and carries the site's only italics
+(testimonial quotes, partner roles). Didot ships one weight, so every heading
+weight token renders as 400 (`font-synthesis` is off). The families live in
+`fonts` in `tokens.ts`, the self-hosted `@font-face` rules in `src/index.css`,
+and `index.html` preloads the Manrope and GFS Didot latin files. A
+`law-firm-site:font` key left in localStorage by the old picker is ignored.
+
 ### Looks
 
 Orthogonal to the palette, the site has two **looks** (`src/theme/modes.ts`),
@@ -52,7 +64,8 @@ classic look, its tokens and `ModePicker`/`ModeOptions` still exist and can be
 previewed on the design-system page, for that page view only.
 
 - **digital** (the default; bare `:root`) — the dissolving figure, the rain,
-  the fire, the circuit field, Jura, poured-glass corners.
+  the fire, the circuit field, Didot headings over Manrope, poured-glass
+  corners.
 - **classic** — the same photograph with the dissolution taken off it: no
   rain, no sparkles, no circuit field. A Garamond, cut corners, a meander
   frieze, a shaft of light behind the figure, entrances that rise rather than
@@ -94,7 +107,11 @@ So there are five artworks and one registry (`src/theme/statues.ts`), and
 limestone for Limestone, Terracotta, Patina, Verdant and Olive; white for
 Amethyst; mono for Graphite; ultramarine for Ultramarine; cyan is the
 `families: null` remainder, which today is Azure. The default pairing is the
-Ultramarine palette (`lapis`) wearing the ultramarine figure.
+Ultramarine palette (`lapis`) wearing the `ultramarine` entry, which is on
+trial as the WHITE figure under ultramarine light: its `base` points at
+`hero-statue-white` while its colour set and light layer stay ultramarine.
+An entry's image and its colours are independent, so that is one line in
+`statues.ts` to revert.
 
 **The statue always follows the theme; visitors cannot pick one.** The header
 statue menu and the account menu's statue section were removed. A stored
@@ -113,16 +130,25 @@ What has NOT changed is the rule underneath: the scene follows the DRAWING.
 light layer come from the statue on screen. Nothing anywhere re-tints a canvas
 to match a palette.
 
-**The light layer is built once per statue colour set.** The Rive mesh (with
-the pan fire) bakes its colours at build time, so `scripts/build-hero-rive.mjs`
-builds `public/animations/hero-<set>.riv` for `cyan`, `ultramarine`,
-`limestone` and `neutral` (white and mono share it). Run with no argument to
-build all four (about three minutes each), or name one set. `statueArtwork.ts`
+**The light layer is built once per statue colour set.** The Rive mesh and the
+fire in both scale pans bake their colours at build time, so
+`scripts/build-hero-rive.mjs` builds `public/animations/hero-<set>.riv` for
+`cyan`, `limestone`, `neutral` (mono), `amethyst` (white) and `ultramarine`.
+The digital pan's fire takes its ramp from the set (`fireRamp` in
+`hero-fire.mjs`), so it burns in the same colour as the mesh. The brass (gold)
+pan always burns an ordinary orange fire, in every theme, by the owner's
+choice. The one set not taken from a
+drawing's wireframe is `amethyst`: the white statue's mesh is neutral, and the
+owner wanted the pink scheme's animation pink, so it is the ultramarine
+lightness profile turned to `porphyry`'s accent hue. Run with no argument to
+build all five (about three minutes each), or name one set. `statueArtwork.ts`
 maps each statue to its file, and `DigitalStatue` loads it inside the effect,
 which keeps it out of rendered markup. The scan band's glow colour is set in
 the same effect for the same reason. Builds are reproducible byte for byte.
-Each build rewrites `art/rive/hero/layers` and `scene.rml` for the set it built,
-so restore them afterwards (`git checkout -- art/rive/hero`).
+Each build rewrites `art/rive/hero/layers` and `scene.rml` for the set it
+built. A full build does ultramarine last so `art/` ends on the default
+palette's set, and that is the state to commit. After building a single other
+set, rebuild `ultramarine` (or `git checkout -- art/rive/hero`).
 
 **On light palettes the light layer is inverted and multiplied.** It is painted
 in light values and composited with `screen`, which can only brighten, so on a
@@ -130,7 +156,7 @@ near-white ground it vanished. The generator emits a light-scheme rule giving
 `.digital-statue__surface` and `.digital-statue__scan`
 `mix-blend-mode: multiply` and `invert(1) hue-rotate(180deg)` (plus saturate and
 contrast). That is the same hue at a dark value, so the lit facets read as ink
-in the wireframe's own colour. The fire in the pans goes dark with it. Check
+in the set's colour. The fire in the pans goes dark with it. Check
 any change to these colours on a light palette as well as a dark one.
 
 The LOOK does not pick a statue either. Both looks wear the same five, and

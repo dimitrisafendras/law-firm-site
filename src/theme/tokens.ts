@@ -131,106 +131,48 @@ export type ColorTokens = { -readonly [K in keyof typeof colors.dark]: string };
 
 // ─── Typography ───────────────────────────────────────────────────────────────
 
+/**
+ * One setup for the whole site: GFS Didot for headings, Manrope for reading.
+ *
+ * Headings are GFS Didot because the VKM mark is itself a Didone: the titles
+ * echo the logo rather than sitting beside it in a different voice. It is a
+ * Greek foundry's cut of the Firmin Didot the classical inscriptions of Athens
+ * are set in, with a true, purpose-drawn Greek rather than a Latin face with
+ * Greek bolted on — which is what a site split between `en` and `el` needs
+ * from a display serif. It ships ONE weight — 400, no italic, no bold — so the
+ * type scale's heading weights (300 for the display steps, 500/600 for the
+ * heading steps) all render as the same drawn 400. That is deliberate:
+ * `font-synthesis` is off, and a synthesised bold distorts a Didone's
+ * thick/thin contrast far more than it would a sans.
+ *
+ * Body copy and labels are Manrope, because Didot's hairlines go faint and
+ * tiring at reading sizes. Manrope is a variable (300–700) geometric-grotesque
+ * hybrid with a complete monotonic Greek, so the scale's body and label
+ * weights render as drawn and an `el` reader never falls back mid-word.
+ */
 export const fonts = {
-  sans: "'Jura', sans-serif",
-  heading: "'Jura', sans-serif",
-  label: "'Jura', sans-serif",
+  sans: "'Manrope', sans-serif",
+  heading: "'GFS Didot', Georgia, serif",
+  label: "'Manrope', sans-serif",
   /**
-   * The one place a second family earns its keep.
+   * The site's italic, and the classic look's whole family.
    *
-   * Jura has no italic. Every italic on this site — partner roles, every
-   * testimonial quote — was a browser-synthesised oblique, which is a slanted
-   * geometric sans and looks exactly as cheap as that sounds at 20px. EB
-   * Garamond ships a true italic *and* Greek, which almost nothing else in
-   * this register does.
-   *
-   * It also earns it structurally: Garamond against Jura is the same collision
-   * the hero is built on — classical stone against digital light — so the
-   * typography stops merely claiming "legacy and innovation" and enacts it.
+   * Neither Manrope nor GFS Didot ships an italic, so every italic on this
+   * site — partner roles, every testimonial quote — would otherwise be a
+   * browser-synthesised oblique. EB Garamond ships a true italic *and* Greek,
+   * which almost nothing else in this register does.
    */
   serif: "'EB Garamond', Georgia, 'Times New Roman', serif",
   mono: 'ui-monospace, Consolas, monospace',
-  /**
-   * GFS Didot — one of the reader's font-picker choices (see
-   * src/theme/fonts.ts). A Greek foundry's cut of the Firmin Didot the
-   * classical inscriptions of Athens are set in: a high-contrast Didone with a
-   * true, purpose-drawn Greek rather than a Latin face with Greek bolted on,
-   * which is exactly what a firm splitting its site between `en` and `el`
-   * needs from a display serif. Ships one weight — 400, no italic, no bold —
-   * so the font-picker option sets it everywhere `--sans`/`--heading`/`--label`
-   * point, and the site's own weight tokens (300/500/600 for the type scale's
-   * display and heading steps) simply render as the same 400 glyphs; a
-   * synthesised bold would distort a Didone's drawn thick/thin contrast far
-   * more than it would a geometric sans, so this is left alone rather than
-   * faked.
-   */
-  didot: "'GFS Didot', Georgia, serif",
-  /*
-   * The rest of the font picker's faces (src/theme/fonts.ts). Every one was
-   * chosen for, and verified to carry, a complete monotonic Greek — the full
-   * U+0384–U+03CE block, tonos and dialytika included — alongside its Latin,
-   * so an `el` reader never falls back mid-word. All are variable on the
-   * weight axis and self-hosted as latin / latin-ext / greek subsets (see
-   * src/index.css), so unlike GFS Didot they render the type scale's own
-   * 300–700 weights as drawn rather than collapsing them to one.
-   *
-   * Three serifs, three sans, each a distinct voice rather than a near-copy of
-   * Jura or Garamond:
-   *   - Literata: a contemporary book serif (Type Together, drawn for long
-   *     reading on screen) — the calm, editorial choice.
-   *   - Piazzolla: a sharp, compact serif with wedge serifs — more contrast and
-   *     authority at display sizes than Literata, still readable as body.
-   *   - Alegreya: a calligraphic old-style serif with real rhythm — the most
-   *     "literary" of the three. Its axis starts at 400, so the light display
-   *     steps render as 400.
-   *   - Manrope: a modern geometric-grotesque hybrid — the closest in spirit
-   *     to Jura, without Jura's techno squareness.
-   *   - Commissioner: a low-contrast sans with a hint of flare in its strokes —
-   *     warm and institutional.
-   *   - IBM Plex Sans: a neutral, engineered grotesque — the corporate-precise
-   *     choice.
-   */
-  literata: "'Literata', Georgia, serif",
-  piazzolla: "'Piazzolla', Georgia, serif",
-  alegreya: "'Alegreya', Georgia, serif",
-  manrope: "'Manrope', sans-serif",
-  commissioner: "'Commissioner', sans-serif",
-  plexSans: "'IBM Plex Sans', sans-serif",
 } as const;
 
 /**
- * Preview-only families for the font picker's "Aa" chip.
- *
- * Each is a separate @font-face (src/index.css) over a ~1–4KB woff2 that holds
- * nothing but the glyphs "A" and "a", cut from the face's latin subset. The
- * picker shows a row per face, each previewing its own face; pointing those
- * chips at the real families would make merely OPENING the theme panel
- * download the latin subset of every face on the list (~300KB), when a face
- * should only be fetched once a reader actually chooses it. With these,
- * opening the panel costs ~14KB and the full face is fetched on the click.
- *
- * The fallback after each sample is a GENERIC family, never the real face:
- * while a sample file is still loading, the browser walks down the list to
- * find something to measure with, and a web font found there gets fetched —
- * which is exactly the download these exist to avoid.
- */
-export const fontSamples = {
-  garamond: "'EB Garamond Sample', serif",
-  didot: "'GFS Didot Sample', serif",
-  literata: "'Literata Sample', serif",
-  piazzolla: "'Piazzolla Sample', serif",
-  alegreya: "'Alegreya Sample', serif",
-  manrope: "'Manrope Sample', sans-serif",
-  commissioner: "'Commissioner Sample', sans-serif",
-  plexSans: "'IBM Plex Sans Sample', sans-serif",
-} as const;
-
-/**
- * Type scale — the eight Liquid Glass steps, set in Jura.
+ * Type scale — the Liquid Glass steps. Headings (`--heading`) are set in GFS
+ * Didot, reading and caption steps in Manrope (`--sans`); see `fonts` above.
  *
  * Sizes, weights, line heights and tracking come from the design system; the
- * family does not. Jura is narrower and more geometric than the system's own
- * Comfortaa, so it carries the tight display tracking comfortably.
+ * family does not. Didot has only a 400, so the heading steps' weights below
+ * are what a heading WOULD take in a face that had them, and render as 400.
  *
  * Each step is the whole specimen, not a loose size: a heading that takes the
  * size but keeps a stray weight or tracking is the usual way a scale rots.
@@ -241,8 +183,9 @@ export const typeScale = {
    *
    * 40px semibold on a 1440px measure is timid — it reads as a subhead on a
    * page whose hero is a 95vh statue. At 80px the weight has to come *down*,
-   * not up: Jura's 300 at this size reads as something cut into stone, where
-   * 600 reads as a banner. This is the page's one big hierarchy jump.
+   * not up: a 300 at this size reads as something cut into stone, where 600
+   * reads as a banner. (GFS Didot draws only 400, which its hairlines already
+   * keep light.) This is the page's one big hierarchy jump.
    */
   displayXl: { size: '5rem', px: 80, weight: 300, lineHeight: '1.0', tracking: '-0.03em' },
   display: { size: '4.5rem', px: 72, weight: 300, lineHeight: '1.02', tracking: '-0.03em' },
@@ -305,7 +248,7 @@ export const fontSizes = {
 } as const;
 
 export const weights = {
-  /** Jura's lower half, unused until the inscription sizes needed it. */
+  /** The inscription-size headings' weight; GFS Didot renders it as its 400. */
   light: 300,
   regular: 400,
   medium: 500,
@@ -1183,13 +1126,6 @@ export const fontVarNames: Record<string, string> = {
   heading: '--heading',
   label: '--label',
   mono: '--mono',
-  didot: '--gfs-didot',
-  literata: '--literata',
-  piazzolla: '--piazzolla',
-  alegreya: '--alegreya',
-  manrope: '--manrope',
-  commissioner: '--commissioner',
-  plexSans: '--plex-sans',
 };
 
 // ─── Aggregate theme object ───────────────────────────────────────────────────
